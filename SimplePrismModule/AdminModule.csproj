@@ -81,6 +81,9 @@
   <ItemGroup>
     <Compile Include="Module.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="Views\AgendaView.xaml.cs">
+      <DependentUpon>AgendaView.xaml</DependentUpon>
+    </Compile>
     <Compile Include="Views\ChooseBoardView.xaml.cs">
       <DependentUpon>ChooseBoardView.xaml</DependentUpon>
     </Compile>
@@ -95,6 +98,10 @@
     <None Include="packages.config" />
   </ItemGroup>
   <ItemGroup>
+    <Page Include="Views\AgendaView.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
     <Page Include="Views\ChooseBoardView.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>

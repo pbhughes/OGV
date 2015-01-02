@@ -60,6 +60,7 @@ namespace PrismExampleOne
             this.Container.RegisterType<object, LoginView>(typeof(LoginView).FullName);
             this.Container.RegisterType<object, StreamerView>(typeof(StreamerView).FullName);
             this.Container.RegisterType<object, ChooseBoardView>(typeof(ChooseBoardView).FullName);
+            this.Container.RegisterType<object, AgendaView>(typeof(AgendaView).FullName);
              
            
         }

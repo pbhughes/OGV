@@ -12,6 +12,7 @@ using System.Windows.Media;
 using System.Windows.Media.Imaging;
 using System.Windows.Navigation;
 using System.Windows.Shapes;
+using Microsoft.Practices.Prism.Regions;
 
 namespace OGV.Admin.Views
 {
@@ -23,6 +24,15 @@ namespace OGV.Admin.Views
         public ChooseBoardView()
         {
             InitializeComponent();
+        }
+
+        private void Button_Click(object sender, RoutedEventArgs e)
+        {
+            Microsoft.Practices.Prism.Regions.IRegionManager rm =
+                    Microsoft.Practices.ServiceLocation.ServiceLocator.Current.GetInstance<Microsoft.Practices.Prism.Regions.IRegionManager>();
+
+            Uri vu = new Uri(typeof(Views.AgendaView).FullName, UriKind.RelativeOrAbsolute);
+            rm.RequestNavigate("MainRegion", vu);
         }
     }
 }

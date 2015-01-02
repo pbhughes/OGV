@@ -3,7 +3,7 @@
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
-             mc:Ignorable="d" Margin="20"
+             mc:Ignorable="d" Margin="75 0 0 0"
              d:DesignHeight="300" d:DesignWidth="300">
     <UserControl.Resources>
         <Style TargetType="ComboBox">
@@ -17,19 +17,38 @@
         </Style>
         <Style TargetType="Label">
             <Setter Property="VerticalAlignment" Value="Center"/>
+            <Setter Property="Width" Value="100"/>
+        </Style>
+        <Style TargetType="Button">
+            <Setter Property="HorizontalAlignment" Value="Right"/>
+            <Setter Property="Margin" Value="0 0 20 0"/>
+            
         </Style>
     </UserControl.Resources>
     <Grid>
         <Grid.RowDefinitions>
             <RowDefinition ></RowDefinition>
         </Grid.RowDefinitions>
-        <StackPanel Orientation="Horizontal">
-            <Label>Choose Board:</Label>
-            <ComboBox Text="Choose Board">
-                <ComboBoxItem Name="cbi1">School Board</ComboBoxItem>
-                <ComboBoxItem Name="cbi2">Tax Board</ComboBoxItem>
-                <ComboBoxItem Name="cbi3">Zoning Board</ComboBoxItem>
-            </ComboBox>
+        <StackPanel Orientation="Vertical" Grid.Row="0">
+            <StackPanel Orientation="Horizontal">
+                <Label>Choose Board:</Label>
+                <ComboBox Text="Choose Board">
+                    <ComboBoxItem Name="cbi1">School Board</ComboBoxItem>
+                    <ComboBoxItem Name="cbi2">Tax Board</ComboBoxItem>
+                    <ComboBoxItem Name="cbi3">Zoning Board</ComboBoxItem>
+                </ComboBox>
+            </StackPanel>
+
+            <StackPanel Orientation="Horizontal">
+                <Label>Choose Agenda:</Label>
+                <ComboBox Text="Choose Board">
+                    <ComboBoxItem Name="ag1">School Board</ComboBoxItem>
+                    <ComboBoxItem Name="ag2">Tax Board</ComboBoxItem>
+                    <ComboBoxItem Name="ag3">Zoning Board</ComboBoxItem>
+                </ComboBox>
+            </StackPanel>
+            <Button Click="Button_Click">Load Agenda</Button>
         </StackPanel>
+       
     </Grid>
 </UserControl>
