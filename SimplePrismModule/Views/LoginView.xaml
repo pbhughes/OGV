@@ -3,39 +3,92 @@
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
+             xmlns:models="clr-namespace:OGV.Admin.Models"
+             xmlns:tk="http://schemas.xceed.com/wpf/xaml/toolkit"
              mc:Ignorable="d" 
-             d:DesignHeight="200" d:DesignWidth="300"
-             Margin="75 0 0 0 ">
+             d:DesignHeight="300" d:DesignWidth="450" 
+             MaxHeight="350" MaxWidth="400"
+             Margin="10">
+    <UserControl.DataContext>
+        <models:User></models:User>
+    </UserControl.DataContext>
     <UserControl.Resources>
-        <Style TargetType="TextBox">
-            <Setter Property="Width" Value="200px" />
-        </Style>
-
         <Style TargetType="PasswordBox">
             <Setter Property="Width" Value="200px" />
+            <Setter Property="MinWidth" Value="200px" />
+            <Setter Property="MinHeight" Value="45px" />
+            <Setter Property="VerticalContentAlignment" Value="Center"/>
         </Style>
         
-
         <Style TargetType="StackPanel">
             <Setter Property="Margin" Value="10px" />
             <Setter Property="VerticalAlignment" Value="Center"/>
         </Style>
+
+        <Style TargetType="TextBox">
+            <Setter Property="MinWidth" Value="200px" />
+            <Setter Property="MinHeight" Value="45px" />
+            <Setter Property="VerticalContentAlignment" Value="Center"/>
+            <Setter Property="HorizontalAlignment" Value="Stretch"/>
+            <Setter Property="FontSize" Value="15" />
+        </Style>
         
         <Style TargetType="Label">
-            <Setter Property="Width" Value="75" />
+            <Setter Property="MinWidth" Value="100px" />
+            <Setter Property="MinHeight" Value="45px" />
+            <Setter Property="VerticalContentAlignment" Value="Center"/>
+            <Setter Property="FontSize" Value="15" />
         </Style>
+        
+        <Style TargetType="Button">
+            <Setter Property="Margin" Value="0 0 70 0" />
+            <Setter Property="MinHeight"  Value="45px" />
+            <Setter Property="MinWidth"  Value="75px" />
+            <Setter Property="FontSize" Value="15" />
+        </Style>
+        
     </UserControl.Resources>
     <StackPanel Orientation="Vertical">
         <StackPanel  Orientation="Horizontal">
             <Label>User Name:</Label>
-            <TextBox ></TextBox>
+            <TextBox></TextBox>
         </StackPanel>
-        <StackPanel  Orientation="Horizontal">
+        <StackPanel  Orientation="Horizontal" 
+                     HorizontalAlignment="Left">
             <Label>Password:</Label>
             <PasswordBox  ></PasswordBox>
         </StackPanel>
-        <StackPanel  Orientation="Horizontal" HorizontalAlignment="Right">
-            <Button Click="Button_Click">Login</Button>
-        </StackPanel>
+        <Button HorizontalAlignment="Right" 
+                Command="{Binding LoginCommand}">Login</Button>
+        <tk:BusyIndicator IsBusy="{Binding IsBusy}" DisplayAfter="0">
+            <tk:BusyIndicator.BusyContentTemplate>
+                <DataTemplate>
+                    <StackPanel Margin="4">
+                        <TextBlock Text="Authenticating" FontWeight="Bold" HorizontalAlignment="Center"/>
+                        <StackPanel Margin="4">
+                            <ProgressBar Minimum="0" Maximum="10" Value="4" Height="15"/>
+                        </StackPanel>
+                        <Grid>
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition/>
+                                <ColumnDefinition/>
+                            </Grid.ColumnDefinitions>
+        
+                        </Grid>
+                    </StackPanel>
+                </DataTemplate>
+            </tk:BusyIndicator.BusyContentTemplate>
+            <tk:BusyIndicator.OverlayStyle>
+                <Style TargetType="Rectangle">
+                    <Setter Property="Fill" Value="#ffffeeee"/>
+                </Style>
+            </tk:BusyIndicator.OverlayStyle>
+            <tk:BusyIndicator.ProgressBarStyle>
+                <Style TargetType="ProgressBar">
+                    <Setter Property="Visibility" Value="Collapsed"/>
+                </Style>
+            </tk:BusyIndicator.ProgressBarStyle>
+            <ContentControl />
+        </tk:BusyIndicator>
     </StackPanel>
 </UserControl>

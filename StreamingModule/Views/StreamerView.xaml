@@ -3,11 +3,13 @@
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
+             xmlns:models="clr-namespace:OGV.Streaming.Models"
              xmlns:wf="clr-namespace:System.Windows.Forms;assembly=System.Windows.Forms"
              mc:Ignorable="d" 
-             d:DesignHeight="550" d:DesignWidth="425">
+             d:DesignHeight="600" d:DesignWidth="425" >
     <UserControl.Resources>
 
+        
         <Style TargetType="Label">
             <Setter Property="MinWidth" Value="100"></Setter>
             <Setter Property="VerticalAlignment" Value="Center"></Setter>
@@ -43,66 +45,63 @@
             </Style.Triggers>
         </Style>
     </UserControl.Resources>
-    <Grid Margin="15">
+    <Grid VerticalAlignment="Stretch">
         <Grid.RowDefinitions>
-            <RowDefinition Height="30" />
             <RowDefinition />
         </Grid.RowDefinitions>
-        <StackPanel Orientation="Vertical" Panel.ZIndex="100" HorizontalAlignment="Stretch" x:Name="stackSettings" Grid.Row="0" >
-            <Canvas Panel.ZIndex="200" HorizontalAlignment="Left" Width="Auto">
-                <Expander x:Name="expWebSites" Header="Settings" Expanded="expWebSites_Expanded" Collapsed="expWebSites_Collapsed">
-                    <Border  Background="LightBlue"  BorderThickness="1" CornerRadius="6" BorderBrush="#E6000000" Margin="5">
+        <StackPanel Grid.Row="0" Panel.ZIndex="1">
+            <StackPanel Orientation="Vertical" Panel.ZIndex="100" HorizontalAlignment="Stretch" VerticalAlignment="Stretch" x:Name="stackSettings" Grid.Row="0" >
+                <Canvas Panel.ZIndex="200" HorizontalAlignment="Left" Width="Auto">
+                    <Expander x:Name="expWebSites" Header="Settings" Expanded="expWebSites_Expanded" Collapsed="expWebSites_Collapsed">
+                        <Border  Background="LightBlue"  BorderThickness="1" CornerRadius="6" BorderBrush="#E6000000" Margin="5">
 
-                        <StackPanel Orientation="Vertical">
-                            <StackPanel x:Name="stackPresets" Orientation="Horizontal">
-                                <Label>Presets:</Label>
-                                <ComboBox x:Name="cboPresets" ItemsSource="{Binding Path=Presets}" DisplayMemberPath="Name" SelectedIndex="0" ></ComboBox>
-                            </StackPanel>
-                            <StackPanel x:Name="stackAudioDevices" Orientation="Horizontal">
-                                <Label>Audio Devices:</Label>
-                                <ComboBox x:Name="cboAudioDevices" ItemsSource="{Binding Path=AudioDevices}" DisplayMemberPath="Name" SelectedIndex="0" ></ComboBox>
-                            </StackPanel>
-                            <StackPanel x:Name="stackVideoDevices" Orientation="Horizontal">
-                                <Label>Video Devices:</Label>
-                                <ComboBox x:Name="cboVideoDevices" ItemsSource="{Binding Path=VideoDevices}" 
-                                     DisplayMemberPath="Name" SelectedIndex="0"></ComboBox>
-                            </StackPanel>
-                            <StackPanel x:Name="stackStreamLive" Orientation="Horizontal">
-                                <Label>Stream Live:</Label>
-                                <CheckBox x:Name="chkStreamLive" IsChecked="{Binding Path=StreamLive}" VerticalAlignment="Center"></CheckBox>
-                                <Label Margin="10,0,0,0" MinWidth="90">Archive Name:</Label>
-                                <TextBox x:Name="txtFileName" MinWidth="130" Text="{Binding Path=SessionName}"></TextBox>
-                            </StackPanel>
-                            <StackPanel x:Name="stackSubClientDetails" Orientation="Vertical" HorizontalAlignment="Stretch">
-                                <StackPanel Orientation="Horizontal">
-                                    <Label>Client Name:</Label>
-                                    <TextBlock x:Name="txtSubClientName" Text="{Binding Path=SubClient.SubClientName}"/>
+                            <StackPanel Orientation="Vertical">
+                                <StackPanel x:Name="stackPresets" Orientation="Horizontal">
+                                    <Label>Presets:</Label>
+                                    <ComboBox x:Name="cboPresets" ItemsSource="{Binding Path=Presets}" DisplayMemberPath="Name" SelectedIndex="0" ></ComboBox>
                                 </StackPanel>
-                                <StackPanel Orientation="Horizontal">
-                                    <Label>Publishing Point:</Label>
-                                    <TextBlock x:Name="txtPublishingPoint" Text="{Binding Path=SubClient.PublishingPoint}"/>
+                                <StackPanel x:Name="stackAudioDevices" Orientation="Horizontal">
+                                    <Label>Audio Devices:</Label>
+                                    <ComboBox x:Name="cboAudioDevices" ItemsSource="{Binding Path=AudioDevices}" DisplayMemberPath="Name" SelectedIndex="0" ></ComboBox>
                                 </StackPanel>
-                                <StackPanel Orientation="Horizontal">
-                                    <Label>Viewing Page:</Label>
-                                    <TextBlock x:Name="txtHmLpage">
+                                <StackPanel x:Name="stackVideoDevices" Orientation="Horizontal">
+                                    <Label>Video Devices:</Label>
+                                    <ComboBox x:Name="cboVideoDevices" ItemsSource="{Binding Path=VideoDevices}" 
+                                     DisplayMemberPath="Name" SelectedIndex="0" SelectionChanged="cboVideoDevices_SelectionChanged"></ComboBox>
+                                </StackPanel>
+                                <StackPanel x:Name="stackStreamLive" Orientation="Horizontal">
+                                    <Label>Stream Live:</Label>
+                                    <CheckBox x:Name="chkStreamLive" IsChecked="{Binding Path=StreamLive}" VerticalAlignment="Center"></CheckBox>
+                                    <Label Margin="10,0,0,0" MinWidth="90">Archive Name:</Label>
+                                    <TextBox x:Name="txtFileName" MinWidth="130" Text="{Binding Path=SessionName}"></TextBox>
+                                </StackPanel>
+                                <StackPanel x:Name="stackSubClientDetails" Orientation="Vertical" HorizontalAlignment="Stretch">
+                                    <StackPanel Orientation="Horizontal">
+                                        <Label>Client Name:</Label>
+                                        <TextBlock x:Name="txtSubClientName" Text="{Binding Path=SubClient.SubClientName}"/>
+                                    </StackPanel>
+                                    <StackPanel Orientation="Horizontal">
+                                        <Label>Publishing Point:</Label>
+                                        <TextBlock x:Name="txtPublishingPoint" Text="{Binding Path=SubClient.PublishingPoint}"/>
+                                    </StackPanel>
+                                    <StackPanel Orientation="Horizontal">
+                                        <Label>Viewing Page:</Label>
+                                        <TextBlock x:Name="txtHmLpage">
                     <Hyperlink x:Name="hypFeedPage" 
                                NavigateUri="{Binding Path=SubClient.LandingPage}">View near real time feed</Hyperlink>
-                                    </TextBlock>
+                                        </TextBlock>
+                                    </StackPanel>
                                 </StackPanel>
                             </StackPanel>
-                        </StackPanel>
-                    </Border>
-                </Expander>
-            </Canvas>
+                        </Border>
+                    </Expander>
+                </Canvas>
 
-        </StackPanel>
-        <StackPanel Grid.Row="1" Panel.ZIndex="1">
+            </StackPanel>
 
             <Label HorizontalAlignment="Center">Preview Window</Label>
-            <WindowsFormsHost x:Name="winHostInputPreview" Panel.ZIndex="-1" Margin="1" 
-                                  MinHeight="150" MinWidth="150" Width="300" Height="300">
-                <wf:Panel x:Name="pnlPreview" Visible="True" AutoSize="True" AutoSizeMode="GrowAndShrink"
-                              BackColor="AliceBlue"  Dock="Fill"></wf:Panel>
+            <WindowsFormsHost x:Name="winHostInputPreview" Panel.ZIndex="-1" Margin="1" Width="400" Height="400">
+                <wf:Panel x:Name="pnlPreview" Visible="True" Dock="Fill" BackColor="AliceBlue"></wf:Panel>
             </WindowsFormsHost>
             <TextBlock x:Name="txtMessageWindow" Margin="2,0,2,2" TextAlignment="Center" 
                          Text="{Binding Path=Message,Mode=OneWay}"></TextBlock>

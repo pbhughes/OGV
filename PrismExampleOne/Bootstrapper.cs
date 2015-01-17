@@ -61,8 +61,14 @@ namespace PrismExampleOne
             this.Container.RegisterType<object, StreamerView>(typeof(StreamerView).FullName);
             this.Container.RegisterType<object, ChooseBoardView>(typeof(ChooseBoardView).FullName);
             this.Container.RegisterType<object, AgendaView>(typeof(AgendaView).FullName);
+            this.Container.RegisterType<object, NavigationView>(typeof(NavigationView).FullName);
              
            
+        }
+
+        protected override void ConfigureServiceLocator()
+        {
+            base.ConfigureServiceLocator();
         }
 
         public CallbackLogger callbackLogger { get { return _callBackLogger; } }

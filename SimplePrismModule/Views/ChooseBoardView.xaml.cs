@@ -13,26 +13,42 @@ using System.Windows.Media.Imaging;
 using System.Windows.Navigation;
 using System.Windows.Shapes;
 using Microsoft.Practices.Prism.Regions;
+using System.Threading.Tasks;
+using OGV.Admin.Models;
 
 namespace OGV.Admin.Views
 {
     /// <summary>
     /// Interaction logic for ChooseBoardView.xaml
     /// </summary>
-    public partial class ChooseBoardView : UserControl
+    public partial class ChooseBoardView : UserControl, INavigationAware
     {
-        public ChooseBoardView()
+        IRegionManager _rm;
+
+        public ChooseBoardView(IRegionManager rm)
         {
             InitializeComponent();
+            _rm = rm;
         }
 
-        private void Button_Click(object sender, RoutedEventArgs e)
-        {
-            Microsoft.Practices.Prism.Regions.IRegionManager rm =
-                    Microsoft.Practices.ServiceLocation.ServiceLocator.Current.GetInstance<Microsoft.Practices.Prism.Regions.IRegionManager>();
 
-            Uri vu = new Uri(typeof(Views.AgendaView).FullName, UriKind.RelativeOrAbsolute);
-            rm.RequestNavigate("MainRegion", vu);
+
+
+        public bool IsNavigationTarget(NavigationContext navigationContext)
+        {
+            return true;
+        }
+
+        public void OnNavigatedFrom(NavigationContext navigationContext)
+        {
+            var view = _rm.Regions["NavBarRegion"].Views.FirstOrDefault();
+            if (view != null)
+                _rm.Regions["NavBarRegion"].Remove(view);
+        }
+
+        public void OnNavigatedTo(NavigationContext navigationContext)
+        {
+            _rm.RegisterViewWithRegion("NavBarRegion", typeof(OGV.Admin.Views.ChangeBoardNavView));
         }
     }
 }

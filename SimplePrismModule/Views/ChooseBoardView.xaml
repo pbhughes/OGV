@@ -3,52 +3,165 @@
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
-             mc:Ignorable="d" Margin="75 0 0 0"
-             d:DesignHeight="300" d:DesignWidth="300">
+             xmlns:model="clr-namespace:OGV.Admin.Models"
+             xmlns:local="clr-namespace:OGV.Admin"
+             xmlns:prism="http://www.codeplex.com/prism"
+             mc:Ignorable="d" Margin="10" MinHeight="575"
+             d:DesignHeight="575" d:DesignWidth="450"  >
+    <UserControl.DataContext>
+        <model:BoardList x:Name="boardList"/>
+    </UserControl.DataContext>
     <UserControl.Resources>
-        <Style TargetType="ComboBox">
-            <Setter Property="Margin" Value="10px"></Setter>
-            <Setter Property="MinWidth" Value="150px"/>
+
+        <local:BoolToVisibilityConverter
+         x:Key="BoolToHiddenConverter"
+         TrueValue="Visible" FalseValue="Collapsed" />
+
+        <Style TargetType="Button">
+            <Setter Property="Margin" Value="0 0 10 0" />
+            <Setter Property="MinHeight"  Value="45px" />
+            <Setter Property="MinWidth"  Value="75px" />
+            <Setter Property="FontSize" Value="15" />
         </Style>
         
         <Style TargetType="StackPanel">
-            <Setter Property="Margin" Value="10px" />
+            <Setter Property="Margin" Value="5" />
             <Setter Property="VerticalAlignment" Value="Center"/>
         </Style>
+
+        <Style TargetType="TextBox">
+            <Setter Property="MinWidth" Value="200px" />
+            <Setter Property="MinHeight" Value="45px" />
+            <Setter Property="VerticalContentAlignment" Value="Center"/>
+            <Setter Property="FontSize" Value="15" />
+        </Style>
+
+
+        <Style TargetType="TextBlock">
+            <Setter Property="MinWidth" Value="200px" />
+            <Setter Property="MinHeight" Value="45px" />
+            <Setter Property="FontSize" Value="15" />
+            <Setter Property="VerticalAlignment" Value="Center"/>
+            <Setter Property="TextAlignment" Value="Center"/>
+            <Setter Property="Padding" Value="10"/>
+            <Setter Property="Background" Value="AntiqueWhite"/>
+        </Style>
+
         <Style TargetType="Label">
-            <Setter Property="VerticalAlignment" Value="Center"/>
-            <Setter Property="Width" Value="100"/>
+            <Setter Property="MinWidth" Value="125px" />
+            <Setter Property="MinHeight" Value="45px" />
+            <Setter Property="VerticalContentAlignment" Value="Center"/>
+            <Setter Property="FontSize" Value="15" />
         </Style>
-        <Style TargetType="Button">
-            <Setter Property="HorizontalAlignment" Value="Right"/>
-            <Setter Property="Margin" Value="0 0 20 0"/>
-            
+
+        <Style TargetType="ComboBox">
+            <Setter Property="MinWidth" Value="200px" />
+            <Setter Property="MinHeight" Value="35px" />
+            <Setter Property="VerticalContentAlignment" Value="Center"/>
+            <Setter Property="HorizontalAlignment" Value="Stretch" />
+            <Setter Property="FontSize" Value="15" />
+            <Setter Property="Margin" Value="5px" />
         </Style>
     </UserControl.Resources>
-    <Grid>
-        <Grid.RowDefinitions>
-            <RowDefinition ></RowDefinition>
-        </Grid.RowDefinitions>
-        <StackPanel Orientation="Vertical" Grid.Row="0">
-            <StackPanel Orientation="Horizontal">
-                <Label>Choose Board:</Label>
-                <ComboBox Text="Choose Board">
-                    <ComboBoxItem Name="cbi1">School Board</ComboBoxItem>
-                    <ComboBoxItem Name="cbi2">Tax Board</ComboBoxItem>
-                    <ComboBoxItem Name="cbi3">Zoning Board</ComboBoxItem>
-                </ComboBox>
+    <ScrollViewer VerticalScrollBarVisibility="Auto">
+        <Grid>
+            <Grid.RowDefinitions>
+                <RowDefinition ></RowDefinition>
+            </Grid.RowDefinitions>
+
+            <StackPanel Orientation="Vertical" Grid.Row="0">
+                <StackPanel Orientation="Horizontal">
+                    <Label>Choose Board:</Label>
+                    <ComboBox Text="Choose a board..." 
+                          IsEditable="True" 
+                          SelectedItem="{Binding SelectedBoard}"
+                          IsReadOnly="True" 
+                          ItemsSource="{Binding Boards}"
+                          DisplayMemberPath="Name">
+                    </ComboBox>
+                </StackPanel>
+                <Grid Visibility="{Binding SelectedBoard, Converter={StaticResource BoolToHiddenConverter}}">
+                    <Grid.RowDefinitions>
+                        <RowDefinition />
+                        <RowDefinition/>
+                    </Grid.RowDefinitions>
+                    <StackPanel Orientation="Vertical">
+                        <StackPanel Orientation="Horizontal">
+                            <Label>Selected Board:</Label>
+                            <Border BorderBrush="AntiqueWhite" 
+                                    BorderThickness="3"
+                                    CornerRadius="6" Margin="2">
+                                <TextBlock Text="{Binding SelectedBoard.Name}" />
+                                </Border>
+                        </StackPanel>
+                        <StackPanel Orientation="Horizontal">
+                            <Label>Agenda Count:</Label>
+                            <Border BorderBrush="AntiqueWhite" 
+                                    BorderThickness="3"
+                                    CornerRadius="6" Margin="2">
+                                <TextBlock Text="{Binding SelectedBoard.Agendas.Count}" />
+                            </Border>
+                        </StackPanel>
+                    </StackPanel>
+                </Grid>
+                <StackPanel Orientation="Horizontal">
+                    <Label>Choose Agenda:</Label>
+                    <ComboBox Text="Choose an Agenda..."
+                          IsEditable="True" 
+                          IsReadOnly="True"
+                          ItemsSource="{Binding SelectedBoard.Agendas}"
+                          DisplayMemberPath="Name"
+                          SelectedItem="{Binding SelectedAgenda}">
+                    </ComboBox>
+                </StackPanel>
+                <Grid  Visibility="{Binding SelectedAgenda, Converter={StaticResource BoolToHiddenConverter}}">
+                    <Grid.RowDefinitions>
+                        <RowDefinition />
+                        <RowDefinition/>
+                        <RowDefinition />
+                    </Grid.RowDefinitions>
+                    <StackPanel Orientation="Vertical">
+                        <StackPanel Orientation="Horizontal">
+                            <Label>Selected Agenda:</Label>
+                            <Border BorderBrush="AntiqueWhite" 
+                                    BorderThickness="3"
+                                    CornerRadius="6" Margin="2">
+                                <TextBlock
+                                    Text="{Binding SelectedAgenda.Name}" />
+                            </Border>
+                            
+                        </StackPanel>
+                        <StackPanel Orientation="Horizontal">
+                            <Label>Name:</Label>
+                            <Border BorderBrush="AntiqueWhite" 
+                                    BorderThickness="3"
+                                    CornerRadius="6" Margin="2">
+                                <TextBlock Text="{Binding SelectedAgenda.Name}" />
+                            </Border>
+                        </StackPanel>
+                        <StackPanel Orientation="Horizontal">
+                            <Label>Meeting Date:</Label>
+                            <Border BorderBrush="AntiqueWhite" 
+                                    BorderThickness="3"
+                                    CornerRadius="6" Margin="2">
+                                <TextBlock Text="{Binding SelectedAgenda.MeetingDate}" />
+                            </Border>
+                        </StackPanel>
+                        <StackPanel Orientation="Horizontal">
+                            <Label>Items Count:</Label>
+                            <Border BorderBrush="AntiqueWhite" 
+                                    BorderThickness="3"
+                                    CornerRadius="6" Margin="2">
+                                <TextBlock Text="{Binding SelectedAgenda.TotalItems}" />
+                            </Border>
+                        </StackPanel>
+        
+                    </StackPanel>
+                    <Button Grid.Row="2" HorizontalAlignment="Right" Command="{Binding LoadAgendaCommand}">Load Agenda</Button>
+                </Grid>
             </StackPanel>
 
-            <StackPanel Orientation="Horizontal">
-                <Label>Choose Agenda:</Label>
-                <ComboBox Text="Choose Board">
-                    <ComboBoxItem Name="ag1">School Board</ComboBoxItem>
-                    <ComboBoxItem Name="ag2">Tax Board</ComboBoxItem>
-                    <ComboBoxItem Name="ag3">Zoning Board</ComboBoxItem>
-                </ComboBox>
-            </StackPanel>
-            <Button Click="Button_Click">Load Agenda</Button>
-        </StackPanel>
-       
-    </Grid>
+        </Grid>
+    </ScrollViewer>
+  
 </UserControl>

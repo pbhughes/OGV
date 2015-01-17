@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Microsoft.Practices.Prism.Regions;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -12,17 +13,59 @@ using System.Windows.Media;
 using System.Windows.Media.Imaging;
 using System.Windows.Navigation;
 using System.Windows.Shapes;
+using OGV.Admin.Models;
 
 namespace OGV.Admin.Views
 {
     /// <summary>
     /// Interaction logic for AgendaView.xaml
     /// </summary>
-    public partial class AgendaView : UserControl
+    public partial class AgendaView : UserControl, INavigationAware
     {
+        private IRegionManager _regionManager;
+
         public AgendaView()
         {
             InitializeComponent();
+            _regionManager =
+              Microsoft.Practices.ServiceLocation.ServiceLocator.
+                                  Current.GetInstance<Microsoft.
+                                  Practices.Prism.Regions.IRegionManager>();
+        }
+
+
+        public bool IsNavigationTarget(NavigationContext navigationContext)
+        {
+            return true;
+        }
+
+        public void OnNavigatedFrom(NavigationContext navigationContext)
+        {
+            var view = _regionManager.Regions["NavBarRegion"].Views.FirstOrDefault();
+            if (view != null)
+                _regionManager.Regions["NavBarRegion"].Remove(view);
+        }
+
+        public void OnNavigatedTo(NavigationContext navigationContext)
+        {
+            //setup the data
+            if (navigationContext == null)
+                return;
+
+            if (navigationContext.Parameters["agenda"] == null)
+                return;
+
+            Agenda currentAgenda = navigationContext.Parameters["agenda"] as Agenda ;
+            this.DataContext = currentAgenda;
+
+            //configure the NAV view
+            _regionManager.RegisterViewWithRegion("NavBarRegion", typeof(OGV.Admin.Views.AgendaNavView));
+
+        }
+
+        private void TreeView_SelectedItemChanged(object sender, RoutedPropertyChangedEventArgs<object> e)
+        {
+            
         }
     }
 }

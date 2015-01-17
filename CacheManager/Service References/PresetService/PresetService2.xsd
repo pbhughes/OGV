@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="utf-8"?>
+<xs:schema xmlns:tns="http://schemas.datacontract.org/2004/07/OV.Services" elementFormDefault="qualified" targetNamespace="http://schemas.datacontract.org/2004/07/OV.Services" xmlns:xs="http://www.w3.org/2001/XMLSchema">
+  <xs:complexType name="ArrayOfPresetContainer">
+    <xs:sequence>
+      <xs:element minOccurs="0" maxOccurs="unbounded" name="PresetContainer" nillable="true" type="tns:PresetContainer" />
+    </xs:sequence>
+  </xs:complexType>
+  <xs:element name="ArrayOfPresetContainer" nillable="true" type="tns:ArrayOfPresetContainer" />
+  <xs:complexType name="PresetContainer">
+    <xs:sequence>
+      <xs:element minOccurs="0" name="Codec" type="tns:PresetCodec" />
+      <xs:element minOccurs="0" name="DateAdded" type="xs:dateTime" />
+      <xs:element minOccurs="0" name="DateModified" type="xs:dateTime" />
+      <xs:element minOccurs="0" name="Description" nillable="true" type="xs:string" />
+      <xs:element minOccurs="0" name="ID" nillable="true" type="xs:string" />
+      <xs:element minOccurs="0" name="IsActive" type="xs:boolean" />
+      <xs:element minOccurs="0" name="Name" nillable="true" type="xs:string" />
+      <xs:element minOccurs="0" name="Xml" nillable="true" type="xs:string" />
+    </xs:sequence>
+  </xs:complexType>
+  <xs:element name="PresetContainer" nillable="true" type="tns:PresetContainer" />
+  <xs:simpleType name="PresetCodec">
+    <xs:restriction base="xs:string">
+      <xs:enumeration value="H264" />
+      <xs:enumeration value="VC1" />
+    </xs:restriction>
+  </xs:simpleType>
+  <xs:element name="PresetCodec" nillable="true" type="tns:PresetCodec" />
+</xs:schema>

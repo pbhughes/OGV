@@ -13,6 +13,9 @@ using System.Windows.Media.Imaging;
 using System.Windows.Navigation;
 using System.Windows.Shapes;
 using Microsoft.Practices.Prism.Regions;
+using OGV.Streaming.Models;
+using Microsoft.Expression.Encoder.Live;
+using Microsoft.Expression.Encoder.Devices;
 
 namespace OGV.Streaming.Views
 {
@@ -21,9 +24,14 @@ namespace OGV.Streaming.Views
     /// </summary>
     public partial class StreamerView : UserControl
     {
+        LiveEncodingSource _encoder;
         public StreamerView()
         {
             InitializeComponent();
+            _encoder = new LiveEncodingSource();
+            DataContext = _encoder;
+            _encoder.LoadCompletedEvent += encoder_LoadCompletedEvent;
+            _encoder.PreconnectPublishingPoint();
         }
 
 
@@ -37,6 +45,7 @@ namespace OGV.Streaming.Views
         private Boolean _loadComplete = false;
 
         #endregion
+
         #region Event Handlers
 
         /// <summary>
@@ -96,7 +105,7 @@ namespace OGV.Streaming.Views
             //set the device source  TODO: send in the devices in an overload
          
 
-            _loadComplete = true;
+      
         }
 
         private void cboVideoDevices_SelectionChanged(object sender, SelectionChangedEventArgs e)
@@ -105,6 +114,7 @@ namespace OGV.Streaming.Views
             {
                
             }
+        
         }
 
         private void cboAudioDevices_SelectionChanged(object sender, SelectionChangedEventArgs e)
@@ -156,5 +166,37 @@ namespace OGV.Streaming.Views
            
         }
         #endregion
+
+        #region Functions and Methods
+
+       
+        private void SetupPreviewWindow(){
+
+            try
+            {
+                LiveDeviceSource liv = _encoder.FeedSource;
+
+                liv.ResizeMode = Microsoft.Expression.Encoder.VideoResizeMode.Letterbox;
+                System.Drawing.Size viewSize = new System.Drawing.Size(400,400);
+                liv.PreviewWindow = _encoder.SetInputPreviewWindow(viewSize, pnlPreview);
+
+                _loadComplete = true;
+               
+            }
+            catch (Exception ex)
+            {
+
+              
+            }
+          
+        }
+        #endregion
+
+        private void encoder_LoadCompletedEvent(object sender, EventArgs e)
+        {
+            SetupPreviewWindow();
+        }
+
+        
     }
 }

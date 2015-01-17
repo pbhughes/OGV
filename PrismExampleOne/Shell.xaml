@@ -2,16 +2,31 @@
         xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
         xmlns:prism="http://www.codeplex.com/prism"
-        Title="Prism Application" SizeToContent="WidthAndHeight">
-    
+        Title="OGV 2" SizeToContent="Height" MaxHeight="700"
+        WindowStartupLocation="Manual" Left="50" Top="10">
+
     <Grid>
         <Grid.ColumnDefinitions>
-            <ColumnDefinition Width="300"></ColumnDefinition>
-            <ColumnDefinition Width="Auto"></ColumnDefinition>
+            <ColumnDefinition Width="550"></ColumnDefinition>
+            <ColumnDefinition Width="*"></ColumnDefinition>
         </Grid.ColumnDefinitions>
-        <ContentControl Grid.Column="0" Name="SidebarRegion" prism:RegionManager.RegionName="SidebarRegion"></ContentControl>
-        <ContentControl Grid.Column="1" Padding="5px" 
+        <Grid.RowDefinitions>
+            <RowDefinition Height="50" />
+            <RowDefinition />
+        </Grid.RowDefinitions>
+
+        <ContentControl Grid.Column="0"
+                        Grid.RowSpan="2"
+                        Name="SidebarRegion"
+                        prism:RegionManager.RegionName="SidebarRegion"></ContentControl>
+
+        <ItemsControl HorizontalAlignment="Stretch" Grid.Column="1" Grid.Row="0"
+                        Name="NavBarRegion"
+                      prism:RegionManager.RegionName="NavBarRegion"></ItemsControl>
+
+        <ContentControl Grid.Column="1"
+                        Grid.Row="1"
+                        Padding="5px"
                         Name="MainRegion" prism:RegionManager.RegionName="MainRegion"></ContentControl>
     </Grid>
-    
 </Window>

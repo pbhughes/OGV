@@ -16,6 +16,7 @@ namespace OGV.Admin
         public void Initialize()
         {
             _regionManager.RegisterViewWithRegion("MainRegion", typeof(OGV.Admin.Views.LoginView));
+            
         }
 
         public Module(IRegionManager regionManager)
