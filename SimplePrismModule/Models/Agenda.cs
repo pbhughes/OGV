@@ -6,6 +6,8 @@ using System.Xml.Linq;
 
 namespace OGV.Admin.Models
 {
+    public delegate void AgendaChangedEventHandler(object sender, EventArgs e);
+
     public class Agenda : INotifyPropertyChanged
     {
         public int TotalItems
@@ -57,6 +59,14 @@ namespace OGV.Admin.Models
             set { _meetingDate = value; OnPropertyChanged("MeetingDate"); }
         }
 
+        private string _videoFileName;
+
+        public string VideoFileName
+        {
+            get { return _videoFileName; }
+            set { _videoFileName = value; OnPropertyChanged("VideoFileName"); }
+        }
+
         private string _orignalText;
 
         public string OriginalText
@@ -71,6 +81,17 @@ namespace OGV.Admin.Models
         {
             get { return _filePath; }
             set { _filePath = value; OnPropertyChanged("FilePath"); }
+        }
+
+        public bool SaveNeeded {
+            get
+            {
+                int orignalHash = OriginalText.GetHashCode();
+                string current = this.ToString();
+                int currenHash = current.GetHashCode();
+
+                return orignalHash != currenHash;
+            }
         }
 
         private ObservableCollection<AgendaItem> _items;
@@ -89,6 +110,9 @@ namespace OGV.Admin.Models
             set { _selectedItem = value; OnPropertyChanged("SelectedItem"); }
         }
 
+        public event AgendaChangedEventHandler ChangedEvent;
+
+
         public Agenda()
         {
             _items = new ObservableCollection<AgendaItem>();
@@ -97,7 +121,14 @@ namespace OGV.Admin.Models
             level1.Items.Add(level2);
         }
 
-        public static Agenda ParseAgenda(FileSystemInfo agenda)
+        public void OnChanged()
+        {
+            if (ChangedEvent != null)
+                ChangedEvent(this, new EventArgs());
+
+        }
+
+        public Agenda ParseAgenda(FileSystemInfo agenda)
         {
             try
             {
@@ -112,7 +143,8 @@ namespace OGV.Admin.Models
                 {
 
                     AgendaItem ai = ParseAgendaItem(itemElement);
-                    a.Items.Add(ai);
+                    a.AddItem(ai);
+                   
                 }
 
                 return a;
@@ -152,9 +184,12 @@ namespace OGV.Admin.Models
         public override string ToString()
         {
             XDocument xdoc = XDocument.Parse("<meeting></meeting>");
-            XElement meetingDate = new XElement("meetingdate", MeetingDate);
+            
+            XElement meetingDate = new XElement("meetingdate", MeetingDate.ToString("G"));
             XElement agenda = new XElement("agenda");
             XElement items = new XElement("items");
+            XElement videoFilName = new XElement("filename", VideoFileName);
+            xdoc.Element("meeting").Add(videoFilName);
             xdoc.Element("meeting").Add(meetingDate);
             xdoc.Element("meeting").Add(agenda);
             
@@ -168,6 +203,23 @@ namespace OGV.Admin.Models
             return content;            
         }
 
+        public void AddItem(AgendaItem item)
+        {
+            if (_items == null)
+                _items = new ObservableCollection<AgendaItem>();
+
+            _items.Add(item);
+
+            item.ChangedEvent += ItemChanged_Event;
+
+            OnChanged();
+        }
+
+        void ItemChanged_Event(object sender, EventArgs e)
+        {
+            OnChanged();
+        }
+
         #region INotifyPropertyChanged
 
         public event PropertyChangedEventHandler PropertyChanged;
@@ -176,6 +228,8 @@ namespace OGV.Admin.Models
         {
             if (PropertyChanged != null)
                 PropertyChanged(this, new PropertyChangedEventArgs(name));
+
+            OnChanged();
         }
 
         #endregion INotifyPropertyChanged

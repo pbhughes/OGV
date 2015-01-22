@@ -60,24 +60,8 @@
         </StackPanel>
         <Button HorizontalAlignment="Right" 
                 Command="{Binding LoginCommand}">Login</Button>
-        <tk:BusyIndicator IsBusy="{Binding IsBusy}" DisplayAfter="0">
-            <tk:BusyIndicator.BusyContentTemplate>
-                <DataTemplate>
-                    <StackPanel Margin="4">
-                        <TextBlock Text="Authenticating" FontWeight="Bold" HorizontalAlignment="Center"/>
-                        <StackPanel Margin="4">
-                            <ProgressBar Minimum="0" Maximum="10" Value="4" Height="15"/>
-                        </StackPanel>
-                        <Grid>
-                            <Grid.ColumnDefinitions>
-                                <ColumnDefinition/>
-                                <ColumnDefinition/>
-                            </Grid.ColumnDefinitions>
-        
-                        </Grid>
-                    </StackPanel>
-                </DataTemplate>
-            </tk:BusyIndicator.BusyContentTemplate>
+        <tk:BusyIndicator BusyContent="{Binding Message}" IsBusy="{Binding IsBusy}" DisplayAfter="0">
+            
             <tk:BusyIndicator.OverlayStyle>
                 <Style TargetType="Rectangle">
                     <Setter Property="Fill" Value="#ffffeeee"/>

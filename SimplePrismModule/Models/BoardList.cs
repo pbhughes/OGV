@@ -12,13 +12,19 @@ using System.Windows;
 using Microsoft.Practices.Prism.Commands;
 using System.Windows.Input;
 using Microsoft.Practices.Prism.Regions;
+using OGV.Infrastructure.Services;
+using Microsoft.Practices.Unity;
+using Microsoft.Practices.ServiceLocation;
 
 namespace OGV.Admin.Models
 {
     public class BoardList : INotifyPropertyChanged
     {
+        private IUnityContainer _container;
 
         private IRegionManager _regionManager;
+
+        private XService _xService;
 
         ObservableCollection<Board> _boards;
         public ObservableCollection<Board> Boards
@@ -35,27 +41,25 @@ namespace OGV.Admin.Models
             {
                 if (_selectedBoard == value)
                     return;
+
+                if (_selectedBoard != null)
+                    _selectedBoard.AgendSelected -= SelectedBoard_AgendaSelected_Event;
+
                 _selectedBoard = value;
                 OnPropertyChanged("SelectedBoard");
+                
+                _selectedBoard.AgendSelected += SelectedBoard_AgendaSelected_Event;
                 LoadAgendaCommand.RaiseCanExecuteChanged();
               
             }
         }
 
-        private Agenda _selectedAgenda;
-        public Agenda SelectedAgenda
+        void SelectedBoard_AgendaSelected_Event(object sender, Agenda agenda)
         {
-            get { return _selectedAgenda; }
-            set
-            {
-                if (_selectedAgenda == value)
-                    return;
-                _selectedAgenda = value;
-                OnPropertyChanged("SelectedAgenda");
-                LoadAgendaCommand.RaiseCanExecuteChanged();
-            }
+            OnPropertyChanged("AgendaChosen");
         }
 
+      
         private bool _isBusy;
         public bool IsBusy
         {
@@ -63,43 +67,129 @@ namespace OGV.Admin.Models
             set { _isBusy = value; OnPropertyChanged("IsBusy"); }
         }
 
+        public bool AgendaChosen
+        {
+            get
+            {
+                if (SelectedBoard != null)
+                    return SelectedBoard.SelectedAgenda != null;
+
+                return false;
+            }
+        }
+
         public event EventHandler CanExecuteChanged;
 
         public DelegateCommand LoadAgendaCommand { get; private set; }
 
+        public DelegateCommand LogOutCommand { get; private set; }
+
+        public DelegateCommand SaveAgendaCommand { get; private set; }
+
+
         private async void OnLoadAgenda()
         {
             //Authenticate against the web service async and reject or navigate to
-            //Board Selection view
+
+                   
+            //Board Selection view setup navigation parameters
             IsBusy = true;
             NavigationParameters navParams = new NavigationParameters();
-            navParams.Add("agenda", SelectedAgenda);
+            navParams.Add("agenda", SelectedBoard.SelectedAgenda);
             IsBusy = false;
+
             Uri vv = new Uri(typeof(Views.AgendaView).FullName, UriKind.RelativeOrAbsolute);
             _regionManager.RequestNavigate("MainRegion", vv, navParams);
         }
 
         private bool CanLoadAgenda()
         {
+            if(SelectedBoard != null)
+                return !(SelectedBoard.SelectedAgenda == null);
 
-            return !(SelectedAgenda == null);
+            return false;
         }
 
         public BoardList()
         {
-            this.LoadAgendaCommand = new DelegateCommand(OnLoadAgenda, CanLoadAgenda);
+
             
-          
+            this.LoadAgendaCommand = new DelegateCommand(OnLoadAgenda, CanLoadAgenda);
+            this.LogOutCommand = new DelegateCommand(OnLogOut, CanLogOut);
+
+
+            _regionManager =
+                Microsoft.Practices.ServiceLocation.ServiceLocator.
+                                    Current.GetInstance<Microsoft.
+                                    Practices.Prism.Regions.IRegionManager>();
+
+
+            _boards = new ObservableCollection<Board>();
+            Task loadTask = Task.Run(async () => { await Load(); });
+
+        }
+
+        public BoardList(IUnityContainer container)
+        {
+
+            _container = container;
+            this.LoadAgendaCommand = new DelegateCommand(OnLoadAgenda, CanLoadAgenda);
+            this.LogOutCommand = new DelegateCommand(OnLogOut, CanLogOut);
+            this.SaveAgendaCommand = new DelegateCommand(OnSaveAgenda, CanSaveAgenda);
+
+
             _regionManager = 
                 Microsoft.Practices.ServiceLocation.ServiceLocator.
                                     Current.GetInstance<Microsoft.
                                     Practices.Prism.Regions.IRegionManager>();
-          
+
 
             _boards = new ObservableCollection<Board>();
-            Task loadTask = Task.Run( async () => { await Load(); });
+            Task loadTask = Task.Run(async () => { await Load(); });
 
         }
+
+        private bool CanSaveAgenda()
+        {
+            if (SelectedBoard.SelectedAgenda != null)
+            {
+                 return SelectedBoard.SelectedAgenda.SaveNeeded;
+            }
+
+            return false;
+        }
+
+        private void OnSaveAgenda()
+        {
+            if (SelectedBoard.SelectedAgenda == null)
+                throw new InvalidOperationException("No agenda has been loaded");
+
+            if (string.IsNullOrEmpty(SelectedBoard.SelectedAgenda.FilePath))
+                throw new InvalidOperationException("File name has not been set");
+
+            string allText = SelectedBoard.SelectedAgenda.ToString();
+            File.WriteAllText(SelectedBoard.SelectedAgenda.FilePath, allText);
+            SelectedBoard.SelectedAgenda.OriginalText = allText;
+
+            //reset the buttons
+            ResetButtons();
+        }   
+
+        private void OnLogOut()
+        {
+            //TODO: Log out with the server
+
+            //show the BoardView in the main region
+            Uri vv = new Uri(typeof(Views.LoginView).FullName, UriKind.RelativeOrAbsolute);
+            _regionManager.RequestNavigate("MainRegion", vv);
+        }
+
+        private bool CanLogOut()
+        {
+            return true;
+        }
+
+     
 
       
         public async Task<ObservableCollection<Board>> Load()
@@ -161,18 +251,21 @@ namespace OGV.Admin.Models
             {
                 string allText = File.ReadAllText(agenda.FullName);
                 string filePath = agenda.FullName;
-                Agenda a = new Agenda() { OriginalText = allText, FilePath = filePath };
-                XDocument xDoc = XDocument.Parse(a.OriginalText);
+                Agenda a = new Agenda() { FilePath = filePath };
+                XDocument xDoc = XDocument.Parse(allText);
+                xDoc.Declaration = null;
                 a.MeetingDate = DateTime.Parse(xDoc.Element("meeting").Element("meetingdate").Value);
                 a.Name = agenda.Name;
+                a.VideoFileName = xDoc.Element("meeting").Element("filename").Value;
                 var allAgendaItems = xDoc.Element("meeting").Element("agenda").Element("items").Elements("item");
                 foreach(var itemElement in allAgendaItems )
                 {
 
                     AgendaItem ai = ParseAgendaItem(itemElement);
-                    a.Items.Add(ai);
+                    ai.ChangedEvent += ItemChanged_Event;
+                    a.AddItem(ai);
                 }
-
+                a.OriginalText = a.ToString();
                 return a;
             }
             catch (Exception ex)
@@ -181,6 +274,19 @@ namespace OGV.Admin.Models
                 throw;
             }
            
+        }
+
+        void ItemChanged_Event(object sender, EventArgs e)
+        {
+            ResetButtons();
+
+        }
+
+        private void ResetButtons()
+        {
+            SaveAgendaCommand.RaiseCanExecuteChanged();
+            LoadAgendaCommand.RaiseCanExecuteChanged();
+            LogOutCommand.RaiseCanExecuteChanged();
         }
 
         private static AgendaItem ParseAgendaItem(XElement itemElement)
@@ -194,7 +300,7 @@ namespace OGV.Admin.Models
             };
 
             if (itemElement.Element("timestamp") != null)
-                ai.TimeStamp = (TimeSpan)itemElement.Element("timestamp");
+                ai.TimeStamp = TimeSpan.Parse(itemElement.Element("timestamp").Value);
 
             if (itemElement.Element("items") != null)
             {
@@ -218,6 +324,6 @@ namespace OGV.Admin.Models
         }
 
         #endregion
-
+       
     }
 }

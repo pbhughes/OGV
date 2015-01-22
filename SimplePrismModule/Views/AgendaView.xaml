@@ -15,7 +15,7 @@
              Margin="2">
 
     <UserControl.DataContext>
-        <model:Agenda></model:Agenda>
+        <model:Agenda x:Name="currentAgenda"></model:Agenda>
     </UserControl.DataContext>
     <UserControl.Resources>
 

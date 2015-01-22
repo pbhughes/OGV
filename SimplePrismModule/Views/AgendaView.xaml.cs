@@ -14,6 +14,8 @@ using System.Windows.Media.Imaging;
 using System.Windows.Navigation;
 using System.Windows.Shapes;
 using OGV.Admin.Models;
+using Microsoft.Practices.Unity;
+using Microsoft.Practices.ServiceLocation;
 
 namespace OGV.Admin.Views
 {
@@ -22,15 +24,20 @@ namespace OGV.Admin.Views
     /// </summary>
     public partial class AgendaView : UserControl, INavigationAware
     {
+        
         private IRegionManager _regionManager;
 
         public AgendaView()
         {
             InitializeComponent();
+
+            
             _regionManager =
               Microsoft.Practices.ServiceLocation.ServiceLocator.
                                   Current.GetInstance<Microsoft.
                                   Practices.Prism.Regions.IRegionManager>();
+
+            this.DataContext = ServiceLocator.Current.GetInstance<BoardList>().SelectedBoard.SelectedAgenda;
         }
 
 
@@ -48,18 +55,11 @@ namespace OGV.Admin.Views
 
         public void OnNavigatedTo(NavigationContext navigationContext)
         {
-            //setup the data
-            if (navigationContext == null)
-                return;
+            //Setup the NAV view
+            Uri nn = new Uri(typeof(Views.AgendaNavView).FullName, UriKind.RelativeOrAbsolute);
+            _regionManager.RequestNavigate("NavBarRegion", nn);
+                      
 
-            if (navigationContext.Parameters["agenda"] == null)
-                return;
-
-            Agenda currentAgenda = navigationContext.Parameters["agenda"] as Agenda ;
-            this.DataContext = currentAgenda;
-
-            //configure the NAV view
-            _regionManager.RegisterViewWithRegion("NavBarRegion", typeof(OGV.Admin.Views.AgendaNavView));
 
         }
 

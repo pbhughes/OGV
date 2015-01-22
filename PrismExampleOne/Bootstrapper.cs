@@ -6,12 +6,14 @@ using Microsoft.Practices.ServiceLocation;
 using Microsoft.Practices.Prism.Regions;
 using OGV.Admin.Views;
 using OGV.Streaming.Views;
+using OGV.Infrastructure.Services;
+using OGV.Admin.Models;
 
 namespace PrismExampleOne
 {
     class Bootstrapper: UnityBootstrapper
     {
-
+        private XService _xService = new XService();
         private CallbackLogger _callBackLogger = new CallbackLogger();
 
         protected override DependencyObject CreateShell()
@@ -51,17 +53,27 @@ namespace PrismExampleOne
         protected override void ConfigureContainer()
         {
             base.ConfigureContainer();
-            RegisterTypeIfMissing(typeof(IServiceLocator), typeof(UnityServiceLocatorAdapter), true);
+
+            ServiceLocator.SetLocatorProvider(() => new UnityServiceLocator(this.Container));
+
+            
+            //RegisterTypeIfMissing(typeof(IServiceLocator), typeof(UnityServiceLocatorAdapter), true);
+
             this.Container.RegisterInstance<CallbackLogger>(this.callbackLogger);
+
             this.Container.RegisterType(typeof(IRegionNavigationService),
                 typeof(Microsoft.Practices.Prism.Regions.RegionNavigationService));
 
-            this.Container.RegisterType<object,SimpleView>(typeof(SimpleView).FullName);
+            this.Container.RegisterType<object, SimpleView>(typeof(SimpleView).FullName);
             this.Container.RegisterType<object, LoginView>(typeof(LoginView).FullName);
             this.Container.RegisterType<object, StreamerView>(typeof(StreamerView).FullName);
-            this.Container.RegisterType<object, ChooseBoardView>(typeof(ChooseBoardView).FullName);
+            this.Container.RegisterType<object, BoardView>(typeof(BoardView).FullName);
             this.Container.RegisterType<object, AgendaView>(typeof(AgendaView).FullName);
-            this.Container.RegisterType<object, NavigationView>(typeof(NavigationView).FullName);
+            this.Container.RegisterType<object, AgendaNavView>(typeof(AgendaNavView).FullName);
+            this.Container.RegisterType<object, BoardNavView>(typeof(BoardNavView).FullName);
+            //this.Container.RegisterInstance<BoardList>(new BoardList(this.Container));
+            this.Container.RegisterInstance<User>(new User(this.Container));
+            this.Container.RegisterInstance<IXService>(_xService);
              
            
         }
@@ -69,6 +81,7 @@ namespace PrismExampleOne
         protected override void ConfigureServiceLocator()
         {
             base.ConfigureServiceLocator();
+            
         }
 
         public CallbackLogger callbackLogger { get { return _callBackLogger; } }

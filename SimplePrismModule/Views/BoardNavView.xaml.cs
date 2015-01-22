@@ -1,4 +1,6 @@
-﻿using System;
+﻿using Microsoft.Practices.Prism.Regions;
+using Microsoft.Practices.ServiceLocation;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -12,25 +14,23 @@ using System.Windows.Media;
 using System.Windows.Media.Imaging;
 using System.Windows.Navigation;
 using System.Windows.Shapes;
-using Microsoft.Practices.Prism.Regions;
 using OGV.Admin.Models;
-using Microsoft.Practices.ServiceLocation;
-
+using OGV.Infrastructure.Services;
 
 namespace OGV.Admin.Views
 {
     /// <summary>
-    /// Interaction logic for LoginModule.xaml
+    /// Interaction logic for BoardViewNav.xaml
     /// </summary>
-    public partial class LoginView : UserControl, INavigationAware
+    public partial class BoardNavView : UserControl, INavigationAware
     {
-        User _user;
+        XService _xService;
 
-        public LoginView()
+        public BoardNavView()
         {
             InitializeComponent();
-            SetUser();
-           
+            this.DataContext = ServiceLocator.Current.GetInstance<BoardList>();
+            
         }
 
         public bool IsNavigationTarget(NavigationContext navigationContext)
@@ -40,18 +40,12 @@ namespace OGV.Admin.Views
 
         public void OnNavigatedFrom(NavigationContext navigationContext)
         {
-           
+            
         }
 
         public void OnNavigatedTo(NavigationContext navigationContext)
         {
-            SetUser();
-        }
-
-        private void SetUser()
-        {
-            _user = ServiceLocator.Current.GetInstance<User>() as User;
-            this.DataContext = _user;
+            this.DataContext = ServiceLocator.Current.GetInstance<BoardList>();
         }
     }
 }

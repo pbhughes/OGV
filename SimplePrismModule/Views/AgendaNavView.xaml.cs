@@ -1,4 +1,7 @@
-﻿using System;
+﻿using Microsoft.Practices.Prism.Regions;
+using Microsoft.Practices.ServiceLocation;
+using OGV.Admin.Models;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -12,27 +15,26 @@ using System.Windows.Media;
 using System.Windows.Media.Imaging;
 using System.Windows.Navigation;
 using System.Windows.Shapes;
-using Microsoft.Practices.Prism.Regions;
-using System.Threading.Tasks;
-using OGV.Admin.Models;
 
 namespace OGV.Admin.Views
 {
     /// <summary>
-    /// Interaction logic for ChooseBoardView.xaml
+    /// Interaction logic for AgendaNavView.xaml
     /// </summary>
-    public partial class ChooseBoardView : UserControl, INavigationAware
+    public partial class AgendaNavView : UserControl, INavigationAware  
     {
-        IRegionManager _rm;
+        private IRegionManager _regionManager;
 
-        public ChooseBoardView(IRegionManager rm)
+        public AgendaNavView()
         {
             InitializeComponent();
-            _rm = rm;
+            _regionManager =
+              Microsoft.Practices.ServiceLocation.ServiceLocator.
+                                  Current.GetInstance<Microsoft.
+                                  Practices.Prism.Regions.IRegionManager>();
         }
 
-
-
+       
 
         public bool IsNavigationTarget(NavigationContext navigationContext)
         {
@@ -41,14 +43,15 @@ namespace OGV.Admin.Views
 
         public void OnNavigatedFrom(NavigationContext navigationContext)
         {
-            var view = _rm.Regions["NavBarRegion"].Views.FirstOrDefault();
-            if (view != null)
-                _rm.Regions["NavBarRegion"].Remove(view);
+           
         }
 
         public void OnNavigatedTo(NavigationContext navigationContext)
         {
-            _rm.RegisterViewWithRegion("NavBarRegion", typeof(OGV.Admin.Views.ChangeBoardNavView));
+            //setup the data
+            this.DataContext = ServiceLocator.Current.GetInstance<BoardList>();
+
+
         }
     }
 }

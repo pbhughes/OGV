@@ -9,6 +9,8 @@ using System.Xml.Linq;
 
 namespace OGV.Admin.Models
 {
+    public delegate void AgendaItemChangedEventHandler(object sender, EventArgs e);
+
     public class AgendaItem: INotifyPropertyChanged
     {
         private string _title;
@@ -53,9 +55,33 @@ namespace OGV.Admin.Models
             set { _selectedItem = value; OnPropertyChanged("SelectedItem"); }
         }
 
+        public event AgendaItemChangedEventHandler ChangedEvent;
+ 
         public AgendaItem()
         {
             _items = new ObservableCollection<AgendaItem>();
+        }
+        public void AddItem(AgendaItem item)
+        {
+            if (_items == null)
+                _items = new ObservableCollection<AgendaItem>();
+
+            _items.Add(item);
+
+            item.ChangedEvent += ItemChanged_Event;
+
+            OnChanged();
+        }
+
+        void ItemChanged_Event(object sender, EventArgs e)
+        {
+            OnChanged();
+        }
+
+        private void OnChanged()
+        {
+            if (ChangedEvent != null)
+                ChangedEvent(this, new EventArgs());
         }
 
         public override string ToString()
@@ -87,6 +113,8 @@ namespace OGV.Admin.Models
         {
             if (PropertyChanged != null)
                 PropertyChanged(this, new PropertyChangedEventArgs(name));
+
+            OnChanged();
         }
 
         #endregion

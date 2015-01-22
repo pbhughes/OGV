@@ -54,6 +54,10 @@
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>
+    <ProjectReference Include="..\Infrastructure\Infrastructure.csproj">
+      <Project>{ac74b650-e3c0-4a4d-9bb5-0d4babeacfca}</Project>
+      <Name>Infrastructure</Name>
+    </ProjectReference>
     <ProjectReference Include="..\SimplePrismModule\AdminModule.csproj">
       <Project>{039d4ca2-ebac-4929-bfe7-6b03e83e69ff}</Project>
       <Name>AdminModule</Name>

@@ -13,25 +13,29 @@ using System.Windows.Media.Imaging;
 using System.Windows.Navigation;
 using System.Windows.Shapes;
 using Microsoft.Practices.Prism.Regions;
+using System.Threading.Tasks;
 using OGV.Admin.Models;
 using Microsoft.Practices.ServiceLocation;
-
 
 namespace OGV.Admin.Views
 {
     /// <summary>
-    /// Interaction logic for LoginModule.xaml
+    /// Interaction logic for ChooseBoardView.xaml
     /// </summary>
-    public partial class LoginView : UserControl, INavigationAware
+    public partial class BoardView : UserControl, INavigationAware
     {
-        User _user;
+        IRegionManager _rm;
+   
 
-        public LoginView()
+        public BoardView(IRegionManager rm)
         {
             InitializeComponent();
-            SetUser();
-           
+            _rm = rm;
+            SetBoard();
         }
+
+
+
 
         public bool IsNavigationTarget(NavigationContext navigationContext)
         {
@@ -40,18 +44,20 @@ namespace OGV.Admin.Views
 
         public void OnNavigatedFrom(NavigationContext navigationContext)
         {
-           
+            var view = _rm.Regions["NavBarRegion"].Views.FirstOrDefault();
+            if (view != null)
+                _rm.Regions["NavBarRegion"].Remove(view);
         }
 
         public void OnNavigatedTo(NavigationContext navigationContext)
         {
-            SetUser();
+            SetBoard();
         }
 
-        private void SetUser()
+        private void SetBoard()
         {
-            _user = ServiceLocator.Current.GetInstance<User>() as User;
-            this.DataContext = _user;
+
+            this.DataContext = ServiceLocator.Current.GetInstance<BoardList>() as BoardList;
         }
     }
 }

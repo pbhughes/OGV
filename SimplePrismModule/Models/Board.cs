@@ -12,6 +12,8 @@ using Microsoft.Practices.Prism.Commands;
 
 namespace OGV.Admin.Models
 {
+    public delegate void AgendaSelectedEventHandler(object sender, Agenda agenda);
+
     public class Board : INotifyPropertyChanged
     {
         private bool _isBusy;
@@ -35,7 +37,22 @@ namespace OGV.Admin.Models
             set { _agendas = value; OnPropertyChanged("Agendas"); }
         }
 
-       
+        private Agenda _selectedAgenda;
+        public Agenda SelectedAgenda
+        {
+            get { return _selectedAgenda; }
+            set
+            {
+                if (_selectedAgenda == value)
+                    return;
+                _selectedAgenda = value;
+                OnPropertyChanged("SelectedAgenda");
+                OnAgendaSelected();
+               
+            }
+        }
+
+        public event AgendaSelectedEventHandler AgendSelected;
 
         private IRegionManager _regionManager;
 
@@ -56,6 +73,12 @@ namespace OGV.Admin.Models
                                    Practices.Prism.Regions.IRegionManager>();
 
             
+        }
+
+        private void OnAgendaSelected()
+        {
+            if (AgendSelected != null)
+                AgendSelected(this, _selectedAgenda);
         }
 
         #region INotifyPropertyChanged

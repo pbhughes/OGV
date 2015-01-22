@@ -36,7 +36,8 @@ namespace UnitTestProject1
         {
             string fileName = @"C:\Users\barkley.hughes\Documents\Visual Studio 2013\Projects\PrismExampleOne\UnitTestProject1\bin\Debug\Agendas\Housing Board\agenda.oga";
             FileInfo f = new FileInfo(fileName);
-            Agenda a = Agenda.ParseAgenda(f);
+            Agenda a = new Agenda();
+            a = a.ParseAgenda(f);
 
             string content = a.Items[0].ToString();
 
@@ -49,7 +50,8 @@ namespace UnitTestProject1
         {
             string fileName = @"C:\Users\barkley.hughes\Documents\Visual Studio 2013\Projects\PrismExampleOne\UnitTestProject1\bin\Debug\Agendas\Housing Board\agenda.oga";
             FileInfo f = new FileInfo(fileName);
-            Agenda a = Agenda.ParseAgenda(f);
+            Agenda a = new Agenda();
+            a = a.ParseAgenda(f);
 
             string content = a.ToString();
 

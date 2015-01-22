@@ -1,4 +1,4 @@
-﻿<UserControl x:Class="OGV.Admin.Views.ChooseBoardView"
+﻿<UserControl x:Class="OGV.Admin.Views.BoardView"
              xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
@@ -8,9 +8,7 @@
              xmlns:prism="http://www.codeplex.com/prism"
              mc:Ignorable="d" Margin="10" MinHeight="575"
              d:DesignHeight="575" d:DesignWidth="450"  >
-    <UserControl.DataContext>
-        <model:BoardList x:Name="boardList"/>
-    </UserControl.DataContext>
+    
     <UserControl.Resources>
 
         <local:BoolToVisibilityConverter
@@ -83,7 +81,7 @@
                 <Grid Visibility="{Binding SelectedBoard, Converter={StaticResource BoolToHiddenConverter}}">
                     <Grid.RowDefinitions>
                         <RowDefinition />
-                        <RowDefinition/>
+                     
                     </Grid.RowDefinitions>
                     <StackPanel Orientation="Vertical">
                         <StackPanel Orientation="Horizontal">
@@ -111,10 +109,10 @@
                           IsReadOnly="True"
                           ItemsSource="{Binding SelectedBoard.Agendas}"
                           DisplayMemberPath="Name"
-                          SelectedItem="{Binding SelectedAgenda}">
+                          SelectedItem="{Binding SelectedBoard.SelectedAgenda}">
                     </ComboBox>
                 </StackPanel>
-                <Grid  Visibility="{Binding SelectedAgenda, Converter={StaticResource BoolToHiddenConverter}}">
+                <Grid  Visibility="{Binding AgendaChosen, Converter={StaticResource BoolToHiddenConverter}}">
                     <Grid.RowDefinitions>
                         <RowDefinition />
                         <RowDefinition/>
@@ -127,7 +125,7 @@
                                     BorderThickness="3"
                                     CornerRadius="6" Margin="2">
                                 <TextBlock
-                                    Text="{Binding SelectedAgenda.Name}" />
+                                    Text="{Binding SelectedBoard.SelectedAgenda.Name}" />
                             </Border>
                             
                         </StackPanel>
@@ -136,7 +134,7 @@
                             <Border BorderBrush="AntiqueWhite" 
                                     BorderThickness="3"
                                     CornerRadius="6" Margin="2">
-                                <TextBlock Text="{Binding SelectedAgenda.Name}" />
+                                <TextBlock Text="{Binding SelectedBoard.SelectedAgenda.Name}" />
                             </Border>
                         </StackPanel>
                         <StackPanel Orientation="Horizontal">
@@ -144,7 +142,7 @@
                             <Border BorderBrush="AntiqueWhite" 
                                     BorderThickness="3"
                                     CornerRadius="6" Margin="2">
-                                <TextBlock Text="{Binding SelectedAgenda.MeetingDate}" />
+                                <TextBlock Text="{Binding SelectedBoard.SelectedAgenda.MeetingDate}" />
                             </Border>
                         </StackPanel>
                         <StackPanel Orientation="Horizontal">
@@ -152,12 +150,12 @@
                             <Border BorderBrush="AntiqueWhite" 
                                     BorderThickness="3"
                                     CornerRadius="6" Margin="2">
-                                <TextBlock Text="{Binding SelectedAgenda.TotalItems}" />
+                                <TextBlock Text="{Binding SelectedBoard.SelectedAgenda.TotalItems}" />
                             </Border>
                         </StackPanel>
         
                     </StackPanel>
-                    <Button Grid.Row="2" HorizontalAlignment="Right" Command="{Binding LoadAgendaCommand}">Load Agenda</Button>
+                   
                 </Grid>
             </StackPanel>
 
