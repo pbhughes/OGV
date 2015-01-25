@@ -34,7 +34,7 @@ namespace OGV.Admin.Views
             InitializeComponent();
             _container = container;
 
-            this.DataContext = userModel.BoardList;
+            this.DataContext = userModel;
             
         }
 

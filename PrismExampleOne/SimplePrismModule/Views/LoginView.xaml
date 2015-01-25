@@ -8,7 +8,7 @@
              mc:Ignorable="d" 
              d:DesignHeight="300" d:DesignWidth="450" 
              MaxHeight="350" MaxWidth="400"
-             Margin="10">
+             Margin="2">
     
     <UserControl.Resources>
 
@@ -42,12 +42,6 @@
             <Setter Property="FontSize" Value="15" />
         </Style>
         
-        <Style TargetType="Button">
-            <Setter Property="Margin" Value="0 0 70 0" />
-            <Setter Property="MinHeight"  Value="45px" />
-            <Setter Property="MinWidth"  Value="75px" />
-            <Setter Property="FontSize" Value="15" />
-        </Style>
 
         <Style TargetType="Border">
             <Setter Property="BorderBrush" Value="LightBlue"/>
@@ -66,10 +60,10 @@
         <StackPanel  Orientation="Horizontal" 
                      HorizontalAlignment="Left">
             <Label>Password:</Label>
-            <PasswordBox ></PasswordBox>
+            <PasswordBox x:Name="txtPassword" ></PasswordBox>
         </StackPanel>
-        <Button HorizontalAlignment="Right" 
-                Command="{Binding LoginCommand}">Login</Button>
+        <Button ToolTip="Login, download agendas, and load the new agendas" HorizontalAlignment="Right" Style="{DynamicResource btn-primary}" 
+                Command="{Binding LoginCommand}" Margin="0 0 70 0">Login</Button>
         <Border Visibility="{Binding IsBusy, Converter={StaticResource BoolToHiddenConverter }}">
             <tk:BusyIndicator BusyContent="{Binding Message}" IsBusy="{Binding IsBusy}" DisplayAfter="0">
 

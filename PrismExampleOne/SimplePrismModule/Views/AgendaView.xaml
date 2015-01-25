@@ -74,13 +74,7 @@
             <Setter Property="Padding" Value="2" />
         </Style>
 
-        <Style TargetType="Button">
-            <Setter Property="Margin" Value="2" />
-            <Setter Property="Height"  Value="25" />
-            <Setter Property="Width"  Value="75" />
-            <Setter Property="FontSize" Value="11" />
-        </Style>
-        
+                
         <Style TargetType="Border">
             <Setter Property="BorderBrush" Value="LightBlue"/>
             <Setter Property="BorderThickness" Value="2"/>
@@ -156,9 +150,9 @@
 
             <Border  Grid.Row="3" Background="LightBlue" VerticalAlignment="Center">
                 <StackPanel Orientation="Horizontal"  Margin="2" HorizontalAlignment="Right">
-                    <Button>Stamp</Button>
-                    <Button>Save</Button>
-                    <Button>Undo</Button>
+                    <Button ToolTip="Stamps the selected agenda with video frame and time" Style="{DynamicResource btn-primary}">Stamp</Button>
+                    <Button ToolTip="Reverts back to the original agenda item" Style="{DynamicResource btn-danger}">Undo</Button>
+                    <Button ToolTip="Saves the current agenda to disk" Style="{DynamicResource btn-success}">Save</Button>
                 </StackPanel>
             </Border>
             

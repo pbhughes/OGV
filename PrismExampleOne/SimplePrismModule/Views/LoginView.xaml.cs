@@ -51,6 +51,8 @@ namespace OGV.Admin.Views
         public void OnNavigatedTo(NavigationContext navigationContext)
         {
             (this.DataContext as UserViewModel).UserName = string.Empty;
+            txtPassword.Clear();
+            
         }
 
         

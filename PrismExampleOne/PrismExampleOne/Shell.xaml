@@ -26,7 +26,8 @@
 
         <ContentControl Grid.Column="1"
                         Grid.Row="1"
-                        Padding="5px"
+                        Padding="2px"
+                        HorizontalAlignment="Stretch"
                         Name="MainRegion" prism:RegionManager.RegionName="MainRegion"></ContentControl>
     </Grid>
 </Window>

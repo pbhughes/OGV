@@ -30,10 +30,10 @@
                 <ColumnDefinition />
                 <ColumnDefinition />
             </Grid.ColumnDefinitions>
-            <Button Grid.Column="0" Command="{Binding LogOutCommand}">Log Out</Button>
-            <Button Grid.Column="1" Command="{Binding ChooseAgendaCommand}">Agenda</Button>
-            <Button Grid.Column="2" Command="{Binding ResetAgendaCommand}" >Reset</Button>
-            <Button Grid.Column="3" Command="{Binding SaveAgendaCommand}" >Save</Button>
+            <Button ToolTip="Logout - be sure everything is saved" Style="{DynamicResource btn-warning}" Grid.Column="0" Command="{Binding LogOutCommand}">Log Out</Button>
+            <Button ToolTip="Move back to the agenda selection page, save all work" Style="{DynamicResource btn-warning}" Grid.Column="1" Command="{Binding ChooseAgendaCommand}">Agenda</Button>
+            <Button ToolTip="Be careful! - resorts back to the orignal agenda text" Style="{DynamicResource btn-danger}" Grid.Column="2" Command="{Binding ResetAgendaCommand}" >Undo</Button>
+            <Button ToolTip="Saves the current agenda to disk" Style="{DynamicResource btn-success}" Grid.Column="3" Command="{Binding SaveAgendaCommand}" >Save</Button>
         </Grid>
     </Border>
 </UserControl>

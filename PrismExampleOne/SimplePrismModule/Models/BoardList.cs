@@ -256,8 +256,8 @@ namespace OGV.Admin.Models
                             b.Agendas.Add(a);
                         }
                        
-                        //Application.Current.Dispatcher.Invoke(() => { Boards.Add(b); });
-                        _boards.Add(b);
+                        Application.Current.Dispatcher.Invoke(() => { _boards.Add(b); });
+                        
                       
                         
                     }

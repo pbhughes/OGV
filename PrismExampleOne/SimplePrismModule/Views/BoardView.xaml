@@ -6,7 +6,7 @@
              xmlns:model="clr-namespace:OGV.Admin.Models"
              xmlns:local="clr-namespace:OGV.Admin"
              xmlns:prism="http://www.codeplex.com/prism"
-             mc:Ignorable="d" Margin="10" MinHeight="575"
+             mc:Ignorable="d" Margin="2" MinHeight="575"
              d:DesignHeight="575" d:DesignWidth="450"  >
     
     <UserControl.Resources>

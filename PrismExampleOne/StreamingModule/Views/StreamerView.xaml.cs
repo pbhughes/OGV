@@ -16,6 +16,7 @@ using Microsoft.Practices.Prism.Regions;
 using OGV.Streaming.Models;
 using Microsoft.Expression.Encoder.Live;
 using Microsoft.Expression.Encoder.Devices;
+using Microsoft.Practices.Unity;
 
 namespace OGV.Streaming.Views
 {
@@ -25,11 +26,17 @@ namespace OGV.Streaming.Views
     public partial class StreamerView : UserControl
     {
         LiveEncodingSource _encoder;
+        IUnityContainer _container;
+        IUserViewModel _userModel;
+
+
         public StreamerView()
         {
             InitializeComponent();
             _encoder = new LiveEncodingSource();
             DataContext = _encoder;
+            
+
             _encoder.LoadCompletedEvent += encoder_LoadCompletedEvent;
             _encoder.PreconnectPublishingPoint();
         }

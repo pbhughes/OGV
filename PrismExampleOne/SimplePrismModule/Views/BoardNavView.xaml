@@ -7,12 +7,7 @@
              mc:Ignorable="d" 
              d:DesignHeight="300" d:DesignWidth="300">
     <UserControl.Resources>
-        <Style TargetType="Button">
-            <Setter Property="Margin" Value="2" />
-            <Setter Property="Height"  Value="25" />
-            <Setter Property="Width"  Value="75" />
-            <Setter Property="FontSize" Value="11" />
-        </Style>
+      
         
     </UserControl.Resources>
     
@@ -20,9 +15,14 @@
             BorderBrush="LightBlue"
             BorderThickness="1" CornerRadius="6" Background="LightBlue">
         <Grid>
+            <StackPanel VerticalAlignment="Center"  Orientation="Horizontal" HorizontalAlignment="Left">
+                <Label>User:</Label>
+                <TextBlock FontSize="12" VerticalAlignment="Center" TextAlignment="Center"  Text="{Binding UserName}" />
+            </StackPanel>
             <StackPanel Orientation="Horizontal" HorizontalAlignment="Right">
-                <Button Command="{Binding LogOutCommand}">Log Out</Button>
-                <Button Command="{Binding LoadAgendaCommand}">Load Agenda</Button>
+                
+                <Button ToolTip="Logout - be sure everything is saved" Style="{DynamicResource btn-warning}" Command="{Binding BoardList.LogOutCommand}">Log Out</Button>
+                <Button ToolTip="Work with the selected agenda" Style="{DynamicResource btn-primary}" Command="{Binding BoardList.LoadAgendaCommand}">Load Agenda</Button>
             </StackPanel>
 
         </Grid>

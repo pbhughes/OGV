@@ -6,12 +6,7 @@
              mc:Ignorable="d" 
              d:DesignHeight="300" d:DesignWidth="300">
         <UserControl.Resources>
-            <Style TargetType="Button">
-                <Setter Property="Margin" Value="0 0 10 0" />
-                <Setter Property="Height"  Value="25" />
-                <Setter Property="Width"  Value="75" />
-                <Setter Property="FontSize" Value="12" />
-            </Style>
+            
         </UserControl.Resources>
     <Border Margin="2" Padding="2" BorderBrush="LightBlue" BorderThickness="1">
         <Grid HorizontalAlignment="Right">
@@ -19,7 +14,7 @@
                 <ColumnDefinition />
                 <ColumnDefinition />
             </Grid.ColumnDefinitions>
-            <Button Grid.Column="0" >Log Out</Button>
+            <Button ToolTip="Logout - be sure everything is saved" Grid.Column="0" Style="{DynamicResource btn-warning}" >Log Out</Button>
         </Grid>
     </Border>
 </UserControl>

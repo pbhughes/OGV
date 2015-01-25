@@ -71,11 +71,8 @@ namespace PrismExampleOne
             this.Container.RegisterType<object, BoardNavView>(typeof(BoardNavView).FullName);
             this.Container.RegisterType<object, AgendaView>(typeof(AgendaView).FullName);
             this.Container.RegisterType<object, AgendaNavView>(typeof(AgendaNavView).FullName);
-
-            //this.Container.RegisterType<object, SimpleView>(typeof(SimpleView).FullName);
-            //this.Container.RegisterType<object, StreamerView>(typeof(StreamerView).FullName);
-
-            //this.Container.RegisterInstance<BoardList>(new BoardList(this.Container));
+            this.Container.RegisterType<object, StreamerView>(typeof(StreamerView).FullName);
+            
             
             this.Container.RegisterInstance<IXService>(_xService);
              
