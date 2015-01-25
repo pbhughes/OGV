@@ -48,7 +48,7 @@ namespace OGV.Admin.Models
         public string FileName
         {
             get { return _fileName; }
-            set { _fileName = value; OnPropertyChanged("FileName"); }
+            set { _fileName = value; OnPropertyChanged("FileName"); OnChanged(); }
         }
 
         private DateTime _meetingDate;
@@ -56,7 +56,7 @@ namespace OGV.Admin.Models
         public DateTime MeetingDate
         {
             get { return _meetingDate; }
-            set { _meetingDate = value; OnPropertyChanged("MeetingDate"); }
+            set { _meetingDate = value; OnPropertyChanged("MeetingDate"); OnChanged(); }
         }
 
         private string _videoFileName;
@@ -112,7 +112,6 @@ namespace OGV.Admin.Models
 
         public event AgendaChangedEventHandler ChangedEvent;
 
-
         public Agenda()
         {
             _items = new ObservableCollection<AgendaItem>();
@@ -125,6 +124,32 @@ namespace OGV.Admin.Models
         {
             if (ChangedEvent != null)
                 ChangedEvent(this, new EventArgs());
+
+        }
+
+        public void Reset()
+        {
+            try
+            {
+
+                XDocument xDoc = XDocument.Parse(OriginalText);
+                _items.Clear();
+                var allAgendaItems = xDoc.Element("meeting").Element("agenda").Element("items").Elements("item");
+                foreach (var itemElement in allAgendaItems)
+                {
+
+                    AgendaItem ai = ParseAgendaItem(itemElement);
+                    AddItem(ai);
+
+                }
+
+                
+            }
+            catch (Exception ex)
+            {
+
+                throw;
+            }
 
         }
 
@@ -168,7 +193,7 @@ namespace OGV.Admin.Models
             };
 
             if (itemElement.Element("timestamp") != null)
-                ai.TimeStamp = (TimeSpan)itemElement.Element("timestamp");
+                ai.TimeStamp = TimeSpan.Parse(itemElement.Element("timestamp").Value);
 
             if (itemElement.Element("items") != null)
             {

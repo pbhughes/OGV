@@ -3,16 +3,18 @@
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
-             xmlns:models="clr-namespace:OGV.Admin.Models"
+             xmlns:models="clr-namespace:OGV.Admin"
              xmlns:tk="http://schemas.xceed.com/wpf/xaml/toolkit"
              mc:Ignorable="d" 
              d:DesignHeight="300" d:DesignWidth="450" 
              MaxHeight="350" MaxWidth="400"
              Margin="10">
-    <UserControl.DataContext>
-        <models:User></models:User>
-    </UserControl.DataContext>
+    
     <UserControl.Resources>
+
+        <models:BoolToVisibilityConverter
+         x:Key="BoolToHiddenConverter"
+         TrueValue="Visible" FalseValue="Collapsed" />
         <Style TargetType="PasswordBox">
             <Setter Property="Width" Value="200px" />
             <Setter Property="MinWidth" Value="200px" />
@@ -46,33 +48,42 @@
             <Setter Property="MinWidth"  Value="75px" />
             <Setter Property="FontSize" Value="15" />
         </Style>
-        
+
+        <Style TargetType="Border">
+            <Setter Property="BorderBrush" Value="LightBlue"/>
+            <Setter Property="BorderThickness" Value="2"/>
+            <Setter Property="CornerRadius" Value="6"/>
+            <Setter Property="Margin" Value="2"/>
+            <Setter Property="Padding" Value="2"></Setter>
+        </Style>
+
     </UserControl.Resources>
     <StackPanel Orientation="Vertical">
         <StackPanel  Orientation="Horizontal">
             <Label>User Name:</Label>
-            <TextBox></TextBox>
+            <TextBox Text="{Binding UserName}"></TextBox>
         </StackPanel>
         <StackPanel  Orientation="Horizontal" 
                      HorizontalAlignment="Left">
             <Label>Password:</Label>
-            <PasswordBox  ></PasswordBox>
+            <PasswordBox ></PasswordBox>
         </StackPanel>
         <Button HorizontalAlignment="Right" 
                 Command="{Binding LoginCommand}">Login</Button>
-        <tk:BusyIndicator BusyContent="{Binding Message}" IsBusy="{Binding IsBusy}" DisplayAfter="0">
-            
-            <tk:BusyIndicator.OverlayStyle>
-                <Style TargetType="Rectangle">
-                    <Setter Property="Fill" Value="#ffffeeee"/>
-                </Style>
-            </tk:BusyIndicator.OverlayStyle>
-            <tk:BusyIndicator.ProgressBarStyle>
-                <Style TargetType="ProgressBar">
-                    <Setter Property="Visibility" Value="Collapsed"/>
-                </Style>
-            </tk:BusyIndicator.ProgressBarStyle>
-            <ContentControl />
-        </tk:BusyIndicator>
+        <Border Visibility="{Binding IsBusy, Converter={StaticResource BoolToHiddenConverter }}">
+            <tk:BusyIndicator BusyContent="{Binding Message}" IsBusy="{Binding IsBusy}" DisplayAfter="0">
+
+                <!--<tk:BusyIndicator.OverlayStyle>
+                   
+                </tk:BusyIndicator.OverlayStyle>-->
+                <tk:BusyIndicator.ProgressBarStyle>
+                    <Style TargetType="ProgressBar">
+                        <Setter Property="Visibility" Value="Collapsed"/>
+                    </Style>
+                </tk:BusyIndicator.ProgressBarStyle>
+                <ContentControl />
+            </tk:BusyIndicator>
+        </Border>
+        
     </StackPanel>
 </UserControl>

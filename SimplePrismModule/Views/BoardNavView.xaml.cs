@@ -16,6 +16,7 @@ using System.Windows.Navigation;
 using System.Windows.Shapes;
 using OGV.Admin.Models;
 using OGV.Infrastructure.Services;
+using Microsoft.Practices.Unity;
 
 namespace OGV.Admin.Views
 {
@@ -24,12 +25,16 @@ namespace OGV.Admin.Views
     /// </summary>
     public partial class BoardNavView : UserControl, INavigationAware
     {
-        XService _xService;
+        private IUnityContainer _container;
+        private IRegionManager _regionManager;
 
-        public BoardNavView()
+        [InjectionConstructor]
+        public BoardNavView(IUnityContainer container, IUserViewModel userModel)
         {
             InitializeComponent();
-            this.DataContext = ServiceLocator.Current.GetInstance<BoardList>();
+            _container = container;
+
+            this.DataContext = userModel.BoardList;
             
         }
 
@@ -45,7 +50,7 @@ namespace OGV.Admin.Views
 
         public void OnNavigatedTo(NavigationContext navigationContext)
         {
-            this.DataContext = ServiceLocator.Current.GetInstance<BoardList>();
+            
         }
     }
 }

@@ -16,6 +16,7 @@ using Microsoft.Practices.Prism.Regions;
 using System.Threading.Tasks;
 using OGV.Admin.Models;
 using Microsoft.Practices.ServiceLocation;
+using Microsoft.Practices.Unity;
 
 namespace OGV.Admin.Views
 {
@@ -24,18 +25,23 @@ namespace OGV.Admin.Views
     /// </summary>
     public partial class BoardView : UserControl, INavigationAware
     {
-        IRegionManager _rm;
-   
 
-        public BoardView(IRegionManager rm)
+        private IUnityContainer _container;
+        private IRegionManager _regionManager;
+
+        [InjectionConstructor]
+        public BoardView(IUnityContainer container, IUserViewModel userModel)
         {
             InitializeComponent();
-            _rm = rm;
-            SetBoard();
+            _container = container;
+            _regionManager =
+                Microsoft.Practices.ServiceLocation.ServiceLocator.
+                                    Current.GetInstance<Microsoft.
+                                    Practices.Prism.Regions.IRegionManager>();
+
+            this.DataContext = userModel.BoardList;
+           
         }
-
-
-
 
         public bool IsNavigationTarget(NavigationContext navigationContext)
         {
@@ -44,20 +50,18 @@ namespace OGV.Admin.Views
 
         public void OnNavigatedFrom(NavigationContext navigationContext)
         {
-            var view = _rm.Regions["NavBarRegion"].Views.FirstOrDefault();
-            if (view != null)
-                _rm.Regions["NavBarRegion"].Remove(view);
+            var view = _regionManager.Regions["NavBarRegion"].Views.FirstOrDefault();
+            if ( view != null && view is BoardNavView)
+                _regionManager.Regions["NavBarRegion"].Remove(view);
         }
 
         public void OnNavigatedTo(NavigationContext navigationContext)
         {
-            SetBoard();
+            //show the Board NAV View in the NAV region
+            Uri nn = new Uri(typeof(Views.BoardNavView).FullName, UriKind.RelativeOrAbsolute);
+            _regionManager.RequestNavigate("NavBarRegion", nn);
         }
 
-        private void SetBoard()
-        {
-
-            this.DataContext = ServiceLocator.Current.GetInstance<BoardList>() as BoardList;
-        }
+       
     }
 }

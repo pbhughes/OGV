@@ -14,9 +14,7 @@
              d:DesignHeight="300" d:DesignWidth="350"
              Margin="2">
 
-    <UserControl.DataContext>
-        <model:Agenda x:Name="currentAgenda"></model:Agenda>
-    </UserControl.DataContext>
+
     <UserControl.Resources>
 
         <local:BoolToVisibilityConverter
@@ -63,21 +61,7 @@
             <Setter Property="FontSize" Value="15" />
         </Style>
 
-        <Style TargetType="Button">
-            <Setter Property="Margin" Value="0 0 10 0" />
-            <Setter Property="MinHeight"  Value="45px" />
-            <Setter Property="MinWidth"  Value="75px" />
-            <Setter Property="FontSize" Value="15" />
-        </Style>
-
-        <Style x:Key="smallButton" TargetType="Button">
-            <Setter Property="Margin" Value="2" />
-            <Setter Property="Height"  Value="25px" />
-            <Setter Property="MinWidth"  Value="50px" />
-            <Setter Property="FontSize" Value="15" />
-        </Style>
-
-        <Style TargetType="tk:DateTimePicker">
+         <Style TargetType="tk:DateTimePicker">
             <Setter Property="MaxWidth" Value="450px" />
             <Setter Property="MinHeight" Value="45px" />
             <Setter Property="TextAlignment" Value="Center" />
@@ -89,16 +73,31 @@
         <Style TargetType="TreeViewItem">
             <Setter Property="Padding" Value="2" />
         </Style>
+
+        <Style TargetType="Button">
+            <Setter Property="Margin" Value="2" />
+            <Setter Property="Height"  Value="25" />
+            <Setter Property="Width"  Value="75" />
+            <Setter Property="FontSize" Value="11" />
+        </Style>
+        
+        <Style TargetType="Border">
+            <Setter Property="BorderBrush" Value="LightBlue"/>
+            <Setter Property="BorderThickness" Value="2"/>
+            <Setter Property="CornerRadius" Value="6"/>
+            <Setter Property="Margin" Value="2"/>
+            <Setter Property="Padding" Value="2"></Setter>
+        </Style>
     </UserControl.Resources>
 
     <Grid>
         <Grid.RowDefinitions>
-           
             <RowDefinition Height="45" />
             <RowDefinition Height="55" />
             <RowDefinition Height="*" />
             <RowDefinition Height="180" />
         </Grid.RowDefinitions>
+        
         <Grid.ColumnDefinitions>
             <ColumnDefinition />
             <ColumnDefinition />
@@ -130,7 +129,7 @@
                 <RowDefinition Height="30" />
                 <RowDefinition />
                 <RowDefinition />
-                <RowDefinition Height="50" />
+                <RowDefinition Height="60"/>
             </Grid.RowDefinitions>
             <Grid.ColumnDefinitions>
                 <ColumnDefinition />
@@ -139,7 +138,7 @@
                        HorizontalAlignment="left" TextAlignment="Left" MinHeight="25"
                            Text="{Binding TimeStamp}"></TextBlock>
 
-            <tk:MultiLineTextEditor Grid.Row="1" Margin="2"
+            <tk:MultiLineTextEditor Grid.Row="1" Margin="2" IsSpellCheckEnabled="True"
                                     DropDownWidth="{Binding Path=ActualWidth, RelativeSource={RelativeSource Self}}"
                                     Text="{Binding Title}"
                                     Content="{Binding Title}"
@@ -147,18 +146,22 @@
                                     ScrollViewer.HorizontalScrollBarVisibility="Disabled"
                                     ScrollViewer.VerticalScrollBarVisibility="Auto" />
 
-            <tk:MultiLineTextEditor Grid.Row="2" Margin="2"
+            <tk:MultiLineTextEditor Grid.Row="2" Margin="2" IsSpellCheckEnabled="True"
                                     DropDownWidth="{Binding Path=ActualWidth, RelativeSource={RelativeSource Self}}"
-                         Text="{Binding Description}"
-                         Content="{Binding Description}"
-                         TextWrapping="Wrap"
-                         ScrollViewer.HorizontalScrollBarVisibility="Disabled"
-                         ScrollViewer.VerticalScrollBarVisibility="Auto" />
-            <StackPanel Orientation="Horizontal" Grid.Row="3">
-                <Button  Style="{StaticResource smallButton}">Stamp</Button>
-                <Button  Style="{StaticResource smallButton}">Save</Button>
-                <Button  Style="{StaticResource smallButton}">Undo</Button>
-            </StackPanel>
+                                    Text="{Binding Description}"
+                                    Content="{Binding Description}"
+                                    TextWrapping="Wrap"
+                                    ScrollViewer.HorizontalScrollBarVisibility="Disabled"
+                                    ScrollViewer.VerticalScrollBarVisibility="Auto" />
+
+            <Border  Grid.Row="3" Background="LightBlue" VerticalAlignment="Center">
+                <StackPanel Orientation="Horizontal"  Margin="2" HorizontalAlignment="Right">
+                    <Button>Stamp</Button>
+                    <Button>Save</Button>
+                    <Button>Undo</Button>
+                </StackPanel>
+            </Border>
+            
         </Grid>
     </Grid>
 </UserControl>

@@ -13,9 +13,14 @@ using System.Windows.Threading;
 namespace OGV.Admin.Models
 {
 
-    public class User: INotifyPropertyChanged
+    public class UserViewModel: INotifyPropertyChanged, OGV.Admin.Models.IUserViewModel
     {
         private IUnityContainer _container;
+        public IUnityContainer Container
+        {
+            get { return _container; }
+            set { _container = value; }
+        }
 
         private IRegionManager _regionManager;
 
@@ -56,13 +61,18 @@ namespace OGV.Admin.Models
         }
 
         private string _message;
-
         public string Message
         {
             get { return _message; }
             set { _message = value; OnPropertyChanged("Message"); }
         }
 
+        private BoardList _boardList;
+        public BoardList BoardList
+        {
+            get { return _boardList; }
+            set { _boardList = value; OnPropertyChanged("BoardList"); }
+        }
 
         public ICommand LoginCommand { get; private set; }
 
@@ -82,7 +92,7 @@ namespace OGV.Admin.Models
 
             //load all the board files
             Message = "Loading Agenda Files...";
-            
+            await LoadAgendaFiles();
 
             IsBusy = false;
             //show the BoardView in the main region
@@ -99,19 +109,22 @@ namespace OGV.Admin.Models
             return ! OGV.Infrastructure.Model.Session.Recording ;
         }
 
-        public User()
+        public UserViewModel()
         {
 
             this.LoginCommand = new DelegateCommand(OnLogin, CanLogin);
             _regionManager = Microsoft.Practices.ServiceLocation.ServiceLocator.Current.GetInstance<Microsoft.Practices.Prism.Regions.IRegionManager>();
+            _boardList = new BoardList();
         }
 
-        public User(IUnityContainer container)
+        public UserViewModel(IUnityContainer container)
         {
 
             this.LoginCommand = new DelegateCommand(OnLogin, CanLogin);
             _container = container;
             _regionManager = Microsoft.Practices.ServiceLocation.ServiceLocator.Current.GetInstance<Microsoft.Practices.Prism.Regions.IRegionManager>();
+            _boardList = new BoardList();
+            
         }
 
         private async Task<string> Authenticate(string userName, string password)
@@ -168,8 +181,9 @@ namespace OGV.Admin.Models
                     Dispatcher.CurrentDispatcher.Invoke((Action)delegate() { CallTime++; });
                     System.Threading.Thread.Sleep(1000);
 
-                    _container.RegisterInstance<BoardList>(new BoardList(_container));
+                    
                 }
+                _boardList.Load();
             });
 
 

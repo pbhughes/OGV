@@ -16,9 +16,6 @@
         
     </UserControl.Resources>
     
-    <UserControl.DataContext>
-        <models:BoardList x:Name="boardList"/>
-    </UserControl.DataContext>
     <Border Margin="2" Padding="2" 
             BorderBrush="LightBlue"
             BorderThickness="1" CornerRadius="6" Background="LightBlue">

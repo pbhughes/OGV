@@ -1,5 +1,6 @@
 ﻿using Microsoft.Practices.Prism.Regions;
 using Microsoft.Practices.ServiceLocation;
+using Microsoft.Practices.Unity;
 using OGV.Admin.Models;
 using System;
 using System.Collections.Generic;
@@ -24,14 +25,17 @@ namespace OGV.Admin.Views
     public partial class AgendaNavView : UserControl, INavigationAware  
     {
         private IRegionManager _regionManager;
+        private IUnityContainer _container;
 
-        public AgendaNavView()
+        public AgendaNavView(IUnityContainer container, IUserViewModel userModel)
         {
             InitializeComponent();
             _regionManager =
               Microsoft.Practices.ServiceLocation.ServiceLocator.
                                   Current.GetInstance<Microsoft.
                                   Practices.Prism.Regions.IRegionManager>();
+
+            this.DataContext = userModel.BoardList;
         }
 
        
@@ -48,10 +52,7 @@ namespace OGV.Admin.Views
 
         public void OnNavigatedTo(NavigationContext navigationContext)
         {
-            //setup the data
-            this.DataContext = ServiceLocator.Current.GetInstance<BoardList>();
-
-
+ 
         }
     }
 }

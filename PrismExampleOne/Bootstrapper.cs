@@ -64,15 +64,19 @@ namespace PrismExampleOne
             this.Container.RegisterType(typeof(IRegionNavigationService),
                 typeof(Microsoft.Practices.Prism.Regions.RegionNavigationService));
 
-            this.Container.RegisterType<object, SimpleView>(typeof(SimpleView).FullName);
-            this.Container.RegisterType<object, LoginView>(typeof(LoginView).FullName);
-            this.Container.RegisterType<object, StreamerView>(typeof(StreamerView).FullName);
+            //register the singleton user view model
+            
+            this.Container.RegisterType<IUserViewModel,UserViewModel>( new ContainerControlledLifetimeManager());
             this.Container.RegisterType<object, BoardView>(typeof(BoardView).FullName);
+            this.Container.RegisterType<object, BoardNavView>(typeof(BoardNavView).FullName);
             this.Container.RegisterType<object, AgendaView>(typeof(AgendaView).FullName);
             this.Container.RegisterType<object, AgendaNavView>(typeof(AgendaNavView).FullName);
-            this.Container.RegisterType<object, BoardNavView>(typeof(BoardNavView).FullName);
+
+            //this.Container.RegisterType<object, SimpleView>(typeof(SimpleView).FullName);
+            //this.Container.RegisterType<object, StreamerView>(typeof(StreamerView).FullName);
+
             //this.Container.RegisterInstance<BoardList>(new BoardList(this.Container));
-            this.Container.RegisterInstance<User>(new User(this.Container));
+            
             this.Container.RegisterInstance<IXService>(_xService);
              
            

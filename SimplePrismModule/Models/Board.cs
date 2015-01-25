@@ -37,23 +37,7 @@ namespace OGV.Admin.Models
             set { _agendas = value; OnPropertyChanged("Agendas"); }
         }
 
-        private Agenda _selectedAgenda;
-        public Agenda SelectedAgenda
-        {
-            get { return _selectedAgenda; }
-            set
-            {
-                if (_selectedAgenda == value)
-                    return;
-                _selectedAgenda = value;
-                OnPropertyChanged("SelectedAgenda");
-                OnAgendaSelected();
-               
-            }
-        }
-
-        public event AgendaSelectedEventHandler AgendSelected;
-
+      
         private IRegionManager _regionManager;
 
         private void LoadBoardData()
@@ -75,12 +59,7 @@ namespace OGV.Admin.Models
             
         }
 
-        private void OnAgendaSelected()
-        {
-            if (AgendSelected != null)
-                AgendSelected(this, _selectedAgenda);
-        }
-
+        
         #region INotifyPropertyChanged
 
         public event PropertyChangedEventHandler PropertyChanged;

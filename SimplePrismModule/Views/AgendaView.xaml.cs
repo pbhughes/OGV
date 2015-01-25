@@ -26,8 +26,11 @@ namespace OGV.Admin.Views
     {
         
         private IRegionManager _regionManager;
+        private IUnityContainer _container;
+        private IUserViewModel _user;
 
-        public AgendaView()
+        [InjectionConstructor]
+        public AgendaView(IUnityContainer container, IUserViewModel userModel)
         {
             InitializeComponent();
 
@@ -36,8 +39,10 @@ namespace OGV.Admin.Views
               Microsoft.Practices.ServiceLocation.ServiceLocator.
                                   Current.GetInstance<Microsoft.
                                   Practices.Prism.Regions.IRegionManager>();
-
-            this.DataContext = ServiceLocator.Current.GetInstance<BoardList>().SelectedBoard.SelectedAgenda;
+            _container = container;
+            _user = userModel;
+            this.DataContext = _user.BoardList.SelectedAgenda;
+            
         }
 
 
@@ -49,18 +54,20 @@ namespace OGV.Admin.Views
         public void OnNavigatedFrom(NavigationContext navigationContext)
         {
             var view = _regionManager.Regions["NavBarRegion"].Views.FirstOrDefault();
-            if (view != null)
+            if (view != null && view is AgendaNavView)
                 _regionManager.Regions["NavBarRegion"].Remove(view);
+
+            this.DataContext = null;
         }
 
         public void OnNavigatedTo(NavigationContext navigationContext)
         {
-            //Setup the NAV view
+            
+            //show the Board NAV View in the NAV region
             Uri nn = new Uri(typeof(Views.AgendaNavView).FullName, UriKind.RelativeOrAbsolute);
             _regionManager.RequestNavigate("NavBarRegion", nn);
-                      
 
-
+            this.DataContext = _user.BoardList.SelectedAgenda;
         }
 
         private void TreeView_SelectedItemChanged(object sender, RoutedPropertyChangedEventArgs<object> e)

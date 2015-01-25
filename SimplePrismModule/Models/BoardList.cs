@@ -42,21 +42,27 @@ namespace OGV.Admin.Models
                 if (_selectedBoard == value)
                     return;
 
-                if (_selectedBoard != null)
-                    _selectedBoard.AgendSelected -= SelectedBoard_AgendaSelected_Event;
+               
 
                 _selectedBoard = value;
                 OnPropertyChanged("SelectedBoard");
                 
-                _selectedBoard.AgendSelected += SelectedBoard_AgendaSelected_Event;
-                LoadAgendaCommand.RaiseCanExecuteChanged();
               
             }
         }
 
-        void SelectedBoard_AgendaSelected_Event(object sender, Agenda agenda)
+        private Agenda _selectedAgenda;
+        public Agenda SelectedAgenda
         {
-            OnPropertyChanged("AgendaChosen");
+            get { return _selectedAgenda; }
+            set
+            {
+                if (_selectedAgenda == value)
+                    return;
+                _selectedAgenda = value;
+                OnPropertyChanged("SelectedAgenda");
+                LoadAgendaCommand.RaiseCanExecuteChanged();
+            }
         }
 
       
@@ -67,93 +73,45 @@ namespace OGV.Admin.Models
             set { _isBusy = value; OnPropertyChanged("IsBusy"); }
         }
 
-        public bool AgendaChosen
-        {
-            get
-            {
-                if (SelectedBoard != null)
-                    return SelectedBoard.SelectedAgenda != null;
-
-                return false;
-            }
-        }
+     
 
         public event EventHandler CanExecuteChanged;
 
+        public DelegateCommand SaveAgendaCommand { get; private set; }
+
         public DelegateCommand LoadAgendaCommand { get; private set; }
+
+        public DelegateCommand ChooseAgendaCommand { get; private set; }
 
         public DelegateCommand LogOutCommand { get; private set; }
 
-        public DelegateCommand SaveAgendaCommand { get; private set; }
+        public DelegateCommand ResetAgendaCommand { get; private set; }
 
 
         private async void OnLoadAgenda()
         {
-            //Authenticate against the web service async and reject or navigate to
-
-                   
-            //Board Selection view setup navigation parameters
-            IsBusy = true;
-            NavigationParameters navParams = new NavigationParameters();
-            navParams.Add("agenda", SelectedBoard.SelectedAgenda);
-            IsBusy = false;
-
+            //navigate to the agenda view
+            //show the BoardView in the main region
             Uri vv = new Uri(typeof(Views.AgendaView).FullName, UriKind.RelativeOrAbsolute);
-            _regionManager.RequestNavigate("MainRegion", vv, navParams);
+            _regionManager.RequestNavigate("MainRegion", vv);
+
+            Uri uu = new Uri(typeof(Views.AgendaNavView).FullName, UriKind.RelativeOrAbsolute);
+            _regionManager.RequestNavigate("NavBarRegion", uu);
         }
 
         private bool CanLoadAgenda()
         {
             if(SelectedBoard != null)
-                return !(SelectedBoard.SelectedAgenda == null);
+                return !(SelectedAgenda == null);
 
             return false;
         }
 
-        public BoardList()
-        {
-
-            
-            this.LoadAgendaCommand = new DelegateCommand(OnLoadAgenda, CanLoadAgenda);
-            this.LogOutCommand = new DelegateCommand(OnLogOut, CanLogOut);
-
-
-            _regionManager =
-                Microsoft.Practices.ServiceLocation.ServiceLocator.
-                                    Current.GetInstance<Microsoft.
-                                    Practices.Prism.Regions.IRegionManager>();
-
-
-            _boards = new ObservableCollection<Board>();
-            Task loadTask = Task.Run(async () => { await Load(); });
-
-        }
-
-        public BoardList(IUnityContainer container)
-        {
-
-            _container = container;
-            this.LoadAgendaCommand = new DelegateCommand(OnLoadAgenda, CanLoadAgenda);
-            this.LogOutCommand = new DelegateCommand(OnLogOut, CanLogOut);
-            this.SaveAgendaCommand = new DelegateCommand(OnSaveAgenda, CanSaveAgenda);
-
-
-            _regionManager = 
-                Microsoft.Practices.ServiceLocation.ServiceLocator.
-                                    Current.GetInstance<Microsoft.
-                                    Practices.Prism.Regions.IRegionManager>();
-
-
-            _boards = new ObservableCollection<Board>();
-            Task loadTask = Task.Run(async () => { await Load(); });
-
-        }
-
         private bool CanSaveAgenda()
         {
-            if (SelectedBoard.SelectedAgenda != null)
+            if (SelectedAgenda != null)
             {
-                 return SelectedBoard.SelectedAgenda.SaveNeeded;
+                return SelectedAgenda.SaveNeeded;
             }
 
             return false;
@@ -161,19 +119,19 @@ namespace OGV.Admin.Models
 
         private void OnSaveAgenda()
         {
-            if (SelectedBoard.SelectedAgenda == null)
+            if (SelectedAgenda == null)
                 throw new InvalidOperationException("No agenda has been loaded");
 
-            if (string.IsNullOrEmpty(SelectedBoard.SelectedAgenda.FilePath))
+            if (string.IsNullOrEmpty(SelectedAgenda.FilePath))
                 throw new InvalidOperationException("File name has not been set");
 
-            string allText = SelectedBoard.SelectedAgenda.ToString();
-            File.WriteAllText(SelectedBoard.SelectedAgenda.FilePath, allText);
-            SelectedBoard.SelectedAgenda.OriginalText = allText;
+            string allText = SelectedAgenda.ToString();
+            File.WriteAllText(SelectedAgenda.FilePath, allText);
+            SelectedAgenda.OriginalText = allText;
 
             //reset the buttons
             ResetButtons();
-        }   
+        }
 
         private void OnLogOut()
         {
@@ -189,10 +147,89 @@ namespace OGV.Admin.Models
             return true;
         }
 
-     
+        private bool CanChooseAgenda()
+        {
+            if(SelectedAgenda != null)
+                return ! SelectedAgenda.SaveNeeded;
 
-      
-        public async Task<ObservableCollection<Board>> Load()
+            return false;
+        }
+
+        private void OnChooseAgenda()
+        {
+            //clear the board and the agenda user is going to get 
+            //a new one
+
+            SelectedAgenda = null;
+            SelectedBoard = null;
+            //navigate to the board view
+            //show the BoardView in the main region
+            Uri vv = new Uri(typeof(Views.BoardView).FullName, UriKind.RelativeOrAbsolute);
+            _regionManager.RequestNavigate("MainRegion", vv);
+
+          
+        }
+
+        private bool CanResetAgenda()
+        {
+            if (SelectedAgenda != null)
+            {
+                return SelectedAgenda.SaveNeeded;
+            }
+
+            return false;
+        }
+
+        private void OnResetAgenda()
+        {
+            SelectedAgenda.Reset();
+        }
+
+        public BoardList()
+        {
+
+
+            this.LoadAgendaCommand = new DelegateCommand(OnLoadAgenda, CanLoadAgenda);
+            this.LogOutCommand = new DelegateCommand(OnLogOut, CanLogOut);
+            this.SaveAgendaCommand = new DelegateCommand(OnSaveAgenda, CanSaveAgenda);
+            this.ChooseAgendaCommand = new DelegateCommand(OnChooseAgenda, CanChooseAgenda);
+            this.ResetAgendaCommand = new DelegateCommand(OnResetAgenda, CanResetAgenda);
+
+
+            _regionManager =
+                Microsoft.Practices.ServiceLocation.ServiceLocator.
+                                    Current.GetInstance<Microsoft.
+                                    Practices.Prism.Regions.IRegionManager>();
+
+
+            _boards = new ObservableCollection<Board>();
+            
+
+        }
+
+        public BoardList(IUnityContainer container)
+        {
+
+            _container = container;
+            this.LoadAgendaCommand = new DelegateCommand(OnLoadAgenda, CanLoadAgenda);
+            this.LogOutCommand = new DelegateCommand(OnLogOut, CanLogOut);
+            this.SaveAgendaCommand = new DelegateCommand(OnSaveAgenda, CanSaveAgenda);
+            this.ChooseAgendaCommand = new DelegateCommand(OnChooseAgenda, CanChooseAgenda);
+            this.ResetAgendaCommand = new DelegateCommand(OnResetAgenda, CanResetAgenda);
+
+
+            _regionManager = 
+                Microsoft.Practices.ServiceLocation.ServiceLocator.
+                                    Current.GetInstance<Microsoft.
+                                    Practices.Prism.Regions.IRegionManager>();
+
+
+            _boards = new ObservableCollection<Board>();
+            
+
+        }
+
+        public void Load()
         {
 
             try
@@ -219,7 +256,8 @@ namespace OGV.Admin.Models
                             b.Agendas.Add(a);
                         }
                        
-                        Application.Current.Dispatcher.Invoke(() => { Boards.Add(b); });
+                        //Application.Current.Dispatcher.Invoke(() => { Boards.Add(b); });
+                        _boards.Add(b);
                       
                         
                     }
@@ -228,10 +266,10 @@ namespace OGV.Admin.Models
                 Task[] allTasks = { t };
                 int count =  Task.WaitAny(allTasks, -1);
                 if (count == -1)
-                    throw new IOException("The agenda file exists, unable to load boards, check board folder and agenda file formating");
+                    throw new IOException("The agenda file exists, unable to load boards, check board folder and agenda file formatting");
                 
 
-                return _boards;
+               
 
             }
             catch (Exception ex)
@@ -266,6 +304,7 @@ namespace OGV.Admin.Models
                     a.AddItem(ai);
                 }
                 a.OriginalText = a.ToString();
+                a.ChangedEvent += Agenda_Changed;
                 return a;
             }
             catch (Exception ex)
@@ -274,6 +313,11 @@ namespace OGV.Admin.Models
                 throw;
             }
            
+        }
+
+        void Agenda_Changed(object sender, EventArgs e)
+        {
+            ResetButtons();
         }
 
         void ItemChanged_Event(object sender, EventArgs e)
@@ -287,6 +331,8 @@ namespace OGV.Admin.Models
             SaveAgendaCommand.RaiseCanExecuteChanged();
             LoadAgendaCommand.RaiseCanExecuteChanged();
             LogOutCommand.RaiseCanExecuteChanged();
+            ChooseAgendaCommand.RaiseCanExecuteChanged();
+            ResetAgendaCommand.RaiseCanExecuteChanged();
         }
 
         private static AgendaItem ParseAgendaItem(XElement itemElement)

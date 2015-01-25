@@ -15,6 +15,7 @@ using System.Windows.Shapes;
 using Microsoft.Practices.Prism.Regions;
 using OGV.Admin.Models;
 using Microsoft.Practices.ServiceLocation;
+using Microsoft.Practices.Unity;
 
 
 namespace OGV.Admin.Views
@@ -24,12 +25,16 @@ namespace OGV.Admin.Views
     /// </summary>
     public partial class LoginView : UserControl, INavigationAware
     {
-        User _user;
 
-        public LoginView()
+        
+        IUnityContainer _container;
+       
+
+        public LoginView(IUnityContainer container, IUserViewModel userModel)
         {
             InitializeComponent();
-            SetUser();
+            _container = container;
+            this.DataContext = userModel;
            
         }
 
@@ -40,18 +45,14 @@ namespace OGV.Admin.Views
 
         public void OnNavigatedFrom(NavigationContext navigationContext)
         {
-           
+            
         }
 
         public void OnNavigatedTo(NavigationContext navigationContext)
         {
-            SetUser();
+            (this.DataContext as UserViewModel).UserName = string.Empty;
         }
 
-        private void SetUser()
-        {
-            _user = ServiceLocator.Current.GetInstance<User>() as User;
-            this.DataContext = _user;
-        }
+        
     }
 }

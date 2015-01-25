@@ -15,6 +15,14 @@
          x:Key="BoolToHiddenConverter"
          TrueValue="Visible" FalseValue="Collapsed" />
 
+        <Style TargetType="Border">
+            <Setter Property="BorderBrush" Value="LightBlue"/>
+            <Setter Property="BorderThickness" Value="2"/>
+            <Setter Property="CornerRadius" Value="6"/>
+            <Setter Property="Margin" Value="2"/>
+            <Setter Property="Padding" Value="2"></Setter>
+        </Style>
+        
         <Style TargetType="Button">
             <Setter Property="Margin" Value="0 0 10 0" />
             <Setter Property="MinHeight"  Value="45px" />
@@ -42,7 +50,6 @@
             <Setter Property="VerticalAlignment" Value="Center"/>
             <Setter Property="TextAlignment" Value="Center"/>
             <Setter Property="Padding" Value="10"/>
-            <Setter Property="Background" Value="AntiqueWhite"/>
         </Style>
 
         <Style TargetType="Label">
@@ -86,17 +93,13 @@
                     <StackPanel Orientation="Vertical">
                         <StackPanel Orientation="Horizontal">
                             <Label>Selected Board:</Label>
-                            <Border BorderBrush="AntiqueWhite" 
-                                    BorderThickness="3"
-                                    CornerRadius="6" Margin="2">
+                            <Border >
                                 <TextBlock Text="{Binding SelectedBoard.Name}" />
                                 </Border>
                         </StackPanel>
                         <StackPanel Orientation="Horizontal">
                             <Label>Agenda Count:</Label>
-                            <Border BorderBrush="AntiqueWhite" 
-                                    BorderThickness="3"
-                                    CornerRadius="6" Margin="2">
+                            <Border >
                                 <TextBlock Text="{Binding SelectedBoard.Agendas.Count}" />
                             </Border>
                         </StackPanel>
@@ -109,10 +112,10 @@
                           IsReadOnly="True"
                           ItemsSource="{Binding SelectedBoard.Agendas}"
                           DisplayMemberPath="Name"
-                          SelectedItem="{Binding SelectedBoard.SelectedAgenda}">
+                          SelectedItem="{Binding SelectedAgenda}">
                     </ComboBox>
                 </StackPanel>
-                <Grid  Visibility="{Binding AgendaChosen, Converter={StaticResource BoolToHiddenConverter}}">
+                <Grid  Visibility="{Binding SelectedAgenda, Converter={StaticResource BoolToHiddenConverter}}">
                     <Grid.RowDefinitions>
                         <RowDefinition />
                         <RowDefinition/>
@@ -121,36 +124,28 @@
                     <StackPanel Orientation="Vertical">
                         <StackPanel Orientation="Horizontal">
                             <Label>Selected Agenda:</Label>
-                            <Border BorderBrush="AntiqueWhite" 
-                                    BorderThickness="3"
-                                    CornerRadius="6" Margin="2">
+                            <Border>
                                 <TextBlock
-                                    Text="{Binding SelectedBoard.SelectedAgenda.Name}" />
+                                    Text="{Binding SelectedAgenda.Name}" />
                             </Border>
                             
                         </StackPanel>
                         <StackPanel Orientation="Horizontal">
                             <Label>Name:</Label>
-                            <Border BorderBrush="AntiqueWhite" 
-                                    BorderThickness="3"
-                                    CornerRadius="6" Margin="2">
-                                <TextBlock Text="{Binding SelectedBoard.SelectedAgenda.Name}" />
+                            <Border>
+                                <TextBlock Text="{Binding SelectedAgenda.Name}" />
                             </Border>
                         </StackPanel>
                         <StackPanel Orientation="Horizontal">
                             <Label>Meeting Date:</Label>
-                            <Border BorderBrush="AntiqueWhite" 
-                                    BorderThickness="3"
-                                    CornerRadius="6" Margin="2">
-                                <TextBlock Text="{Binding SelectedBoard.SelectedAgenda.MeetingDate}" />
+                            <Border>
+                                <TextBlock Text="{Binding SelectedAgenda.MeetingDate}" />
                             </Border>
                         </StackPanel>
                         <StackPanel Orientation="Horizontal">
                             <Label>Items Count:</Label>
-                            <Border BorderBrush="AntiqueWhite" 
-                                    BorderThickness="3"
-                                    CornerRadius="6" Margin="2">
-                                <TextBlock Text="{Binding SelectedBoard.SelectedAgenda.TotalItems}" />
+                            <Border>
+                                <TextBlock Text="{Binding SelectedAgenda.TotalItems}" />
                             </Border>
                         </StackPanel>
         
