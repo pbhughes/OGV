@@ -87,6 +87,9 @@ namespace OGV.Admin.Models
 
         public DelegateCommand ResetAgendaCommand { get; private set; }
 
+        public DelegateCommand AddNodeCommand { get; private set; }
+
+        public DelegateCommand<AgendaItem> RemoveNodeCommand { get; private set; }
 
         private async void OnLoadAgenda()
         {
@@ -185,15 +188,55 @@ namespace OGV.Admin.Models
             SelectedAgenda.Reset();
         }
 
+        private bool CanInsertNode()
+        {
+            if (SelectedAgenda == null)
+                return false;
+
+            return true;
+        }
+
+        private void OnInsertNode()
+        {
+            string newTitleVerbiage = "New Agenda Item... Please add a title";
+            if (SelectedAgenda.SelectedItem == null)
+                SelectedAgenda.AddItem(new AgendaItem() { Title = newTitleVerbiage  });
+            else
+                SelectedAgenda.SelectedItem.AddItem(new AgendaItem() { Title = newTitleVerbiage });
+        }
+
+        private bool CanRemoveNode(AgendaItem item)
+        {
+            if (item == null)
+                return false;
+
+            if (item.Parent == null)
+                return false;
+
+            return true;
+        }
+
+        private void OnRemoveNode(AgendaItem item)
+        {
+            if (item == null)
+                return;
+
+            if (item.Parent == null)
+                return;
+
+            item.Parent.RemoveItem(item);
+        }
+        
         public BoardList()
         {
-
 
             this.LoadAgendaCommand = new DelegateCommand(OnLoadAgenda, CanLoadAgenda);
             this.LogOutCommand = new DelegateCommand(OnLogOut, CanLogOut);
             this.SaveAgendaCommand = new DelegateCommand(OnSaveAgenda, CanSaveAgenda);
             this.ChooseAgendaCommand = new DelegateCommand(OnChooseAgenda, CanChooseAgenda);
             this.ResetAgendaCommand = new DelegateCommand(OnResetAgenda, CanResetAgenda);
+            this.AddNodeCommand = new DelegateCommand(OnInsertNode, CanInsertNode);
+            this.RemoveNodeCommand = new DelegateCommand<AgendaItem >(OnRemoveNode, CanRemoveNode);
 
 
             _regionManager =
@@ -216,8 +259,8 @@ namespace OGV.Admin.Models
             this.SaveAgendaCommand = new DelegateCommand(OnSaveAgenda, CanSaveAgenda);
             this.ChooseAgendaCommand = new DelegateCommand(OnChooseAgenda, CanChooseAgenda);
             this.ResetAgendaCommand = new DelegateCommand(OnResetAgenda, CanResetAgenda);
-
-
+            this.AddNodeCommand = new DelegateCommand(OnInsertNode, CanInsertNode);
+            this.RemoveNodeCommand = new DelegateCommand<AgendaItem>(OnRemoveNode, CanRemoveNode);
             _regionManager = 
                 Microsoft.Practices.ServiceLocation.ServiceLocator.
                                     Current.GetInstance<Microsoft.
@@ -333,6 +376,8 @@ namespace OGV.Admin.Models
             LogOutCommand.RaiseCanExecuteChanged();
             ChooseAgendaCommand.RaiseCanExecuteChanged();
             ResetAgendaCommand.RaiseCanExecuteChanged();
+            AddNodeCommand.RaiseCanExecuteChanged();
+            RemoveNodeCommand.RaiseCanExecuteChanged();
         }
 
         private static AgendaItem ParseAgendaItem(XElement itemElement)

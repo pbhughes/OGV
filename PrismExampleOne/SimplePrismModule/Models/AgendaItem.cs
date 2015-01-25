@@ -11,7 +11,7 @@ namespace OGV.Admin.Models
 {
     public delegate void AgendaItemChangedEventHandler(object sender, EventArgs e);
 
-    public class AgendaItem: INotifyPropertyChanged
+    public class AgendaItem: INotifyPropertyChanged, IParent
     {
         private string _title;
         public string Title
@@ -41,6 +41,14 @@ namespace OGV.Admin.Models
             set { _items = value; OnPropertyChanged("Items"); }
         }
 
+        private IParent _parent;
+
+        public IParent Parent
+        {
+            get { return _parent; }
+            set { _parent = value; OnPropertyChanged("Parent"); OnChanged(); }
+        }
+
         private long _frame;
         public long Frame
         {
@@ -61,6 +69,7 @@ namespace OGV.Admin.Models
         {
             _items = new ObservableCollection<AgendaItem>();
         }
+
         public void AddItem(AgendaItem item)
         {
             if (_items == null)
@@ -68,6 +77,7 @@ namespace OGV.Admin.Models
 
             _items.Add(item);
 
+            item.Parent = this;
             item.ChangedEvent += ItemChanged_Event;
 
             OnChanged();
@@ -117,6 +127,14 @@ namespace OGV.Admin.Models
             OnChanged();
         }
 
+        #endregion
+
+        #region IParent Interface
+        public void RemoveItem(AgendaItem item)
+        {
+            if (_items.Contains(item))
+                _items.Remove(item);
+        }
         #endregion
     }
 }

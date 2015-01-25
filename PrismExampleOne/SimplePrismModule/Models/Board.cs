@@ -37,7 +37,6 @@ namespace OGV.Admin.Models
             set { _agendas = value; OnPropertyChanged("Agendas"); }
         }
 
-      
         private IRegionManager _regionManager;
 
         private void LoadBoardData()
@@ -59,7 +58,6 @@ namespace OGV.Admin.Models
             
         }
 
-        
         #region INotifyPropertyChanged
 
         public event PropertyChangedEventHandler PropertyChanged;

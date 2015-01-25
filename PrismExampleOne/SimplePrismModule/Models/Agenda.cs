@@ -8,7 +8,7 @@ namespace OGV.Admin.Models
 {
     public delegate void AgendaChangedEventHandler(object sender, EventArgs e);
 
-    public class Agenda : INotifyPropertyChanged
+    public class Agenda : INotifyPropertyChanged, IParent
     {
         public int TotalItems
         {
@@ -107,7 +107,7 @@ namespace OGV.Admin.Models
         public AgendaItem SelectedItem
         {
             get { return _selectedItem; }
-            set { _selectedItem = value; OnPropertyChanged("SelectedItem"); }
+            set { _selectedItem = value; OnPropertyChanged("SelectedItem"); OnChanged(); }
         }
 
         public event AgendaChangedEventHandler ChangedEvent;
@@ -234,6 +234,7 @@ namespace OGV.Admin.Models
                 _items = new ObservableCollection<AgendaItem>();
 
             _items.Add(item);
+            item.Parent = this;
 
             item.ChangedEvent += ItemChanged_Event;
 
@@ -258,5 +259,16 @@ namespace OGV.Admin.Models
         }
 
         #endregion INotifyPropertyChanged
+
+        #region IParent Interface 
+
+
+        public void RemoveItem(AgendaItem item)
+        {
+            if (_items.Contains(item))
+                _items.Remove(item);
+        }
+
+        #endregion
     }
 }
