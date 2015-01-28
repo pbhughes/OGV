@@ -23,18 +23,21 @@
 
         <HierarchicalDataTemplate DataType="{x:Type model:AgendaItem}"
                                   ItemsSource="{Binding Items}">
-            <TreeViewItem Header="{Binding Title}">
-                <StackPanel Orientation="Vertical">
-                    <TextBlock Text="{Binding Description}" IsHitTestVisible="False" />
-                    <TextBlock Text="{Binding TimeStamp}" IsHitTestVisible="False" />
-                </StackPanel>
-            </TreeViewItem>
+            <StackPanel Orientation="Horizontal" IsHitTestVisible="True">
+                <TextBlock Margin="4,4,10,4" Text="{Binding TimeStamp}" IsHitTestVisible="False" />
+                <TextBlock Margin="4,4,4,4" Text="{Binding Title}" IsHitTestVisible="False" />
+            </StackPanel>
         </HierarchicalDataTemplate>
 
         <Style TargetType="StackPanel">
             <Setter Property="Margin" Value="10px" />
             <Setter Property="VerticalAlignment" Value="Top" />
             <Setter Property="MaxWidth" Value="300px" />
+            <Style.Triggers>
+                <Trigger Property="IsMouseOver" Value="True">
+                    <Setter Property="Background" Value="LightBlue"/>
+                </Trigger>
+            </Style.Triggers>
         </Style>
 
         <Style TargetType="TextBox">
@@ -52,6 +55,7 @@
             <Setter Property="TextAlignment" Value="Center" />
             <Setter Property="VerticalAlignment" Value="Center" />
             <Setter Property="FontSize" Value="15" />
+            <Setter Property="Margin" Value="4"/>
         </Style>
 
         <Style TargetType="Label">
@@ -110,8 +114,14 @@
                             AutoCloseCalendar="True"
                             Value="{Binding MeetingDate}" HorizontalAlignment="Left" ></tk:DateTimePicker>
 
-        <TreeView Grid.Row="2" Grid.ColumnSpan="3" Margin="2"
-                  ItemsSource="{Binding Items}">
+        <TreeView x:Name="tvAgenda" AllowDrop="True" Grid.Row="2" 
+                  Grid.ColumnSpan="3" Margin="2"
+                  ItemsSource="{Binding Items}" 
+                  PreviewMouseDown="TreeView_MouseDown" 
+                  PreviewMouseMove="TreeView_MouseMove" 
+                  PreviewDragOver="TreeView_DragOver" 
+                  PreviewDrop="TreeView_Drop">
+            
             <e:Interaction.Behaviors>
                 <util:BindableSelectedItemBehavior
                     SelectedItem="{Binding SelectedItem, Mode=TwoWay}" />

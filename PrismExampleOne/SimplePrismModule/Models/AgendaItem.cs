@@ -70,19 +70,6 @@ namespace OGV.Admin.Models
             _items = new ObservableCollection<AgendaItem>();
         }
 
-        public void AddItem(AgendaItem item)
-        {
-            if (_items == null)
-                _items = new ObservableCollection<AgendaItem>();
-
-            _items.Add(item);
-
-            item.Parent = this;
-            item.ChangedEvent += ItemChanged_Event;
-
-            OnChanged();
-        }
-
         void ItemChanged_Event(object sender, EventArgs e)
         {
             OnChanged();
@@ -134,6 +121,19 @@ namespace OGV.Admin.Models
         {
             if (_items.Contains(item))
                 _items.Remove(item);
+        }
+
+        public void AddItem(AgendaItem item)
+        {
+            if (_items == null)
+                _items = new ObservableCollection<AgendaItem>();
+
+            _items.Add(item);
+
+            item.Parent = this;
+            item.ChangedEvent += ItemChanged_Event;
+
+            OnChanged();
         }
         #endregion
     }
