@@ -112,6 +112,7 @@
     <Compile Include="Models\AgendaItem.cs" />
     <Compile Include="Models\Board.cs" />
     <Compile Include="Models\BoardList.cs" />
+    <Compile Include="Models\IChangeAble.cs" />
     <Compile Include="Models\IParent.cs" />
     <Compile Include="Models\IUserViewModel.cs" />
     <Compile Include="Models\UserViewModel.cs" />

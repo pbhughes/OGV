@@ -72,6 +72,8 @@ namespace OGV.Admin.Views
 
         private AgendaItem draggedItem;
 
+        private int dropIndex;
+
         private void TreeView_DragOver(object sender, DragEventArgs e)
         {
             try
@@ -82,7 +84,7 @@ namespace OGV.Admin.Views
                    (Math.Abs(currentPosition.Y - _lastMouseDown.Y) > 10.0))
                 {
                     // Verify that this is a valid drop and then store the drop target
-                    AgendaItem item = GetNearestItem(e);
+                    IParent item = GetNearestItem(e);
                     if (CheckDropTarget(draggedItem, item))
                     {
                         e.Effects = DragDropEffects.Move;
@@ -94,7 +96,7 @@ namespace OGV.Admin.Views
                 }
                 e.Handled = true;
             }
-            catch (Exception)
+            catch (Exception ex)
             {
             }
         }
@@ -106,21 +108,29 @@ namespace OGV.Admin.Views
                 e.Effects = DragDropEffects.None;
                 e.Handled = true;
 
-                AgendaItem TargetItem = GetNearestItem(e);
+                IParent TargetItem = GetNearestItem(e);
                 if (TargetItem != null && draggedItem != null)
                 {
                     e.Effects = DragDropEffects.Move;
                     draggedItem.Parent.RemoveItem(draggedItem);
-                    TargetItem.AddItem(draggedItem);
+                    if (TargetItem is Agenda)
+                    {
+                        TargetItem.InsertItem(draggedItem, dropIndex);
+                    }
+                    if (TargetItem is AgendaItem)
+                    {
+                        TargetItem.AddItem(draggedItem);
+                    }
+                    
 
-                }
+                } 
             }
             catch (Exception)
             {
             }
         }
 
-        private AgendaItem GetNearestItem(DragEventArgs e)
+        private IParent GetNearestItem(DragEventArgs e)
         {
 
             // Verify that this is a valid drop and then store the drop target
@@ -128,8 +138,62 @@ namespace OGV.Admin.Views
             Point point = e.GetPosition(tvAgenda);
             //find the item at that point
             var item = tvAgenda.InputHitTest(point) as FrameworkElement;
+           
 
-            AgendaItem TargetItem = item.DataContext as AgendaItem;
+
+            if(item != null)
+            {
+                if(item.DataContext != null)
+                {
+                    if(item.DataContext is Agenda)
+                    {
+                        //the drop occurred in the tree not on a node
+                        //find out where in the tree it could be the 
+                        var rec = VisualTreeHelper.GetContentBounds(item);
+                        double topEdge = 0;
+                        double bottomEdge = rec.Height;
+                       
+
+                        //is it between nodes
+                        var itemAbove = tvAgenda.InputHitTest(new Point(point.X, point.Y - 10)) as FrameworkElement;
+                        var itemBelow = tvAgenda.InputHitTest(new Point(point.X, point.Y + 10)) as FrameworkElement;
+
+                        
+
+                        if ( (itemAbove != null && itemAbove.DataContext is AgendaItem) && 
+                            (itemBelow != null && itemBelow.DataContext is AgendaItem))
+                        {
+                            //this is happening between nodes
+                            dropIndex = (item.DataContext as IParent).IndexOf(itemBelow.DataContext as AgendaItem);
+                            System.Diagnostics.Debug.WriteLine(string.Format("Between nodes - dropIndex = {0}", dropIndex));
+                
+                        }
+                        else
+                        {
+                            
+                            //this is happening at the top or bottom
+                            //of the tree
+                            
+                            double midPoint = rec.Height / 2;
+                            if (point.Y > midPoint)
+                            {
+                                //insert at the end
+                                dropIndex = (item.DataContext as Agenda).Items.Count;
+                            }
+                            else
+                            {
+                                //insert at the head
+                                dropIndex = 0;
+                            }
+
+                            System.Diagnostics.Debug.WriteLine(string.Format("Outside of nodes - dropIndex = {0}", dropIndex));
+                        }
+                    }
+                       
+                }
+            }
+
+            IParent TargetItem = item.DataContext as IParent;
             return TargetItem;
         }
 
@@ -214,35 +278,46 @@ namespace OGV.Admin.Views
 
 
        
-        private void CopyItem(AgendaItem _sourceItem, AgendaItem _targetItem)
+        private void CopyItem(AgendaItem sourceItem, IParent targetItem)
         {
-            if (MessageBox.Show("Would you like to drop " + _sourceItem.Title + " into " + _targetItem.Title + "", "", MessageBoxButton.YesNo) == MessageBoxResult.Yes)
+            if(targetItem is AgendaItem)
             {
-                try
+                if (MessageBox.Show("Would you like to drop " + sourceItem.Title + " into " + (targetItem as AgendaItem).Title + "", "", MessageBoxButton.YesNo) == MessageBoxResult.Yes)
                 {
-                    //adding dragged TreeViewItem in target TreeViewItem
-                    addChild(_sourceItem, _targetItem);
-
-                    //finding Parent TreeViewItem of dragged TreeViewItem 
-                    IParent ParentItem = _sourceItem.Parent;
-                    // if parent is null then remove from TreeView else remove from Parent TreeViewItem
-                    if (ParentItem == null)
+                    try
                     {
-                        tvAgenda.Items.Remove(_sourceItem);
-                    }
-                    else
-                    {
-                        ((AgendaItem)ParentItem).Items.Remove(_sourceItem);
-                    }
-                }
-                catch
-                {
+                        //adding dragged TreeViewItem in target TreeViewItem
+                        addChild(sourceItem, targetItem as AgendaItem);
 
+                        //finding Parent TreeViewItem of dragged TreeViewItem 
+                        IParent ParentItem = sourceItem.Parent;
+                        // if parent is null then remove from TreeView else remove from Parent TreeViewItem
+                        if (ParentItem == null)
+                        {
+                            tvAgenda.Items.Remove(sourceItem);
+                        }
+                        else
+                        {
+                            ((AgendaItem)ParentItem).Items.Remove(sourceItem);
+                        }
+                    }
+                    catch
+                    {
+
+                    }
                 }
             }
+            if (targetItem is Agenda)
+            {
+                IParent sourceItemParent = sourceItem.Parent;
+                sourceItemParent.RemoveItem(sourceItem);
+                targetItem.InsertItem(sourceItem, dropIndex);
+                
+            }
+           
         }
 
-        private bool CheckDropTarget(AgendaItem _sourceItem, AgendaItem _targetItem)
+        private bool CheckDropTarget(AgendaItem _sourceItem, IParent _targetItem)
         {
             //Check whether the target item is meeting your condition
             bool _isEqual = false;

@@ -38,8 +38,8 @@
             <Button ToolTip="Removes an agenda item" Style="{DynamicResource btn-primary}" Grid.Column="3" 
                     Command="{Binding RemoveNodeCommand}" 
                     CommandParameter="{Binding SelectedAgenda.SelectedItem}">Remove Node</Button>
-            <Button ToolTip="Be careful! - resorts back to the orignal agenda text" Style="{DynamicResource btn-danger}" Grid.Column="4" Command="{Binding ResetAgendaCommand}" >Undo</Button>
-            <Button ToolTip="Saves the current agenda to disk" Style="{DynamicResource btn-success}" Grid.Column="5" Command="{Binding SaveAgendaCommand}" >Save</Button>
+            <Button ToolTip="Be careful! - resorts back to the orignal agenda text" Style="{DynamicResource btn-danger}" Grid.Column="4" Command="{Binding SelectedAgenda.ResetAgendaCommand}" >Undo</Button>
+            <Button ToolTip="Saves the current agenda to disk" Style="{DynamicResource btn-success}" Grid.Column="5" Command="{Binding SelectedAgenda.SaveAgendaCommand}" >Save</Button>
         </Grid>
     </Border>
 </UserControl>

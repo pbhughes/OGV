@@ -10,5 +10,7 @@ namespace OGV.Admin.Models
     {
         void RemoveItem(AgendaItem item);
         void AddItem(AgendaItem item);
+        void InsertItem(AgendaItem item, int indexAt);
+        int IndexOf(AgendaItem item);
     }
 }

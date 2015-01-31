@@ -77,15 +77,11 @@ namespace OGV.Admin.Models
 
         public event EventHandler CanExecuteChanged;
 
-        public DelegateCommand SaveAgendaCommand { get; private set; }
-
         public DelegateCommand LoadAgendaCommand { get; private set; }
 
         public DelegateCommand ChooseAgendaCommand { get; private set; }
 
         public DelegateCommand LogOutCommand { get; private set; }
-
-        public DelegateCommand ResetAgendaCommand { get; private set; }
 
         public DelegateCommand AddNodeCommand { get; private set; }
 
@@ -110,17 +106,7 @@ namespace OGV.Admin.Models
             return false;
         }
 
-        private bool CanSaveAgenda()
-        {
-            if (SelectedAgenda != null)
-            {
-                return SelectedAgenda.SaveNeeded;
-            }
-
-            return false;
-        }
-
-        private void OnSaveAgenda()
+        public void SaveAgenda()
         {
             if (SelectedAgenda == null)
                 throw new InvalidOperationException("No agenda has been loaded");
@@ -173,21 +159,6 @@ namespace OGV.Admin.Models
           
         }
 
-        private bool CanResetAgenda()
-        {
-            if (SelectedAgenda != null)
-            {
-                return SelectedAgenda.SaveNeeded;
-            }
-
-            return false;
-        }
-
-        private void OnResetAgenda()
-        {
-            SelectedAgenda.Reset();
-        }
-
         private bool CanInsertNode()
         {
             if (SelectedAgenda == null)
@@ -232,9 +203,7 @@ namespace OGV.Admin.Models
 
             this.LoadAgendaCommand = new DelegateCommand(OnLoadAgenda, CanLoadAgenda);
             this.LogOutCommand = new DelegateCommand(OnLogOut, CanLogOut);
-            this.SaveAgendaCommand = new DelegateCommand(OnSaveAgenda, CanSaveAgenda);
             this.ChooseAgendaCommand = new DelegateCommand(OnChooseAgenda, CanChooseAgenda);
-            this.ResetAgendaCommand = new DelegateCommand(OnResetAgenda, CanResetAgenda);
             this.AddNodeCommand = new DelegateCommand(OnInsertNode, CanInsertNode);
             this.RemoveNodeCommand = new DelegateCommand<AgendaItem >(OnRemoveNode, CanRemoveNode);
 
@@ -256,9 +225,7 @@ namespace OGV.Admin.Models
             _container = container;
             this.LoadAgendaCommand = new DelegateCommand(OnLoadAgenda, CanLoadAgenda);
             this.LogOutCommand = new DelegateCommand(OnLogOut, CanLogOut);
-            this.SaveAgendaCommand = new DelegateCommand(OnSaveAgenda, CanSaveAgenda);
             this.ChooseAgendaCommand = new DelegateCommand(OnChooseAgenda, CanChooseAgenda);
-            this.ResetAgendaCommand = new DelegateCommand(OnResetAgenda, CanResetAgenda);
             this.AddNodeCommand = new DelegateCommand(OnInsertNode, CanInsertNode);
             this.RemoveNodeCommand = new DelegateCommand<AgendaItem>(OnRemoveNode, CanRemoveNode);
             _regionManager = 
@@ -371,11 +338,15 @@ namespace OGV.Admin.Models
 
         private void ResetButtons()
         {
-            SaveAgendaCommand.RaiseCanExecuteChanged();
+            if (SelectedAgenda != null)
+            {
+                SelectedAgenda.SaveAgendaCommand.RaiseCanExecuteChanged();
+                SelectedAgenda.ResetAgendaCommand.RaiseCanExecuteChanged();
+            }
+            
             LoadAgendaCommand.RaiseCanExecuteChanged();
             LogOutCommand.RaiseCanExecuteChanged();
             ChooseAgendaCommand.RaiseCanExecuteChanged();
-            ResetAgendaCommand.RaiseCanExecuteChanged();
             AddNodeCommand.RaiseCanExecuteChanged();
             RemoveNodeCommand.RaiseCanExecuteChanged();
         }
@@ -398,9 +369,12 @@ namespace OGV.Admin.Models
                 foreach (var subItem in itemElement.Element("items").Elements("item"))
                 {
                     var subAgendaItem = ParseAgendaItem(subItem);
+                    subAgendaItem.Parent = ai;
                     ai.Items.Add(subAgendaItem);
+                    
                 }
             }
+            ai.OriginalText = ai.ToString();
             return ai;
         }
 

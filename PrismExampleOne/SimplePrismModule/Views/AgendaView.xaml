@@ -33,11 +33,7 @@
             <Setter Property="Margin" Value="10px" />
             <Setter Property="VerticalAlignment" Value="Top" />
             <Setter Property="MaxWidth" Value="300px" />
-            <Style.Triggers>
-                <Trigger Property="IsMouseOver" Value="True">
-                    <Setter Property="Background" Value="LightBlue"/>
-                </Trigger>
-            </Style.Triggers>
+            
         </Style>
 
         <Style TargetType="TextBox">
@@ -75,7 +71,19 @@
         </Style>
 
         <Style TargetType="TreeViewItem">
-            <Setter Property="Padding" Value="2" />
+            <Setter Property="Padding" Value="5" />
+            <Setter Property="Background" Value="LightGray"/>
+            <Setter Property="Margin" Value="0,5,0,5"/>
+            <Style.Triggers>
+                <Trigger Property="IsMouseOver" Value="True">
+                    <Setter Property="Background" Value="LightBlue"/>
+                </Trigger>
+                <Trigger Property="IsSelected" Value="True">
+                    <Setter Property="Background" Value="Red"/>
+                </Trigger>
+                
+                
+            </Style.Triggers>
         </Style>
 
                 
@@ -121,7 +129,7 @@
                   PreviewMouseMove="TreeView_MouseMove" 
                   PreviewDragOver="TreeView_DragOver" 
                   PreviewDrop="TreeView_Drop">
-            
+
             <e:Interaction.Behaviors>
                 <util:BindableSelectedItemBehavior
                     SelectedItem="{Binding SelectedItem, Mode=TwoWay}" />

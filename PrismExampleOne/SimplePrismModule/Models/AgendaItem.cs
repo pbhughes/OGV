@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Microsoft.Practices.Prism.Commands;
+using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.ComponentModel;
@@ -11,8 +12,10 @@ namespace OGV.Admin.Models
 {
     public delegate void AgendaItemChangedEventHandler(object sender, EventArgs e);
 
-    public class AgendaItem: INotifyPropertyChanged, IParent
+    public class AgendaItem: INotifyPropertyChanged, IParent, IChangeable
     {
+        public string OriginalText { get; set; }
+
         private string _title;
         public string Title
         {
@@ -42,7 +45,6 @@ namespace OGV.Admin.Models
         }
 
         private IParent _parent;
-
         public IParent Parent
         {
             get { return _parent; }
@@ -63,22 +65,16 @@ namespace OGV.Admin.Models
             set { _selectedItem = value; OnPropertyChanged("SelectedItem"); }
         }
 
-        public event AgendaItemChangedEventHandler ChangedEvent;
- 
         public AgendaItem()
         {
+            this.SaveAgendaCommand = new DelegateCommand(OnSave, CanSave);
+            this.ResetAgendaCommand = new DelegateCommand(OnReset, CanReset);
             _items = new ObservableCollection<AgendaItem>();
         }
 
         void ItemChanged_Event(object sender, EventArgs e)
         {
             OnChanged();
-        }
-
-        private void OnChanged()
-        {
-            if (ChangedEvent != null)
-                ChangedEvent(this, new EventArgs());
         }
 
         public override string ToString()
@@ -135,6 +131,103 @@ namespace OGV.Admin.Models
 
             OnChanged();
         }
+
+        public void InsertItem(AgendaItem item, int indexAt)
+        {
+            if (_items == null)
+            {
+                indexAt = 0;
+                _items = new ObservableCollection<AgendaItem>();
+            }
+            item.Parent = this;
+
+            if (indexAt > _items.Count)
+                _items.Add(item);
+            else
+                _items.Insert(indexAt, item);
+            OnChanged();
+        }
+
+        public int IndexOf(AgendaItem item)
+        {
+            if (_items.Contains(item))
+                return _items.IndexOf(item);
+
+            return -1;
+        }
         #endregion
+
+        #region IChangeble
+
+        public DelegateCommand SaveAgendaCommand { get; set; }
+
+        public DelegateCommand ResetAgendaCommand { get; set; }
+
+        public event ChangedEventHandler ChangedEvent;
+
+        public bool CanSave()
+        {
+            if (this != null)
+            {
+                return SaveNeeded;
+            }
+
+            return false;
+        }
+
+        public void OnSave()
+        {
+            if (this == null)
+                throw new InvalidOperationException("No agenda has been loaded");
+
+            string allText = this.ToString();
+            OriginalText = allText;
+
+            OnChanged();
+        }
+
+        public bool CanReset()
+        {
+            if (this != null)
+            {
+                return SaveNeeded;
+            }
+
+            return false;
+        }
+
+        public void OnReset()
+        {
+            Reset();
+        }
+
+        public bool SaveNeeded
+        {
+            get
+            {
+                int orignalHash = OriginalText.GetHashCode();
+                string current = this.ToString();
+                int currenHash = current.GetHashCode();
+
+                return orignalHash != currenHash;
+            }
+        }
+
+        public void Reset()
+        {
+
+        }
+
+        public void OnChanged()
+        {
+            if (ChangedEvent != null)
+                ChangedEvent(this, new EventArgs());
+
+        }
+
+        #endregion
+
+
+      
     }
 }
