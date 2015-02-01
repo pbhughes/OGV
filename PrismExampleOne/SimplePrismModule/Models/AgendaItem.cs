@@ -7,12 +7,13 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using System.Xml.Linq;
+using OGV.Infrastructure.Interfaces;
 
 namespace OGV.Admin.Models
 {
     public delegate void AgendaItemChangedEventHandler(object sender, EventArgs e);
 
-    public class AgendaItem: INotifyPropertyChanged, IParent, IChangeable
+    public class AgendaItem: INotifyPropertyChanged, IParent, IChangeable, IAgendaItem
     {
         public string OriginalText { get; set; }
 
@@ -37,8 +38,8 @@ namespace OGV.Admin.Models
             set { _timeStamp = value; OnPropertyChanged("TimeStamp"); }
         }
 
-        ObservableCollection<AgendaItem> _items;
-        public ObservableCollection<AgendaItem> Items
+        ObservableCollection<IAgendaItem> _items;
+        public ObservableCollection<IAgendaItem> Items
         {
             get { return _items; }
             set { _items = value; OnPropertyChanged("Items"); }
@@ -58,8 +59,8 @@ namespace OGV.Admin.Models
             set { _frame = value; OnPropertyChanged("Frame"); }
         }
 
-        private AgendaItem _selectedItem;
-        public AgendaItem SelectedItem
+        private IAgendaItem _selectedItem;
+        public IAgendaItem SelectedItem
         {
             get { return _selectedItem; }
             set { _selectedItem = value; OnPropertyChanged("SelectedItem"); }
@@ -67,9 +68,9 @@ namespace OGV.Admin.Models
 
         public AgendaItem()
         {
-            this.SaveAgendaCommand = new DelegateCommand(OnSave, CanSave);
-            this.ResetAgendaCommand = new DelegateCommand(OnReset, CanReset);
-            _items = new ObservableCollection<AgendaItem>();
+            this.SaveCommand = new DelegateCommand(OnSave, CanSave);
+            this.ResetCommand = new DelegateCommand(OnReset, CanReset);
+            _items = new ObservableCollection<IAgendaItem>();
         }
 
         void ItemChanged_Event(object sender, EventArgs e)
@@ -98,6 +99,34 @@ namespace OGV.Admin.Models
             return content;
         }
 
+        private void ResetButtons()
+        {
+            SaveCommand.RaiseCanExecuteChanged();
+            ResetCommand.RaiseCanExecuteChanged();
+        }
+
+        private void ParseAgendaItem(string text)
+        {
+            XDocument xDoc = XDocument.Parse(text);
+
+
+            Title = (string)xDoc.Element("item").Element("title") ?? "";
+            Description = (string)xDoc.Element("item").Element("desc") ?? "";
+            Frame = long.Parse((string)xDoc.Element("item").Element("frame") ?? "0");
+            TimeStamp = TimeSpan.Parse((string)xDoc.Element("item").Element("timestamp") ?? (new TimeSpan(0, 0, 0)).ToString());
+
+
+            if (xDoc.Element("item").Element("timestamp") != null)
+                TimeStamp = TimeSpan.Parse(xDoc.Element("item").Element("timestamp").Value);
+
+            foreach(IAgendaItem item in _items){
+                item.Reset();
+            }
+            
+        }
+
+      
+
         #region INotifyPropertyChanged
 
         public event PropertyChangedEventHandler PropertyChanged;
@@ -113,16 +142,16 @@ namespace OGV.Admin.Models
         #endregion
 
         #region IParent Interface
-        public void RemoveItem(AgendaItem item)
+        public void RemoveItem(IAgendaItem item)
         {
             if (_items.Contains(item))
                 _items.Remove(item);
         }
 
-        public void AddItem(AgendaItem item)
+        public void AddItem(IAgendaItem item)
         {
             if (_items == null)
-                _items = new ObservableCollection<AgendaItem>();
+                _items = new ObservableCollection<IAgendaItem>();
 
             _items.Add(item);
 
@@ -132,12 +161,12 @@ namespace OGV.Admin.Models
             OnChanged();
         }
 
-        public void InsertItem(AgendaItem item, int indexAt)
+        public void InsertItem(IAgendaItem item, int indexAt)
         {
             if (_items == null)
             {
                 indexAt = 0;
-                _items = new ObservableCollection<AgendaItem>();
+                _items = new ObservableCollection<IAgendaItem>();
             }
             item.Parent = this;
 
@@ -148,7 +177,7 @@ namespace OGV.Admin.Models
             OnChanged();
         }
 
-        public int IndexOf(AgendaItem item)
+        public int IndexOf(IAgendaItem item)
         {
             if (_items.Contains(item))
                 return _items.IndexOf(item);
@@ -157,14 +186,17 @@ namespace OGV.Admin.Models
         }
         #endregion
 
+
+
         #region IChangeble
 
-        public DelegateCommand SaveAgendaCommand { get; set; }
+        public DelegateCommand SaveCommand { get; set; }
 
-        public DelegateCommand ResetAgendaCommand { get; set; }
+        public DelegateCommand ResetCommand { get; set; }
 
         public event ChangedEventHandler ChangedEvent;
 
+        
         public bool CanSave()
         {
             if (this != null)
@@ -215,7 +247,7 @@ namespace OGV.Admin.Models
 
         public void Reset()
         {
-
+            ParseAgendaItem(this.OriginalText);
         }
 
         public void OnChanged()
@@ -223,6 +255,7 @@ namespace OGV.Admin.Models
             if (ChangedEvent != null)
                 ChangedEvent(this, new EventArgs());
 
+            ResetButtons();
         }
 
         #endregion

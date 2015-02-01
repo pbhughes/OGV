@@ -1,9 +1,9 @@
 ﻿using System;
-namespace OGV.Admin.Models
+namespace OGV.Infrastructure.Interfaces
 {
     public interface IUserViewModel
     {
-        BoardList BoardList { get; set; }
+        IBoardList BoardList { get; set; }
         int CallTime { get; set; }
         Microsoft.Practices.Unity.IUnityContainer Container { get; set; }
         bool IsBusy { get; set; }

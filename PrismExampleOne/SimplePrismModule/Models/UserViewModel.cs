@@ -9,11 +9,12 @@ using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Input;
 using System.Windows.Threading;
+using OGV.Infrastructure.Interfaces;
 
 namespace OGV.Admin.Models
 {
 
-    public class UserViewModel: INotifyPropertyChanged, OGV.Admin.Models.IUserViewModel
+    public class UserViewModel: INotifyPropertyChanged, IUserViewModel
     {
         private IUnityContainer _container;
         public IUnityContainer Container
@@ -67,8 +68,8 @@ namespace OGV.Admin.Models
             set { _message = value; OnPropertyChanged("Message"); }
         }
 
-        private BoardList _boardList;
-        public BoardList BoardList
+        private IBoardList _boardList;
+        public IBoardList BoardList
         {
             get { return _boardList; }
             set { _boardList = value; OnPropertyChanged("BoardList"); }
@@ -88,7 +89,7 @@ namespace OGV.Admin.Models
 
             //down load all the board files
             Message = "Downloading Agenda Files...";
-            List<Agenda> files = await DownLoadAgendaFiles(""); //get the url from the authentication token
+            List<IAgenda> files = await DownLoadAgendaFiles(""); //get the url from the authentication token
 
             //load all the board files
             Message = "Loading Agenda Files...";
@@ -148,7 +149,7 @@ namespace OGV.Admin.Models
 
         }
 
-        private async Task<List<Agenda>> DownLoadAgendaFiles(string url)
+        private async Task<List<IAgenda>> DownLoadAgendaFiles(string url)
         {
             Guid token;
             //hash them and send it to the server
@@ -165,7 +166,7 @@ namespace OGV.Admin.Models
 
             await t;
 
-            return new List<Agenda>();
+            return new List<IAgenda>();
 
         }
 

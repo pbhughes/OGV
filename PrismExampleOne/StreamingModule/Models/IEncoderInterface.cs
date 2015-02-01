@@ -7,33 +7,22 @@ using Microsoft.Expression.Encoder.Live;
 using eeDevices = Microsoft.Expression.Encoder.Devices;
 using System.Drawing;
 using System.Windows.Forms;
+using Microsoft.Practices.Prism.Commands;
 
 namespace OGV.Streaming.Models
 {
-    public delegate void StatusDelegate(object sender, EncodeStatusEventArgs e);
-
-    public delegate void MessageDelegate(string message);
-
-    public interface IEncoderInterface
+       public interface IEncoderInterface
     {
-        
 
         LiveSource AddRootSource();
 
         void RemoveRootSource();
-
-        void StopEncoding();
 
         void CacheSettings();
 
         void ReadAndApplySettings();
 
         PreviewWindow SetInputPreviewWindow(Size windowSize, Panel pnlInputPreview);
-
-        event StatusDelegate StatusEvent;
-
-        event MessageDelegate MessageEvent;
-
 
     }
 }

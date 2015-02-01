@@ -9,13 +9,15 @@ using System.Xml.Linq;
 using System.Linq;
 using System.Windows.Forms;
 using Microsoft.Expression.Encoder.Devices;
+using System.ComponentModel;
+using Microsoft.Practices.Prism.Commands;
 
 namespace OGV.Streaming.Models
 {
 
     public delegate void LoadCompleteDelegate(object sender, EventArgs e);
 
-    public class LiveEncodingSource : EncodingSourceBase, IEncoderInterface
+    public class LiveEncodingSource : EncodingSourceBase, IEncoderInterface, INotifyPropertyChanged
     {
         #region Fields - Properties - Events
 
@@ -35,9 +37,14 @@ namespace OGV.Streaming.Models
 
         public event LoadCompleteDelegate LoadCompletedEvent;
 
+        public DelegateCommand RecordCommand { get; set; }
+
+        public DelegateCommand StopCommand { get; set; }
+
         #endregion
 
         #region Constructors
+
         public LiveEncodingSource()
             : base()
         {
@@ -46,12 +53,88 @@ namespace OGV.Streaming.Models
 
             SetDefaultDevices();
 
+            RecordCommand = new DelegateCommand(OnRecord, CanRecord);
+            StopCommand = new DelegateCommand(OnStop, CanStop);
+
            
+           
+        }
+
+        private bool CanStop()
+        {
+            return _job.IsCapturing;
+        }
+
+        private void OnStop()
+        {
+            StopEncoding();
+        }
+
+        private bool CanRecord()
+        {
+            return true;
+        }
+
+        private void OnRecord()
+        {
+            try
+            {
+                if (_job == null)
+                {
+
+                    _job = new LiveJob();
+                    _job.Status += new EventHandler<EncodeStatusEventArgs>(job_Status);
+                    // remove all existing output formats it will have
+                    //to add them new each time
+                    _job.PublishFormats.Clear();
+
+                }
+
+                //create the base file structure if it does not exist
+                string myVideos = Environment.GetFolderPath(Environment.SpecialFolder.MyVideos);
+                myVideos = System.IO.Path.Combine(myVideos, "OV Videos");
+                if (!System.IO.Directory.Exists(myVideos))
+                    System.IO.Directory.CreateDirectory(myVideos);
+
+                //add a folder for today's segments
+                string todaysFolder = string.Format("{0}_{1}_{2}", DateTime.Now.Month, DateTime.Now.Day, DateTime.Now.Year);
+                myVideos = System.IO.Path.Combine(myVideos, todaysFolder);
+                if (!System.IO.Directory.Exists(myVideos))
+                    System.IO.Directory.CreateDirectory(myVideos);
+
+                //add the file archive output format by choosing
+                //a segment file name that has not been used today
+                string fileName = string.Format("{0}_{1}.ismv", SessionName, 1);
+                int i = 1;
+                string fullPath = System.IO.Path.Combine(myVideos, fileName);
+                while (System.IO.File.Exists(fullPath))
+                {
+                    fileName = string.Format("{0}_{1}.ismv", SessionName, i++);
+                    fullPath = System.IO.Path.Combine(myVideos, fileName);
+
+                }
+
+                FileArchivePublishFormat archiveFormat = new FileArchivePublishFormat(fullPath);
+                Job.PublishFormats.Add(archiveFormat);
+
+                if (_liveSource == null)
+                {
+                    ActivateSource(VideoDevice, AudioDevice);
+
+                }
+                _job.StartEncoding();
+            }
+            catch (Exception ex)
+            {
+
+                throw;
+            }
         }
 
         #endregion
 
         #region IEncoderInterface
+
         public override void PreconnectPublishingPoint()
         {
             try
@@ -97,38 +180,7 @@ namespace OGV.Streaming.Models
 
 
 
-                //create the base file structure if it does not exist
-                string myVideos = Environment.GetFolderPath(Environment.SpecialFolder.MyVideos);
-                myVideos = System.IO.Path.Combine(myVideos, "OV Videos");
-                if (!System.IO.Directory.Exists(myVideos))
-                    System.IO.Directory.CreateDirectory(myVideos);
-
-                //add a folder for todays segements
-                string todaysFolder = string.Format("{0}_{1}_{2}", DateTime.Now.Month, DateTime.Now.Day, DateTime.Now.Year);
-                myVideos = System.IO.Path.Combine(myVideos, todaysFolder);
-                if (!System.IO.Directory.Exists(myVideos))
-                    System.IO.Directory.CreateDirectory(myVideos);
-
-                //add the file archive output format by choosing
-                //a segment file name that has not been used today
-                string fileName = string.Format("{0}_{1}.ismv", SessionName, 1);
-                int i = 1;
-                string fullPath = System.IO.Path.Combine(myVideos, fileName);
-                while (System.IO.File.Exists(fullPath))
-                {
-                    fileName = string.Format("{0}_{1}.ismv", SessionName, i++);
-                    fullPath = System.IO.Path.Combine(myVideos, fileName);
-
-                }
-
-                FileArchivePublishFormat archiveFormat = new FileArchivePublishFormat(fullPath);
-                Job.PublishFormats.Add(archiveFormat);
-
-                if(_liveSource == null)
-                {
-                    ActivateSource(VideoDevice,AudioDevice);
-
-                }
+               
 
                 if (LoadCompletedEvent != null)
                     LoadCompletedEvent(this, new EventArgs());
@@ -231,7 +283,7 @@ namespace OGV.Streaming.Models
 
 
         /// <summary>
-        /// Reads and apply the users last run time settngs.
+        /// Reads and apply the users last run time settings.
         /// </summary>
         public void ReadAndApplySettings()
         {
@@ -285,17 +337,7 @@ namespace OGV.Streaming.Models
             }
         }
 
-        event StatusDelegate IEncoderInterface.StatusEvent
-        {
-            add { throw new NotImplementedException(); }
-            remove { throw new NotImplementedException(); }
-        }
-
-        event MessageDelegate IEncoderInterface.MessageEvent
-        {
-            add { throw new NotImplementedException(); }
-            remove { throw new NotImplementedException(); }
-        }
+     
 
         #endregion
 
@@ -338,5 +380,21 @@ namespace OGV.Streaming.Models
 
         }
         #endregion
+
+        #region INotifyPropertyChanged
+
+        public event PropertyChangedEventHandler PropertyChanged;
+
+        private void OnPropertyChanged(string name)
+        {
+            if (PropertyChanged != null)
+                PropertyChanged(this, new PropertyChangedEventArgs(name));
+
+           
+        }
+
+        #endregion INotifyPropertyChanged
+
+        
     }
 }

@@ -5,7 +5,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace OGV.Admin.Models
+namespace OGV.Infrastructure.Interfaces
 {
     public interface IChangeable
     {
@@ -13,9 +13,9 @@ namespace OGV.Admin.Models
 
         event ChangedEventHandler ChangedEvent;
 
-        DelegateCommand SaveAgendaCommand { get; set; }
+        DelegateCommand SaveCommand { get; set; }
 
-        DelegateCommand ResetAgendaCommand { get; set; }
+        DelegateCommand ResetCommand { get; set; }
 
         bool CanSave();
 
@@ -28,5 +28,7 @@ namespace OGV.Admin.Models
         bool SaveNeeded { get;  }
 
         void Reset();
+
+       
     }
 }

@@ -77,6 +77,13 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Interfaces\IAgenda.cs" />
+    <Compile Include="Interfaces\IAgendaItem.cs" />
+    <Compile Include="Interfaces\IBoard.cs" />
+    <Compile Include="Interfaces\IBoardList.cs" />
+    <Compile Include="Interfaces\IChangeable.cs" />
+    <Compile Include="Interfaces\IParent.cs" />
+    <Compile Include="Interfaces\IUserViewModel.cs" />
     <Compile Include="Model\Session.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Services\IXService.cs" />

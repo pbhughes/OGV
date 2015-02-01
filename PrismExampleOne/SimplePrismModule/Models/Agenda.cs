@@ -4,13 +4,13 @@ using System.Collections.ObjectModel;
 using System.ComponentModel;
 using System.IO;
 using System.Xml.Linq;
+using OGV.Infrastructure.Interfaces;
+using OGV.Admin.Models;
 
-namespace OGV.Admin.Models
+namespace OGV.Infrastructure.Interfaces
 {
 
-    public delegate void ChangedEventHandler(object sender, EventArgs e);
-
-    public class Agenda : INotifyPropertyChanged, IParent, IChangeable
+    public class Agenda : INotifyPropertyChanged, IParent, IChangeable, IAgenda
     {
         public int TotalItems
         {
@@ -27,7 +27,7 @@ namespace OGV.Admin.Models
             }
         }
 
-        private void AddToTotal(AgendaItem agItem, ref int total)
+        private void AddToTotal(IAgendaItem agItem, ref int total)
         {
             foreach (var item in agItem.Items)
             {
@@ -96,30 +96,27 @@ namespace OGV.Admin.Models
             }
         }
 
-        private ObservableCollection<AgendaItem> _items;
+        private ObservableCollection<IAgendaItem> _items;
 
-        public ObservableCollection<AgendaItem> Items
+        public ObservableCollection<IAgendaItem> Items
         {
             get { return _items; }
             set { _items = value; OnPropertyChanged("Items"); }
         }
 
-        private AgendaItem _selectedItem;
-
-        public AgendaItem SelectedItem
+        private IAgendaItem _selectedItem;
+        public IAgendaItem SelectedItem
         {
             get { return _selectedItem; }
             set { _selectedItem = value; OnPropertyChanged("SelectedItem"); OnChanged(); }
         }
 
-       
-
         public Agenda()
         {
-            this.SaveAgendaCommand = new DelegateCommand(OnSave, CanSave);
-            this.ResetAgendaCommand = new DelegateCommand(OnReset, CanReset);
+            this.SaveCommand = new DelegateCommand(OnSave, CanSave);
+            this.ResetCommand = new DelegateCommand(OnReset, CanReset);
 
-            _items = new ObservableCollection<AgendaItem>();
+            _items = new ObservableCollection<IAgendaItem>();
             AgendaItem level1 = new AgendaItem() { Title = "Top 1" };
             AgendaItem level2 = new AgendaItem() { Title = "Top 2" };
             level1.Items.Add(level2);
@@ -159,7 +156,7 @@ namespace OGV.Admin.Models
 
         }
 
-        public Agenda ParseAgenda(FileSystemInfo agenda)
+        public IAgenda ParseAgenda(FileSystemInfo agenda)
         {
             try
             {
@@ -256,16 +253,16 @@ namespace OGV.Admin.Models
         #region IParent Interface 
 
 
-        public void RemoveItem(AgendaItem item)
+        public void RemoveItem(IAgendaItem item)
         {
             if (_items.Contains(item))
                 _items.Remove(item);
         }
 
-        public void AddItem(AgendaItem item)
+        public void AddItem(IAgendaItem item)
         {
             if (_items == null)
-                _items = new ObservableCollection<AgendaItem>();
+                _items = new ObservableCollection<IAgendaItem>();
 
             _items.Add(item);
             item.Parent = this;
@@ -275,12 +272,12 @@ namespace OGV.Admin.Models
             OnChanged();
         }
 
-        public void InsertItem(AgendaItem item, int indexAt)
+        public void InsertItem(IAgendaItem item, int indexAt)
         {
             if (_items == null)
             {
                 indexAt = 0;
-                _items = new ObservableCollection<AgendaItem>();
+                _items = new ObservableCollection<IAgendaItem>();
             }
             item.Parent = this;
 
@@ -291,7 +288,7 @@ namespace OGV.Admin.Models
             OnChanged();
         }
 
-        public int IndexOf(AgendaItem item)
+        public int IndexOf(IAgendaItem item)
         {
             if (_items.Contains(item))
                 return _items.IndexOf(item);
@@ -303,9 +300,9 @@ namespace OGV.Admin.Models
 
         #region IChangable
 
-        public DelegateCommand SaveAgendaCommand { get;  set; }
+        public DelegateCommand SaveCommand { get;  set; }
 
-        public DelegateCommand ResetAgendaCommand { get;  set; }
+        public DelegateCommand ResetCommand { get;  set; }
 
         public event ChangedEventHandler ChangedEvent;
 

@@ -8,6 +8,7 @@ using OGV.Admin.Views;
 using OGV.Streaming.Views;
 using OGV.Infrastructure.Services;
 using OGV.Admin.Models;
+using OGV.Infrastructure.Interfaces;
 
 namespace PrismExampleOne
 {

@@ -121,7 +121,7 @@
                     <Button x:Name="cmdPreconnect" Margin="0,0,5,0">
                         <ContentControl>
                             <StackPanel Orientation="Horizontal">
-                                <Image x:Name="imgRecordButton" Source="..\Images\record.png"/>
+                                <Image x:Name="imgRecordButton" Source="{StaticResource imgRecord}"/>
                                 <TextBlock Text="Record" Margin="5"></TextBlock>
                                 <Border BorderThickness="1" BorderBrush="Black">
                                     <TextBlock Text="{Binding Path=State}" Margin="3" MinWidth="35" MaxWidth="150" TextWrapping="Wrap"
@@ -134,7 +134,7 @@
                     <Button x:Name="cmdStop" Margin="0,0,5,0" >
                         <ContentControl>
                             <StackPanel Orientation="Horizontal">
-                                <Image x:Name="imgStopButton" Source="../Images/stop.png"/>
+                                <Image x:Name="imgStopButton" Source="{StaticResource imgStop}"/>
                                 <TextBlock Text="Stop" Margin="5"></TextBlock>
                             </StackPanel>
                         </ContentControl>

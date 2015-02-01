@@ -13,10 +13,10 @@ using System.Windows.Media.Imaging;
 using System.Windows.Navigation;
 using System.Windows.Shapes;
 using Microsoft.Practices.Prism.Regions;
-using System.Threading.Tasks;
 using OGV.Admin.Models;
 using Microsoft.Practices.ServiceLocation;
 using Microsoft.Practices.Unity;
+using OGV.Infrastructure.Interfaces;
 
 namespace OGV.Admin.Views
 {

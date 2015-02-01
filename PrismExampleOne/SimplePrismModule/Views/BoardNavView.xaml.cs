@@ -17,6 +17,7 @@ using System.Windows.Shapes;
 using OGV.Admin.Models;
 using OGV.Infrastructure.Services;
 using Microsoft.Practices.Unity;
+using OGV.Infrastructure.Interfaces;
 
 namespace OGV.Admin.Views
 {

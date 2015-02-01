@@ -9,12 +9,13 @@ using System.IO;
 using System.Windows.Input;
 using Microsoft.Practices.Prism.Regions;
 using Microsoft.Practices.Prism.Commands;
+using OGV.Infrastructure.Interfaces;
 
-namespace OGV.Admin.Models
+namespace OGV.Infrastructure.Interfaces
 {
     public delegate void AgendaSelectedEventHandler(object sender, Agenda agenda);
 
-    public class Board : INotifyPropertyChanged
+    public class Board : INotifyPropertyChanged, IBoard
     {
         private bool _isBusy;
         public bool IsBusy
@@ -30,8 +31,8 @@ namespace OGV.Admin.Models
             set { _name = value; OnPropertyChanged("Name"); }
         }
 
-        private ObservableCollection<Agenda> _agendas;
-        public ObservableCollection<Agenda> Agendas
+        private ObservableCollection<IAgenda> _agendas;
+        public ObservableCollection<IAgenda> Agendas
         {
             get { return _agendas; }
             set { _agendas = value; OnPropertyChanged("Agendas"); }
@@ -48,7 +49,7 @@ namespace OGV.Admin.Models
         {
             // TODO: Complete member initialization
             _name = folder;
-            _agendas = new ObservableCollection<Agenda>();
+            _agendas = new ObservableCollection<IAgenda>();
 
             _regionManager =
                Microsoft.Practices.ServiceLocation.ServiceLocator.

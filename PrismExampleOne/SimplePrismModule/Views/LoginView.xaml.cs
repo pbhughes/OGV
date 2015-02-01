@@ -16,6 +16,7 @@ using Microsoft.Practices.Prism.Regions;
 using OGV.Admin.Models;
 using Microsoft.Practices.ServiceLocation;
 using Microsoft.Practices.Unity;
+using OGV.Infrastructure.Interfaces;
 
 
 namespace OGV.Admin.Views

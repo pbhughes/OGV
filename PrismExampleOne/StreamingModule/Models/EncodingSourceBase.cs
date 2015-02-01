@@ -163,6 +163,7 @@ namespace OGV.Streaming.Models
             get { return _publishingPoint; }
             set { _publishingPoint = value; }
         }
+
         #endregion
 
         #region Constructors
@@ -254,16 +255,15 @@ namespace OGV.Streaming.Models
 
         public event PropertyChangedEventHandler PropertyChanged;
 
-        protected void OnPropertyChanged(string name)
+        private void OnPropertyChanged(string name)
         {
-            PropertyChangedEventHandler handler = PropertyChanged;
-            if (handler != null)
-            {
-                handler(this, new PropertyChangedEventArgs(name));
-            }
+            if (PropertyChanged != null)
+                PropertyChanged(this, new PropertyChangedEventArgs(name));
+
+
         }
 
-        #endregion
+        #endregion INotifyPropertyChanged
     }
 
 

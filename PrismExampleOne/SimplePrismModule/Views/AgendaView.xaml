@@ -119,8 +119,9 @@
         <tk:DateTimePicker  Grid.Row="1"
                             Grid.Column="1"
                             Grid.ColumnSpan="2"
-                            AutoCloseCalendar="True"
-                            Value="{Binding MeetingDate}" HorizontalAlignment="Left" ></tk:DateTimePicker>
+                            HorizontalAlignment="Left"
+                            Value="{Binding MeetingDate}"
+                            Width="246" ></tk:DateTimePicker>
 
         <TreeView x:Name="tvAgenda" AllowDrop="True" Grid.Row="2" 
                   Grid.ColumnSpan="3" Margin="2"
@@ -168,9 +169,13 @@
 
             <Border  Grid.Row="3" Background="LightBlue" VerticalAlignment="Center">
                 <StackPanel Orientation="Horizontal"  Margin="2" HorizontalAlignment="Right">
-                    <Button ToolTip="Stamps the selected agenda with video frame and time" Style="{DynamicResource btn-primary}">Stamp</Button>
-                    <Button ToolTip="Reverts back to the original agenda item" Style="{DynamicResource btn-danger}">Undo</Button>
-                    <Button ToolTip="Saves the current agenda to disk" Style="{DynamicResource btn-success}">Save</Button>
+                    <Button ToolTip="Stamps the selected agenda with video frame and time" 
+                            Style="{DynamicResource btn-primary}">Stamp</Button>
+                    <Button ToolTip="Reverts back to the original agenda item" 
+                            Style="{DynamicResource btn-danger}"
+                            Command="{Binding ResetCommand}">Undo</Button>
+                    <Button ToolTip="Saves the current agenda to disk" 
+                            Style="{DynamicResource btn-success}" Command="{Binding SaveCommand}">Save</Button>
                 </StackPanel>
             </Border>
             

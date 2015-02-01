@@ -15,10 +15,11 @@ using Microsoft.Practices.Prism.Regions;
 using OGV.Infrastructure.Services;
 using Microsoft.Practices.Unity;
 using Microsoft.Practices.ServiceLocation;
+using OGV.Infrastructure.Interfaces;
 
 namespace OGV.Admin.Models
 {
-    public class BoardList : INotifyPropertyChanged
+    public class BoardList : INotifyPropertyChanged, IBoardList
     {
         private IUnityContainer _container;
 
@@ -26,15 +27,15 @@ namespace OGV.Admin.Models
 
         private XService _xService;
 
-        ObservableCollection<Board> _boards;
-        public ObservableCollection<Board> Boards
+        ObservableCollection<IBoard> _boards;
+        public ObservableCollection<IBoard> Boards
         {
             get { return _boards; }
             set { _boards = value; }
         }
 
-        private Board _selectedBoard;
-        public Board SelectedBoard
+        private IBoard _selectedBoard;
+        public IBoard SelectedBoard
         {
             get { return _selectedBoard; }
             set
@@ -51,8 +52,8 @@ namespace OGV.Admin.Models
             }
         }
 
-        private Agenda _selectedAgenda;
-        public Agenda SelectedAgenda
+        private IAgenda _selectedAgenda;
+        public IAgenda SelectedAgenda
         {
             get { return _selectedAgenda; }
             set
@@ -85,7 +86,7 @@ namespace OGV.Admin.Models
 
         public DelegateCommand AddNodeCommand { get; private set; }
 
-        public DelegateCommand<AgendaItem> RemoveNodeCommand { get; private set; }
+        public DelegateCommand<IAgendaItem> RemoveNodeCommand { get; private set; }
 
         private async void OnLoadAgenda()
         {
@@ -133,7 +134,8 @@ namespace OGV.Admin.Models
 
         private bool CanLogOut()
         {
-            return true;
+            return SelectedAgenda == null? true : ! SelectedAgenda.SaveNeeded;
+           
         }
 
         private bool CanChooseAgenda()
@@ -176,7 +178,7 @@ namespace OGV.Admin.Models
                 SelectedAgenda.SelectedItem.AddItem(new AgendaItem() { Title = newTitleVerbiage });
         }
 
-        private bool CanRemoveNode(AgendaItem item)
+        private bool CanRemoveNode(IAgendaItem item)
         {
             if (item == null)
                 return false;
@@ -187,7 +189,7 @@ namespace OGV.Admin.Models
             return true;
         }
 
-        private void OnRemoveNode(AgendaItem item)
+        private void OnRemoveNode(IAgendaItem item)
         {
             if (item == null)
                 return;
@@ -205,7 +207,7 @@ namespace OGV.Admin.Models
             this.LogOutCommand = new DelegateCommand(OnLogOut, CanLogOut);
             this.ChooseAgendaCommand = new DelegateCommand(OnChooseAgenda, CanChooseAgenda);
             this.AddNodeCommand = new DelegateCommand(OnInsertNode, CanInsertNode);
-            this.RemoveNodeCommand = new DelegateCommand<AgendaItem >(OnRemoveNode, CanRemoveNode);
+            this.RemoveNodeCommand = new DelegateCommand<IAgendaItem >(OnRemoveNode, CanRemoveNode);
 
 
             _regionManager =
@@ -214,7 +216,7 @@ namespace OGV.Admin.Models
                                     Practices.Prism.Regions.IRegionManager>();
 
 
-            _boards = new ObservableCollection<Board>();
+            _boards = new ObservableCollection<IBoard>();
             
 
         }
@@ -227,14 +229,14 @@ namespace OGV.Admin.Models
             this.LogOutCommand = new DelegateCommand(OnLogOut, CanLogOut);
             this.ChooseAgendaCommand = new DelegateCommand(OnChooseAgenda, CanChooseAgenda);
             this.AddNodeCommand = new DelegateCommand(OnInsertNode, CanInsertNode);
-            this.RemoveNodeCommand = new DelegateCommand<AgendaItem>(OnRemoveNode, CanRemoveNode);
+            this.RemoveNodeCommand = new DelegateCommand<IAgendaItem>(OnRemoveNode, CanRemoveNode);
             _regionManager = 
                 Microsoft.Practices.ServiceLocation.ServiceLocator.
                                     Current.GetInstance<Microsoft.
                                     Practices.Prism.Regions.IRegionManager>();
 
 
-            _boards = new ObservableCollection<Board>();
+            _boards = new ObservableCollection<IBoard>();
             
 
         }
@@ -245,7 +247,7 @@ namespace OGV.Admin.Models
             try
             {
                 if (_boards == null)
-                    _boards = new ObservableCollection<Board>();
+                    _boards = new ObservableCollection<IBoard>();
 
                 if( ! Directory.Exists("Agendas"))
                 {
@@ -262,7 +264,7 @@ namespace OGV.Admin.Models
                         
                         foreach (var agendaPath in agendaFiles)
                         {
-                            Agenda a = ParseAgenda(agendaPath);
+                            Agenda a = (Agenda)ParseAgenda(agendaPath);
                             b.Agendas.Add(a);
                         }
                        
@@ -293,7 +295,7 @@ namespace OGV.Admin.Models
             }
         }
 
-        public Agenda ParseAgenda(FileSystemInfo agenda)
+        public IAgenda ParseAgenda(FileSystemInfo agenda)
         {
             try
             {
@@ -340,8 +342,8 @@ namespace OGV.Admin.Models
         {
             if (SelectedAgenda != null)
             {
-                SelectedAgenda.SaveAgendaCommand.RaiseCanExecuteChanged();
-                SelectedAgenda.ResetAgendaCommand.RaiseCanExecuteChanged();
+                SelectedAgenda.SaveCommand.RaiseCanExecuteChanged();
+                SelectedAgenda.ResetCommand.RaiseCanExecuteChanged();
             }
             
             LoadAgendaCommand.RaiseCanExecuteChanged();

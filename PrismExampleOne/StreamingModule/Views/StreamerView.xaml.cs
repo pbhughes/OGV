@@ -17,6 +17,7 @@ using OGV.Streaming.Models;
 using Microsoft.Expression.Encoder.Live;
 using Microsoft.Expression.Encoder.Devices;
 using Microsoft.Practices.Unity;
+using OGV.Infrastructure.Interfaces;
 
 namespace OGV.Streaming.Views
 {
