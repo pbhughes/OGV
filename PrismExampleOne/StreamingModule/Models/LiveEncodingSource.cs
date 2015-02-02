@@ -11,6 +11,7 @@ using System.Windows.Forms;
 using Microsoft.Expression.Encoder.Devices;
 using System.ComponentModel;
 using Microsoft.Practices.Prism.Commands;
+using OGV.Infrastructure.Interfaces;
 
 namespace OGV.Streaming.Models
 {
@@ -41,13 +42,61 @@ namespace OGV.Streaming.Models
 
         public DelegateCommand StopCommand { get; set; }
 
+        protected System.Timers.Timer _timerFrameTrack = null;
+
+        private long _numberOfSamples = 0;
+        public long NumberOfSamples
+        {
+            set
+            {
+                _numberOfSamples = value;
+                OnPropertyChanged("NumberOfSamples");
+            }
+            get
+            {
+                return _numberOfSamples;
+            }
+        }
+
+        private long _numberOfDroppedSamples = 0;
+        public long NumberOfDroppedSamples
+        {
+            set
+            {
+                _numberOfDroppedSamples = value;
+                OnPropertyChanged("NumberOfDroppedSamples");
+            }
+            get
+            {
+                return _numberOfDroppedSamples;
+            }
+        }
+
+        private string _sessionTime = "00 : 00 : 00";
+        public string SessionTime
+        {
+            get
+            {
+                return _sessionTime;
+            }
+            set
+            {
+                _sessionTime = value;
+                OnPropertyChanged("SessionTime");
+            }
+        }
+
+        protected DateTime _startTime;
+
+        IUserViewModel _user;
         #endregion
 
         #region Constructors
 
-        public LiveEncodingSource()
+        public LiveEncodingSource(IUserViewModel user)
             : base()
         {
+            _user = user;
             VideoDevices = eeDevices.EncoderDevices.FindDevices(eeDevices.EncoderDeviceType.Video);
             AudioDevices = eeDevices.EncoderDevices.FindDevices(eeDevices.EncoderDeviceType.Audio);
 
@@ -56,6 +105,7 @@ namespace OGV.Streaming.Models
             RecordCommand = new DelegateCommand(OnRecord, CanRecord);
             StopCommand = new DelegateCommand(OnStop, CanStop);
 
+            ActivateSource(VideoDevice, AudioDevice);
            
            
         }
@@ -68,11 +118,13 @@ namespace OGV.Streaming.Models
         private void OnStop()
         {
             StopEncoding();
+            StopCommand.RaiseCanExecuteChanged();
+            RecordCommand.RaiseCanExecuteChanged();
         }
 
         private bool CanRecord()
         {
-            return true;
+            return (!_job.IsCapturing );
         }
 
         private void OnRecord()
@@ -89,6 +141,8 @@ namespace OGV.Streaming.Models
                     _job.PublishFormats.Clear();
 
                 }
+                //set the start time
+                _startTime = DateTime.Now;
 
                 //create the base file structure if it does not exist
                 string myVideos = Environment.GetFolderPath(Environment.SpecialFolder.MyVideos);
@@ -123,6 +177,11 @@ namespace OGV.Streaming.Models
 
                 }
                 _job.StartEncoding();
+
+                _timerFrameTrack.Start();
+
+                StopCommand.RaiseCanExecuteChanged();
+                RecordCommand.RaiseCanExecuteChanged();
             }
             catch (Exception ex)
             {
@@ -196,28 +255,7 @@ namespace OGV.Streaming.Models
 
         }
 
-        private void timerFrameTrack_Elapsed(object sender, System.Timers.ElapsedEventArgs e)
-        {
-            //report the sample statistics
-            NumberOfDroppedSamples = Job.NumberOfDroppedSamples;
-            NumberOfSamples = Job.NumberOfEncodedSamples;
-
-            //report the time
-            SessionTime = string.Format("{0} : {1} : {2}",
-                (DateTime.Now - _startTime).Hours,
-                (DateTime.Now - _startTime).Minutes,
-                (DateTime.Now - _startTime).Seconds);
-
-            if (NumberOfDroppedSamples > 100)
-            {
-                MessageBox.Show(string.Format("The number of dropped samples is excessive.  Dropped Samples: {0} " +
-                    "- This is an indication of poor network performance. Live streaming will be stopped." +
-                    " Disable live streaming and turn on archiving.", NumberOfDroppedSamples));
-                timerFrameTrack.Stop();
-                Job.StopEncoding();
-
-            }
-        }
+        
 
         public LiveSource AddRootSource()
         {
@@ -236,13 +274,15 @@ namespace OGV.Streaming.Models
 
         public void StopEncoding()
         {
+            _timerFrameTrack.Stop();
             base.Message = "Shutting down the live stream...";
-            timerFrameTrack.Stop();
+            _timerFrameTrack.Stop();
             base.Job.StopEncoding();
             base.State = "Disconnected";
             NumberOfDroppedSamples = 0;
             NumberOfSamples = 0;
             SessionTime = "00 : 00 : 00";
+
         }
 
         public PreviewWindow SetInputPreviewWindow(System.Drawing.Size windowSize, System.Windows.Forms.Panel pnlInputPreview)
@@ -343,7 +383,39 @@ namespace OGV.Streaming.Models
 
         #region Event Handlers
 
+        void timerFrameTrack_Elapsed(object sender, System.Timers.ElapsedEventArgs e)
+        {
+            //report the sample statistics
+            NumberOfDroppedSamples = _job.NumberOfDroppedSamples;
+            NumberOfSamples = _job.NumberOfEncodedSamples;
 
+            //set the video time for stamps
+            if(_user != null)
+                if(_user.BoardList != null)
+                    if (_user.BoardList.SelectedAgenda != null)
+                    {
+                        _user.BoardList.SelectedAgenda.VideoTime = new TimeSpan(
+                                (DateTime.Now - _startTime).Hours,
+                                (DateTime.Now - _startTime).Minutes,
+                                (DateTime.Now - _startTime).Seconds
+                            );
+                    }
+            //report the time
+            SessionTime = string.Format("{0} : {1} : {2}",
+                (DateTime.Now - _startTime).Hours,
+                (DateTime.Now - _startTime).Minutes,
+                (DateTime.Now - _startTime).Seconds);
+
+            if (_numberOfDroppedSamples > 100)
+            {
+                MessageBox.Show(string.Format("The number of dropped samples is excessive.  Dropped Samples: {0} " +
+                    "- This is an indication of poo network performance. Live streaming will be stopped." +
+                    " Disable live streaming and turn on archiving.", NumberOfDroppedSamples));
+                _timerFrameTrack.Stop();
+                _job.StopEncoding();
+
+            }
+        }
 
         #endregion
 
@@ -367,6 +439,9 @@ namespace OGV.Streaming.Models
 
         public void ActivateSource( EncoderDevice video, EncoderDevice audio )
         {
+            if (_job == null)
+                _job = new LiveJob();
+
             foreach (LiveDeviceSource ds in _job.DeviceSources)
             {
                 _job.RemoveDeviceSource(ds);
@@ -375,9 +450,23 @@ namespace OGV.Streaming.Models
             VideoDevice = video;
             AudioDevice = audio;
             _liveSource = _job.AddDeviceSource(VideoDevice, AudioDevice);
+
+            
             _job.ActivateSource(_liveSource);
 
+            if (_timerFrameTrack == null)
+            {
+                _timerFrameTrack = new System.Timers.Timer(500);
+                _timerFrameTrack.Elapsed += timerFrameTrack_Elapsed;
+            }
 
+
+
+        }
+
+        void _job_Status(object sender, EncodeStatusEventArgs e)
+        {
+            
         }
         #endregion
 

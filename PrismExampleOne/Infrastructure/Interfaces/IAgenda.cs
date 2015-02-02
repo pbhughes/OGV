@@ -1,4 +1,6 @@
 ﻿using System;
+using Microsoft.Practices.Prism.Commands;
+
 namespace OGV.Infrastructure.Interfaces
 {
     public delegate void ChangedEventHandler(object sender, EventArgs e);
@@ -24,8 +26,9 @@ namespace OGV.Infrastructure.Interfaces
         event System.ComponentModel.PropertyChangedEventHandler PropertyChanged;
         void RemoveItem(IAgendaItem item);
         void Reset();
-        Microsoft.Practices.Prism.Commands.DelegateCommand ResetCommand { get; set; }
-        Microsoft.Practices.Prism.Commands.DelegateCommand SaveCommand { get; set; }
+        DelegateCommand ResetCommand { get; set; }
+        DelegateCommand SaveCommand { get; set; }
+        TimeSpan VideoTime { get; set; }
         bool SaveNeeded { get; }
         IAgendaItem SelectedItem { get; set; }
         string ToString();

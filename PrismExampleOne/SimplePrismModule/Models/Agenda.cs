@@ -108,13 +108,14 @@ namespace OGV.Infrastructure.Interfaces
         public IAgendaItem SelectedItem
         {
             get { return _selectedItem; }
-            set { _selectedItem = value; OnPropertyChanged("SelectedItem"); OnChanged(); }
+            set { _selectedItem = value; OnPropertyChanged("SelectedItem"); OnChanged(); StampCommand.RaiseCanExecuteChanged(); }
         }
 
         public Agenda()
         {
             this.SaveCommand = new DelegateCommand(OnSave, CanSave);
             this.ResetCommand = new DelegateCommand(OnReset, CanReset);
+            this.StampCommand = new DelegateCommand(OnStamp, CanStamp);
 
             _items = new ObservableCollection<IAgendaItem>();
             AgendaItem level1 = new AgendaItem() { Title = "Top 1" };
@@ -126,6 +127,8 @@ namespace OGV.Infrastructure.Interfaces
         {
             if (ChangedEvent != null)
                 ChangedEvent(this, new EventArgs());
+
+           
 
         }
 
@@ -236,6 +239,13 @@ namespace OGV.Infrastructure.Interfaces
             OnChanged();
         }
 
+        private TimeSpan _videoTime;
+        public TimeSpan VideoTime
+        {
+            get { return _videoTime; }
+            set { _videoTime = value; }
+        }
+
         #region INotifyPropertyChanged
 
         public event PropertyChangedEventHandler PropertyChanged;
@@ -304,6 +314,8 @@ namespace OGV.Infrastructure.Interfaces
 
         public DelegateCommand ResetCommand { get;  set; }
 
+        public DelegateCommand StampCommand { get; set; }
+
         public event ChangedEventHandler ChangedEvent;
 
         public bool CanSave()
@@ -346,6 +358,21 @@ namespace OGV.Infrastructure.Interfaces
             Reset();
         }
 
+        public bool CanStamp()
+        {
+            return (VideoTime != null && SelectedItem != null);
+        }
+
+        public void OnStamp()
+        {
+            SelectedItem.TimeStamp = VideoTime;
+        }
+
         #endregion
+
+
+     
+
+        
     }
 }

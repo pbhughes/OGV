@@ -86,7 +86,6 @@
             </Style.Triggers>
         </Style>
 
-                
         <Style TargetType="Border">
             <Setter Property="BorderBrush" Value="LightBlue"/>
             <Setter Property="BorderThickness" Value="2"/>
@@ -94,6 +93,7 @@
             <Setter Property="Margin" Value="2"/>
             <Setter Property="Padding" Value="2"></Setter>
         </Style>
+        
     </UserControl.Resources>
 
     <Grid>
@@ -169,13 +169,16 @@
 
             <Border  Grid.Row="3" Background="LightBlue" VerticalAlignment="Center">
                 <StackPanel Orientation="Horizontal"  Margin="2" HorizontalAlignment="Right">
-                    <Button ToolTip="Stamps the selected agenda with video frame and time" 
-                            Style="{DynamicResource btn-primary}">Stamp</Button>
+                    <Button x:Name="cmdStamp"
+                        ToolTip="Stamps the selected agenda with video frame and time" 
+                        Style="{DynamicResource btn-primary}"
+                        Command="{Binding StampCommand}">Stamp</Button>
                     <Button ToolTip="Reverts back to the original agenda item" 
                             Style="{DynamicResource btn-danger}"
                             Command="{Binding ResetCommand}">Undo</Button>
                     <Button ToolTip="Saves the current agenda to disk" 
-                            Style="{DynamicResource btn-success}" Command="{Binding SaveCommand}">Save</Button>
+                            Style="{DynamicResource btn-success}" 
+                            Command="{Binding SaveCommand}">Save</Button>
                 </StackPanel>
             </Border>
             

@@ -83,51 +83,9 @@ namespace OGV.Streaming.Models
             }
         }
 
-        protected System.Timers.Timer timerFrameTrack = null;
+      
 
-        private long _numberOfSamples = 0;
-        public long NumberOfSamples
-        {
-            set
-            {
-                _numberOfSamples = value;
-                OnPropertyChanged("NumberOfSamples");
-            }
-            get
-            {
-                return _numberOfSamples;
-            }
-        }
-
-        private long _numberOfDroppedSamples = 0;
-        public long NumberOfDroppedSamples
-        {
-            set
-            {
-                _numberOfDroppedSamples = value;
-                OnPropertyChanged("NumberOfDroppedSamples");
-            }
-            get
-            {
-                return _numberOfDroppedSamples;
-            }
-        }
-
-        private string _sessionTime = "00 : 00 : 00";
-        public string SessionTime
-        {
-            get
-            {
-                return _sessionTime;
-            }
-            set
-            {
-                _sessionTime = value;
-                OnPropertyChanged("SessionTime");
-            }
-        }
-
-        protected DateTime _startTime;
+       
 
         private bool _streamLive = false;
         public bool StreamLive
@@ -227,28 +185,7 @@ namespace OGV.Streaming.Models
         /// </summary>
         /// <param name="sender"></param>
         /// <param name="e"></param>
-        void timerFrameTrack_Elapsed(object sender, System.Timers.ElapsedEventArgs e)
-        {
-            //report the sample statistics
-            NumberOfDroppedSamples = _job.NumberOfDroppedSamples;
-            NumberOfSamples = _job.NumberOfEncodedSamples;
-
-            //report the time
-            SessionTime = string.Format("{0} : {1} : {2}",
-                (DateTime.Now - _startTime).Hours,
-                (DateTime.Now - _startTime).Minutes,
-                (DateTime.Now - _startTime).Seconds);
-
-            if (_numberOfDroppedSamples > 100)
-            {
-                MessageBox.Show(string.Format("The number of dropped samples is excessive.  Dropped Samples: {0} " +
-                    "- This is an indication of poo network performance. Live streaming will be stopped." +
-                    " Disable live streaming and turn on archiving.", NumberOfDroppedSamples));
-                timerFrameTrack.Stop();
-                _job.StopEncoding();
-
-            }
-        }
+       
         #endregion
 
         #region INotifyPropertyChanged

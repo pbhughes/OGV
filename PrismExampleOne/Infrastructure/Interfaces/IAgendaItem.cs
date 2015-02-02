@@ -1,4 +1,6 @@
 ﻿using System;
+using Microsoft.Practices.Prism.Commands;
+
 namespace OGV.Infrastructure.Interfaces
 {
     public interface IAgendaItem
@@ -20,8 +22,8 @@ namespace OGV.Infrastructure.Interfaces
         event System.ComponentModel.PropertyChangedEventHandler PropertyChanged;
         void RemoveItem(IAgendaItem item);
         void Reset();
-        Microsoft.Practices.Prism.Commands.DelegateCommand ResetCommand { get; set; }
-        Microsoft.Practices.Prism.Commands.DelegateCommand SaveCommand { get; set; }
+        DelegateCommand ResetCommand { get; set; }
+        DelegateCommand SaveCommand { get; set; }
         bool SaveNeeded { get; }
         IAgendaItem SelectedItem { get; set; }
         TimeSpan TimeStamp { get; set; }

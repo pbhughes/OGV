@@ -31,12 +31,12 @@ namespace OGV.Streaming.Views
         IUserViewModel _userModel;
 
 
-        public StreamerView()
+        public StreamerView(IUserViewModel user)
         {
             InitializeComponent();
-            _encoder = new LiveEncodingSource();
+            _encoder = new LiveEncodingSource(user);
             DataContext = _encoder;
-            
+            _userModel = user;
 
             _encoder.LoadCompletedEvent += encoder_LoadCompletedEvent;
             _encoder.PreconnectPublishingPoint();

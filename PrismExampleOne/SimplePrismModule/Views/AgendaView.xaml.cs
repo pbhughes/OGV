@@ -21,6 +21,7 @@ namespace OGV.Admin.Views
         private Point _lastMouseDown;
         private IRegionManager _regionManager;
         private IUserViewModel _user;
+
         [InjectionConstructor]
         public AgendaView(IUnityContainer container, IUserViewModel userModel)
         {
@@ -33,6 +34,7 @@ namespace OGV.Admin.Views
             _container = container;
             _user = userModel;
             this.DataContext = _user.BoardList.SelectedAgenda;
+            cmdStamp.DataContext = _user.BoardList.SelectedAgenda;
         }
 
         public Point LastMouseDown
