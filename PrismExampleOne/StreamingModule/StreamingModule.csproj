@@ -128,7 +128,6 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Models\EncodingSourceBase.cs" />
-    <Compile Include="Models\IEncoderInterface.cs" />
     <Compile Include="Models\LiveEncodingSource.cs" />
     <Compile Include="Module.cs" />
     <Compile Include="Properties\AssemblyInfo.cs">

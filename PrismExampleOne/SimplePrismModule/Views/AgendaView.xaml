@@ -33,16 +33,16 @@
             <Setter Property="Margin" Value="10px" />
             <Setter Property="VerticalAlignment" Value="Top" />
             <Setter Property="MaxWidth" Value="300px" />
-            
+
         </Style>
 
         <Style TargetType="TextBox">
-            <Setter Property="MinWidth" Value="200px" />
-            <Setter Property="MinHeight" Value="35px" />
+            <Setter Property="MinWidth" Value="100px" />
+            <Setter Property="MinHeight" Value="25px" />
             <Setter Property="VerticalContentAlignment" Value="Center" />
             <Setter Property="HorizontalAlignment" Value="Stretch" />
-            <Setter Property="FontSize" Value="15" />
-            <Setter Property="Margin" Value="5px" />
+            <Setter Property="FontSize" Value="12" />
+            <Setter Property="Margin" Value="2px" />
         </Style>
 
         <Style TargetType="TextBlock">
@@ -55,18 +55,18 @@
         </Style>
 
         <Style TargetType="Label">
-            <Setter Property="MinWidth" Value="50px" />
-            <Setter Property="MinHeight" Value="45px" />
+            <Setter Property="MinWidth" Value="25px" />
+            <Setter Property="MinHeight" Value="35px" />
             <Setter Property="VerticalContentAlignment" Value="Center" />
-            <Setter Property="FontSize" Value="15" />
+            <Setter Property="FontSize" Value="12" />
         </Style>
 
-         <Style TargetType="tk:DateTimePicker">
+        <Style TargetType="tk:DateTimePicker">
             <Setter Property="MaxWidth" Value="450px" />
-            <Setter Property="MinHeight" Value="45px" />
+            <Setter Property="MinHeight" Value="25px" />
             <Setter Property="TextAlignment" Value="Center" />
             <Setter Property="VerticalAlignment" Value="Center" />
-            <Setter Property="FontSize" Value="15" />
+            <Setter Property="FontSize" Value="12" />
             <Setter Property="Margin" Value="5" />
         </Style>
 
@@ -81,8 +81,8 @@
                 <Trigger Property="IsSelected" Value="True">
                     <Setter Property="Background" Value="Red"/>
                 </Trigger>
-                
-                
+
+
             </Style.Triggers>
         </Style>
 
@@ -93,38 +93,54 @@
             <Setter Property="Margin" Value="2"/>
             <Setter Property="Padding" Value="2"></Setter>
         </Style>
-        
+
     </UserControl.Resources>
 
     <Grid>
         <Grid.RowDefinitions>
-            <RowDefinition Height="45" />
-            <RowDefinition Height="55" />
+            <RowDefinition Height="115" />
             <RowDefinition Height="*" />
             <RowDefinition Height="180" />
         </Grid.RowDefinitions>
-        
+
         <Grid.ColumnDefinitions>
+            <ColumnDefinition />
             <ColumnDefinition />
             <ColumnDefinition />
             <ColumnDefinition />
         </Grid.ColumnDefinitions>
 
-        
-        <Label Grid.Column="0" Grid.Row="0" HorizontalAlignment="Right">Agenda Name:</Label>
-        <TextBox Grid.Column="1" Grid.Row="0" HorizontalAlignment="Left"
+
+        <Grid Grid.Column="0" Grid.Row="0" Grid.ColumnSpan="4">
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="100" />
+                <ColumnDefinition Width="*" />
+            </Grid.ColumnDefinitions>
+            <Grid.RowDefinitions>
+                <RowDefinition Height="35" />
+                <RowDefinition Height="35" />
+                <RowDefinition Height="35" />
+            </Grid.RowDefinitions>
+
+            <Label Grid.Column="0" Grid.Row="0" HorizontalAlignment="Left">Agenda Name:</Label>
+            <TextBox Grid.Column="1" Grid.Row="0" HorizontalAlignment="Left"
                          Text="{Binding Name}"></TextBox>
-        
-        <Label HorizontalAlignment="Right" Grid.Column="0" Grid.Row="1">Meeting Date:</Label>
-        <tk:DateTimePicker  Grid.Row="1"
+            <Label Grid.Column="0" Grid.Row="1" HorizontalAlignment="Left">Video Name:</Label>
+            <TextBox Grid.Column="1" Grid.Row="1" HorizontalAlignment="Left"
+                         Text="{Binding VideoFileName}"></TextBox>
+
+            <Label HorizontalAlignment="Left" Grid.Column="0" Grid.Row="2">Meeting Date:</Label>
+            <tk:DateTimePicker  Grid.Row="2"
                             Grid.Column="1"
                             Grid.ColumnSpan="2"
                             HorizontalAlignment="Left"
                             Value="{Binding MeetingDate}"
                             Width="246" ></tk:DateTimePicker>
+        </Grid>
 
-        <TreeView x:Name="tvAgenda" AllowDrop="True" Grid.Row="2" 
-                  Grid.ColumnSpan="3" Margin="2"
+
+        <TreeView x:Name="tvAgenda" AllowDrop="True" Grid.Row="1" 
+                  Grid.ColumnSpan="4" Margin="2"
                   ItemsSource="{Binding Items}" 
                   PreviewMouseDown="TreeView_MouseDown" 
                   PreviewMouseMove="TreeView_MouseMove" 
@@ -137,7 +153,7 @@
             </e:Interaction.Behaviors>
         </TreeView>
 
-        <Grid Margin="2" Grid.Row="3" Grid.ColumnSpan="3" DataContext="{Binding SelectedItem}">
+        <Grid Margin="2" Grid.Row="2" Grid.ColumnSpan="4" DataContext="{Binding SelectedItem}">
             <Grid.RowDefinitions>
                 <RowDefinition Height="30" />
                 <RowDefinition />
@@ -146,10 +162,21 @@
             </Grid.RowDefinitions>
             <Grid.ColumnDefinitions>
                 <ColumnDefinition />
+                <ColumnDefinition />
             </Grid.ColumnDefinitions>
+            
             <TextBlock Grid.Column="0" Grid.Row="0"
-                       HorizontalAlignment="left" TextAlignment="Left" MinHeight="25"
-                           Text="{Binding TimeStamp}"></TextBlock>
+                       HorizontalAlignment="left"
+                       TextAlignment="Left" 
+                       MinHeight="25"
+                       Text="{Binding TimeStamp}" 
+                       Margin="4,2,0,2"></TextBlock>
+            <TextBlock Grid.Column="1" Grid.Row="0"
+                       HorizontalAlignment="left"
+                       TextAlignment="Left" 
+                       MinHeight="25"
+                       Text="{Binding Segment}" 
+                       Margin="4,2,0,2"></TextBlock>
 
             <tk:MultiLineTextEditor Grid.Row="1" Margin="2" IsSpellCheckEnabled="True"
                                     DropDownWidth="{Binding Path=ActualWidth, RelativeSource={RelativeSource Self}}"
@@ -157,7 +184,7 @@
                                     Content="{Binding Title}"
                                     TextWrapping="Wrap"
                                     ScrollViewer.HorizontalScrollBarVisibility="Disabled"
-                                    ScrollViewer.VerticalScrollBarVisibility="Auto" />
+                                    ScrollViewer.VerticalScrollBarVisibility="Auto" Grid.ColumnSpan="2" />
 
             <tk:MultiLineTextEditor Grid.Row="2" Margin="2" IsSpellCheckEnabled="True"
                                     DropDownWidth="{Binding Path=ActualWidth, RelativeSource={RelativeSource Self}}"
@@ -165,9 +192,9 @@
                                     Content="{Binding Description}"
                                     TextWrapping="Wrap"
                                     ScrollViewer.HorizontalScrollBarVisibility="Disabled"
-                                    ScrollViewer.VerticalScrollBarVisibility="Auto" />
+                                    ScrollViewer.VerticalScrollBarVisibility="Auto" Grid.ColumnSpan="2" />
 
-            <Border  Grid.Row="3" Background="LightBlue" VerticalAlignment="Center">
+            <Border  Grid.Row="3" Background="LightBlue" VerticalAlignment="Center" Grid.ColumnSpan="2" Margin="2,4">
                 <StackPanel Orientation="Horizontal"  Margin="2" HorizontalAlignment="Right">
                     <Button x:Name="cmdStamp"
                         ToolTip="Stamps the selected agenda with video frame and time" 
@@ -181,7 +208,7 @@
                             Command="{Binding SaveCommand}">Save</Button>
                 </StackPanel>
             </Border>
-            
+
         </Grid>
     </Grid>
 </UserControl>

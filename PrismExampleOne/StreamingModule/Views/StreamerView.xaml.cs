@@ -37,7 +37,7 @@ namespace OGV.Streaming.Views
             _encoder = new LiveEncodingSource(user);
             DataContext = _encoder;
             _userModel = user;
-
+            
             _encoder.LoadCompletedEvent += encoder_LoadCompletedEvent;
             _encoder.PreconnectPublishingPoint();
         }

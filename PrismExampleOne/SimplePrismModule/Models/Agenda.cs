@@ -66,7 +66,20 @@ namespace OGV.Infrastructure.Interfaces
         public string VideoFileName
         {
             get { return _videoFileName; }
-            set { _videoFileName = value; OnPropertyChanged("VideoFileName"); }
+            set { _videoFileName = value; OnPropertyChanged("VideoFileName"); OnChanged(); }
+        }
+
+        private string _currentSegment;
+
+        public string CurrentSegment
+        {
+            get { return _currentSegment; }
+            set
+            {
+                _currentSegment = value;
+                OnPropertyChanged("CurrentSegment");
+                OnChanged();
+            }
         }
 
         private string _orignalText;
@@ -167,6 +180,7 @@ namespace OGV.Infrastructure.Interfaces
                 string filePath = agenda.FullName;
                 Agenda a = new Agenda() { OriginalText = allText, FilePath = filePath };
                 XDocument xDoc = XDocument.Parse(a.OriginalText);
+                a.VideoFileName = xDoc.Element("meeting").Element("filename").Value;
                 a.MeetingDate = DateTime.Parse(xDoc.Element("meeting").Element("meetingdate").Value);
                 a.Name = agenda.Name;
                 var allAgendaItems = xDoc.Element("meeting").Element("agenda").Element("items").Elements("item");
@@ -201,6 +215,9 @@ namespace OGV.Infrastructure.Interfaces
             if (itemElement.Element("timestamp") != null)
                 ai.TimeStamp = TimeSpan.Parse(itemElement.Element("timestamp").Value);
 
+            if (itemElement.Element("segment") != null)
+                ai.Segment = (string)itemElement.Element("segment") ?? "0";
+
             if (itemElement.Element("items") != null)
             {
                 foreach (var subItem in itemElement.Element("items").Elements("item"))
@@ -215,7 +232,6 @@ namespace OGV.Infrastructure.Interfaces
         public override string ToString()
         {
             XDocument xdoc = XDocument.Parse("<meeting></meeting>");
-            
             XElement meetingDate = new XElement("meetingdate", MeetingDate.ToString("G"));
             XElement agenda = new XElement("agenda");
             XElement items = new XElement("items");
@@ -274,8 +290,10 @@ namespace OGV.Infrastructure.Interfaces
             if (_items == null)
                 _items = new ObservableCollection<IAgendaItem>();
 
-            _items.Add(item);
             item.Parent = this;
+            item.OriginalText = item.ToString();
+            _items.Add(item);
+           
 
             item.ChangedEvent += ItemChanged_Event;
 
@@ -365,6 +383,7 @@ namespace OGV.Infrastructure.Interfaces
 
         public void OnStamp()
         {
+            SelectedItem.Segment = CurrentSegment;
             SelectedItem.TimeStamp = VideoTime;
         }
 

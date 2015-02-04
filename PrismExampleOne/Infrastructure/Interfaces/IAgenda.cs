@@ -34,5 +34,6 @@ namespace OGV.Infrastructure.Interfaces
         string ToString();
         int TotalItems { get; }
         string VideoFileName { get; set; }
+        string CurrentSegment { get; set; }
     }
 }

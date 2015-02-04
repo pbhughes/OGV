@@ -29,5 +29,6 @@ namespace OGV.Infrastructure.Interfaces
         TimeSpan TimeStamp { get; set; }
         string Title { get; set; }
         string ToString();
+        string Segment { get; set; } 
     }
 }

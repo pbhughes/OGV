@@ -12,6 +12,8 @@ using Microsoft.Expression.Encoder.Devices;
 using System.ComponentModel;
 using Microsoft.Practices.Prism.Commands;
 using OGV.Infrastructure.Interfaces;
+using System.IO;
+using OGV.Infrastructure.Extensions;
 
 namespace OGV.Streaming.Models
 {
@@ -97,6 +99,7 @@ namespace OGV.Streaming.Models
             : base()
         {
             _user = user;
+            _user.BoardList.AgendaSelectedEvent += BoardList_AgendaSelectedEvent;
             VideoDevices = eeDevices.EncoderDevices.FindDevices(eeDevices.EncoderDeviceType.Video);
             AudioDevices = eeDevices.EncoderDevices.FindDevices(eeDevices.EncoderDeviceType.Audio);
 
@@ -105,9 +108,16 @@ namespace OGV.Streaming.Models
             RecordCommand = new DelegateCommand(OnRecord, CanRecord);
             StopCommand = new DelegateCommand(OnStop, CanStop);
 
+
             ActivateSource(VideoDevice, AudioDevice);
            
            
+        }
+
+        void BoardList_AgendaSelectedEvent(IAgenda selected)
+        {
+            RecordCommand.RaiseCanExecuteChanged();
+            StopCommand.RaiseCanExecuteChanged();
         }
 
         private bool CanStop()
@@ -124,7 +134,7 @@ namespace OGV.Streaming.Models
 
         private bool CanRecord()
         {
-            return (!_job.IsCapturing );
+            return (!_job.IsCapturing && _user.BoardList.SelectedAgenda != null );
         }
 
         private void OnRecord()
@@ -136,13 +146,16 @@ namespace OGV.Streaming.Models
 
                     _job = new LiveJob();
                     _job.Status += new EventHandler<EncodeStatusEventArgs>(job_Status);
-                    // remove all existing output formats it will have
-                    //to add them new each time
-                    _job.PublishFormats.Clear();
+                    
 
                 }
+                // remove all existing output formats it will have
+                //to add them new each time
+                _job.PublishFormats.Clear();
+
                 //set the start time
-                _startTime = DateTime.Now;
+                if (_startTime == null)
+                    _startTime = DateTime.Now;
 
                 //create the base file structure if it does not exist
                 string myVideos = Environment.GetFolderPath(Environment.SpecialFolder.MyVideos);
@@ -156,15 +169,40 @@ namespace OGV.Streaming.Models
                 if (!System.IO.Directory.Exists(myVideos))
                     System.IO.Directory.CreateDirectory(myVideos);
 
+                //check the video file name
+                string ext = "mp4";
+                if (_user != null)
+                    if (_user.BoardList != null)
+                        if (_user.BoardList.SelectedAgenda != null)
+                            if (!string.IsNullOrEmpty(_user.BoardList.SelectedAgenda.VideoFileName))
+                            {
+                                if (_user.BoardList.SelectedAgenda.VideoFileName.Contains(".wmv"))
+                                {
+                                    _user.BoardList.SelectedAgenda.VideoFileName.Replace(".wmv", "");
+
+                                }
+                                SessionName = _user.BoardList.SelectedAgenda.VideoFileName;
+ 
+                            }
+                            else
+                            {
+                                //the file name is not set
+                                SessionName = DateTime.Now.ToShortDateString().Replace("/","_") + "video" + "."+ ext;
+                                _user.BoardList.SelectedAgenda.VideoFileName = SessionName;
+                            }
                 //add the file archive output format by choosing
                 //a segment file name that has not been used today
-                string fileName = string.Format("{0}_{1}.ismv", SessionName, 1);
+
+                string fileName = SessionName;
                 int i = 1;
                 string fullPath = System.IO.Path.Combine(myVideos, fileName);
+                FileInfo fo = new FileInfo(fullPath);
                 while (System.IO.File.Exists(fullPath))
                 {
-                    fileName = string.Format("{0}_{1}.ismv", SessionName, i++);
+                    fileName = string.Format("{0}_{1}{2}",fo.FileNameNoExt(),i++,fo.Extension);
                     fullPath = System.IO.Path.Combine(myVideos, fileName);
+                    _user.BoardList.SelectedAgenda.CurrentSegment = fileName;
+                    _user.BoardList.SelectedAgenda.VideoFileName = fileName;
 
                 }
 
@@ -255,8 +293,6 @@ namespace OGV.Streaming.Models
 
         }
 
-        
-
         public LiveSource AddRootSource()
         {
             _liveSource = Job.AddDeviceSource(VideoDevice, AudioDevice);
@@ -279,13 +315,11 @@ namespace OGV.Streaming.Models
             _timerFrameTrack.Stop();
             base.Job.StopEncoding();
             base.State = "Disconnected";
-            NumberOfDroppedSamples = 0;
-            NumberOfSamples = 0;
-            SessionTime = "00 : 00 : 00";
 
         }
 
-        public PreviewWindow SetInputPreviewWindow(System.Drawing.Size windowSize, System.Windows.Forms.Panel pnlInputPreview)
+        public PreviewWindow SetInputPreviewWindow(System.Drawing.Size windowSize, 
+            System.Windows.Forms.Panel pnlInputPreview)
         {
 
             HandleRef h = new HandleRef(pnlInputPreview, pnlInputPreview.Handle);
@@ -377,8 +411,6 @@ namespace OGV.Streaming.Models
             }
         }
 
-     
-
         #endregion
 
         #region Event Handlers
@@ -389,22 +421,16 @@ namespace OGV.Streaming.Models
             NumberOfDroppedSamples = _job.NumberOfDroppedSamples;
             NumberOfSamples = _job.NumberOfEncodedSamples;
 
+            TimeSpan current = (_startTime - DateTime.Now );
             //set the video time for stamps
             if(_user != null)
                 if(_user.BoardList != null)
                     if (_user.BoardList.SelectedAgenda != null)
                     {
-                        _user.BoardList.SelectedAgenda.VideoTime = new TimeSpan(
-                                (DateTime.Now - _startTime).Hours,
-                                (DateTime.Now - _startTime).Minutes,
-                                (DateTime.Now - _startTime).Seconds
-                            );
+                        _user.BoardList.SelectedAgenda.VideoTime = current;
                     }
             //report the time
-            SessionTime = string.Format("{0} : {1} : {2}",
-                (DateTime.Now - _startTime).Hours,
-                (DateTime.Now - _startTime).Minutes,
-                (DateTime.Now - _startTime).Seconds);
+            SessionTime = string.Format("{0} : {1} : {2}",current.Hours,current.Minutes,current.Seconds);
 
             if (_numberOfDroppedSamples > 100)
             {

@@ -83,8 +83,10 @@ namespace OGV.Admin.Models
             XDocument xdoc = XDocument.Parse("<item></item>");
             XElement title = new XElement("title", Title);
             XElement desc = new XElement("desc", Description);
+            XElement segment = new XElement("segment", Segment);
             XElement timeStamp = new XElement("timestamp", TimeStamp.ToString());
             XElement items = new XElement("items");
+            
             xdoc.Element("item").Add(title);
             xdoc.Element("item").Add(desc);
             xdoc.Element("item").Add(timeStamp);
@@ -114,7 +116,7 @@ namespace OGV.Admin.Models
             Description = (string)xDoc.Element("item").Element("desc") ?? "";
             Frame = long.Parse((string)xDoc.Element("item").Element("frame") ?? "0");
             TimeStamp = TimeSpan.Parse((string)xDoc.Element("item").Element("timestamp") ?? (new TimeSpan(0, 0, 0)).ToString());
-
+            Segment = (string)xDoc.Element("item").Element("segment") ?? "";
 
             if (xDoc.Element("item").Element("timestamp") != null)
                 TimeStamp = TimeSpan.Parse(xDoc.Element("item").Element("timestamp").Value);
@@ -125,7 +127,25 @@ namespace OGV.Admin.Models
             
         }
 
-      
+        private string _segment;
+        public string Segment
+        {
+            get
+            {
+                return _segment;
+            }
+            set
+            {
+                if (value != _segment)
+                {
+                    
+                    _segment = value;
+                    OnPropertyChanged("Segment");
+                    OnChanged();
+                }
+
+            }
+        }
 
         #region INotifyPropertyChanged
 
@@ -142,6 +162,7 @@ namespace OGV.Admin.Models
         #endregion
 
         #region IParent Interface
+
         public void RemoveItem(IAgendaItem item)
         {
             if (_items.Contains(item))
@@ -153,9 +174,11 @@ namespace OGV.Admin.Models
             if (_items == null)
                 _items = new ObservableCollection<IAgendaItem>();
 
+            item.Parent = this;
+            item.OriginalText = item.ToString();
             _items.Add(item);
 
-            item.Parent = this;
+          
             item.ChangedEvent += ItemChanged_Event;
 
             OnChanged();
@@ -210,7 +233,7 @@ namespace OGV.Admin.Models
         public void OnSave()
         {
             if (this == null)
-                throw new InvalidOperationException("No agenda has been loaded");
+                throw new InvalidOperationException("Agenda has not been loaded");
 
             string allText = this.ToString();
             OriginalText = allText;
@@ -237,11 +260,17 @@ namespace OGV.Admin.Models
         {
             get
             {
-                int orignalHash = OriginalText.GetHashCode();
-                string current = this.ToString();
-                int currenHash = current.GetHashCode();
+                if (!string.IsNullOrEmpty(OriginalText))
+                {
+                    int orignalHash = OriginalText.GetHashCode();
+                    string current = this.ToString();
+                    int currenHash = current.GetHashCode();
 
-                return orignalHash != currenHash;
+                    return orignalHash != currenHash;
+                }
+
+                return false;
+                
             }
         }
 
@@ -261,6 +290,9 @@ namespace OGV.Admin.Models
         #endregion
 
 
-      
+
+
+
+       
     }
 }

@@ -1,19 +1,24 @@
 ﻿using System;
+using Microsoft.Practices.Prism.Commands;
 namespace OGV.Infrastructure.Interfaces
 {
+    public delegate void AgendaSelectedDelegate( IAgenda selected );
+
     public interface IBoardList
     {
-        Microsoft.Practices.Prism.Commands.DelegateCommand AddNodeCommand { get; }
+        DelegateCommand AddNodeCommand { get; }
         System.Collections.ObjectModel.ObservableCollection<IBoard> Boards { get; set; }
         event EventHandler CanExecuteChanged;
-        Microsoft.Practices.Prism.Commands.DelegateCommand ChooseAgendaCommand { get; }
+        DelegateCommand ChooseAgendaCommand { get; }
         bool IsBusy { get; set; }
         void Load();
-        Microsoft.Practices.Prism.Commands.DelegateCommand LoadAgendaCommand { get; }
-        Microsoft.Practices.Prism.Commands.DelegateCommand LogOutCommand { get; }
+        DelegateCommand LoadAgendaCommand { get; }
+        DelegateCommand LogOutCommand { get; }
         IAgenda ParseAgenda(System.IO.FileSystemInfo agenda);
         event System.ComponentModel.PropertyChangedEventHandler PropertyChanged;
-        Microsoft.Practices.Prism.Commands.DelegateCommand<IAgendaItem> RemoveNodeCommand { get; }
+        event AgendaSelectedDelegate AgendaSelectedEvent;
+        void OnAgendaSelected(IAgenda sender);
+        DelegateCommand<IAgendaItem> RemoveNodeCommand { get; }
         void SaveAgenda();
         IAgenda SelectedAgenda { get; set; }
         IBoard SelectedBoard { get; set; }

@@ -19,6 +19,8 @@ using OGV.Infrastructure.Interfaces;
 
 namespace OGV.Admin.Models
 {
+    
+
     public class BoardList : INotifyPropertyChanged, IBoardList
     {
         private IUnityContainer _container;
@@ -63,6 +65,7 @@ namespace OGV.Admin.Models
                 _selectedAgenda = value;
                 OnPropertyChanged("SelectedAgenda");
                 LoadAgendaCommand.RaiseCanExecuteChanged();
+                OnAgendaSelected(value);
             }
         }
 
@@ -74,9 +77,9 @@ namespace OGV.Admin.Models
             set { _isBusy = value; OnPropertyChanged("IsBusy"); }
         }
 
-     
-
         public event EventHandler CanExecuteChanged;
+
+        public event AgendaSelectedDelegate AgendaSelectedEvent;
 
         public DelegateCommand LoadAgendaCommand { get; private set; }
 
@@ -161,7 +164,7 @@ namespace OGV.Admin.Models
           
         }
 
-        private bool CanInsertNode()
+        private bool CanAddNode()
         {
             if (SelectedAgenda == null)
                 return false;
@@ -169,7 +172,7 @@ namespace OGV.Admin.Models
             return true;
         }
 
-        private void OnInsertNode()
+        private void OnAddNode()
         {
             string newTitleVerbiage = "New Agenda Item... Please add a title";
             if (SelectedAgenda.SelectedItem == null)
@@ -199,14 +202,19 @@ namespace OGV.Admin.Models
 
             item.Parent.RemoveItem(item);
         }
-        
+
+        public void OnAgendaSelected(IAgenda selected)
+        {
+            if (AgendaSelectedEvent != null)
+                AgendaSelectedEvent(SelectedAgenda);
+        }
         public BoardList()
         {
 
             this.LoadAgendaCommand = new DelegateCommand(OnLoadAgenda, CanLoadAgenda);
             this.LogOutCommand = new DelegateCommand(OnLogOut, CanLogOut);
             this.ChooseAgendaCommand = new DelegateCommand(OnChooseAgenda, CanChooseAgenda);
-            this.AddNodeCommand = new DelegateCommand(OnInsertNode, CanInsertNode);
+            this.AddNodeCommand = new DelegateCommand(OnAddNode, CanAddNode);
             this.RemoveNodeCommand = new DelegateCommand<IAgendaItem >(OnRemoveNode, CanRemoveNode);
 
 
@@ -228,7 +236,7 @@ namespace OGV.Admin.Models
             this.LoadAgendaCommand = new DelegateCommand(OnLoadAgenda, CanLoadAgenda);
             this.LogOutCommand = new DelegateCommand(OnLogOut, CanLogOut);
             this.ChooseAgendaCommand = new DelegateCommand(OnChooseAgenda, CanChooseAgenda);
-            this.AddNodeCommand = new DelegateCommand(OnInsertNode, CanInsertNode);
+            this.AddNodeCommand = new DelegateCommand(OnAddNode, CanAddNode);
             this.RemoveNodeCommand = new DelegateCommand<IAgendaItem>(OnRemoveNode, CanRemoveNode);
             _regionManager = 
                 Microsoft.Practices.ServiceLocation.ServiceLocator.
@@ -307,6 +315,7 @@ namespace OGV.Admin.Models
                 a.MeetingDate = DateTime.Parse(xDoc.Element("meeting").Element("meetingdate").Value);
                 a.Name = agenda.Name;
                 a.VideoFileName = xDoc.Element("meeting").Element("filename").Value;
+                a.CurrentSegment = a.VideoFileName;
                 var allAgendaItems = xDoc.Element("meeting").Element("agenda").Element("items").Elements("item");
                 foreach(var itemElement in allAgendaItems )
                 {
@@ -366,6 +375,9 @@ namespace OGV.Admin.Models
             if (itemElement.Element("timestamp") != null)
                 ai.TimeStamp = TimeSpan.Parse(itemElement.Element("timestamp").Value);
 
+            if (itemElement.Element("segment") != null)
+                ai.TimeStamp = TimeSpan.Parse(itemElement.Element("segment").Value);
+
             if (itemElement.Element("items") != null)
             {
                 foreach (var subItem in itemElement.Element("items").Elements("item"))
@@ -391,6 +403,9 @@ namespace OGV.Admin.Models
         }
 
         #endregion
+
+
+
        
     }
 }

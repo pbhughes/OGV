@@ -9,7 +9,8 @@ using System.Drawing;
 using System.Windows.Forms;
 using Microsoft.Practices.Prism.Commands;
 
-namespace OGV.Streaming.Models
+
+namespace OGV.Infrastructure.Interfaces
 {
        public interface IEncoderInterface
     {
