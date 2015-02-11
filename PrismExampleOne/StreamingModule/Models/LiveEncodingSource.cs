@@ -90,6 +90,9 @@ namespace OGV.Streaming.Models
 
         protected DateTime _startTime;
 
+        protected TimeSpan _totalRecordTime = new TimeSpan(0, 0, 0);
+
+
         IUserViewModel _user;
         #endregion
 
@@ -154,8 +157,7 @@ namespace OGV.Streaming.Models
                 _job.PublishFormats.Clear();
 
                 //set the start time
-                if (_startTime == null)
-                    _startTime = DateTime.Now;
+                _startTime = DateTime.Now;
 
                 //create the base file structure if it does not exist
                 string myVideos = Environment.GetFolderPath(Environment.SpecialFolder.MyVideos);
@@ -421,16 +423,21 @@ namespace OGV.Streaming.Models
             NumberOfDroppedSamples = _job.NumberOfDroppedSamples;
             NumberOfSamples = _job.NumberOfEncodedSamples;
 
-            TimeSpan current = (_startTime - DateTime.Now );
+            
+
+            TimeSpan current = DateTime.Now.Subtract( _startTime );
+            _totalRecordTime += current;
+
+
             //set the video time for stamps
             if(_user != null)
                 if(_user.BoardList != null)
                     if (_user.BoardList.SelectedAgenda != null)
                     {
-                        _user.BoardList.SelectedAgenda.VideoTime = current;
+                        _user.BoardList.SelectedAgenda.VideoTime = _totalRecordTime;
                     }
             //report the time
-            SessionTime = string.Format("{0} : {1} : {2}",current.Hours,current.Minutes,current.Seconds);
+            SessionTime = string.Format("{0} : {1} : {2}", _totalRecordTime.Hours, _totalRecordTime.Minutes, _totalRecordTime.Seconds);
 
             if (_numberOfDroppedSamples > 100)
             {
