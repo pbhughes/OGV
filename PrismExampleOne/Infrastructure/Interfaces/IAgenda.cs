@@ -28,6 +28,7 @@ namespace OGV.Infrastructure.Interfaces
         void Reset();
         DelegateCommand ResetCommand { get; set; }
         DelegateCommand SaveCommand { get; set; }
+        DelegateCommand AssociateVideo { get; set; }
         TimeSpan VideoTime { get; set; }
         bool SaveNeeded { get; }
         IAgendaItem SelectedItem { get; set; }

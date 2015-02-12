@@ -68,6 +68,7 @@
             <Setter Property="Margin" Value="5px" />
         </Style>
     </UserControl.Resources>
+    
     <ScrollViewer VerticalScrollBarVisibility="Auto">
         <Grid>
             <Grid.RowDefinitions>
@@ -148,7 +149,13 @@
                                 <TextBlock Text="{Binding SelectedAgenda.TotalItems}" />
                             </Border>
                         </StackPanel>
-        
+                        <StackPanel Orientation="Horizontal">
+                            <Label>Video File:</Label>
+                            <Border>
+                                <TextBlock Text="{Binding SelectedAgenda.VideoFileName}" />
+                            </Border>
+                        </StackPanel>
+
                     </StackPanel>
                    
                 </Grid>
