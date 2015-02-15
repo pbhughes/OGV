@@ -4,14 +4,29 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 VisualStudioVersion = 12.0.31101.0
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Main", "PrismExampleOne\Main.csproj", "{0181DE4F-CC01-4242-BF0F-5591E3666A78}"
+	ProjectSection(ProjectDependencies) = postProject
+		{AC74B650-E3C0-4A4D-9BB5-0D4BABEACFCA} = {AC74B650-E3C0-4A4D-9BB5-0D4BABEACFCA}
+		{73CA3B74-58A2-4867-ADCB-60B20CF34289} = {73CA3B74-58A2-4867-ADCB-60B20CF34289}
+		{939FA592-08FC-4564-AFD3-E3B133DE6DDE} = {939FA592-08FC-4564-AFD3-E3B133DE6DDE}
+		{039D4CA2-EBAC-4929-BFE7-6B03E83E69FF} = {039D4CA2-EBAC-4929-BFE7-6B03E83E69FF}
+	EndProjectSection
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "AdminModule", "SimplePrismModule\AdminModule.csproj", "{039D4CA2-EBAC-4929-BFE7-6B03E83E69FF}"
+	ProjectSection(ProjectDependencies) = postProject
+		{AC74B650-E3C0-4A4D-9BB5-0D4BABEACFCA} = {AC74B650-E3C0-4A4D-9BB5-0D4BABEACFCA}
+	EndProjectSection
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "StreamingModule", "StreamingModule\StreamingModule.csproj", "{73CA3B74-58A2-4867-ADCB-60B20CF34289}"
+	ProjectSection(ProjectDependencies) = postProject
+		{AC74B650-E3C0-4A4D-9BB5-0D4BABEACFCA} = {AC74B650-E3C0-4A4D-9BB5-0D4BABEACFCA}
+	EndProjectSection
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Infrastructure", "Infrastructure\Infrastructure.csproj", "{AC74B650-E3C0-4A4D-9BB5-0D4BABEACFCA}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Cache", "CacheManager\Cache.csproj", "{939FA592-08FC-4564-AFD3-E3B133DE6DDE}"
+	ProjectSection(ProjectDependencies) = postProject
+		{AC74B650-E3C0-4A4D-9BB5-0D4BABEACFCA} = {AC74B650-E3C0-4A4D-9BB5-0D4BABEACFCA}
+	EndProjectSection
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "UnitTestProject1", "UnitTestProject1\UnitTestProject1.csproj", "{0318E2B4-E515-46A5-82DE-DB35513833A8}"
 EndProject

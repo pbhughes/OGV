@@ -6,6 +6,7 @@ using System.IO;
 using System.Xml.Linq;
 using OGV.Infrastructure.Interfaces;
 using OGV.Admin.Models;
+using System.Windows.Forms;
 
 namespace OGV.Infrastructure.Interfaces
 {
@@ -65,9 +66,26 @@ namespace OGV.Infrastructure.Interfaces
 
         public string VideoFileName
         {
-            get { return _videoFileName; }
-            set { _videoFileName = value; OnPropertyChanged("VideoFileName"); OnChanged(); }
+            get
+            {
+                return _videoFileName;
+            }
+            set
+            {
+                _videoFileName = value; OnPropertyChanged("VideoFileName"); OnChanged();
+            }
+            
         }
+
+        private string _videoFilePath;
+
+        public string VideoFilePath
+        {
+            get { return _videoFilePath; }
+            set { _videoFilePath = value; OnPropertyChanged("VideoFilePath"); OnChanged(); }
+        }
+
+
 
         private string _currentSegment;
 
@@ -129,12 +147,15 @@ namespace OGV.Infrastructure.Interfaces
             this.SaveCommand = new DelegateCommand(OnSave, CanSave);
             this.ResetCommand = new DelegateCommand(OnReset, CanReset);
             this.StampCommand = new DelegateCommand(OnStamp, CanStamp);
+            this.AssociateVideoCommand = new DelegateCommand(OnAssociateVideo, CanAssociateVideo);
 
             _items = new ObservableCollection<IAgendaItem>();
             AgendaItem level1 = new AgendaItem() { Title = "Top 1" };
             AgendaItem level2 = new AgendaItem() { Title = "Top 2" };
             level1.Items.Add(level2);
         }
+
+       
 
         public void OnChanged()
         {
@@ -180,7 +201,7 @@ namespace OGV.Infrastructure.Interfaces
                 string filePath = agenda.FullName;
                 Agenda a = new Agenda() { OriginalText = allText, FilePath = filePath };
                 XDocument xDoc = XDocument.Parse(a.OriginalText);
-                a.VideoFileName = xDoc.Element("meeting").Element("filename").Value;
+                a.VideoFilePath = xDoc.Element("meeting").Element("filename").Value;
                 a.MeetingDate = DateTime.Parse(xDoc.Element("meeting").Element("meetingdate").Value);
                 a.Name = agenda.Name;
                 var allAgendaItems = xDoc.Element("meeting").Element("agenda").Element("items").Elements("item");
@@ -262,6 +283,19 @@ namespace OGV.Infrastructure.Interfaces
             set { _videoTime = value; }
         }
 
+        private bool _isRecording;
+        public bool IsRecording
+        {
+            get
+            {
+                return _isRecording;
+            }
+            set
+            {
+                _isRecording = value; OnPropertyChanged("IsRecording"); OnChanged();
+            }
+        }
+
         #region INotifyPropertyChanged
 
         public event PropertyChangedEventHandler PropertyChanged;
@@ -334,6 +368,8 @@ namespace OGV.Infrastructure.Interfaces
 
         public DelegateCommand StampCommand { get; set; }
 
+        public DelegateCommand AssociateVideoCommand { get; set; }
+
         public event ChangedEventHandler ChangedEvent;
 
         public bool CanSave()
@@ -365,7 +401,7 @@ namespace OGV.Infrastructure.Interfaces
         {
             if (this != null)
             {
-                return SaveNeeded;
+                return SaveNeeded && !IsRecording;
             }
 
             return false;
@@ -387,11 +423,40 @@ namespace OGV.Infrastructure.Interfaces
             SelectedItem.TimeStamp = VideoTime;
         }
 
+        private bool CanAssociateVideo()
+        {
+            return true;
+        }
+
+        private void OnAssociateVideo()
+        {
+            OpenFileDialog openFileDialog1 = new OpenFileDialog();
+
+            openFileDialog1.InitialDirectory = Environment.GetFolderPath(Environment.SpecialFolder.MyVideos);
+            openFileDialog1.Filter = "mp4 files (*.mp4)|*.mp4";
+            openFileDialog1.FilterIndex = 2;
+            openFileDialog1.RestoreDirectory = true;
+            openFileDialog1.CheckFileExists = false;
+
+            if (openFileDialog1.ShowDialog() == DialogResult.OK)
+            {
+                try
+                {
+                    if (! string.IsNullOrEmpty(openFileDialog1.FileName) )
+                    {
+                        this.VideoFilePath = openFileDialog1.FileName;
+
+                    }
+                }
+                catch (Exception ex)
+                {
+                    MessageBox.Show("Error: Could not read file from disk. Original error: " + ex.Message);
+                }
+            }
+        }
+
         #endregion
 
-
-     
-
-        
+       
     }
 }

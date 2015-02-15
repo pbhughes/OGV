@@ -137,14 +137,14 @@ namespace OGV.Admin.Models
 
         private bool CanLogOut()
         {
-            return SelectedAgenda == null? true : ! SelectedAgenda.SaveNeeded;
+            return SelectedAgenda == null ? true : !SelectedAgenda.SaveNeeded && !SelectedAgenda.IsRecording;
            
         }
 
         private bool CanChooseAgenda()
         {
-            if(SelectedAgenda != null)
-                return ! SelectedAgenda.SaveNeeded;
+            if (SelectedAgenda != null)
+                return !SelectedAgenda.SaveNeeded && !SelectedAgenda.IsRecording;
 
             return false;
         }
@@ -314,8 +314,8 @@ namespace OGV.Admin.Models
                 xDoc.Declaration = null;
                 a.MeetingDate = DateTime.Parse(xDoc.Element("meeting").Element("meetingdate").Value);
                 a.Name = agenda.Name;
-                a.VideoFileName = xDoc.Element("meeting").Element("filename").Value;
-                a.CurrentSegment = a.VideoFileName;
+                a.VideoFilePath = xDoc.Element("meeting").Element("filename").Value;
+                a.CurrentSegment = a.VideoFilePath;
                 var allAgendaItems = xDoc.Element("meeting").Element("agenda").Element("items").Elements("item");
                 foreach(var itemElement in allAgendaItems )
                 {

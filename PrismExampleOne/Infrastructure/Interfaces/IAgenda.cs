@@ -28,13 +28,15 @@ namespace OGV.Infrastructure.Interfaces
         void Reset();
         DelegateCommand ResetCommand { get; set; }
         DelegateCommand SaveCommand { get; set; }
-        DelegateCommand AssociateVideo { get; set; }
+        DelegateCommand AssociateVideoCommand { get; set; }
         TimeSpan VideoTime { get; set; }
         bool SaveNeeded { get; }
         IAgendaItem SelectedItem { get; set; }
         string ToString();
         int TotalItems { get; }
         string VideoFileName { get; set; }
+        string VideoFilePath { get; set; }
         string CurrentSegment { get; set; }
+        bool IsRecording { get; set; }
     }
 }

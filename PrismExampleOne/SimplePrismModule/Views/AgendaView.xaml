@@ -126,9 +126,12 @@
             <TextBox Grid.Column="1" Grid.Row="0" HorizontalAlignment="Left"
                          Text="{Binding Name}"></TextBox>
             <Label Grid.Column="0" Grid.Row="1" HorizontalAlignment="Left">Video Name:</Label>
-            <TextBox Grid.Column="1" Grid.Row="1" HorizontalAlignment="Left"
+            <StackPanel HorizontalAlignment="Left" Grid.Column="1" Grid.Row="1" Orientation="Horizontal" Margin="1">
+                <TextBox HorizontalAlignment="Left"
                          Text="{Binding VideoFileName}"></TextBox>
-
+                <Button Command="{Binding AssociateVideoCommand}">...</Button>
+            </StackPanel>
+          
             <Label HorizontalAlignment="Left" Grid.Column="0" Grid.Row="2">Meeting Date:</Label>
             <tk:DateTimePicker  Grid.Row="2"
                             Grid.Column="1"

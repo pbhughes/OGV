@@ -131,6 +131,9 @@ namespace OGV.Streaming.Models
         private void OnStop()
         {
             StopEncoding();
+            _user.BoardList.SelectedAgenda.IsRecording = false;
+            _user.BoardList.LoadAgendaCommand.RaiseCanExecuteChanged();
+            _user.BoardList.LogOutCommand.RaiseCanExecuteChanged();
             StopCommand.RaiseCanExecuteChanged();
             RecordCommand.RaiseCanExecuteChanged();
         }
@@ -176,21 +179,21 @@ namespace OGV.Streaming.Models
                 if (_user != null)
                     if (_user.BoardList != null)
                         if (_user.BoardList.SelectedAgenda != null)
-                            if (!string.IsNullOrEmpty(_user.BoardList.SelectedAgenda.VideoFileName))
+                            if (!string.IsNullOrEmpty(_user.BoardList.SelectedAgenda.VideoFilePath))
                             {
-                                if (_user.BoardList.SelectedAgenda.VideoFileName.Contains(".wmv"))
+                                if (_user.BoardList.SelectedAgenda.VideoFilePath.Contains(".wmv"))
                                 {
-                                    _user.BoardList.SelectedAgenda.VideoFileName.Replace(".wmv", "");
+                                    _user.BoardList.SelectedAgenda.VideoFilePath.Replace(".wmv", "");
 
                                 }
-                                SessionName = _user.BoardList.SelectedAgenda.VideoFileName;
+                                SessionName = _user.BoardList.SelectedAgenda.VideoFilePath;
  
                             }
                             else
                             {
                                 //the file name is not set
                                 SessionName = DateTime.Now.ToShortDateString().Replace("/","_") + "video" + "."+ ext;
-                                _user.BoardList.SelectedAgenda.VideoFileName = SessionName;
+                                _user.BoardList.SelectedAgenda.VideoFilePath = SessionName;
                             }
                 //add the file archive output format by choosing
                 //a segment file name that has not been used today
@@ -205,6 +208,7 @@ namespace OGV.Streaming.Models
                     fullPath = System.IO.Path.Combine(myVideos, fileName);
                     _user.BoardList.SelectedAgenda.CurrentSegment = fileName;
                     _user.BoardList.SelectedAgenda.VideoFileName = fileName;
+                    _user.BoardList.SelectedAgenda.VideoFilePath = fullPath;
 
                 }
 
@@ -216,6 +220,17 @@ namespace OGV.Streaming.Models
                     ActivateSource(VideoDevice, AudioDevice);
 
                 }
+
+                //add streaming format
+                PushBroadcastPublishFormat pushFormat = new PushBroadcastPublishFormat();
+                Preset preset = Preset.SystemLivePresets.Where(p => p.Name.Contains("Low Bandwidth")).First();
+                _job.ApplyPreset(preset);
+               
+                pushFormat.PublishingPoint = new Uri( @"http://ogv2.opengovideo.com/point1.isml");
+                _job.PublishFormats.Add(pushFormat);
+                
+              
+                
                 _job.StartEncoding();
 
                 _timerFrameTrack.Start();
