@@ -100,6 +100,15 @@ namespace OGV.Infrastructure.Interfaces
             }
         }
 
+        private string _publishingPoint;
+
+        public string PublishingPoint
+        {
+            get { return _publishingPoint; }
+            set { _publishingPoint = value; OnPropertyChanged("PublishingPoint"); OnChanged(); }
+        }
+
+
         private string _orignalText;
 
         public string OriginalText
@@ -193,6 +202,37 @@ namespace OGV.Infrastructure.Interfaces
 
         }
 
+        public IAgenda ParseAgenda(string filePath)
+        {
+            try
+            {
+                string allText = File.ReadAllText(filePath);
+                Agenda a = new Agenda() { OriginalText = allText, FilePath = filePath };
+                XDocument xDoc = XDocument.Parse(a.OriginalText);
+                a.VideoFilePath = xDoc.Element("meeting").Element("filename").Value;
+                a.PublishingPoint = xDoc.Element("meeting").Element("publishingpoint").Value;
+                a.MeetingDate = DateTime.Parse(xDoc.Element("meeting").Element("meetingdate").Value);
+                FileSystemInfo fSysInfo = new FileInfo(filePath);
+                a.Name = fSysInfo.Name;
+                var allAgendaItems = xDoc.Element("meeting").Element("agenda").Element("items").Elements("item");
+                foreach (var itemElement in allAgendaItems)
+                {
+
+                    AgendaItem ai = ParseAgendaItem(itemElement);
+                    a.AddItem(ai);
+
+                }
+
+                return a;
+            }
+            catch (Exception ex)
+            {
+
+                throw;
+            }
+
+        }
+
         public IAgenda ParseAgenda(FileSystemInfo agenda)
         {
             try
@@ -202,6 +242,7 @@ namespace OGV.Infrastructure.Interfaces
                 Agenda a = new Agenda() { OriginalText = allText, FilePath = filePath };
                 XDocument xDoc = XDocument.Parse(a.OriginalText);
                 a.VideoFilePath = xDoc.Element("meeting").Element("filename").Value;
+                a.PublishingPoint = xDoc.Element("meeting").Element("publishingpoint").Value;
                 a.MeetingDate = DateTime.Parse(xDoc.Element("meeting").Element("meetingdate").Value);
                 a.Name = agenda.Name;
                 var allAgendaItems = xDoc.Element("meeting").Element("agenda").Element("items").Elements("item");
@@ -257,6 +298,7 @@ namespace OGV.Infrastructure.Interfaces
             XElement agenda = new XElement("agenda");
             XElement items = new XElement("items");
             XElement videoFilName = new XElement("filename", VideoFileName);
+            XElement pubPoint = new XElement("publishingpoint", PublishingPoint);
             xdoc.Element("meeting").Add(videoFilName);
             xdoc.Element("meeting").Add(meetingDate);
             xdoc.Element("meeting").Add(agenda);

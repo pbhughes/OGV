@@ -272,7 +272,8 @@ namespace OGV.Admin.Models
                         
                         foreach (var agendaPath in agendaFiles)
                         {
-                            Agenda a = (Agenda)ParseAgenda(agendaPath);
+                            Agenda a = new Agenda();
+                            a = a.ParseAgenda(agendaPath) as Agenda;
                             b.Agendas.Add(a);
                         }
                        
@@ -303,38 +304,7 @@ namespace OGV.Admin.Models
             }
         }
 
-        public IAgenda ParseAgenda(FileSystemInfo agenda)
-        {
-            try
-            {
-                string allText = File.ReadAllText(agenda.FullName);
-                string filePath = agenda.FullName;
-                Agenda a = new Agenda() { FilePath = filePath };
-                XDocument xDoc = XDocument.Parse(allText);
-                xDoc.Declaration = null;
-                a.MeetingDate = DateTime.Parse(xDoc.Element("meeting").Element("meetingdate").Value);
-                a.Name = agenda.Name;
-                a.VideoFilePath = xDoc.Element("meeting").Element("filename").Value;
-                a.CurrentSegment = a.VideoFilePath;
-                var allAgendaItems = xDoc.Element("meeting").Element("agenda").Element("items").Elements("item");
-                foreach(var itemElement in allAgendaItems )
-                {
-
-                    AgendaItem ai = ParseAgendaItem(itemElement);
-                    ai.ChangedEvent += ItemChanged_Event;
-                    a.AddItem(ai);
-                }
-                a.OriginalText = a.ToString();
-                a.ChangedEvent += Agenda_Changed;
-                return a;
-            }
-            catch (Exception ex)
-            {
-                
-                throw;
-            }
-           
-        }
+    
 
         void Agenda_Changed(object sender, EventArgs e)
         {
@@ -362,35 +332,7 @@ namespace OGV.Admin.Models
             RemoveNodeCommand.RaiseCanExecuteChanged();
         }
 
-        private static AgendaItem ParseAgendaItem(XElement itemElement)
-        {
-            AgendaItem ai = new AgendaItem()
-            {
-                Title = (string)itemElement.Element("title") ?? "",
-                Description = (string)itemElement.Element("desc") ?? "",
-                Frame = long.Parse((string)itemElement.Element("frame") ??"0"),
-                TimeStamp = TimeSpan.Parse((string)itemElement.Element("timestamp")?? (new TimeSpan(0,0,0)).ToString())
-            };
-
-            if (itemElement.Element("timestamp") != null)
-                ai.TimeStamp = TimeSpan.Parse(itemElement.Element("timestamp").Value);
-
-            if (itemElement.Element("segment") != null)
-                ai.TimeStamp = TimeSpan.Parse(itemElement.Element("segment").Value);
-
-            if (itemElement.Element("items") != null)
-            {
-                foreach (var subItem in itemElement.Element("items").Elements("item"))
-                {
-                    var subAgendaItem = ParseAgendaItem(subItem);
-                    subAgendaItem.Parent = ai;
-                    ai.Items.Add(subAgendaItem);
-                    
-                }
-            }
-            ai.OriginalText = ai.ToString();
-            return ai;
-        }
+       
 
         #region INotifyPropertyChanged
 

@@ -8,27 +8,42 @@
 
     <Grid>
         <Grid.ColumnDefinitions>
-            <ColumnDefinition Width="550"></ColumnDefinition>
-            <ColumnDefinition Width="*"></ColumnDefinition>
+            <ColumnDefinition />
+            <ColumnDefinition Width="5" />
+            <ColumnDefinition />
         </Grid.ColumnDefinitions>
+        
         <Grid.RowDefinitions>
             <RowDefinition Height="50" />
             <RowDefinition />
         </Grid.RowDefinitions>
 
+
         <ContentControl Grid.Column="0"
-                        Grid.RowSpan="2"
-                        Name="SidebarRegion"
-                        prism:RegionManager.RegionName="SidebarRegion"></ContentControl>
-
-        <ItemsControl HorizontalAlignment="Stretch" Grid.Column="1" Grid.Row="0"
-                        Name="NavBarRegion"
-                      prism:RegionManager.RegionName="NavBarRegion"></ItemsControl>
-
-        <ContentControl Grid.Column="1"
                         Grid.Row="1"
                         Padding="2px"
                         HorizontalAlignment="Stretch"
                         Name="MainRegion" prism:RegionManager.RegionName="MainRegion"></ContentControl>
+
+
+        <ItemsControl HorizontalAlignment="Stretch" Grid.Column="0" Grid.Row="0"
+                        Name="NavBarRegion"
+                      prism:RegionManager.RegionName="NavBarRegion"></ItemsControl>
+
+
+        <GridSplitter Grid.Column="1" 
+                      Width="5" 
+                      HorizontalAlignment="Stretch"
+                      Grid.RowSpan="2"/>
+
+        <ContentControl Grid.Column="2"
+                        Grid.RowSpan="2"
+                        Name="SidebarRegion"
+                        HorizontalAlignment="Stretch"
+                        prism:RegionManager.RegionName="SidebarRegion"></ContentControl>
+
+        
+
+
     </Grid>
 </Window>

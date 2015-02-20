@@ -5,13 +5,14 @@
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
              xmlns:model="clr-namespace:OGV.Admin.Models"
              xmlns:local="clr-namespace:OGV.Admin"
+             xmlns:infra="clr-namespace:OGV.Infrastructure.Converters;assembly=OGV.Infrastructure"
              xmlns:prism="http://www.codeplex.com/prism"
              mc:Ignorable="d" Margin="2" MinHeight="575"
              d:DesignHeight="575" d:DesignWidth="450"  >
     
     <UserControl.Resources>
 
-        <local:BoolToVisibilityConverter
+        <infra:BoolToVisibilityConverter
          x:Key="BoolToHiddenConverter"
          TrueValue="Visible" FalseValue="Collapsed" />
 
@@ -22,7 +23,16 @@
             <Setter Property="Margin" Value="2"/>
             <Setter Property="Padding" Value="2"></Setter>
         </Style>
-        
+
+        <Style TargetType="TextBlock">
+            <Setter Property="MinWidth" Value="200px" />
+            <Setter Property="MinHeight" Value="45px" />
+            <Setter Property="FontSize" Value="15" />
+            <Setter Property="VerticalAlignment" Value="Center"/>
+            <Setter Property="TextAlignment" Value="Center"/>
+            <Setter Property="Padding" Value="10"/>
+        </Style>
+
         <Style TargetType="Button">
             <Setter Property="Margin" Value="0 0 10 0" />
             <Setter Property="MinHeight"  Value="45px" />
@@ -40,16 +50,6 @@
             <Setter Property="MinHeight" Value="45px" />
             <Setter Property="VerticalContentAlignment" Value="Center"/>
             <Setter Property="FontSize" Value="15" />
-        </Style>
-
-
-        <Style TargetType="TextBlock">
-            <Setter Property="MinWidth" Value="200px" />
-            <Setter Property="MinHeight" Value="45px" />
-            <Setter Property="FontSize" Value="15" />
-            <Setter Property="VerticalAlignment" Value="Center"/>
-            <Setter Property="TextAlignment" Value="Center"/>
-            <Setter Property="Padding" Value="10"/>
         </Style>
 
         <Style TargetType="Label">

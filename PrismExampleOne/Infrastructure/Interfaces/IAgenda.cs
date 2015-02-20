@@ -23,6 +23,7 @@ namespace OGV.Infrastructure.Interfaces
         void OnSave();
         string OriginalText { get; set; }
         IAgenda ParseAgenda(System.IO.FileSystemInfo agenda);
+        IAgenda ParseAgenda(string filePath);
         event System.ComponentModel.PropertyChangedEventHandler PropertyChanged;
         void RemoveItem(IAgendaItem item);
         void Reset();

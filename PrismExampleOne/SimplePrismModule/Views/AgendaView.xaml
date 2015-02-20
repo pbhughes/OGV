@@ -6,6 +6,7 @@
              xmlns:e="http://schemas.microsoft.com/expression/2010/interactivity"
              xmlns:model="clr-namespace:OGV.Admin.Models"
              xmlns:local="clr-namespace:OGV.Admin"
+             xmlns:infra="clr-namespace:OGV.Infrastructure.Converters;assembly=OGV.Infrastructure"
              xmlns:util="clr-namespace:OGV.Admin.Utility"
              xmlns:tk="http://schemas.xceed.com/wpf/xaml/toolkit"
              xmlns:tkGrid="http://schemas.xceed.com/wpf/xaml/datagrid"
@@ -17,7 +18,7 @@
 
     <UserControl.Resources>
 
-        <local:BoolToVisibilityConverter
+        <infra:BoolToVisibilityConverter
          x:Key="BoolToHiddenConverter"
          TrueValue="Visible" FalseValue="Collapsed" />
 

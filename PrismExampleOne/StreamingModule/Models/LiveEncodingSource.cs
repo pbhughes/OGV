@@ -175,7 +175,7 @@ namespace OGV.Streaming.Models
                     System.IO.Directory.CreateDirectory(myVideos);
 
                 //check the video file name
-                string ext = "mp4";
+                string ext = "ismv";
                 if (_user != null)
                     if (_user.BoardList != null)
                         if (_user.BoardList.SelectedAgenda != null)
@@ -213,7 +213,8 @@ namespace OGV.Streaming.Models
                 }
 
                 FileArchivePublishFormat archiveFormat = new FileArchivePublishFormat(fullPath);
-                Job.PublishFormats.Add(archiveFormat);
+                
+                _job.PublishFormats.Add(archiveFormat);
 
                 if (_liveSource == null)
                 {
@@ -228,13 +229,8 @@ namespace OGV.Streaming.Models
                
                 pushFormat.PublishingPoint = new Uri( @"http://ogv2.opengovideo.com/point1.isml");
                 _job.PublishFormats.Add(pushFormat);
-                
-              
-                
                 _job.StartEncoding();
-
                 _timerFrameTrack.Start();
-
                 StopCommand.RaiseCanExecuteChanged();
                 RecordCommand.RaiseCanExecuteChanged();
             }
@@ -437,11 +433,7 @@ namespace OGV.Streaming.Models
             //report the sample statistics
             NumberOfDroppedSamples = _job.NumberOfDroppedSamples;
             NumberOfSamples = _job.NumberOfEncodedSamples;
-
-            
-
-            TimeSpan current = DateTime.Now.Subtract( _startTime );
-            _totalRecordTime += current;
+            _totalRecordTime = _totalRecordTime.Add(new TimeSpan(0, 0, 0, 1, 0));
 
 
             //set the video time for stamps
@@ -453,16 +445,8 @@ namespace OGV.Streaming.Models
                     }
             //report the time
             SessionTime = string.Format("{0} : {1} : {2}", _totalRecordTime.Hours, _totalRecordTime.Minutes, _totalRecordTime.Seconds);
-
-            if (_numberOfDroppedSamples > 100)
-            {
-                MessageBox.Show(string.Format("The number of dropped samples is excessive.  Dropped Samples: {0} " +
-                    "- This is an indication of poo network performance. Live streaming will be stopped." +
-                    " Disable live streaming and turn on archiving.", NumberOfDroppedSamples));
-                _timerFrameTrack.Stop();
-                _job.StopEncoding();
-
-            }
+            System.Diagnostics.Debug.WriteLine(DateTime.Now.ToLongTimeString());
+            
         }
 
         #endregion
@@ -504,7 +488,7 @@ namespace OGV.Streaming.Models
 
             if (_timerFrameTrack == null)
             {
-                _timerFrameTrack = new System.Timers.Timer(500);
+                _timerFrameTrack = new System.Timers.Timer(1000);
                 _timerFrameTrack.Elapsed += timerFrameTrack_Elapsed;
             }
 

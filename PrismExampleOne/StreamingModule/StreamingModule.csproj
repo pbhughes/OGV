@@ -143,6 +143,9 @@
       <DependentUpon>Settings.settings</DependentUpon>
       <DesignTimeSharedInput>True</DesignTimeSharedInput>
     </Compile>
+    <Compile Include="Views\PublishingPointView.xaml.cs">
+      <DependentUpon>PublishingPointView.xaml</DependentUpon>
+    </Compile>
     <Compile Include="Views\StreamerView.xaml.cs">
       <DependentUpon>StreamerView.xaml</DependentUpon>
     </Compile>
@@ -161,6 +164,10 @@
     <None Include="App.config" />
   </ItemGroup>
   <ItemGroup>
+    <Page Include="Views\PublishingPointView.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
     <Page Include="Views\StreamerView.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>

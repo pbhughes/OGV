@@ -73,7 +73,7 @@ namespace PrismExampleOne
             this.Container.RegisterType<object, AgendaView>(typeof(AgendaView).FullName);
             this.Container.RegisterType<object, AgendaNavView>(typeof(AgendaNavView).FullName);
             this.Container.RegisterType<object, StreamerView>(typeof(StreamerView).FullName);
-            
+            this.Container.RegisterType<object, PublishingPointView>(typeof(PublishingPointView).FullName);
             
             this.Container.RegisterInstance<IXService>(_xService);
              

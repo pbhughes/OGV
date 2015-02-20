@@ -142,7 +142,6 @@
     <Compile Include="Views\SimpleView.xaml.cs">
       <DependentUpon>SimpleView.xaml</DependentUpon>
     </Compile>
-    <Compile Include="VisibilityConverter.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="app.config" />

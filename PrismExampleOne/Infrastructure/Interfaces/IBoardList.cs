@@ -14,7 +14,6 @@ namespace OGV.Infrastructure.Interfaces
         void Load();
         DelegateCommand LoadAgendaCommand { get; }
         DelegateCommand LogOutCommand { get; }
-        IAgenda ParseAgenda(System.IO.FileSystemInfo agenda);
         event System.ComponentModel.PropertyChangedEventHandler PropertyChanged;
         event AgendaSelectedDelegate AgendaSelectedEvent;
         void OnAgendaSelected(IAgenda sender);

@@ -45,6 +45,7 @@
             </Style.Triggers>
         </Style>
     </UserControl.Resources>
+    
     <Grid VerticalAlignment="Stretch">
         <Grid.RowDefinitions>
             <RowDefinition />

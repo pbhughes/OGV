@@ -4,6 +4,7 @@
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
              xmlns:models="clr-namespace:OGV.Admin"
+             xmlns:infra="clr-namespace:OGV.Infrastructure.Converters;assembly=OGV.Infrastructure"
              xmlns:tk="http://schemas.xceed.com/wpf/xaml/toolkit"
              mc:Ignorable="d" 
              d:DesignHeight="300" d:DesignWidth="450" 
@@ -12,7 +13,7 @@
     
     <UserControl.Resources>
 
-        <models:BoolToVisibilityConverter
+        <infra:BoolToVisibilityConverter
          x:Key="BoolToHiddenConverter"
          TrueValue="Visible" FalseValue="Collapsed" />
         <Style TargetType="PasswordBox">
