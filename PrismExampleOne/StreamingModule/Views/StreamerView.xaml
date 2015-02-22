@@ -79,17 +79,16 @@
                                 <StackPanel x:Name="stackSubClientDetails" Orientation="Vertical" HorizontalAlignment="Stretch">
                                     <StackPanel Orientation="Horizontal">
                                         <Label>Client Name:</Label>
-                                        <TextBlock x:Name="txtSubClientName" Text="{Binding Path=SubClient.SubClientName}"/>
+                                        <TextBlock x:Name="txtSubClientName" />
                                     </StackPanel>
                                     <StackPanel Orientation="Horizontal">
                                         <Label>Publishing Point:</Label>
-                                        <TextBlock x:Name="txtPublishingPoint" Text="{Binding Path=SubClient.PublishingPoint}"/>
+                                        <TextBlock x:Name="txtPublishingPoint" />
                                     </StackPanel>
                                     <StackPanel Orientation="Horizontal">
                                         <Label>Viewing Page:</Label>
                                         <TextBlock x:Name="txtHmLpage">
-                    <Hyperlink x:Name="hypFeedPage" 
-                               NavigateUri="{Binding Path=SubClient.LandingPage}">View near real time feed</Hyperlink>
+                    <Hyperlink x:Name="hypFeedPage">View near real time feed</Hyperlink>
                                         </TextBlock>
                                     </StackPanel>
                                 </StackPanel>

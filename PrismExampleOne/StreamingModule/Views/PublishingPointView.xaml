@@ -2,14 +2,19 @@
              xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
              xmlns:infra="clr-namespace:OGV.Infrastructure.Converters;assembly=OGV.Infrastructure"
-             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
-             xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
-             mc:Ignorable="d" 
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+             xmlns:tk="http://schemas.xceed.com/wpf/xaml/toolkit"
+             mc:Ignorable="d"
              d:DesignHeight="300" d:DesignWidth="300">
     <UserControl.Resources>
 
-        <infra:CollapsedIfNotNull x:Key="NullToVisible"/>
-        <infra:HiddenIfNullConverter x:Key="NullToHidden"/>
+        <infra:CollapsedIfNotNull x:Key="NullToVisible" />
+        <infra:HiddenIfNullConverter x:Key="NullToHidden" />
+
+        <infra:BoolToVisibilityConverter
+         x:Key="BoolToHiddenConverter"
+         TrueValue="Visible" FalseValue="Collapsed" />
         
         <Style TargetType="Label">
             <Setter Property="MinWidth" Value="100"></Setter>
@@ -31,15 +36,15 @@
         </Style>
 
         <Style TargetType="Image">
-            <Setter Property="Width" Value="35"/>
+            <Setter Property="Width" Value="35" />
             <Setter Property="Height" Value="25" />
         </Style>
 
         <Style TargetType="Border">
-            <Setter Property="BorderBrush" Value="LightBlue"/>
-            <Setter Property="BorderThickness" Value="2"/>
-            <Setter Property="CornerRadius" Value="6"/>
-            <Setter Property="Margin" Value="2"/>
+            <Setter Property="BorderBrush" Value="LightBlue" />
+            <Setter Property="BorderThickness" Value="2" />
+            <Setter Property="CornerRadius" Value="6" />
+            <Setter Property="Margin" Value="2" />
             <Setter Property="Padding" Value="2"></Setter>
         </Style>
 
@@ -47,46 +52,92 @@
             <Setter Property="MinWidth" Value="200px" />
             <Setter Property="MinHeight" Value="45px" />
             <Setter Property="FontSize" Value="15" />
-            <Setter Property="VerticalAlignment" Value="Center"/>
-            <Setter Property="TextAlignment" Value="Center"/>
-            <Setter Property="Padding" Value="10"/>
+            <Setter Property="VerticalAlignment" Value="Center" />
+            <Setter Property="TextAlignment" Value="Center" />
+            <Setter Property="Padding" Value="10" />
         </Style>
-    </UserControl.Resources> 
-        <Grid VerticalAlignment="Stretch" Margin="6">
+    </UserControl.Resources>
+    <Grid VerticalAlignment="Stretch" Margin="6">
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="Auto" />
+        </Grid.RowDefinitions>
+
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition />
+            <ColumnDefinition />
+        </Grid.ColumnDefinitions>
+        <StackPanel Orientation="Vertical" Grid.Row="0" Grid.ColumnSpan="2">
+            <Label >Publishing Point Configuration</Label>
+            <Label Visibility="{Binding SelectedAgenda, Converter={StaticResource NullToVisible}}">Please login and select an agenada!</Label>
+        </StackPanel>
+        
+        <Grid Grid.Row="1" Grid.ColumnSpan="2" Grid.RowSpan="2"
+                  Visibility="{Binding SelectedAgenda,Converter={StaticResource NullToHidden}}">
             <Grid.RowDefinitions>
-                <RowDefinition />
-                <RowDefinition />
-                <RowDefinition />
+                <RowDefinition/>
             </Grid.RowDefinitions>
-            
+
             <Grid.ColumnDefinitions>
                 <ColumnDefinition />
                 <ColumnDefinition />
             </Grid.ColumnDefinitions>
-            <Label Grid.Row="0" Grid.ColumnSpan="2">Publishing Point Configuration</Label>
-            <Label Grid.Row="1" Visibility="{Binding SelectedAgenda, Converter={StaticResource NullToVisible}}">Please login and select an agenada!</Label>
-            <Grid Grid.Row="1" Grid.ColumnSpan="2"
-                  Visibility="{Binding SelectedAgenda,Converter={StaticResource NullToHidden}}">
-                <Grid.RowDefinitions>
-                    <RowDefinition Height="35" />
-                </Grid.RowDefinitions>
-                
-                <Grid.ColumnDefinitions>
-                    <ColumnDefinition />
-                    <ColumnDefinition />
-                </Grid.ColumnDefinitions>
-            <StackPanel Orientation="Horizontal" 
+            
+            <StackPanel Orientation="Vertical"
                             Grid.Row="0" Grid.Column="0"
-                            Grid.ColumnSpan="2">
-                <Label VerticalAlignment="Center"
+                            Grid.ColumnSpan="2" >
+
+                <StackPanel Orientation="Horizontal">
+                    <Label VerticalAlignment="Center"
                        HorizontalAlignment="Right">Publishing Point</Label>
-                <Border>
-                    <TextBlock  VerticalAlignment="Center"
+                    <Border>
+                        <TextBlock  VerticalAlignment="Center"
                             TextAlignment="Left"
                             HorizontalAlignment="Left"
-                          Text="{Binding SelectedAgenda.PublishingPoint, Mode=OneWay}"/>
-                </Border>
+                          Text="{Binding SelectedAgenda.PublishingPoint, Mode=OneWay}" />
+                    </Border>
+                </StackPanel>
+
+                <StackPanel Orientation="Vertical"
+                            x:Name="pnlPointMonitor">
+                    
+                    <StackPanel Orientation="Horizontal" >
+                        <Label VerticalAlignment="Center"
+                       HorizontalAlignment="Right">Current State</Label>
+                        <Border>
+                            <TextBlock  VerticalAlignment="Center"
+                            TextAlignment="Left"
+                            HorizontalAlignment="Left"
+                          Text="{Binding State, Mode=OneWay}" />
+                        </Border>
+
+
+                    </StackPanel>
+
+                    <Border Visibility="{Binding IsBusy, Converter={StaticResource BoolToHiddenConverter }}">
+                        
+                            <tk:BusyIndicator BusyContent="{Binding Message}" IsBusy="{Binding IsBusy}" DisplayAfter="0">
+                                <tk:BusyIndicator.ProgressBarStyle>
+                                    <Style TargetType="ProgressBar">
+                                        <Setter Property="Visibility" Value="Collapsed"/>
+                                    </Style>
+                                </tk:BusyIndicator.ProgressBarStyle>
+                                <ContentControl />
+                            </tk:BusyIndicator>
+
+                    </Border>
+                    
+                    <StackPanel Orientation="Horizontal" HorizontalAlignment="Right">
+                        <Button
+                            Command="{Binding CheckStateCommand }"
+                            Style="{DynamicResource btn-primary}">Check State</Button>
+                    </StackPanel>
+                </StackPanel>                
+          
+                
             </StackPanel>
+            
+            
         </Grid>
-        </Grid>
+    </Grid>
 </UserControl>

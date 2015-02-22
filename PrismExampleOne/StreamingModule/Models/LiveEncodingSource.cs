@@ -112,7 +112,7 @@ namespace OGV.Streaming.Models
             StopCommand = new DelegateCommand(OnStop, CanStop);
 
 
-            ActivateSource(VideoDevice, AudioDevice);
+            //ActivateSource(VideoDevice, AudioDevice);
            
            
         }
@@ -125,6 +125,9 @@ namespace OGV.Streaming.Models
 
         private bool CanStop()
         {
+            if (_job == null)
+                return false;
+
             return _job.IsCapturing;
         }
 
@@ -140,6 +143,12 @@ namespace OGV.Streaming.Models
 
         private bool CanRecord()
         {
+            if (_job == null)
+                return false;
+
+            if (_user == null)
+                return false;
+
             return (!_job.IsCapturing && _user.BoardList.SelectedAgenda != null );
         }
 
@@ -208,6 +217,7 @@ namespace OGV.Streaming.Models
                     fullPath = System.IO.Path.Combine(myVideos, fileName);
                     _user.BoardList.SelectedAgenda.CurrentSegment = fileName;
                     _user.BoardList.SelectedAgenda.VideoFileName = fileName;
+                    _user.BoardList.SelectedAgenda.FileName = fileName;
                     _user.BoardList.SelectedAgenda.VideoFilePath = fullPath;
 
                 }

@@ -19,7 +19,10 @@ namespace OGV.Streaming
 
         public void Initialize()
         {
+            
             _regionManager.RegisterViewWithRegion("SidebarRegion", typeof(OGV.Streaming.Views.PublishingPointView));
+
+           
         }
     }
 }

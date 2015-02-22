@@ -24,7 +24,7 @@ namespace OGV.Streaming.Views
     /// <summary>
     /// Interaction logic for StreamerView.xaml
     /// </summary>
-    public partial class StreamerView : UserControl
+    public partial class StreamerView : UserControl, INavigationAware
     {
         LiveEncodingSource _encoder;
         IUnityContainer _container;
@@ -39,7 +39,7 @@ namespace OGV.Streaming.Views
             _userModel = user;
             
             _encoder.LoadCompletedEvent += encoder_LoadCompletedEvent;
-            _encoder.PreconnectPublishingPoint();
+            //_encoder.PreconnectPublishingPoint();
         }
 
 
@@ -205,6 +205,21 @@ namespace OGV.Streaming.Views
             SetupPreviewWindow();
         }
 
-        
+
+
+        public bool IsNavigationTarget(NavigationContext navigationContext)
+        {
+            return true;
+        }
+
+        public void OnNavigatedFrom(NavigationContext navigationContext)
+        {
+            
+        }
+
+        public void OnNavigatedTo(NavigationContext navigationContext)
+        {
+           
+        }
     }
 }
