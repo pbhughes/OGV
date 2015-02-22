@@ -10,6 +10,7 @@ using System.Threading.Tasks;
 using System.Windows.Input;
 using System.Windows.Threading;
 using OGV.Infrastructure.Interfaces;
+using System.Windows.Controls;
 
 namespace OGV.Admin.Models
 {
@@ -75,15 +76,16 @@ namespace OGV.Admin.Models
             set { _boardList = value; OnPropertyChanged("BoardList"); }
         }
 
-        public ICommand LoginCommand { get; private set; }
+        public DelegateCommand<PasswordBox> LoginCommand { get; private set; }
 
-        private async void OnLogin()
+        private async void OnLogin(PasswordBox pbox)
         {
             //Authenticate against the web service async and reject or navigate to
             //Board Selection view
             Message = "Authenticating...";
             IsBusy = true;
-            
+
+            _password = pbox.Password;
             string token = await Authenticate(_userName, _password);
             OGV.Infrastructure.Model.Session.Instance.Token = token;
 
@@ -105,7 +107,7 @@ namespace OGV.Admin.Models
             _regionManager.RequestNavigate("NavBarRegion", nn);
         }
 
-        private bool CanLogin()
+        private bool CanLogin(PasswordBox pbox)
         {
             return ! OGV.Infrastructure.Model.Session.Recording ;
         }
@@ -113,7 +115,7 @@ namespace OGV.Admin.Models
         public UserViewModel()
         {
 
-            this.LoginCommand = new DelegateCommand(OnLogin, CanLogin);
+            this.LoginCommand = new DelegateCommand<PasswordBox>(OnLogin, CanLogin);
             _regionManager = Microsoft.Practices.ServiceLocation.ServiceLocator.Current.GetInstance<Microsoft.Practices.Prism.Regions.IRegionManager>();
             _boardList = new BoardList();
         }
@@ -121,7 +123,7 @@ namespace OGV.Admin.Models
         public UserViewModel(IUnityContainer container)
         {
 
-            this.LoginCommand = new DelegateCommand(OnLogin, CanLogin);
+            this.LoginCommand = new DelegateCommand<PasswordBox>(OnLogin, CanLogin);
             _container = container;
             _regionManager = Microsoft.Practices.ServiceLocation.ServiceLocator.Current.GetInstance<Microsoft.Practices.Prism.Regions.IRegionManager>();
             _boardList = new BoardList();

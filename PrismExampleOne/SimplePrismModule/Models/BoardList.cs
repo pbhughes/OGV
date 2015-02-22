@@ -137,8 +137,16 @@ namespace OGV.Admin.Models
 
         private bool CanLogOut()
         {
-            return SelectedAgenda == null ? true : !SelectedAgenda.SaveNeeded && !SelectedAgenda.IsRecording;
-           
+            if(SelectedAgenda == null)
+                return true;
+
+            if(SelectedAgenda.SaveNeeded)
+                return false;
+
+            if (SelectedAgenda.IsRecording)
+                return false;
+
+            return true;
         }
 
         private bool CanChooseAgenda()

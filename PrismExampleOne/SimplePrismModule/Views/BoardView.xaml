@@ -86,7 +86,7 @@
                           DisplayMemberPath="Name">
                     </ComboBox>
                 </StackPanel>
-                <Grid Visibility="{Binding SelectedBoard, Converter={StaticResource BoolToHiddenConverter}}">
+                <Grid x:Name="grdBoardMetaData" Visibility="{Binding SelectedBoard, Converter={StaticResource BoolToHiddenConverter}}">
                     <Grid.RowDefinitions>
                         <RowDefinition />
                      
@@ -116,7 +116,7 @@
                           SelectedItem="{Binding SelectedAgenda}">
                     </ComboBox>
                 </StackPanel>
-                <Grid  Visibility="{Binding SelectedAgenda, Converter={StaticResource BoolToHiddenConverter}}">
+                <Grid x:Name="grdAgendaMetaData"  Visibility="{Binding SelectedAgenda, Converter={StaticResource BoolToHiddenConverter}}">
                     <Grid.RowDefinitions>
                         <RowDefinition />
                         <RowDefinition/>

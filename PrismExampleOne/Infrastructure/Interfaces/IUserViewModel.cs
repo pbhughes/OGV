@@ -1,4 +1,8 @@
-﻿using System;
+﻿using Microsoft.Practices.Prism.Commands;
+using System;
+using System.Windows.Controls;
+
+
 namespace OGV.Infrastructure.Interfaces
 {
     public interface IUserViewModel
@@ -7,7 +11,7 @@ namespace OGV.Infrastructure.Interfaces
         int CallTime { get; set; }
         Microsoft.Practices.Unity.IUnityContainer Container { get; set; }
         bool IsBusy { get; set; }
-        System.Windows.Input.ICommand LoginCommand { get; }
+        DelegateCommand<PasswordBox> LoginCommand { get; }
         string Message { get; set; }
         string Password { get; set; }
         event System.ComponentModel.PropertyChangedEventHandler PropertyChanged;

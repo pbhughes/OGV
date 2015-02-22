@@ -242,7 +242,7 @@ namespace OGV.Infrastructure.Interfaces
                 Agenda a = new Agenda() { OriginalText = allText, FilePath = filePath };
                 XDocument xDoc = XDocument.Parse(a.OriginalText);
                 a.VideoFilePath = xDoc.Element("meeting").Element("filename").Value;
-                a.PublishingPoint = xDoc.Element("meeting").Element("publishingpoint").Value;
+                a.PublishingPoint = xDoc.Element("meeting").Element("publishingpoint") == null ? string.Empty : xDoc.Element("meeting").Element("publishingpoint").Value;
                 a.MeetingDate = DateTime.Parse(xDoc.Element("meeting").Element("meetingdate").Value);
                 a.Name = agenda.Name;
                 var allAgendaItems = xDoc.Element("meeting").Element("agenda").Element("items").Elements("item");
@@ -297,10 +297,11 @@ namespace OGV.Infrastructure.Interfaces
             XElement meetingDate = new XElement("meetingdate", MeetingDate.ToString("G"));
             XElement agenda = new XElement("agenda");
             XElement items = new XElement("items");
-            XElement videoFilName = new XElement("filename", VideoFileName);
+            XElement videoFilName = new XElement("filename", FileName);
             XElement pubPoint = new XElement("publishingpoint", PublishingPoint);
             xdoc.Element("meeting").Add(videoFilName);
             xdoc.Element("meeting").Add(meetingDate);
+            xdoc.Element("meeting").Add(pubPoint);
             xdoc.Element("meeting").Add(agenda);
             
             foreach (var item in Items)
