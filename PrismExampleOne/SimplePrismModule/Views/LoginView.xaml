@@ -9,7 +9,7 @@
              mc:Ignorable="d" 
              d:DesignHeight="300" d:DesignWidth="450" 
              MaxHeight="350" MaxWidth="400"
-             Margin="2">
+             Margin="2" Loaded="UserControl_Loaded">
     
     <UserControl.Resources>
 
@@ -56,7 +56,7 @@
     <StackPanel Orientation="Vertical">
         <StackPanel  Orientation="Horizontal">
             <Label>User Name:</Label>
-            <TextBox Text="{Binding UserName}"></TextBox>
+            <TextBox Text="{Binding UserName}" x:Name="txtUserId"></TextBox>
         </StackPanel>
         <StackPanel  Orientation="Horizontal" 
                      HorizontalAlignment="Left">
@@ -64,7 +64,8 @@
             <PasswordBox x:Name="txtPassword" ></PasswordBox>
         </StackPanel>
         <Button ToolTip="Login, download agendas, and load the new agendas" HorizontalAlignment="Right" Style="{DynamicResource btn-primary}" 
-                Command="{Binding LoginCommand}" Margin="0 0 70 0">Login</Button>
+                Command="{Binding LoginCommand}" 
+                Margin="0 0 70 0" IsDefault="True">Login</Button>
         <Border Visibility="{Binding IsBusy, Converter={StaticResource BoolToHiddenConverter }}">
             <tk:BusyIndicator BusyContent="{Binding Message}" IsBusy="{Binding IsBusy}" DisplayAfter="0">
 

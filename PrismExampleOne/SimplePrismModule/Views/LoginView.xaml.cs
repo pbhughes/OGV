@@ -52,8 +52,25 @@ namespace OGV.Admin.Views
         public void OnNavigatedTo(NavigationContext navigationContext)
         {
             (this.DataContext as UserViewModel).UserName = string.Empty;
-            txtPassword.Clear();
+
+            SetUpUIControls();
             
+        }
+
+        private void SetUpUIControls()
+        {
+            Application.Current.Dispatcher.Invoke(() =>
+            {
+                txtPassword.Clear();
+                txtUserId.Focus();
+                txtUserId.SelectAll();
+
+            });
+        }
+
+        private void UserControl_Loaded(object sender, RoutedEventArgs e)
+        {
+            SetUpUIControls();
         }
 
         
