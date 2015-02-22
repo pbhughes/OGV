@@ -13,6 +13,7 @@ namespace OGV.Infrastructure.Interfaces
         event ChangedEventHandler ChangedEvent;
         string FileName { get; set; }
         string FilePath { get; set; }
+        string PublishingPoint { get; set; }
         int IndexOf(IAgendaItem item);
         void InsertItem(IAgendaItem item, int indexAt);
         System.Collections.ObjectModel.ObservableCollection<IAgendaItem> Items { get; set; }
