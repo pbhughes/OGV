@@ -12,7 +12,7 @@ using System.Windows;
 using Microsoft.Practices.Prism.Commands;
 using System.Windows.Input;
 using Microsoft.Practices.Prism.Regions;
-using OGV.Infrastructure.Services;
+using OGV.Infrastructure.Interfaces;
 using Microsoft.Practices.Unity;
 using Microsoft.Practices.ServiceLocation;
 using OGV.Infrastructure.Interfaces;

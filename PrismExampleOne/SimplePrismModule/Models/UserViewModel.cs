@@ -11,6 +11,12 @@ using System.Windows.Input;
 using System.Windows.Threading;
 using OGV.Infrastructure.Interfaces;
 using System.Windows.Controls;
+using System.Net;
+using System.Net.Security;
+using System.Net.Http;
+using System.Net.Http.Headers;
+using System.Xml.Linq;
+using OGV.Infrastructure.Interfaces;
 
 namespace OGV.Admin.Models
 {
@@ -23,6 +29,8 @@ namespace OGV.Admin.Models
             get { return _container; }
             set { _container = value; }
         }
+
+        private IXService _xService;
 
         private IRegionManager _regionManager;
 
@@ -80,31 +88,44 @@ namespace OGV.Admin.Models
 
         private async void OnLogin(PasswordBox pbox)
         {
-            //Authenticate against the web service async and reject or navigate to
-            //Board Selection view
-            Message = "Authenticating...";
-            IsBusy = true;
+            try
+            {
+                //Authenticate against the web service async and reject or navigate to
+                //Board Selection view
+                Message = "Authenticating...";
+                IsBusy = true;
 
-            _password = pbox.Password;
-            string token = await Authenticate(_userName, _password);
-            OGV.Infrastructure.Model.Session.Instance.Token = token;
+                _password = pbox.Password;
+                string token = await Authenticate(_userName, _password);
+                if (token == null)
+                    return;
 
-            //down load all the board files
-            Message = "Downloading Agenda Files...";
-            List<IAgenda> files = await DownLoadAgendaFiles(""); //get the url from the authentication token
+                OGV.Infrastructure.Model.Session.Instance.Token = token;
 
-            //load all the board files
-            Message = "Loading Agenda Files...";
-            await LoadAgendaFiles();
+                //down load all the board files
+                Message = "Downloading Agenda Files...";
+                List<IAgenda> files = await DownLoadAgendaFiles(); //get the url from the authentication token
 
-            IsBusy = false;
-            //show the BoardView in the main region
-            Uri vv = new Uri(typeof(Views.BoardView).FullName, UriKind.RelativeOrAbsolute);
-            _regionManager.RequestNavigate("MainRegion", vv);
+                //load all the board files
+                Message = "Loading Agenda Files...";
+                await LoadAgendaFiles();
 
-            //show the Board NAV View in the NAV region
-            Uri nn = new Uri(typeof(Views.BoardNavView).FullName, UriKind.RelativeOrAbsolute);
-            _regionManager.RequestNavigate("NavBarRegion", nn);
+                IsBusy = false;
+                //show the BoardView in the main region
+                Uri vv = new Uri(typeof(Views.BoardView).FullName, UriKind.RelativeOrAbsolute);
+                _regionManager.RequestNavigate("MainRegion", vv);
+
+                //show the Board NAV View in the NAV region
+                Uri nn = new Uri(typeof(Views.BoardNavView).FullName, UriKind.RelativeOrAbsolute);
+                _regionManager.RequestNavigate("NavBarRegion", nn);
+            }
+            catch (Exception ex)
+            {
+
+                Message = ex.Message;
+                IsBusy = true;
+            }
+           
         }
 
         private bool CanLogin(PasswordBox pbox)
@@ -120,13 +141,14 @@ namespace OGV.Admin.Models
             _boardList = new BoardList();
         }
 
-        public UserViewModel(IUnityContainer container)
+        public UserViewModel(IUnityContainer container, IXService xService)
         {
 
             this.LoginCommand = new DelegateCommand<PasswordBox>(OnLogin, CanLogin);
             _container = container;
             _regionManager = Microsoft.Practices.ServiceLocation.ServiceLocator.Current.GetInstance<Microsoft.Practices.Prism.Regions.IRegionManager>();
             _boardList = new BoardList();
+            _xService = xService;
             
         }
 
@@ -135,15 +157,34 @@ namespace OGV.Admin.Models
             Guid token;
             //hash them and send it to the server
             //get a token back and store it on the session
-            Task t =  Task.Run(  () =>
+            Task t =  Task.Run( async  () =>
             {
-                for (int i = 0; i < 2; i++)
-                {
-                    Dispatcher.CurrentDispatcher.Invoke((Action)delegate(){ CallTime++; });
-                    System.Threading.Thread.Sleep(1000);
-                   
+                
+                string url = string.Format("http://{0}/{1}/{2}",_xService.BaseUrl, "Authentication", "login.html");
+                using (var client = new HttpClient()){
+                    client.Timeout = new TimeSpan(0, 0, 5);
+                    client.DefaultRequestHeaders.TryAddWithoutValidation("User-Agent", @": Mozilla/5.0 (Windows; U; Windows NT 6.1; en-US; rv:1.9.1.3) Gecko/20090824 Firefox/3.5.3 (.NET CLR 4.0.20506)");
+                    client.DefaultRequestHeaders.TryAddWithoutValidation("Accept", "text/html");
+                    var byteArray = Encoding.ASCII.GetBytes(string.Format("{0}:{1}", userName, password));
+
+                     var header = new AuthenticationHeaderValue(
+                               "Basic", Convert.ToBase64String(byteArray));
+                    client.DefaultRequestHeaders.Authorization = header;
+
+                    var response = await client.GetAsync(url);
+                    if (response.StatusCode != HttpStatusCode.OK)
+                    {
+                        //got a bad response error
+                        throw new UnauthorizedAccessException(response.ReasonPhrase);
+                        
+                    }
+                    else
+                    {
+                        
+                    }
                 }
             });
+
 
             await t;
 
@@ -151,19 +192,73 @@ namespace OGV.Admin.Models
 
         }
 
-        private async Task<List<IAgenda>> DownLoadAgendaFiles(string url)
+        private async Task<List<IAgenda>> DownLoadAgendaFiles()
         {
             Guid token;
             //hash them and send it to the server
             //get a token back and store it on the session
-            Task t = Task.Run(() =>
+            Task t = Task.Run(async () =>
             {
-                for (int i = 0; i < 2; i++)
-                {
-                    Dispatcher.CurrentDispatcher.Invoke((Action)delegate() { CallTime++; });
-                    System.Threading.Thread.Sleep(1000);
 
+                string url = string.Format("http://{0}/{1}/Manifest.xml", _xService.BaseUrl, _xService.BoardFolder);
+                using (var client = new HttpClient())
+                {
+                    client.Timeout = new TimeSpan(0, 0, 5);
+                    client.DefaultRequestHeaders.TryAddWithoutValidation("User-Agent", @": Mozilla/5.0 (Windows; U; Windows NT 6.1; en-US; rv:1.9.1.3) Gecko/20090824 Firefox/3.5.3 (.NET CLR 4.0.20506)");
+                    client.DefaultRequestHeaders.TryAddWithoutValidation("Accept", "text/xml");
+                    var byteArray = Encoding.ASCII.GetBytes(string.Format("{0}:{1}", _userName, _password));
+
+                    var header = new AuthenticationHeaderValue(
+                              "Basic", Convert.ToBase64String(byteArray));
+                    client.DefaultRequestHeaders.Authorization = header;
+
+                    var response = await client.GetAsync(url);
+                    if (response.StatusCode != HttpStatusCode.OK)
+                    {
+                        //got a bad response error
+                        throw new UnauthorizedAccessException(response.ReasonPhrase);
+
+                    }
+                    else
+                    {
+                        //we got back a manifest file process it
+                        string manifestXml = await response.Content.ReadAsStringAsync();
+                        XDocument xDoc = XDocument.Parse(manifestXml);
+                        foreach (var fileElement in xDoc.Element("manifest").Elements("file"))
+                        {
+                            string link = fileElement.Attribute("link") == null ? null : fileElement.Attribute("link").Value;
+                            string folder = fileElement.Attribute("directory") == null ? null : fileElement.Attribute("directory").Value;
+                            string fileName = fileElement.Attribute("filename") == null ? null : fileElement.Attribute("filename").Value;
+                            using (var fileClient = new HttpClient())
+                            {
+                                Message = string.Format("Downloading file {0}", link);
+                                fileClient.Timeout = new TimeSpan(0, 0, 5);
+                                fileClient.DefaultRequestHeaders.TryAddWithoutValidation("User-Agent", @": Mozilla/5.0 (Windows; U; Windows NT 6.1; en-US; rv:1.9.1.3) Gecko/20090824 Firefox/3.5.3 (.NET CLR 4.0.20506)");
+                                fileClient.DefaultRequestHeaders.TryAddWithoutValidation("Accept", "text/ogvv");
+                                var fileByteArray = Encoding.ASCII.GetBytes(string.Format("{0}:{1}", _userName, _password));
+
+                                var fileRequestHeader = new AuthenticationHeaderValue(
+                                          "Basic", Convert.ToBase64String(fileByteArray));
+                                fileClient.DefaultRequestHeaders.Authorization = header;
+
+                                var fileGetResponse = await fileClient.GetAsync(link);
+                                if (response.StatusCode != HttpStatusCode.OK)
+                                {
+                                    //we had a problem
+                                    Message = string.Format("Unable to download file {0} error {1}", link, response.ReasonPhrase);
+                                    System.Threading.Thread.Sleep(2000);
+                                }
+                                else
+                                {
+                                    string fileText = await response.Content.ReadAsStringAsync();
+                                }
+                            }
+
+                        }
+                    }
                 }
+
+
             });
 
             await t;

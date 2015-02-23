@@ -5,11 +5,11 @@ using System.IO;
 using System.Linq;
 using System.Net;
 using System.Net.Security;
+using System.Net.Http;
+using System.Net.Http.Headers;
 using System.Text;
 using System.Threading.Tasks;
 using System.Xml;
-using System.Net.Http;
-using System.Net.Http.Headers;
 using System.Xml.Linq;
 using Microsoft.Practices.Prism.Regions;
 using System.Windows;
@@ -134,21 +134,6 @@ namespace OGV.Streaming.Models
 
                     }
 
-                   
-
-
-                    ////process the response
-
-                    //var xDoc = new XmlDocument();
-                    //xDoc.LoadXml(text);
-                    //var nsmgr = new XmlNamespaceManager(xDoc.NameTable);
-                    //nsmgr.AddNamespace("atom", "http://www.w3.org/2005/Atom");
-                    //XmlElement root = xDoc.DocumentElement;
-                    //XmlNodeList valueList = root.GetElementsByTagName("State");
-                    //XmlNode currentState = valueList[0];
-                    //retval = currentState.InnerText;
-                    //OnStateRequestCompleted(retval);
-                    //reader.Close();
 
                 }
             }

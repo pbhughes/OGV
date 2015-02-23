@@ -15,7 +15,7 @@ using System.Windows.Media.Imaging;
 using System.Windows.Navigation;
 using System.Windows.Shapes;
 using OGV.Admin.Models;
-using OGV.Infrastructure.Services;
+using OGV.Infrastructure.Interfaces;
 using Microsoft.Practices.Unity;
 using OGV.Infrastructure.Interfaces;
 

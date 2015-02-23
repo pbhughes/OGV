@@ -15,7 +15,7 @@ using System.Windows.Navigation;
 using System.Windows.Shapes;
 using OGV.Infrastructure.Interfaces;
 
-namespace PrismExampleOne
+namespace OGV.Main
 {
     /// <summary>
     /// Interaction logic for MainWindow.xaml

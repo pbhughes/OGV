@@ -20,6 +20,8 @@ namespace OGV.Infrastructure.Model
 
         private static readonly Session instance = new Session();
 
+        
+
         private Session() { }
 
         public static Session Instance
@@ -29,6 +31,8 @@ namespace OGV.Infrastructure.Model
                 return instance;
             }
         }
+
+
     }
 
 }

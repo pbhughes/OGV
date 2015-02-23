@@ -4,7 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace OGV.Infrastructure.Services
+namespace OGV.Infrastructure.Interfaces
 {
     public class XService: IXService
     {
@@ -28,6 +28,27 @@ namespace OGV.Infrastructure.Services
         public void RequestBack()
         {
             throw new NotImplementedException();
+        }
+
+        private string _baseUrl;
+
+        public string BaseUrl
+        {
+            get { return _baseUrl; }
+            set { _baseUrl = value; }
+        }
+
+        private string _boardFolder;
+        public string BoardFolder
+        {
+            get
+            {
+                return _boardFolder;
+            }
+            set
+            {
+                _boardFolder = value;
+            }
         }
     }
 }

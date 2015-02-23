@@ -4,7 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace OGV.Infrastructure.Services
+namespace OGV.Infrastructure.Interfaces
 {
     public interface IXService
     {
@@ -14,8 +14,8 @@ namespace OGV.Infrastructure.Services
         void RequestSave();
         event EventHandler Back;
         void RequestBack();
-
-        
+        string BaseUrl { get; set; }
+        string BoardFolder { get; set; }
 
     }
 }

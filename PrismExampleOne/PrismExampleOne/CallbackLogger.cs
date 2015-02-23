@@ -4,7 +4,7 @@ using System.Linq;
 using System.Text;
 using Microsoft.Practices.Prism.Logging;
 
-namespace PrismExampleOne
+namespace OGV.Main
 {
     class CallbackLogger : ILoggerFacade
     {

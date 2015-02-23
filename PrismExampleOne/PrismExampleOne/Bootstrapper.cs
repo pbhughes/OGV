@@ -6,11 +6,11 @@ using Microsoft.Practices.ServiceLocation;
 using Microsoft.Practices.Prism.Regions;
 using OGV.Admin.Views;
 using OGV.Streaming.Views;
-using OGV.Infrastructure.Services;
+using OGV.Infrastructure.Interfaces;
 using OGV.Admin.Models;
 using OGV.Infrastructure.Interfaces;
 
-namespace PrismExampleOne
+namespace OGV.Main
 {
     class Bootstrapper: UnityBootstrapper
     {
@@ -74,7 +74,9 @@ namespace PrismExampleOne
             this.Container.RegisterType<object, AgendaNavView>(typeof(AgendaNavView).FullName);
             this.Container.RegisterType<object, StreamerView>(typeof(StreamerView).FullName);
             this.Container.RegisterType<object, PublishingPointView>(typeof(PublishingPointView).FullName);
-            
+
+            _xService.BaseUrl = OGV.Main.Properties.Settings.Default.BaseUrl;
+            _xService.BoardFolder = OGV.Main.Properties.Settings.Default.BoardFolder;
             this.Container.RegisterInstance<IXService>(_xService);
              
            

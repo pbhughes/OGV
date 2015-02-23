@@ -7,7 +7,7 @@
     <ProjectGuid>{0181DE4F-CC01-4242-BF0F-5591E3666A78}</ProjectGuid>
     <OutputType>WinExe</OutputType>
     <AppDesignerFolder>Properties</AppDesignerFolder>
-    <RootNamespace>OGV.Admin</RootNamespace>
+    <RootNamespace>OGV.Main</RootNamespace>
     <AssemblyName>OGV.Main</AssemblyName>
     <TargetFrameworkVersion>v4.5</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
