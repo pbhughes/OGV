@@ -169,16 +169,11 @@
       <Generator>ResXFileCodeGenerator</Generator>
       <LastGenOutput>Resources.Designer.cs</LastGenOutput>
     </EmbeddedResource>
-    <Content Include="Agendas\Housing Board\agenda.oga">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    <None Include="Agendas\Housing Board\agenda.oga">
       <SubType>Designer</SubType>
-    </Content>
-    <Content Include="Agendas\Tax Board\agenda.oga">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </Content>
-    <Content Include="Agendas\Zoning Board\agenda.oga">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </Content>
+    </None>
+    <None Include="Agendas\Tax Board\agenda.oga" />
+    <None Include="Agendas\Zoning Board\agenda.oga" />
     <None Include="packages.config" />
     <None Include="Properties\Settings.settings">
       <Generator>SettingsSingleFileGenerator</Generator>

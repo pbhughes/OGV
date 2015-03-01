@@ -130,6 +130,9 @@
   <ItemGroup>
     <Compile Include="Models\EncodingSourceBase.cs" />
     <Compile Include="Models\LiveEncodingSource.cs" />
+    <Compile Include="Views\PublishingPointManagerNavView.xaml.cs">
+      <DependentUpon>PublishingPointManagerNavView.xaml</DependentUpon>
+    </Compile>
     <Compile Include="Models\PublishingPointMonitor.cs" />
     <Compile Include="Module.cs" />
     <Compile Include="Properties\AssemblyInfo.cs">
@@ -147,6 +150,9 @@
     </Compile>
     <Compile Include="Views\PublishingPointView.xaml.cs">
       <DependentUpon>PublishingPointView.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Views\StreamerNavView.xaml.cs">
+      <DependentUpon>StreamerNavView.xaml</DependentUpon>
     </Compile>
     <Compile Include="Views\StreamerView.xaml.cs">
       <DependentUpon>StreamerView.xaml</DependentUpon>
@@ -166,7 +172,15 @@
     <None Include="App.config" />
   </ItemGroup>
   <ItemGroup>
+    <Page Include="Views\PublishingPointManagerNavView.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
     <Page Include="Views\PublishingPointView.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Views\StreamerNavView.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>

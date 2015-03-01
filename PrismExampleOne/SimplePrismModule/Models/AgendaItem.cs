@@ -209,8 +209,6 @@ namespace OGV.Admin.Models
         }
         #endregion
 
-
-
         #region IChangeble
 
         public DelegateCommand SaveCommand { get; set; }

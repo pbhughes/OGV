@@ -27,20 +27,24 @@ namespace OGV.Streaming.Views
         LiveEncodingSource _encoder;
         IUnityContainer _container;
         IUserViewModel _userModel;
-        PublishingPointMonitor _pointMonitor;
+        IPublishingPointMonitor _pubMonitor;
+        IRegionManager _regionManager;
 
-        public PublishingPointView(IUserViewModel user)
+        public PublishingPointView(IUserViewModel user, IPublishingPointMonitor pubMonitor, IRegionManager regionManager)
         {
             InitializeComponent();
+            _regionManager = regionManager;
             _userModel = user;
-            _pointMonitor = new PublishingPointMonitor( user );
-            pnlPointMonitor.DataContext = _pointMonitor;
+            _pubMonitor = pubMonitor;
+            pnlPointMonitor.DataContext = _pubMonitor;
             this.DataContext = _userModel.BoardList;
             _userModel.BoardList.AgendaSelectedEvent += BoardList_AgendaSelectedEvent;
         }
 
         void BoardList_AgendaSelectedEvent(IAgenda selected)
+
         {
+
             ResetButtons();
         }
 
@@ -56,13 +60,13 @@ namespace OGV.Streaming.Views
 
         public void OnNavigatedTo(NavigationContext navigationContext)
         {
-            ResetButtons();
+           
         }
 
         private void ResetButtons()
         {
-            if (_pointMonitor != null)
-                _pointMonitor.CheckStateCommand.RaiseCanExecuteChanged();
+            if (_pubMonitor != null)
+                _pubMonitor.CheckStateCommand.RaiseCanExecuteChanged();
         }
     }
 }

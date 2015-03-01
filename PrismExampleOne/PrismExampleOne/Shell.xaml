@@ -2,7 +2,7 @@
         xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
         xmlns:prism="http://www.codeplex.com/prism"
-        Title="OGV 2" SizeToContent="Height" MaxHeight="700"
+        Title="OGV 2" SizeToContent="Height" 
         WindowStartupLocation="Manual" 
         Left="50" Top="10" Closing="Window_Closing">
 
@@ -14,21 +14,24 @@
         </Grid.ColumnDefinitions>
         
         <Grid.RowDefinitions>
-            <RowDefinition Height="50" />
+            <RowDefinition Height="Auto" />
             <RowDefinition />
         </Grid.RowDefinitions>
 
 
-        <ContentControl Grid.Column="0"
+        <ContentControl Grid.Column="0" 
                         Grid.Row="1"
                         Padding="2px"
                         HorizontalAlignment="Stretch"
-                        Name="MainRegion" prism:RegionManager.RegionName="MainRegion"></ContentControl>
+                        Name="MainRegion" 
+                        prism:RegionManager.RegionName="MainRegion"></ContentControl>
 
 
-        <ItemsControl HorizontalAlignment="Stretch" Grid.Column="0" Grid.Row="0"
+        <ContentControl HorizontalAlignment="Stretch" 
+                        Grid.Column="0" 
+                        Grid.Row="0"
                         Name="NavBarRegion"
-                      prism:RegionManager.RegionName="NavBarRegion"></ItemsControl>
+                        prism:RegionManager.RegionName="NavBarRegion"></ContentControl>
 
 
         <GridSplitter Grid.Column="1" 
@@ -36,14 +39,18 @@
                       HorizontalAlignment="Stretch"
                       Grid.RowSpan="2"/>
 
-        <ContentControl Grid.Column="2"
-                        Grid.RowSpan="2"
+        <ContentControl Grid.Column="2" Grid.Row="1"
+                        Background="Red"
                         Name="SidebarRegion"
-                        HorizontalAlignment="Stretch"
+                        Padding="2"
                         prism:RegionManager.RegionName="SidebarRegion"></ContentControl>
 
-        
 
 
+        <ContentControl HorizontalAlignment="Stretch" 
+                      Grid.Column="2" 
+                      Grid.Row="0"
+                        Name="SideNavBarRegion"
+                      prism:RegionManager.RegionName="SideNavBarRegion"></ContentControl>
     </Grid>
 </Window>

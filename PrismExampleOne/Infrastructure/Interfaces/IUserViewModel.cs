@@ -16,5 +16,8 @@ namespace OGV.Infrastructure.Interfaces
         string Password { get; set; }
         event System.ComponentModel.PropertyChangedEventHandler PropertyChanged;
         string UserName { get; set; }
+        event EventHandler LoggedIn;
+        void OnLoggedIn();
+       
     }
 }

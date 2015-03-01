@@ -9,6 +9,7 @@ using OGV.Streaming.Views;
 using OGV.Infrastructure.Interfaces;
 using OGV.Admin.Models;
 using OGV.Infrastructure.Interfaces;
+using OGV.Streaming.Models;
 
 namespace OGV.Main
 {
@@ -68,12 +69,15 @@ namespace OGV.Main
             //register the singleton user view model
             
             this.Container.RegisterType<IUserViewModel,UserViewModel>( new ContainerControlledLifetimeManager());
+            this.Container.RegisterType<IPublishingPointMonitor, PublishingPointMonitor>(new ContainerControlledLifetimeManager());
             this.Container.RegisterType<object, BoardView>(typeof(BoardView).FullName);
             this.Container.RegisterType<object, BoardNavView>(typeof(BoardNavView).FullName);
             this.Container.RegisterType<object, AgendaView>(typeof(AgendaView).FullName);
             this.Container.RegisterType<object, AgendaNavView>(typeof(AgendaNavView).FullName);
             this.Container.RegisterType<object, StreamerView>(typeof(StreamerView).FullName);
+            this.Container.RegisterType<object, StreamerNavView>(typeof(StreamerNavView).FullName);
             this.Container.RegisterType<object, PublishingPointView>(typeof(PublishingPointView).FullName);
+            this.Container.RegisterType<object, PublishingPointManagerNavView>(typeof(PublishingPointManagerNavView).FullName);
 
             _xService.BaseUrl = OGV.Main.Properties.Settings.Default.BaseUrl;
             _xService.BoardFolder = OGV.Main.Properties.Settings.Default.BoardFolder;

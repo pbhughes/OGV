@@ -9,6 +9,7 @@ using System.Windows.Controls;
 using System.Windows.Input;
 using System.Windows.Media;
 using OGV.Infrastructure.Interfaces;
+using OGV.Admin.Utility;
 
 namespace OGV.Admin.Views
 {
@@ -22,26 +23,28 @@ namespace OGV.Admin.Views
         private IRegionManager _regionManager;
         private IUserViewModel _user;
 
-        [InjectionConstructor]
-        public AgendaView(IUnityContainer container, IUserViewModel userModel)
+        
+        public AgendaView(IUnityContainer container, IUserViewModel userModel, IRegionManager regionManager)
         {
             InitializeComponent();
 
-            _regionManager =
-              Microsoft.Practices.ServiceLocation.ServiceLocator.
-                                  Current.GetInstance<Microsoft.
-                                  Practices.Prism.Regions.IRegionManager>();
+            _regionManager = regionManager;
             _container = container;
             _user = userModel;
+
             this.DataContext = _user.BoardList.SelectedAgenda;
-            cmdStamp.DataContext = _user.BoardList.SelectedAgenda;
+
+            _user.BoardList.AgendaSelectedEvent += BoardList_AgendaSelectedEvent;
+
+           
+           
         }
 
-        public Point LastMouseDown
+        void BoardList_AgendaSelectedEvent(IAgenda selected)
         {
-            get { return _lastMouseDown; }
-            set { _lastMouseDown = value; OnPropertyChanged("LastMouseDown"); }
+            throw new NotImplementedException();
         }
+
         public bool IsNavigationTarget(NavigationContext navigationContext)
         {
             return true;
@@ -53,7 +56,7 @@ namespace OGV.Admin.Views
             if (view != null && view is AgendaNavView)
                 _regionManager.Regions["NavBarRegion"].Remove(view);
 
-            this.DataContext = null;
+           
         }
 
         public void OnNavigatedTo(NavigationContext navigationContext)
@@ -62,7 +65,13 @@ namespace OGV.Admin.Views
             Uri nn = new Uri(typeof(Views.AgendaNavView).FullName, UriKind.RelativeOrAbsolute);
             _regionManager.RequestNavigate("NavBarRegion", nn);
 
-            this.DataContext = _user.BoardList.SelectedAgenda;
+            cmdAddNode.DataContext = _user.BoardList.SelectedAgenda;
+            cmdRemoveNode.DataContext = _user.BoardList.SelectedAgenda;
+
+            _user.BoardList.SelectedAgenda.RemoveItemCommand.RaiseCanExecuteChanged();
+            _user.BoardList.SelectedAgenda.AddItemCommand.RaiseCanExecuteChanged();
+
+           
         }
 
         private void TreeView_SelectedItemChanged(object sender, RoutedPropertyChangedEventArgs<object> e)
@@ -75,7 +84,16 @@ namespace OGV.Admin.Views
 
         private AgendaItem draggedItem;
 
+        private ScrollViewer _treeViewScrollViewer;
+
         private int dropIndex;
+
+        public Point LastMouseDown
+        {
+            get { return _lastMouseDown; }
+            set { _lastMouseDown = value; OnPropertyChanged("LastMouseDown"); }
+        }
+
 
         private void TreeView_DragOver(object sender, DragEventArgs e)
         {
@@ -124,9 +142,11 @@ namespace OGV.Admin.Views
                     {
                         TargetItem.AddItem(draggedItem);
                     }
-                    
 
-                } 
+
+                }
+                else
+                    e.Effects = DragDropEffects.None;
             }
             catch (Exception)
             {
@@ -141,42 +161,40 @@ namespace OGV.Admin.Views
             Point point = e.GetPosition(tvAgenda);
             //find the item at that point
             var item = tvAgenda.InputHitTest(point) as FrameworkElement;
-           
 
-
-            if(item != null)
+            if (item != null)
             {
-                if(item.DataContext != null)
+                if (item.DataContext != null)
                 {
-                    if(item.DataContext is Agenda)
+                    if (item.DataContext is Agenda)
                     {
                         //the drop occurred in the tree not on a node
                         //find out where in the tree it could be the 
                         var rec = VisualTreeHelper.GetContentBounds(item);
                         double topEdge = 0;
                         double bottomEdge = rec.Height;
-                       
+
 
                         //is it between nodes
                         var itemAbove = tvAgenda.InputHitTest(new Point(point.X, point.Y - 10)) as FrameworkElement;
                         var itemBelow = tvAgenda.InputHitTest(new Point(point.X, point.Y + 10)) as FrameworkElement;
 
-                        
 
-                        if ( (itemAbove != null && itemAbove.DataContext is AgendaItem) && 
+
+                        if ((itemAbove != null && itemAbove.DataContext is AgendaItem) &&
                             (itemBelow != null && itemBelow.DataContext is AgendaItem))
                         {
                             //this is happening between nodes
                             dropIndex = (item.DataContext as IParent).IndexOf(itemBelow.DataContext as AgendaItem);
-                            System.Diagnostics.Debug.WriteLine(string.Format("Between nodes - dropIndex = {0}", dropIndex));
-                
+                            //System.Diagnostics.Debug.WriteLine(string.Format("Between nodes - dropIndex = {0}", dropIndex));
+
                         }
                         else
                         {
-                            
+
                             //this is happening at the top or bottom
                             //of the tree
-                            
+
                             double midPoint = rec.Height / 2;
                             if (point.Y > midPoint)
                             {
@@ -189,15 +207,21 @@ namespace OGV.Admin.Views
                                 dropIndex = 0;
                             }
 
-                            System.Diagnostics.Debug.WriteLine(string.Format("Outside of nodes - dropIndex = {0}", dropIndex));
+                            //System.Diagnostics.Debug.WriteLine(string.Format("Outside of nodes - dropIndex = {0}", dropIndex));
                         }
-                    }
-                       
-                }
-            }
 
-            IParent TargetItem = item.DataContext as IParent;
-            return TargetItem;
+                        IParent TargetItem = item.DataContext as IParent;
+                        return TargetItem;
+                    }
+                    else return null;
+
+                }
+                else return null;
+            }
+            else
+                return null;
+
+          
         }
 
         private void TreeView_MouseDown(object sender, MouseButtonEventArgs e)
@@ -205,6 +229,20 @@ namespace OGV.Admin.Views
             if (e.ChangedButton == MouseButton.Left)
             {
                 _lastMouseDown = e.GetPosition(tvAgenda);
+                if (tvAgenda.Items.Count > 0)
+                {
+                    var x = VisualTreeHelper.HitTest(tvAgenda, _lastMouseDown);
+                    var visual = x.VisualHit;
+                    var visualElement = VisualTreeHelper.GetParent(visual);
+                    while(visualElement != null && ! (visualElement is ScrollViewer))
+                    {
+                        visualElement = VisualTreeHelper.GetParent(visualElement);
+                    }
+
+                    if (visualElement != null)
+                        _treeViewScrollViewer = visualElement as ScrollViewer;
+                }
+                    
             }
         }
 
@@ -212,16 +250,28 @@ namespace OGV.Admin.Views
         {
             try
             {
+
                 if (e.LeftButton == MouseButtonState.Pressed)
                 {
+
                     Point currentPosition = e.GetPosition(tvAgenda);
+                    var x = VisualTreeHelper.HitTest(tvAgenda,currentPosition);
+                    var visual = x.VisualHit;
+                    var visualElement = VisualTreeHelper.GetParent(visual);
+
+                    ScrollIfNeeded(currentPosition);
+                    //System.Diagnostics.Debug.WriteLine(string.Format("current position - {0}:{1}", currentPosition.X, currentPosition.Y));
+
+                   
 
                     if ((Math.Abs(currentPosition.X - _lastMouseDown.X) > 10.0) ||
                         (Math.Abs(currentPosition.Y - _lastMouseDown.Y) > 10.0))
                     {
-                        draggedItem = (AgendaItem) tvAgenda.SelectedItem;
+                        draggedItem = (AgendaItem)tvAgenda.SelectedItem;
+                       
                         if (draggedItem != null)
                         {
+      
                             DragDropEffects finalDropEffect =
                                             DragDrop.DoDragDrop(tvAgenda, tvAgenda.SelectedValue,
                                 DragDropEffects.Move);
@@ -245,6 +295,42 @@ namespace OGV.Admin.Views
             {
                 throw;
             }
+        }
+
+        private void ScrollIfNeeded(Point currentMousePostion)
+        {
+            if (_treeViewScrollViewer != null)
+            {
+                double scrollOffset = 0.0;
+
+                // See if we need to scroll down 
+                if (_treeViewScrollViewer.ViewportHeight - currentMousePostion.Y < 20.0)
+                {
+                    scrollOffset = 3.0;
+                }
+                else if (currentMousePostion.Y < 20.0)
+                {
+                    scrollOffset = -3.0;
+                }
+                System.Diagnostics.Debug.WriteLine(string.Format("Detected offset: {0} View Port Height: {1} currentMousePosition.Y: {2} ", 
+                    scrollOffset.ToString(), _treeViewScrollViewer.ViewportHeight, currentMousePostion.Y.ToString()));
+                // Scroll the tree down or up 
+                if (scrollOffset != 0.0)
+                {
+                    scrollOffset += _treeViewScrollViewer.VerticalOffset;
+
+                    if (scrollOffset < 0.0)
+                    {
+                        scrollOffset = 0.0;
+                    }
+                    else if (scrollOffset > _treeViewScrollViewer.ScrollableHeight)
+                    {
+                        scrollOffset = _treeViewScrollViewer.ScrollableHeight;
+                    }
+
+                    _treeViewScrollViewer.ScrollToVerticalOffset(scrollOffset);
+                }
+            } 
         }
 
         public void addChild(AgendaItem _sourceItem, AgendaItem _targetItem)

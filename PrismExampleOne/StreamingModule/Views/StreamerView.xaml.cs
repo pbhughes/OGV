@@ -39,7 +39,7 @@ namespace OGV.Streaming.Views
             _userModel = user;
             
             _encoder.LoadCompletedEvent += encoder_LoadCompletedEvent;
-            //_encoder.PreconnectPublishingPoint();
+            _encoder.PreconnectPublishingPoint();
         }
 
 

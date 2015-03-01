@@ -110,6 +110,8 @@
     </Reference>
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Controls\DragAndDropExtension.cs" />
+    <Compile Include="Controls\DraggableScrollViewer.cs" />
     <Compile Include="Models\Agenda.cs" />
     <Compile Include="Models\AgendaItem.cs" />
     <Compile Include="Models\Board.cs" />

@@ -19,8 +19,10 @@ namespace OGV.Streaming
 
         public void Initialize()
         {
-            
+
+            _regionManager.RegisterViewWithRegion("SideNavBarRegion", typeof(OGV.Streaming.Views.PublishingPointManagerNavView));
             _regionManager.RegisterViewWithRegion("SidebarRegion", typeof(OGV.Streaming.Views.PublishingPointView));
+            _regionManager.RegisterViewWithRegion("SideNavBarRegion", typeof(OGV.Streaming.Views.StreamerNavView));
 
            
         }

@@ -6,7 +6,7 @@ namespace OGV.Infrastructure.Interfaces
 
     public interface IBoardList
     {
-        DelegateCommand AddNodeCommand { get; }
+        
         System.Collections.ObjectModel.ObservableCollection<IBoard> Boards { get; set; }
         event EventHandler CanExecuteChanged;
         DelegateCommand ChooseAgendaCommand { get; }
@@ -17,7 +17,7 @@ namespace OGV.Infrastructure.Interfaces
         event System.ComponentModel.PropertyChangedEventHandler PropertyChanged;
         event AgendaSelectedDelegate AgendaSelectedEvent;
         void OnAgendaSelected(IAgenda sender);
-        DelegateCommand<IAgendaItem> RemoveNodeCommand { get; }
+      
         void SaveAgenda();
         IAgenda SelectedAgenda { get; set; }
         IBoard SelectedBoard { get; set; }

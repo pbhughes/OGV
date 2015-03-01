@@ -108,6 +108,7 @@
     <Compile Include="Interfaces\IChangeable.cs" />
     <Compile Include="Interfaces\IEncoderInterface.cs" />
     <Compile Include="Interfaces\IParent.cs" />
+    <Compile Include="Interfaces\IPublishingPointMonitor.cs" />
     <Compile Include="Interfaces\IUserViewModel.cs" />
     <Compile Include="Model\Session.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />

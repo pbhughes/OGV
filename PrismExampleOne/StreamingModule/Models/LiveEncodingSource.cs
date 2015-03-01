@@ -112,7 +112,7 @@ namespace OGV.Streaming.Models
             StopCommand = new DelegateCommand(OnStop, CanStop);
 
 
-            //ActivateSource(VideoDevice, AudioDevice);
+            ActivateSource(VideoDevice, AudioDevice);
            
            
         }

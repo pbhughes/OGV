@@ -87,9 +87,8 @@ namespace OGV.Admin.Models
 
         public DelegateCommand LogOutCommand { get; private set; }
 
-        public DelegateCommand AddNodeCommand { get; private set; }
+      
 
-        public DelegateCommand<IAgendaItem> RemoveNodeCommand { get; private set; }
 
         private async void OnLoadAgenda()
         {
@@ -100,6 +99,8 @@ namespace OGV.Admin.Models
 
             Uri uu = new Uri(typeof(Views.AgendaNavView).FullName, UriKind.RelativeOrAbsolute);
             _regionManager.RequestNavigate("NavBarRegion", uu);
+
+           
         }
 
         private bool CanLoadAgenda()
@@ -128,7 +129,7 @@ namespace OGV.Admin.Models
 
         private void OnLogOut()
         {
-            //TODO: Log out with the server
+            SelectedAgenda.OnSave();
 
             //show the BoardView in the main region
             Uri vv = new Uri(typeof(Views.LoginView).FullName, UriKind.RelativeOrAbsolute);
@@ -139,9 +140,6 @@ namespace OGV.Admin.Models
         {
             if(SelectedAgenda == null)
                 return true;
-
-            if(SelectedAgenda.SaveNeeded)
-                return false;
 
             if (SelectedAgenda.IsRecording)
                 return false;
@@ -172,45 +170,7 @@ namespace OGV.Admin.Models
           
         }
 
-        private bool CanAddNode()
-        {
-            if (SelectedAgenda == null)
-                return false;
-
-            return true;
-        }
-
-        private void OnAddNode()
-        {
-            string newTitleVerbiage = "New Agenda Item... Please add a title";
-            if (SelectedAgenda.SelectedItem == null)
-                SelectedAgenda.AddItem(new AgendaItem() { Title = newTitleVerbiage  });
-            else
-                SelectedAgenda.SelectedItem.AddItem(new AgendaItem() { Title = newTitleVerbiage });
-        }
-
-        private bool CanRemoveNode(IAgendaItem item)
-        {
-            if (item == null)
-                return false;
-
-            if (item.Parent == null)
-                return false;
-
-            return true;
-        }
-
-        private void OnRemoveNode(IAgendaItem item)
-        {
-            if (item == null)
-                return;
-
-            if (item.Parent == null)
-                return;
-
-            item.Parent.RemoveItem(item);
-        }
-
+     
         public void OnAgendaSelected(IAgenda selected)
         {
             if (AgendaSelectedEvent != null)
@@ -222,8 +182,7 @@ namespace OGV.Admin.Models
             this.LoadAgendaCommand = new DelegateCommand(OnLoadAgenda, CanLoadAgenda);
             this.LogOutCommand = new DelegateCommand(OnLogOut, CanLogOut);
             this.ChooseAgendaCommand = new DelegateCommand(OnChooseAgenda, CanChooseAgenda);
-            this.AddNodeCommand = new DelegateCommand(OnAddNode, CanAddNode);
-            this.RemoveNodeCommand = new DelegateCommand<IAgendaItem >(OnRemoveNode, CanRemoveNode);
+        
 
 
             _regionManager =
@@ -244,8 +203,7 @@ namespace OGV.Admin.Models
             this.LoadAgendaCommand = new DelegateCommand(OnLoadAgenda, CanLoadAgenda);
             this.LogOutCommand = new DelegateCommand(OnLogOut, CanLogOut);
             this.ChooseAgendaCommand = new DelegateCommand(OnChooseAgenda, CanChooseAgenda);
-            this.AddNodeCommand = new DelegateCommand(OnAddNode, CanAddNode);
-            this.RemoveNodeCommand = new DelegateCommand<IAgendaItem>(OnRemoveNode, CanRemoveNode);
+       
             _regionManager = 
                 Microsoft.Practices.ServiceLocation.ServiceLocator.
                                     Current.GetInstance<Microsoft.
@@ -336,8 +294,7 @@ namespace OGV.Admin.Models
             LoadAgendaCommand.RaiseCanExecuteChanged();
             LogOutCommand.RaiseCanExecuteChanged();
             ChooseAgendaCommand.RaiseCanExecuteChanged();
-            AddNodeCommand.RaiseCanExecuteChanged();
-            RemoveNodeCommand.RaiseCanExecuteChanged();
+            
         }
 
        

@@ -12,23 +12,6 @@ namespace OGV.Infrastructure.Interfaces
         void OnChanged();
 
         event ChangedEventHandler ChangedEvent;
-
-        DelegateCommand SaveCommand { get; set; }
-
-        DelegateCommand ResetCommand { get; set; }
-
-        bool CanSave();
-
-        void OnSave();
-
-        bool CanReset();
-
-        void OnReset();
-
-        bool SaveNeeded { get;  }
-
-        void Reset();
-
        
     }
 }

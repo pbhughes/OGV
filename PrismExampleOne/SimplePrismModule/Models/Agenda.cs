@@ -13,6 +13,7 @@ namespace OGV.Infrastructure.Interfaces
 
     public class Agenda : INotifyPropertyChanged, IParent, IChangeable, IAgenda
     {
+       
         public int TotalItems
         {
             get
@@ -85,8 +86,6 @@ namespace OGV.Infrastructure.Interfaces
             set { _videoFilePath = value; OnPropertyChanged("VideoFilePath"); OnChanged(); }
         }
 
-
-
         private string _currentSegment;
 
         public string CurrentSegment
@@ -148,14 +147,22 @@ namespace OGV.Infrastructure.Interfaces
         public IAgendaItem SelectedItem
         {
             get { return _selectedItem; }
-            set { _selectedItem = value; OnPropertyChanged("SelectedItem"); OnChanged(); StampCommand.RaiseCanExecuteChanged(); }
+            set {
+                _selectedItem = value; OnPropertyChanged("SelectedItem"); 
+                OnChanged(); 
+                StampCommand.RaiseCanExecuteChanged();
+                RemoveItemCommand.RaiseCanExecuteChanged();
+            }
         }
 
         public Agenda()
         {
+            
             this.SaveCommand = new DelegateCommand(OnSave, CanSave);
             this.ResetCommand = new DelegateCommand(OnReset, CanReset);
             this.StampCommand = new DelegateCommand(OnStamp, CanStamp);
+            this.RemoveItemCommand = new DelegateCommand(OnRemoveItem, CanRemoveItem);
+            this.AddItemCommand = new DelegateCommand(OnAddItem, CanAddItem);
             this.AssociateVideoCommand = new DelegateCommand(OnAssociateVideo, CanAssociateVideo);
 
             _items = new ObservableCollection<IAgendaItem>();
@@ -163,8 +170,6 @@ namespace OGV.Infrastructure.Interfaces
             AgendaItem level2 = new AgendaItem() { Title = "Top 2" };
             level1.Items.Add(level2);
         }
-
-       
 
         public void OnChanged()
         {
@@ -339,81 +344,17 @@ namespace OGV.Infrastructure.Interfaces
             }
         }
 
-        #region INotifyPropertyChanged
+        public DelegateCommand SaveCommand { get; set; }
 
-        public event PropertyChangedEventHandler PropertyChanged;
-
-        private void OnPropertyChanged(string name)
-        {
-            if (PropertyChanged != null)
-                PropertyChanged(this, new PropertyChangedEventArgs(name));
-
-            OnChanged();
-        }
-
-        #endregion INotifyPropertyChanged
-
-        #region IParent Interface 
-
-
-        public void RemoveItem(IAgendaItem item)
-        {
-            if (_items.Contains(item))
-                _items.Remove(item);
-        }
-
-        public void AddItem(IAgendaItem item)
-        {
-            if (_items == null)
-                _items = new ObservableCollection<IAgendaItem>();
-
-            item.Parent = this;
-            item.OriginalText = item.ToString();
-            _items.Add(item);
-           
-
-            item.ChangedEvent += ItemChanged_Event;
-
-            OnChanged();
-        }
-
-        public void InsertItem(IAgendaItem item, int indexAt)
-        {
-            if (_items == null)
-            {
-                indexAt = 0;
-                _items = new ObservableCollection<IAgendaItem>();
-            }
-            item.Parent = this;
-
-            if (indexAt > _items.Count)
-                _items.Add(item);
-            else
-            _items.Insert(indexAt, item);
-            OnChanged();
-        }
-
-        public int IndexOf(IAgendaItem item)
-        {
-            if (_items.Contains(item))
-                return _items.IndexOf(item);
-
-            return -1;
-        }
-
-        #endregion
-
-        #region IChangable
-
-        public DelegateCommand SaveCommand { get;  set; }
-
-        public DelegateCommand ResetCommand { get;  set; }
+        public DelegateCommand ResetCommand { get; set; }
 
         public DelegateCommand StampCommand { get; set; }
 
         public DelegateCommand AssociateVideoCommand { get; set; }
 
-        public event ChangedEventHandler ChangedEvent;
+        public DelegateCommand AddItemCommand { get; set; }
+
+        public DelegateCommand RemoveItemCommand { get; set; }
 
         public bool CanSave()
         {
@@ -485,7 +426,7 @@ namespace OGV.Infrastructure.Interfaces
             {
                 try
                 {
-                    if (! string.IsNullOrEmpty(openFileDialog1.FileName) )
+                    if (!string.IsNullOrEmpty(openFileDialog1.FileName))
                     {
                         this.VideoFilePath = openFileDialog1.FileName;
 
@@ -497,6 +438,98 @@ namespace OGV.Infrastructure.Interfaces
                 }
             }
         }
+
+        public bool CanAddItem()
+        {
+            return true;
+        }
+
+        public void OnAddItem()
+        {
+            if (SelectedItem == null)
+                InsertItem(new AgendaItem() { Title = "Add title...", Description = "" }, 0);
+
+            SelectedItem.AddItem(new AgendaItem() { Title = "Add title...", Description = "" });
+        }
+
+        public bool CanRemoveItem()
+        {
+            return !(SelectedItem == null);
+        }
+
+        public void OnRemoveItem()
+        {
+            RemoveItem(SelectedItem);
+        }
+
+        #region INotifyPropertyChanged
+
+        public event PropertyChangedEventHandler PropertyChanged;
+
+        private void OnPropertyChanged(string name)
+        {
+            if (PropertyChanged != null)
+                PropertyChanged(this, new PropertyChangedEventArgs(name));
+
+            OnChanged();
+        }
+
+        #endregion INotifyPropertyChanged
+
+        #region IParent Interface 
+
+
+        public void RemoveItem(IAgendaItem item)
+        {
+            if (_items.Contains(item))
+                _items.Remove(item);
+        }
+
+        public void AddItem(IAgendaItem item)
+        {
+            if (_items == null)
+                _items = new ObservableCollection<IAgendaItem>();
+
+            item.Parent = this;
+            item.OriginalText = item.ToString();
+            _items.Add(item);
+           
+
+            item.ChangedEvent += ItemChanged_Event;
+
+            OnChanged();
+        }
+
+        public void InsertItem(IAgendaItem item, int indexAt)
+        {
+            if (_items == null)
+            {
+                indexAt = 0;
+                _items = new ObservableCollection<IAgendaItem>();
+            }
+            item.Parent = this;
+
+            if (indexAt > _items.Count)
+                _items.Add(item);
+            else
+            _items.Insert(indexAt, item);
+            OnChanged();
+        }
+
+        public int IndexOf(IAgendaItem item)
+        {
+            if (_items.Contains(item))
+                return _items.IndexOf(item);
+
+            return -1;
+        }
+
+        #endregion
+
+        #region IChangable
+
+        public event ChangedEventHandler ChangedEvent;
+
 
         #endregion
 

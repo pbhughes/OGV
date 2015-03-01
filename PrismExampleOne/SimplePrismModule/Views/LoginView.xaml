@@ -67,8 +67,12 @@
                 Command="{Binding LoginCommand}" 
                 CommandParameter="{Binding ElementName=txtPassword}"
                 Margin="0 0 70 0" IsDefault="True">Login</Button>
-        <Border Visibility="{Binding IsBusy, Converter={StaticResource BoolToHiddenConverter }}">
-            <tk:BusyIndicator BusyContent="{Binding Message}" IsBusy="{Binding IsBusy}" DisplayAfter="0">
+        <Border 
+            Visibility="{Binding IsBusy, Converter={StaticResource BoolToHiddenConverter }}">
+            <tk:BusyIndicator TextOptions.TextFormattingMode="Display" 
+                              BusyContent="{Binding Message}" HorizontalAlignment="Center"
+                              TextBlock.TextAlignment="Center"
+                              IsBusy="{Binding IsBusy}" DisplayAfter="0">
 
                 <!--<tk:BusyIndicator.OverlayStyle>
                    

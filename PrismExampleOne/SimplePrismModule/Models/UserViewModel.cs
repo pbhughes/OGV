@@ -17,6 +17,7 @@ using System.Net.Http;
 using System.Net.Http.Headers;
 using System.Xml.Linq;
 using OGV.Infrastructure.Interfaces;
+using System.IO;
 
 namespace OGV.Admin.Models
 {
@@ -97,6 +98,7 @@ namespace OGV.Admin.Models
 
                 _password = pbox.Password;
                 string token = await Authenticate(_userName, _password);
+               
                 if (token == null)
                     return;
 
@@ -104,7 +106,7 @@ namespace OGV.Admin.Models
 
                 //down load all the board files
                 Message = "Downloading Agenda Files...";
-                List<IAgenda> files = await DownLoadAgendaFiles(); //get the url from the authentication token
+                List<IAgenda> files = await DownLoadAgendaFiles(); //get the URL from the authentication token
 
                 //load all the board files
                 Message = "Loading Agenda Files...";
@@ -124,6 +126,10 @@ namespace OGV.Admin.Models
 
                 Message = ex.Message;
                 IsBusy = true;
+            }
+            finally
+            {
+                OnLoggedIn();
             }
            
         }
@@ -229,9 +235,14 @@ namespace OGV.Admin.Models
                             string link = fileElement.Attribute("link") == null ? null : fileElement.Attribute("link").Value;
                             string folder = fileElement.Attribute("directory") == null ? null : fileElement.Attribute("directory").Value;
                             string fileName = fileElement.Attribute("filename") == null ? null : fileElement.Attribute("filename").Value;
+                            string strfileDate = fileElement.Attribute("filedate") == null ? null : fileElement.Attribute("filedate").Value;
+                            DateTime? remoteFileDate = null;
+                            if (!string.IsNullOrEmpty(strfileDate))
+                                remoteFileDate = DateTime.Parse(strfileDate);
+
                             using (var fileClient = new HttpClient())
                             {
-                                Message = string.Format("Downloading file {0}", link);
+                                Message = string.Format("Downloading file {0}", fileName);
                                 fileClient.Timeout = new TimeSpan(0, 0, 5);
                                 fileClient.DefaultRequestHeaders.TryAddWithoutValidation("User-Agent", @": Mozilla/5.0 (Windows; U; Windows NT 6.1; en-US; rv:1.9.1.3) Gecko/20090824 Firefox/3.5.3 (.NET CLR 4.0.20506)");
                                 fileClient.DefaultRequestHeaders.TryAddWithoutValidation("Accept", "text/ogvv");
@@ -250,7 +261,35 @@ namespace OGV.Admin.Models
                                 }
                                 else
                                 {
-                                    string fileText = await response.Content.ReadAsStringAsync();
+                                    string fileText = await fileGetResponse.Content.ReadAsStringAsync();
+                                    string executingDirectory = Path.GetDirectoryName(System.Reflection.Assembly.GetExecutingAssembly().Location);
+                                    string agendaPath = Path.Combine(executingDirectory, "Agendas");
+                                    if (!Directory.Exists(agendaPath))
+                                        Directory.CreateDirectory(agendaPath);
+
+                                    string currentFileDirectory = Path.Combine(agendaPath, folder);
+                                    if (!Directory.Exists(currentFileDirectory))
+                                        Directory.CreateDirectory(currentFileDirectory);
+
+                                    string localFilePath = Path.Combine(currentFileDirectory, fileName);
+                                    
+                                    if(File.Exists(localFilePath))
+                                    {
+                                        //read it get all the text and calculate a hash
+                                        int localFileHash = File.ReadAllText(localFilePath).GetHashCode();
+                                        int remoteFileHash = fileText.GetHashCode();
+
+                                        if (localFileHash != remoteFileHash)
+                                        {
+                                            //the files are different compare the dates
+                                            FileInfo localFileInfo = new FileInfo(localFilePath);
+                                            if (remoteFileDate > localFileInfo.LastWriteTime)
+                                                ;
+                                        }
+                                    }
+                                    File.WriteAllText(localFilePath,fileText);
+
+                                    
                                 }
                             }
 
@@ -304,6 +343,12 @@ namespace OGV.Admin.Models
 
         #endregion
 
-        
+        public event EventHandler LoggedIn;
+
+        public void OnLoggedIn()
+        {
+            if(LoggedIn != null)
+                LoggedIn(this, new EventArgs());
+        }
     }
 }

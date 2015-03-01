@@ -57,23 +57,20 @@
             <Setter Property="Padding" Value="10" />
         </Style>
     </UserControl.Resources>
-    <Grid VerticalAlignment="Stretch" Margin="6">
+    
+    <Grid Margin="6">
         <Grid.RowDefinitions>
-            <RowDefinition Height="Auto"/>
-            <RowDefinition Height="Auto" />
+            <RowDefinition Height="*" />
         </Grid.RowDefinitions>
 
         <Grid.ColumnDefinitions>
             <ColumnDefinition />
             <ColumnDefinition />
         </Grid.ColumnDefinitions>
-        <StackPanel Orientation="Vertical" Grid.Row="0" Grid.ColumnSpan="2">
-            <Label >Publishing Point Configuration</Label>
-            <Label Visibility="{Binding SelectedAgenda, Converter={StaticResource NullToVisible}}">Please login and select an agenada!</Label>
-        </StackPanel>
+      
         
-        <Grid Grid.Row="1" Grid.ColumnSpan="2" Grid.RowSpan="2"
-                  Visibility="{Binding SelectedAgenda,Converter={StaticResource NullToHidden}}">
+        <Grid Grid.Row="1" 
+              Grid.ColumnSpan="2">
             <Grid.RowDefinitions>
                 <RowDefinition/>
             </Grid.RowDefinitions>
@@ -127,11 +124,6 @@
 
                     </Border>
                     
-                    <StackPanel Orientation="Horizontal" HorizontalAlignment="Right">
-                        <Button
-                            Command="{Binding CheckStateCommand }"
-                            Style="{DynamicResource btn-primary}">Check State</Button>
-                    </StackPanel>
                 </StackPanel>                
           
                 

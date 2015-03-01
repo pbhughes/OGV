@@ -29,14 +29,35 @@ namespace OGV.Admin.Views
 
         
         IUnityContainer _container;
+        IUserViewModel _user;
        
 
         public LoginView(IUnityContainer container, IUserViewModel userModel)
         {
             InitializeComponent();
             _container = container;
-            this.DataContext = userModel;
+            _user = userModel;
+            _user.LoggedIn += UserLoggedIn;
+            this.DataContext = _user;
            
+        }
+
+        void UserLoggedIn(object sender, EventArgs e)
+        {
+            try
+            {
+                Application.Current.Dispatcher.Invoke(() =>
+                {
+                    txtPassword.Clear();
+                    txtUserId.Focus();
+                    txtUserId.SelectAll();
+                });
+            }
+            catch (Exception)
+            {
+                
+                throw;
+            }
         }
 
         public bool IsNavigationTarget(NavigationContext navigationContext)
@@ -73,6 +94,7 @@ namespace OGV.Admin.Views
             SetUpUIControls();
         }
 
+       
         
     }
 }

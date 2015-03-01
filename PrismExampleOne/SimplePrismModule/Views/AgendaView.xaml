@@ -12,9 +12,8 @@
              xmlns:tkGrid="http://schemas.xceed.com/wpf/xaml/datagrid"
              xmlns:prism="http://www.codeplex.com/prism"
              mc:Ignorable="d"
-             d:DesignHeight="300" d:DesignWidth="350"
+             d:DesignHeight="400" d:DesignWidth="455"
              Margin="2">
-
 
     <UserControl.Resources>
 
@@ -33,8 +32,6 @@
         <Style TargetType="StackPanel">
             <Setter Property="Margin" Value="10px" />
             <Setter Property="VerticalAlignment" Value="Top" />
-            <Setter Property="MaxWidth" Value="300px" />
-
         </Style>
 
         <Style TargetType="TextBox">
@@ -52,7 +49,7 @@
             <Setter Property="TextAlignment" Value="Center" />
             <Setter Property="VerticalAlignment" Value="Center" />
             <Setter Property="FontSize" Value="15" />
-            <Setter Property="Margin" Value="4"/>
+            <Setter Property="Margin" Value="4" />
         </Style>
 
         <Style TargetType="Label">
@@ -73,46 +70,35 @@
 
         <Style TargetType="TreeViewItem">
             <Setter Property="Padding" Value="5" />
-            <Setter Property="Background" Value="LightGray"/>
-            <Setter Property="Margin" Value="0,5,0,5"/>
+            <Setter Property="Background" Value="LightGray" />
+            <Setter Property="Margin" Value="0,5,0,5" />
             <Style.Triggers>
                 <Trigger Property="IsMouseOver" Value="True">
-                    <Setter Property="Background" Value="LightBlue"/>
+                    <Setter Property="Background" Value="LightBlue" />
                 </Trigger>
                 <Trigger Property="IsSelected" Value="True">
-                    <Setter Property="Background" Value="Red"/>
+                    <Setter Property="Background" Value="Red" />
                 </Trigger>
-
-
             </Style.Triggers>
         </Style>
 
         <Style TargetType="Border">
-            <Setter Property="BorderBrush" Value="LightBlue"/>
-            <Setter Property="BorderThickness" Value="2"/>
-            <Setter Property="CornerRadius" Value="6"/>
-            <Setter Property="Margin" Value="2"/>
+            <Setter Property="BorderBrush" Value="LightBlue" />
+            <Setter Property="BorderThickness" Value="2" />
+            <Setter Property="CornerRadius" Value="6" />
+            <Setter Property="Margin" Value="2" />
             <Setter Property="Padding" Value="2"></Setter>
         </Style>
-
     </UserControl.Resources>
 
-    <Grid>
+    <Grid HorizontalAlignment="Stretch" VerticalAlignment="Stretch">
         <Grid.RowDefinitions>
-            <RowDefinition Height="115" />
+            <RowDefinition Height="112" />
+            <RowDefinition Height="Auto" />
             <RowDefinition Height="*" />
-            <RowDefinition Height="180" />
         </Grid.RowDefinitions>
 
-        <Grid.ColumnDefinitions>
-            <ColumnDefinition />
-            <ColumnDefinition />
-            <ColumnDefinition />
-            <ColumnDefinition />
-        </Grid.ColumnDefinitions>
-
-
-        <Grid Grid.Column="0" Grid.Row="0" Grid.ColumnSpan="4">
+        <Grid HorizontalAlignment="Stretch" Grid.Row="0">
             <Grid.ColumnDefinitions>
                 <ColumnDefinition Width="100" />
                 <ColumnDefinition Width="*" />
@@ -125,14 +111,16 @@
 
             <Label Grid.Column="0" Grid.Row="0" HorizontalAlignment="Left">Agenda Name:</Label>
             <TextBox Grid.Column="1" Grid.Row="0" HorizontalAlignment="Left"
+                     VerticalAlignment="Center"
                          Text="{Binding Name}"></TextBox>
-            <Label Grid.Column="0" Grid.Row="1" HorizontalAlignment="Left">Video Name:</Label>
-            <StackPanel HorizontalAlignment="Left" Grid.Column="1" Grid.Row="1" Orientation="Horizontal" Margin="1">
+            <Label Grid.Column="0" Grid.Row="1" 
+                   HorizontalAlignment="Left" >Video Name:</Label>
+            <StackPanel HorizontalAlignment="Left" VerticalAlignment="Center" Grid.Column="1" Grid.Row="1" Orientation="Horizontal" Margin="1">
                 <TextBox HorizontalAlignment="Left"
                          Text="{Binding VideoFileName}"></TextBox>
                 <Button Command="{Binding AssociateVideoCommand}">...</Button>
             </StackPanel>
-          
+
             <Label HorizontalAlignment="Left" Grid.Column="0" Grid.Row="2">Meeting Date:</Label>
             <tk:DateTimePicker  Grid.Row="2"
                             Grid.Column="1"
@@ -142,44 +130,30 @@
                             Width="246" ></tk:DateTimePicker>
         </Grid>
 
-
-        <TreeView x:Name="tvAgenda" AllowDrop="True" Grid.Row="1" 
-                  Grid.ColumnSpan="4" Margin="2"
-                  ItemsSource="{Binding Items}" 
-                  PreviewMouseDown="TreeView_MouseDown" 
-                  PreviewMouseMove="TreeView_MouseMove" 
-                  PreviewDragOver="TreeView_DragOver" 
-                  PreviewDrop="TreeView_Drop">
-
-            <e:Interaction.Behaviors>
-                <util:BindableSelectedItemBehavior
-                    SelectedItem="{Binding SelectedItem, Mode=TwoWay}" />
-            </e:Interaction.Behaviors>
-        </TreeView>
-
-        <Grid Margin="2" Grid.Row="2" Grid.ColumnSpan="4" DataContext="{Binding SelectedItem}">
+        <Grid DataContext="{Binding SelectedItem}"
+              Grid.Row="1" VerticalAlignment="Stretch">
             <Grid.RowDefinitions>
                 <RowDefinition Height="30" />
-                <RowDefinition />
-                <RowDefinition />
-                <RowDefinition Height="60"/>
+                <RowDefinition Height="Auto" />
+                <RowDefinition Height="Auto" />
+                <RowDefinition Height="60" />
             </Grid.RowDefinitions>
             <Grid.ColumnDefinitions>
                 <ColumnDefinition />
                 <ColumnDefinition />
             </Grid.ColumnDefinitions>
-            
+
             <TextBlock Grid.Column="0" Grid.Row="0"
                        HorizontalAlignment="left"
-                       TextAlignment="Left" 
+                       TextAlignment="Left"
                        MinHeight="25"
-                       Text="{Binding TimeStamp}" 
+                       Text="{Binding TimeStamp}"
                        Margin="4,2,0,2"></TextBlock>
             <TextBlock Grid.Column="1" Grid.Row="0"
                        HorizontalAlignment="left"
-                       TextAlignment="Left" 
+                       TextAlignment="Left"
                        MinHeight="25"
-                       Text="{Binding Segment}" 
+                       Text="{Binding Segment}"
                        Margin="4,2,0,2"></TextBlock>
 
             <tk:MultiLineTextEditor Grid.Row="1" Margin="2" IsSpellCheckEnabled="True"
@@ -198,21 +172,46 @@
                                     ScrollViewer.HorizontalScrollBarVisibility="Disabled"
                                     ScrollViewer.VerticalScrollBarVisibility="Auto" Grid.ColumnSpan="2" />
 
-            <Border  Grid.Row="3" Background="LightBlue" VerticalAlignment="Center" Grid.ColumnSpan="2" Margin="2,4">
-                <StackPanel Orientation="Horizontal"  Margin="2" HorizontalAlignment="Right">
+            <Border  Grid.Row="3" Background="LightBlue"
+                     VerticalAlignment="Center"
+                     Grid.ColumnSpan="2" Margin="2,4">
+                <StackPanel Orientation="Horizontal"
+                            Margin="2" HorizontalAlignment="Right">
+                    <Button x:Name="cmdAddNode" ToolTip="Adds an agenda item"
+                            Style="{DynamicResource btn-primary}"
+                            Command="{Binding AddItemCommand}" >Add Node</Button>
+                    <Button x:Name="cmdRemoveNode" ToolTip="Removes an agenda item"
+                            Style="{DynamicResource btn-primary}"
+                            Command="{Binding RemoveItemCommand}"
+                            CommandParameter="{Binding SelectedAgenda.SelectedItem}">Remove Node</Button>
                     <Button x:Name="cmdStamp"
-                        ToolTip="Stamps the selected agenda with video frame and time" 
+                        ToolTip="Stamps the selected agenda with video frame and time"
                         Style="{DynamicResource btn-primary}"
                         Command="{Binding StampCommand}">Stamp</Button>
-                    <Button ToolTip="Reverts back to the original agenda item" 
+                    <Button ToolTip="Reverts back to the original agenda item"
                             Style="{DynamicResource btn-danger}"
                             Command="{Binding ResetCommand}">Undo</Button>
-                    <Button ToolTip="Saves the current agenda to disk" 
-                            Style="{DynamicResource btn-success}" 
+                    <Button ToolTip="Saves the current agenda to disk"
+                            Style="{DynamicResource btn-success}"
                             Command="{Binding SaveCommand}">Save</Button>
                 </StackPanel>
             </Border>
-
         </Grid>
+
+        <TreeView x:Name="tvAgenda" AllowDrop="True"
+                  Margin="2" Grid.Row="2"
+                  ItemsSource="{Binding Items}"
+                  ScrollViewer.VerticalScrollBarVisibility="Auto"
+                  VerticalAlignment="Stretch"
+                  PreviewMouseDown="TreeView_MouseDown"
+                  PreviewMouseMove="TreeView_MouseMove"
+                  PreviewDragOver="TreeView_DragOver"
+                  PreviewDrop="TreeView_Drop">
+
+            <e:Interaction.Behaviors>
+                <util:BindableSelectedItemBehavior
+                    SelectedItem="{Binding SelectedItem, Mode=TwoWay}" />
+            </e:Interaction.Behaviors>
+        </TreeView>
     </Grid>
 </UserControl>
