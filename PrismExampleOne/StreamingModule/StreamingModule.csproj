@@ -151,6 +151,9 @@
     <Compile Include="Views\PublishingPointView.xaml.cs">
       <DependentUpon>PublishingPointView.xaml</DependentUpon>
     </Compile>
+    <Compile Include="Views\StreamerSplashScreen.xaml.cs">
+      <DependentUpon>StreamerSplashScreen.xaml</DependentUpon>
+    </Compile>
     <Compile Include="Views\StreamerNavView.xaml.cs">
       <DependentUpon>StreamerNavView.xaml</DependentUpon>
     </Compile>
@@ -177,6 +180,10 @@
       <Generator>MSBuild:Compile</Generator>
     </Page>
     <Page Include="Views\PublishingPointView.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Views\StreamerSplashScreen.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>

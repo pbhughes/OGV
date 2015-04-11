@@ -124,7 +124,7 @@ namespace OGV.Admin.Models
             catch (Exception ex)
             {
 
-                Message = ex.Message;
+                Message = string.Format("Login for {0} failed, please try again", _userName);
                 IsBusy = true;
             }
             finally

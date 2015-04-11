@@ -101,6 +101,7 @@
     <Compile Include="Converters\CollapsedIfNullConverter.cs" />
     <Compile Include="Converters\VisibilityConverter.cs" />
     <Compile Include="Extensions\FileSystemInfoExt.cs" />
+    <Compile Include="GlobalSuppressions.cs" />
     <Compile Include="Interfaces\IAgenda.cs" />
     <Compile Include="Interfaces\IAgendaItem.cs" />
     <Compile Include="Interfaces\IBoard.cs" />

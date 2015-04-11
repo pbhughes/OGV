@@ -313,6 +313,11 @@ namespace OGV.Admin.Models
 
 
 
-       
+
+
+        public Infrastructure.Interfaces.Agenda ParseAgenda(FileInfo fileInfo)
+        {
+            throw new NotImplementedException();
+        }
     }
 }

@@ -78,6 +78,7 @@ namespace OGV.Main
             this.Container.RegisterType<object, StreamerNavView>(typeof(StreamerNavView).FullName);
             this.Container.RegisterType<object, PublishingPointView>(typeof(PublishingPointView).FullName);
             this.Container.RegisterType<object, PublishingPointManagerNavView>(typeof(PublishingPointManagerNavView).FullName);
+            this.Container.RegisterType<object, StreamerSplashScreen>(typeof(StreamerSplashScreen).FullName);
 
             _xService.BaseUrl = OGV.Main.Properties.Settings.Default.BaseUrl;
             _xService.BoardFolder = OGV.Main.Properties.Settings.Default.BoardFolder;

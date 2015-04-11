@@ -15,7 +15,7 @@ namespace OGV.Infrastructure.Interfaces
        public interface IEncoderInterface
     {
 
-        LiveSource AddRootSource();
+      
 
         void RemoveRootSource();
 
@@ -23,7 +23,7 @@ namespace OGV.Infrastructure.Interfaces
 
         void ReadAndApplySettings();
 
-        PreviewWindow SetInputPreviewWindow(Size windowSize, Panel pnlInputPreview);
+        PreviewWindow SetInputPreviewWindow(Panel pnlInputPreview);
 
     }
 }

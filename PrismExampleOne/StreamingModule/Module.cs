@@ -19,10 +19,17 @@ namespace OGV.Streaming
 
         public void Initialize()
         {
-
-            _regionManager.RegisterViewWithRegion("SideNavBarRegion", typeof(OGV.Streaming.Views.PublishingPointManagerNavView));
+            
+            //_regionManager.RegisterViewWithRegion("SideNavBarRegion", typeof(OGV.Streaming.Views.PublishingPointManagerNavView));
             _regionManager.RegisterViewWithRegion("SidebarRegion", typeof(OGV.Streaming.Views.PublishingPointView));
-            _regionManager.RegisterViewWithRegion("SideNavBarRegion", typeof(OGV.Streaming.Views.StreamerNavView));
+            //_regionManager.RegisterViewWithRegion("SideNavBarRegion", typeof(OGV.Streaming.Views.StreamerNavView));
+            _regionManager.RegisterViewWithRegion("SidebarRegion", typeof(OGV.Streaming.Views.StreamerSplashScreen));
+
+            Uri nn = new Uri(typeof(Views.StreamerSplashScreen).FullName, UriKind.RelativeOrAbsolute);
+
+            _regionManager.RequestNavigate("SidebarRegion", nn);
+
+            
 
            
         }

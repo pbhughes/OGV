@@ -2,8 +2,8 @@
         xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
         xmlns:prism="http://www.codeplex.com/prism"
-        Title="OGV 2" SizeToContent="Height" 
-        WindowStartupLocation="Manual" 
+        Title="OGV 2" 
+        WindowStartupLocation="CenterScreen" WindowState="Maximized"
         Left="50" Top="10" Closing="Window_Closing">
 
     <Grid>
@@ -22,7 +22,7 @@
         <ContentControl Grid.Column="0" 
                         Grid.Row="1"
                         Padding="2px"
-                        HorizontalAlignment="Stretch"
+                        HorizontalAlignment="Center"
                         Name="MainRegion" 
                         prism:RegionManager.RegionName="MainRegion"></ContentControl>
 

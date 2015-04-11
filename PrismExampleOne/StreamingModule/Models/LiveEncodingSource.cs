@@ -20,9 +20,17 @@ namespace OGV.Streaming.Models
 
     public delegate void LoadCompleteDelegate(object sender, EventArgs e);
 
-    public class LiveEncodingSource : EncodingSourceBase, IEncoderInterface, INotifyPropertyChanged
+    public class LiveEncodingSource : EncodingSourceBase, IEncoderInterface, INotifyPropertyChanged, IDisposable
     {
         #region Fields - Properties - Events
+
+        System.Drawing.Size _newSize;
+
+        public System.Drawing.Size NewSize
+        {
+            get { return _newSize; }
+            set { _newSize = value; }
+        }
 
         public IList<eeDevices.EncoderDevice> VideoDevices { get; set; }
 
@@ -247,7 +255,15 @@ namespace OGV.Streaming.Models
             catch (Exception ex)
             {
 
-                throw;
+                if (ex.Message.ToLower().Contains("licensed"))
+                {
+                    MessageBox.Show("Make sure you have a full featured version of Microsoft Encoder 2 installed, it's free");
+                }
+                else
+                    MessageBox.Show(ex.Message);
+                    
+
+                
             }
         }
 
@@ -270,6 +286,7 @@ namespace OGV.Streaming.Models
                 {
 
                     _job = new LiveJob();
+
                     _job.Status += new EventHandler<EncodeStatusEventArgs>(job_Status);
                     // remove all existing output formats it will have
                     //to add them new each time
@@ -316,11 +333,7 @@ namespace OGV.Streaming.Models
 
         }
 
-        public LiveSource AddRootSource()
-        {
-            _liveSource = Job.AddDeviceSource(VideoDevice, AudioDevice);
-            return _liveSource;
-        }
+     
 
         public void RemoveRootSource()
         {
@@ -341,13 +354,11 @@ namespace OGV.Streaming.Models
 
         }
 
-        public PreviewWindow SetInputPreviewWindow(System.Drawing.Size windowSize, 
-            System.Windows.Forms.Panel pnlInputPreview)
+        public PreviewWindow SetInputPreviewWindow(System.Windows.Forms.Panel pnlInputPreview)
         {
+            
+            PreviewWindow prev = new PreviewWindow(new HandleRef(pnlInputPreview, pnlInputPreview.Handle));
 
-            HandleRef h = new HandleRef(pnlInputPreview, pnlInputPreview.Handle);
-            PreviewWindow prev = new PreviewWindow(h);
-            prev.SetSize(windowSize);
             return prev;
         }
 
@@ -471,7 +482,7 @@ namespace OGV.Streaming.Models
             if (VideoDevices.Count > 0)
             {
                 //set to the first device that can capture live video
-                VideoDevice = VideoDevices.Where(dev => dev.Name =="Integrated Webcam").First();
+                VideoDevice = VideoDevices.Where(dev => dev.Name.ToLower().Contains("cam")).First();
             }
                 
 
@@ -491,10 +502,17 @@ namespace OGV.Streaming.Models
             
             VideoDevice = video;
             AudioDevice = audio;
-            _liveSource = _job.AddDeviceSource(VideoDevice, AudioDevice);
-
+            _liveSource = Job.AddDeviceSource(VideoDevice, AudioDevice);
+            System.Drawing.Size size = new System.Drawing.Size(600, 800);
+            _liveSource.PickBestVideoFormat(size, (long)15);
+            SourceProperties sp = _liveSource.SourcePropertiesSnapshot();
             
+            _newSize = new System.Drawing.Size(sp.Size.Width, sp.Size.Height);
+            _job.OutputFormat.VideoProfile.Size = new System.Drawing.Size(sp.Size.Width, sp.Size.Height);
             _job.ActivateSource(_liveSource);
+            if (this.LoadCompletedEvent != null)
+                LoadCompletedEvent(this, new EventArgs());
+           
 
             if (_timerFrameTrack == null)
             {
@@ -526,6 +544,14 @@ namespace OGV.Streaming.Models
 
         #endregion INotifyPropertyChanged
 
-        
+
+        #region IDisposable
+        public void Dispose()
+        {
+            _timerFrameTrack.Stop();
+            _timerFrameTrack.Dispose();
+        }
+        #endregion
+       
     }
 }

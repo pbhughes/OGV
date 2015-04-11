@@ -40,6 +40,9 @@ namespace OGV.Streaming.Views
             
             _encoder.LoadCompletedEvent += encoder_LoadCompletedEvent;
             _encoder.PreconnectPublishingPoint();
+
+           
+
         }
 
 
@@ -186,7 +189,7 @@ namespace OGV.Streaming.Views
 
                 liv.ResizeMode = Microsoft.Expression.Encoder.VideoResizeMode.Letterbox;
                 System.Drawing.Size viewSize = new System.Drawing.Size(400,400);
-                liv.PreviewWindow = _encoder.SetInputPreviewWindow(viewSize, pnlPreview);
+                liv.PreviewWindow = _encoder.SetInputPreviewWindow( pnlPreview);
 
                 _loadComplete = true;
                
