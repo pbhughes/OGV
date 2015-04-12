@@ -1,4 +1,6 @@
-﻿using System;
+﻿using Microsoft.Practices.Prism.Regions;
+using OGV.Infrastructure.Interfaces;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -20,9 +22,23 @@ namespace OGV.Streaming.Views
     /// </summary>
     public partial class StreamerSplashScreen : UserControl
     {
-        public StreamerSplashScreen()
+        IRegionManager _regionManager;
+        IUserViewModel _user;
+        public StreamerSplashScreen(IRegionManager regionManger, IUserViewModel user)
         {
             InitializeComponent();
+            _regionManager = regionManger;
+            _user = user;
+            _user.BoardList.AgendaSelectedEvent += BoardList_AgendaSelectedEvent;
+        }
+
+        void BoardList_AgendaSelectedEvent(IAgenda selected)
+        {
+            Uri nn = new Uri(typeof(Views.PublishingPointManagerNavView).FullName, UriKind.RelativeOrAbsolute);
+            _regionManager.RequestNavigate("SideNavBarRegion", nn);
+
+            Uri mm = new Uri(typeof(Views.PublishingPointView).FullName, UriKind.RelativeOrAbsolute);
+            _regionManager.RequestNavigate("SidebarRegion", mm);
         }
     }
 }

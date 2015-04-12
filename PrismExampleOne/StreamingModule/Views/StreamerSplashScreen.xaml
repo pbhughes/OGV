@@ -6,6 +6,6 @@
              mc:Ignorable="d" 
              d:DesignHeight="300" d:DesignWidth="300">
     <Grid>
-        <Label>The Splash screen</Label>
+        <Image Source="pack://siteoforigin:,,,/Resources/ogLogoLarge.png" />
     </Grid>
 </UserControl>

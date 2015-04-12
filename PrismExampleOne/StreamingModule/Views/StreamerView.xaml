@@ -101,7 +101,7 @@
             <StackPanel Grid.Row="1" x:Name="dockPanel" >
 
 
-            <Label HorizontalAlignment="Center">Preview Window</Label>
+          
             <WindowsFormsHost  x:Name="winHostInputPreview" Height="400" Width="400" Background="AliceBlue"
                               Panel.ZIndex="-1" Margin="1" >
                 <wf:Panel x:Name="pnlPreview" Visible="True" Size="1200,1200"
