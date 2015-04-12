@@ -21,5 +21,8 @@ namespace OGV.Infrastructure.Interfaces
         void SaveAgenda();
         IAgenda SelectedAgenda { get; set; }
         IBoard SelectedBoard { get; set; }
+
+        event EventHandler LoggedOut;
+        void OnLoggedOut();
     }
 }

@@ -29,15 +29,26 @@ namespace OGV.Streaming.Views
         private IPublishingPointMonitor _pubMonitor;
         
 
-        public PublishingPointManagerNavView(IUnityContainer container, IUserViewModel user, IPublishingPointMonitor pubMonitor)
+        public PublishingPointManagerNavView(IUnityContainer container, IUserViewModel user, IPublishingPointMonitor pubMonitor, IRegionManager regionManager)
         {
             InitializeComponent();
             _container = container;
             _user = user;
             _pubMonitor = pubMonitor;
             this.DataContext = _pubMonitor;
+            _regionManager = regionManager;
+            _user.BoardList.LoggedOut += BoardList_LoggedOut;
 
           
+        }
+
+        void BoardList_LoggedOut(object sender, EventArgs e)
+        {
+            Uri vv = new Uri(typeof(Views.StreamerSplashScreen).FullName, UriKind.RelativeOrAbsolute);
+            _regionManager.RequestNavigate("SidebarRegion", vv);
+
+            var sideBarNavView = _regionManager.Regions["SideNavBarRegion"].ActiveViews.First();
+            _regionManager.Regions["SideNavBarRegion"].Remove(sideBarNavView);
         }
 
        

@@ -30,6 +30,7 @@ namespace OGV.Streaming.Views
             _regionManager = regionManger;
             _user = user;
             _user.BoardList.AgendaSelectedEvent += BoardList_AgendaSelectedEvent;
+            
         }
 
         void BoardList_AgendaSelectedEvent(IAgenda selected)

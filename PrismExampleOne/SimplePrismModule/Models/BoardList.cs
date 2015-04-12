@@ -129,12 +129,26 @@ namespace OGV.Admin.Models
 
         private void OnLogOut()
         {
-            SelectedAgenda.OnSave();
+            if (SelectedAgenda != null)
+            {
+                SelectedAgenda.OnSave();
+            }
 
             //show the BoardView in the main region
             Uri vv = new Uri(typeof(Views.LoginView).FullName, UriKind.RelativeOrAbsolute);
             _regionManager.RequestNavigate("MainRegion", vv);
+
+            OnLoggedOut();
         }
+
+        public event EventHandler LoggedOut;
+
+        public void OnLoggedOut()
+        {
+            if (LoggedOut != null)
+                LoggedOut(this, new EventArgs());
+        }
+
 
         private bool CanLogOut()
         {
@@ -310,10 +324,6 @@ namespace OGV.Admin.Models
         }
 
         #endregion
-
-
-
-
 
         public Infrastructure.Interfaces.Agenda ParseAgenda(FileInfo fileInfo)
         {

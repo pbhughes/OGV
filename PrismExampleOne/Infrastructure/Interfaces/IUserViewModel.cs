@@ -18,6 +18,6 @@ namespace OGV.Infrastructure.Interfaces
         string UserName { get; set; }
         event EventHandler LoggedIn;
         void OnLoggedIn();
-       
+        
     }
 }

@@ -28,21 +28,41 @@ namespace OGV.Streaming.Views
     {
         LiveEncodingSource _encoder;
         IUnityContainer _container;
-        IUserViewModel _userModel;
+        IUserViewModel _user;
+        IRegionManager _regionManager;
 
 
-        public StreamerView(IUserViewModel user)
+        public StreamerView(IUserViewModel user, IRegionManager regionManager)
         {
             InitializeComponent();
             _encoder = new LiveEncodingSource(user);
             DataContext = _encoder;
-            _userModel = user;
-            
+            _user = user;
+            _regionManager = regionManager;
             _encoder.LoadCompletedEvent += encoder_LoadCompletedEvent;
             _encoder.PreconnectPublishingPoint();
+            _user.BoardList.LoggedOut += User_LoggedOut;
 
            
 
+        }
+
+        void User_LoggedOut(object sender, EventArgs e)
+        {
+            if (_encoder.Job.IsCapturing)
+            {
+                _encoder.StopEncoding();
+            }
+
+            Uri vv = new Uri(typeof(Views.StreamerSplashScreen).FullName, UriKind.RelativeOrAbsolute);
+            _regionManager.RequestNavigate("SidebarRegion", vv);
+
+            if (_regionManager.Regions["SideNavBarRegion"].ActiveViews.Count() > 0)
+            {
+                var sideBarNavView = _regionManager.Regions["SideNavBarRegion"].ActiveViews.First();
+                _regionManager.Regions["SideNavBarRegion"].Remove(sideBarNavView);
+            }
+           
         }
 
 
