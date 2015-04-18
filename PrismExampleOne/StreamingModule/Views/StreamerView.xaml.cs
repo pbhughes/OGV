@@ -134,8 +134,7 @@ namespace OGV.Streaming.Views
             //on that source
       
             //set the device source  TODO: send in the devices in an overload
-         
-
+        
       
         }
 

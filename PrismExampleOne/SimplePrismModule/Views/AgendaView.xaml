@@ -69,6 +69,7 @@
         </Style>
 
         <Style TargetType="TreeViewItem">
+            <EventSetter Event="MouseDoubleClick" Handler="OnMouseDoubleClick"></EventSetter>
             <Setter Property="Padding" Value="5" />
             <Setter Property="Margin" Value="0,5,0,5" />
             <Style.Triggers>
@@ -79,6 +80,7 @@
                     <Setter Property="Background" Value="Red" />
                 </Trigger>
             </Style.Triggers>
+           
         </Style>
 
         <Style TargetType="Border">
@@ -183,10 +185,10 @@
                             Style="{DynamicResource btn-primary}"
                             Command="{Binding RemoveItemCommand}"
                             CommandParameter="{Binding SelectedAgenda.SelectedItem}">Remove Node</Button>
-                    <Button x:Name="cmdStamp"
-                        ToolTip="Stamps the selected agenda with video frame and time"
-                        Style="{DynamicResource btn-primary}"
-                        Command="{Binding StampCommand}">Stamp</Button>
+                    <Button x:Name="cmdStamp" 
+                            ToolTip="Stamps the selected agenda with video frame and time"
+                            Style="{DynamicResource btn-primary}"
+                            Command="{Binding StampCommand}">Stamp</Button>
                     <Button ToolTip="Reverts back to the original agenda item"
                             Style="{DynamicResource btn-danger}"
                             Command="{Binding ResetCommand}">Undo</Button>
@@ -206,7 +208,7 @@
                   PreviewMouseMove="TreeView_MouseMove"
                   PreviewDragOver="TreeView_DragOver"
                   PreviewDrop="TreeView_Drop">
-
+ 
             <e:Interaction.Behaviors>
                 <util:BindableSelectedItemBehavior
                     SelectedItem="{Binding SelectedItem, Mode=TwoWay}" />

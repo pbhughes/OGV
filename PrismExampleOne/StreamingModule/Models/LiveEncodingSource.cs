@@ -242,10 +242,10 @@ namespace OGV.Streaming.Models
 
                 //add streaming format
                 PushBroadcastPublishFormat pushFormat = new PushBroadcastPublishFormat();
-                Preset preset = Preset.SystemLivePresets.Where(p => p.Name.Contains("Low Bandwidth")).First();
+                Preset preset = Preset.SystemLivePresets.Where(p => p.Name.ToLower().Contains("iphone wifi")).First();
                 _job.ApplyPreset(preset);
                
-                pushFormat.PublishingPoint = new Uri( @"http://ogv2.opengovideo.com/point1.isml");
+                pushFormat.PublishingPoint = new Uri(_user.BoardList.SelectedAgenda.PublishingPoint);
                 _job.PublishFormats.Add(pushFormat);
                 _job.StartEncoding();
                 _timerFrameTrack.Start();
@@ -301,7 +301,7 @@ namespace OGV.Streaming.Models
                     if( ! string.IsNullOrEmpty(PublishingPoint))
                     {
                         pushformat.PublishingPoint = new Uri(PublishingPoint);
-                        pushformat.EventId = GenerateEventID();
+                        //pushformat.EventId = GenerateEventID();
                         Job.PublishFormats.Add(pushformat);
                         Job.PreConnectPublishingPoint();
 
@@ -462,11 +462,13 @@ namespace OGV.Streaming.Models
                 if(_user.BoardList != null)
                     if (_user.BoardList.SelectedAgenda != null)
                     {
-                        _user.BoardList.SelectedAgenda.VideoTime = _totalRecordTime;
+                        if(_user.BoardList.SelectedAgenda.SelectedItem != null)
+                            _user.BoardList.SelectedAgenda.SelectedItem.ProposedTime = _totalRecordTime;
+                        
                     }
             //report the time
             SessionTime = string.Format("{0} : {1} : {2}", _totalRecordTime.Hours, _totalRecordTime.Minutes, _totalRecordTime.Seconds);
-            System.Diagnostics.Debug.WriteLine(DateTime.Now.ToLongTimeString());
+            System.Diagnostics.Debug.WriteLine(_user.BoardList.SelectedAgenda.VideoTime.ToString());
             
         }
 

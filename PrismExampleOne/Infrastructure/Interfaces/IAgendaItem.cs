@@ -29,6 +29,7 @@ namespace OGV.Infrastructure.Interfaces
         TimeSpan TimeStamp { get; set; }
         string Title { get; set; }
         string ToString();
-        string Segment { get; set; } 
+        string Segment { get; set; }
+        TimeSpan? ProposedTime { get; set; }
     }
 }

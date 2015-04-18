@@ -70,8 +70,12 @@ namespace OGV.Admin.Models
         {
             this.SaveCommand = new DelegateCommand(OnSave, CanSave);
             this.ResetCommand = new DelegateCommand(OnReset, CanReset);
+            this.StampCommand = new DelegateCommand(OnStamp, CanStamp);
             _items = new ObservableCollection<IAgendaItem>();
         }
+
+
+        public TimeSpan? ProposedTime { get; set; }
 
         void ItemChanged_Event(object sender, EventArgs e)
         {
@@ -145,6 +149,21 @@ namespace OGV.Admin.Models
                 }
 
             }
+        }
+
+        public DelegateCommand StampCommand { get; set; }
+
+        public bool CanStamp()
+        {
+            return true;
+        }
+
+        public void OnStamp()
+        {
+            if (ProposedTime == null )
+                return;
+            
+            TimeStamp = ProposedTime.Value;
         }
 
         #region INotifyPropertyChanged

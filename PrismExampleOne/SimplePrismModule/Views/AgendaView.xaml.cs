@@ -73,6 +73,11 @@ namespace OGV.Admin.Views
 
            
         }
+        private void OnMouseDoubleClick(object sender, RoutedEventArgs e)
+        {
+            if (_user.BoardList.SelectedAgenda.SelectedItem != null && _user.BoardList.SelectedAgenda.SelectedItem.ProposedTime != null)
+                _user.BoardList.SelectedAgenda.SelectedItem.TimeStamp = _user.BoardList.SelectedAgenda.SelectedItem.ProposedTime.Value;
+        }
 
         private void TreeView_SelectedItemChanged(object sender, RoutedPropertyChangedEventArgs<object> e)
         {
