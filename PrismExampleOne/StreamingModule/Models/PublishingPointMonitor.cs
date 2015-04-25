@@ -243,10 +243,7 @@ namespace OGV.Streaming.Models
                     }
                     else
                     {
-                        string x = await response.Content.ReadAsStringAsync();
-                        var xDoc = XDocument.Parse(x);
-                        State = xDoc.Descendants().Skip(12).First().Value;
-                        IsBusy = false;
+                        //status code is all we will get back
 
 
                     }

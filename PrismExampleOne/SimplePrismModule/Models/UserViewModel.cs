@@ -245,7 +245,7 @@ namespace OGV.Admin.Models
                                 Message = string.Format("Downloading file {0}", fileName);
                                 fileClient.Timeout = new TimeSpan(0, 0, 5);
                                 fileClient.DefaultRequestHeaders.TryAddWithoutValidation("User-Agent", @": Mozilla/5.0 (Windows; U; Windows NT 6.1; en-US; rv:1.9.1.3) Gecko/20090824 Firefox/3.5.3 (.NET CLR 4.0.20506)");
-                                fileClient.DefaultRequestHeaders.TryAddWithoutValidation("Accept", "text/ogvv");
+                                fileClient.DefaultRequestHeaders.TryAddWithoutValidation("Accept", "text/xml");
                                 var fileByteArray = Encoding.ASCII.GetBytes(string.Format("{0}:{1}", _userName, _password));
 
                                 var fileRequestHeader = new AuthenticationHeaderValue(
