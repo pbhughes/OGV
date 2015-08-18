@@ -1,7 +1,24 @@
 ﻿<?xml version='1.0' encoding='utf-8'?>
-<SettingsFile xmlns="uri:settings" CurrentProfile="(Default)">
-  <Profiles>
-    <Profile Name="(Default)" />
-  </Profiles>
-  <Settings />
+<SettingsFile xmlns="http://schemas.microsoft.com/VisualStudio/2004/01/settings" CurrentProfile="(Default)" GeneratedClassNamespace="OGV2P.Admin.Properties" GeneratedClassName="Settings">
+  <Profiles />
+  <Settings>
+    <Setting Name="RecorderInternalID" Type="System.String" Scope="Application">
+      <Value Profile="(Default)">be945750-4a8d-4080-aea7-5eb4d5682e45</Value>
+    </Setting>
+    <Setting Name="FolderID" Type="System.String" Scope="Application">
+      <Value Profile="(Default)">bd9254c2-9f11-4322-a8fd-9d0dc1627f0d</Value>
+    </Setting>
+    <Setting Name="PanoptoUserID" Type="System.String" Scope="Application">
+      <Value Profile="(Default)">barkley</Value>
+    </Setting>
+    <Setting Name="PanoptoPassword" Type="System.String" Scope="User">
+      <Value Profile="(Default)">seri502/dupe</Value>
+    </Setting>
+    <Setting Name="PanoptoRecorderServiceName" Type="System.String" Scope="User">
+      <Value Profile="(Default)">PanoptoRemoteRecorderService</Value>
+    </Setting>
+    <Setting Name="PanoptoUploadService" Type="System.String" Scope="User">
+      <Value Profile="(Default)">PanoptoRecorderService</Value>
+    </Setting>
+  </Settings>
 </SettingsFile>
