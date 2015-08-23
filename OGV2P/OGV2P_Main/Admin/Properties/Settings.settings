@@ -3,7 +3,7 @@
   <Profiles />
   <Settings>
     <Setting Name="RecorderInternalID" Type="System.String" Scope="Application">
-      <Value Profile="(Default)">be945750-4a8d-4080-aea7-5eb4d5682e45</Value>
+      <Value Profile="(Default)">284226f3-9990-4054-bbdb-e8d299c4a003</Value>
     </Setting>
     <Setting Name="FolderID" Type="System.String" Scope="Application">
       <Value Profile="(Default)">bd9254c2-9f11-4322-a8fd-9d0dc1627f0d</Value>

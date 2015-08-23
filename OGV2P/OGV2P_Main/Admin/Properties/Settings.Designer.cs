@@ -25,7 +25,7 @@ namespace OGV2P.Admin.Properties {
         
         [global::System.Configuration.ApplicationScopedSettingAttribute()]
         [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
-        [global::System.Configuration.DefaultSettingValueAttribute("be945750-4a8d-4080-aea7-5eb4d5682e45")]
+        [global::System.Configuration.DefaultSettingValueAttribute("284226f3-9990-4054-bbdb-e8d299c4a003")]
         public string RecorderInternalID {
             get {
                 return ((string)(this["RecorderInternalID"]));

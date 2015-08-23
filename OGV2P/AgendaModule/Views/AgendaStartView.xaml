@@ -5,9 +5,19 @@
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
              mc:Ignorable="d" 
              d:DesignHeight="300" d:DesignWidth="300">
+    <UserControl.Resources>
+        <Style TargetType="UserControl">
+            <Setter Property="Margin" Value="10"/>
+        </Style>
+    </UserControl.Resources>
     <Grid>
-        <Label HorizontalAlignment="Center" VerticalAlignment="Center">
-            Please Login
-        </Label>
+        <StackPanel Orientation="Vertical">
+            <Label>Note:</Label>
+            <TextBox x:Name="txtNote" Width="300"></TextBox>
+            
+            <Button Click="Button_Click">Send Note</Button>
+            <Label>Session:</Label>
+            <TextBox x:Name="txtSessionGuid" Width="300"></TextBox>
+        </StackPanel>
     </Grid>
 </UserControl>

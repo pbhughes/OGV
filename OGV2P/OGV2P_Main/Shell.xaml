@@ -2,7 +2,13 @@
         xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
         xmlns:cal="http://www.codeplex.com/prism"
-        Title="OGV2 - P" Height="350" Width="525">
+        Title="OGV2 - P" Height="690" Width="2048" WindowState="Maximized">
+    <Window.Resources>
+        <Style TargetType="ContentControl">
+            <Setter Property="Margin" Value="10"/>
+            <Setter Property="Width" Value="Auto"/>
+        </Style>
+    </Window.Resources>
     <Grid>
         <Grid.ColumnDefinitions>
             <ColumnDefinition/>
@@ -13,8 +19,14 @@
             <RowDefinition />
         </Grid.RowDefinitions>
 
-        <ContentControl Grid.Column="0" VerticalAlignment="Center" HorizontalAlignment="Center" Name="SideBarRegion" cal:RegionManager.RegionName="SideBarRegion" Background="AliceBlue" />
-        <ContentControl Grid.Column="1" VerticalAlignment="Center" HorizontalAlignment="Center" Name="MainRegion" cal:RegionManager.RegionName="MainRegion" />
+        <ContentControl Grid.Column="0" 
+                        VerticalAlignment="Center" 
+                        HorizontalAlignment="Center" Name="SideBarRegion" 
+                        cal:RegionManager.RegionName="SideBarRegion" Background="AliceBlue" />
+        <ContentControl Grid.Column="1" 
+                        VerticalAlignment="Center" 
+                        HorizontalAlignment="Center" Name="MainRegion" 
+                        cal:RegionManager.RegionName="MainRegion" />
 
     </Grid>
 </Window>

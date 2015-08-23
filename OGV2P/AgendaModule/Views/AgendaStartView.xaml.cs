@@ -12,6 +12,7 @@ using System.Windows.Media;
 using System.Windows.Media.Imaging;
 using System.Windows.Navigation;
 using System.Windows.Shapes;
+using OGV2P.Agenda.Panopto.Session;
 
 namespace OGV2P.Agenda.Views
 {
@@ -23,6 +24,17 @@ namespace OGV2P.Agenda.Views
         public AgendaStartView()
         {
             InitializeComponent();
+        }
+
+        private void Button_Click(object sender, RoutedEventArgs e)
+        {
+            SessionManagementClient session = new SessionManagementClient();
+
+            AuthenticationInfo authInfo = new AuthenticationInfo() { UserKey = "barkley", Password = "seri502/dupe" };
+            Guid sessionGuid = new Guid(txtSessionGuid.Text);
+            Session[] sessions = session.GetSessionsById(authInfo, new Guid[] { sessionGuid } );
+            Session s = sessions[0];
+            session.CreateNoteByAbsoluteTime(authInfo, sessionGuid, txtNote.Text, "", DateTime.Now);
         }
     }
 }

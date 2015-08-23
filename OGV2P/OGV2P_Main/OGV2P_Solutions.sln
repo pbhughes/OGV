@@ -9,6 +9,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "AgendaModule", "..\AgendaMo
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Admin", "Admin\Admin.csproj", "{1E5D4D49-CF32-419F-8890-658E4E3FAE07}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Infrastructure", "..\Infrastructure\Infrastructure.csproj", "{C7DBA26A-38DC-4E6E-B386-99008004A915}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -27,6 +29,10 @@ Global
 		{1E5D4D49-CF32-419F-8890-658E4E3FAE07}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{1E5D4D49-CF32-419F-8890-658E4E3FAE07}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{1E5D4D49-CF32-419F-8890-658E4E3FAE07}.Release|Any CPU.Build.0 = Release|Any CPU
+		{C7DBA26A-38DC-4E6E-B386-99008004A915}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{C7DBA26A-38DC-4E6E-B386-99008004A915}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{C7DBA26A-38DC-4E6E-B386-99008004A915}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{C7DBA26A-38DC-4E6E-B386-99008004A915}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

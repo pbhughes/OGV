@@ -14,6 +14,7 @@ using System.Windows.Navigation;
 using System.Windows.Shapes;
 using System.ServiceProcess;
 using Microsoft.Practices.Prism.Regions;
+using System.Threading.Tasks;
 
 namespace OGV2P.Admin.Views
 {
@@ -32,13 +33,19 @@ namespace OGV2P.Admin.Views
 
         }
 
-        void ServicesView_Loaded(object sender, RoutedEventArgs e)
+        async void  ServicesView_Loaded(object sender, RoutedEventArgs e)
         {
-            if(this.pRecorder.Status == 0 && this.pUploader.Status == 0)
+            ServiceController recorder = new ServiceController(OGV2P.Admin.Properties.Settings.Default.PanoptoRecorderServiceName);
+            ServiceController uploader = new ServiceController(OGV2P.Admin.Properties.Settings.Default.PanoptoUploadService);
+
+            if (recorder.Status != ServiceControllerStatus.Running || uploader.Status != ServiceControllerStatus.Running)
+                System.Diagnostics.Process.Start("services.msc");
+            else
             {
                 Uri vv = new Uri(typeof(Views.LoginView).FullName, UriKind.RelativeOrAbsolute);
                 _regionManager.RequestNavigate("SideBarRegion", vv);
             }
+           
         }
     }
 }

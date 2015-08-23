@@ -15,7 +15,7 @@ namespace OGV2P.Admin
 
         public void Initialize()
         {
-            _regionViewRegistry.RegisterViewWithRegion("SideBarRegion", typeof(Views.ServicesView));
+            _regionViewRegistry.RegisterViewWithRegion("SideBarRegion", typeof(Views.CameraView));
         }
     }
 }

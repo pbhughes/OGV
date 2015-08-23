@@ -5,13 +5,107 @@
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
              xmlns:frms="clr-namespace:System.Windows.Forms;assembly=System.Windows.Forms"
              mc:Ignorable="d" 
-             d:DesignHeight="400" d:DesignWidth="400">
-    <Grid Background="Lavender">
-        <StackPanel Orientation="Vertical">
+             d:DesignHeight="800" d:DesignWidth="800">
+    <UserControl.Resources>
+        <Style TargetType="Label">
+            <Setter Property="MinWidth" Value="100"/>
+            <Setter Property="Margin" Value="5"/>
+        </Style>
+        <Style TargetType="ComboBox">
+            <Setter Property="MinWidth" Value="200"/>
+            <Setter Property="Margin" Value="5"/>
+        </Style>
+        <Style TargetType="TextBox">
+            <Setter Property="MinWidth" Value="200"/>
+            <Setter Property="FontSize" Value="20"/>
+            <Setter Property="Margin" Value="5"/>
+            <Setter Property="VerticalAlignment" Value="Center" />
+        </Style>
+        <Style TargetType="PasswordBox">
+            <Setter Property="MinWidth" Value="200"/>
+            <Setter Property="Margin" Value="5"/>
+        </Style>
+        <Style TargetType="Button">
+            <Setter Property="Margin" Value="5"/>
+        </Style>
+        <Style TargetType="Grid">
+            <Setter Property="Width" Value="Auto"/>
+            <Setter Property="Margin" Value="10"/>
+        </Style>
+        
+    </UserControl.Resources>
+    <Grid Background="Lavender" >
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition Width="Auto" />
+            <ColumnDefinition Width="Auto" />
+        </Grid.ColumnDefinitions>
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="Auto" />
+        </Grid.RowDefinitions>
+        <StackPanel Grid.Column="0" Grid.Row="0" Orientation="Vertical" Width="Auto">
+            <StackPanel Orientation="Horizontal">
+                <Label>Cameras</Label>
+                <ComboBox x:Name="cboCameras" ItemsSource="{Binding Cameras}" ></ComboBox>
+            </StackPanel>
+            <StackPanel Orientation="Horizontal">
+                <Label>Microphones</Label>
+                <ComboBox x:Name="cboMicrophones" ItemsSource="{Binding Microphones}" SelectionChanged="cboMicrophones_SelectionChanged"  ></ComboBox>
+            </StackPanel>
+            <StackPanel Orientation="Horizontal">
+                <Label>UserID</Label>
+                <TextBox x:Name="txtUserID" Text="{Binding UserID}" />
+            </StackPanel>
+            <StackPanel Orientation="Horizontal">
+                <Label>Password</Label>
+                <TextBox x:Name="txt"  Text="{Binding Password}" />
+                <Button x:Name="cmdLoadRecorders" 
+                        FontSize="20" Command="{Binding GetRecorders}">∞..</Button>
+            </StackPanel>
+
+            <StackPanel Orientation="Horizontal">
+                <Label>Title</Label>
+                <TextBox x:Name="txtTitle"  Text="{Binding Title}" />
+            </StackPanel>
+
+        </StackPanel>
+        <StackPanel Grid.Column="1" Grid.Row="0" Orientation="Vertical">
+            <StackPanel Orientation="Horizontal">
+                <Label>Recorders</Label>
+                <ComboBox x:Name="cboRecorders" 
+                          ItemsSource="{Binding RemoteRecorders}" 
+                          DisplayMemberPath="Name" SelectedItem="{Binding CurrentRecorder}"></ComboBox>
+            </StackPanel>
+            <StackPanel Orientation="Horizontal">
+                <Label>Recorder ID</Label>
+                <TextBox x:Name="txtRecorderID"  Text="{Binding CurrentRecorder.Id}" FontSize="10" />
+            </StackPanel>
+
+            <StackPanel Orientation="Horizontal">
+                <Label>Folders</Label>
+                <ComboBox x:Name="cboFolders" 
+                          ItemsSource="{Binding FolderList}" 
+                          DisplayMemberPath="Name" SelectedItem="{Binding CurrentFolder}"></ComboBox>
+            </StackPanel>
+            <StackPanel Orientation="Horizontal">
+                <Label>Folder ID</Label>
+                <TextBox x:Name="txtFolderID"  Text="{Binding CurrentFolder.Id}" FontSize="10" />
+            </StackPanel>
+            <StackPanel Orientation="Horizontal" VerticalAlignment="Center">
+                <Button x:Name="cmdStartRecording" 
+                        FontSize="15" Command="{Binding StartRecording}">REC</Button>
+                <Button x:Name="cmdStopRecording" 
+                        FontSize="15" Command="{Binding StopRecording}">STP</Button>
+            </StackPanel>
+            <TextBox Margin ="0 10 0 0" Text="{Binding CurrentSessionGuid}"/>
+
+        </StackPanel>
+        <StackPanel Grid.Row="1" Grid.Column="0" HorizontalAlignment="Center"
+                    Grid.ColumnSpan="2" Orientation="Vertical" >
             <Label>Camera View</Label>
             <Button Click="Button_Click">Load View</Button>
-            <WindowsFormsHost Width="320" Height="320">
-                <frms:Panel x:Name="videoPanel" Width="320" Height="320" BackColor="WhiteSmoke"></frms:Panel>
+            <WindowsFormsHost Width="640" Height="360" >
+                <frms:Panel x:Name="videoPanel" Width="640" Height="360" BackColor="WhiteSmoke"></frms:Panel>
             </WindowsFormsHost>
         </StackPanel>
     </Grid>
