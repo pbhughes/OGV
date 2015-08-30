@@ -7,9 +7,9 @@ using DirectX.Capture;
 using DShowNET;
 using Infrastructure.Panopto.RemoteRecorder;
 using Microsoft.Practices.Prism.Commands;
-using System.Threading.Tasks;
 using System.ComponentModel;
 using Infrastructure.Panopto.Session;
+using Infrastructure.Interfaces;
 using System.Windows.Input;
 
 namespace Infrastructure.Models
@@ -18,11 +18,21 @@ namespace Infrastructure.Models
     {
         Filters filter = new Filters();
 
+        private ISession _sessionService;
+
         public List<string> Cameras { get; set; }
 
         public List<string> Microphones { get; set; }
 
         public RemoteRecorder[] RemoteRecorders { get; set; }
+
+        private bool _isBusy;
+
+        public bool IsBusy
+        {
+            get { return _isBusy; }
+            set { _isBusy = value; OnPropertyChanged("IsBusy"); }
+        }
 
         private ScheduledRecordingResult _currentSession;
         public ScheduledRecordingResult CurrentSession
@@ -37,8 +47,6 @@ namespace Infrastructure.Models
             get { return _currentSessionGuid; }
             set { _currentSessionGuid = value; OnPropertyChanged("CurrentSessionGuid"); }
         }
-
-
 
         private string _title;
         public string Title {
@@ -156,6 +164,7 @@ namespace Infrastructure.Models
 
         private async void OnStartRecording()
         {
+            IsBusy = true;
             RemoteRecorderManagementClient client = new RemoteRecorderManagementClient();
             Infrastructure.Panopto.RemoteRecorder.AuthenticationInfo authInfo = new Infrastructure.Panopto.RemoteRecorder.AuthenticationInfo()
             {
@@ -165,6 +174,8 @@ namespace Infrastructure.Models
             RecorderSettings settings = new RecorderSettings() { RecorderId = CurrentRecorder.Id, SuppressSecondary=true };
             ScheduledRecordingResult response = await client.ScheduleRecordingAsync(authInfo, _title, CurrentFolder.Id, true, DateTime.Now, DateTime.Now.AddHours(1), new RecorderSettings[] { settings });
             CurrentSessionGuid = response.SessionIDs[0];
+            _sessionService.CurrentSession = CurrentSessionGuid;
+            IsBusy = false;
             
         }
 
@@ -190,8 +201,9 @@ namespace Infrastructure.Models
            
         }
 
-        public Devices()
+        public Devices(ISession sessionService)
         {
+            _sessionService = sessionService;
             UserID = "barkley";
             Password = "seri502/dupe";
             Cameras = new List<string>();

@@ -3,35 +3,12 @@
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
+             xmlns:tk="http://schemas.xceed.com/wpf/xaml/toolkit"
              xmlns:frms="clr-namespace:System.Windows.Forms;assembly=System.Windows.Forms"
              mc:Ignorable="d" 
              d:DesignHeight="800" d:DesignWidth="800">
     <UserControl.Resources>
-        <Style TargetType="Label">
-            <Setter Property="MinWidth" Value="100"/>
-            <Setter Property="Margin" Value="5"/>
-        </Style>
-        <Style TargetType="ComboBox">
-            <Setter Property="MinWidth" Value="200"/>
-            <Setter Property="Margin" Value="5"/>
-        </Style>
-        <Style TargetType="TextBox">
-            <Setter Property="MinWidth" Value="200"/>
-            <Setter Property="FontSize" Value="20"/>
-            <Setter Property="Margin" Value="5"/>
-            <Setter Property="VerticalAlignment" Value="Center" />
-        </Style>
-        <Style TargetType="PasswordBox">
-            <Setter Property="MinWidth" Value="200"/>
-            <Setter Property="Margin" Value="5"/>
-        </Style>
-        <Style TargetType="Button">
-            <Setter Property="Margin" Value="5"/>
-        </Style>
-        <Style TargetType="Grid">
-            <Setter Property="Width" Value="Auto"/>
-            <Setter Property="Margin" Value="10"/>
-        </Style>
+        
         
     </UserControl.Resources>
     <Grid Background="Lavender" >
@@ -102,7 +79,10 @@
         </StackPanel>
         <StackPanel Grid.Row="1" Grid.Column="0" HorizontalAlignment="Center"
                     Grid.ColumnSpan="2" Orientation="Vertical" >
-            <Label>Camera View</Label>
+            <StackPanel Orientation="Horizontal">
+                <Label>Camera View</Label>
+                <tk:BusyIndicator IsBusy="{Binding IsBusy}"></tk:BusyIndicator>
+            </StackPanel>
             <Button Click="Button_Click">Load View</Button>
             <WindowsFormsHost Width="640" Height="360" >
                 <frms:Panel x:Name="videoPanel" Width="640" Height="360" BackColor="WhiteSmoke"></frms:Panel>

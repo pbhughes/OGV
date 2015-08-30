@@ -7,7 +7,7 @@
     <ProjectGuid>{3072C61C-AB0B-43E0-A00E-D7F1CD6E3573}</ProjectGuid>
     <OutputType>library</OutputType>
     <AppDesignerFolder>Properties</AppDesignerFolder>
-    <RootNamespace>OGV2P.Agenda</RootNamespace>
+    <RootNamespace>OGV2P.AgendaModule</RootNamespace>
     <AssemblyName>OGV2P.Agenda</AssemblyName>
     <TargetFrameworkVersion>v4.5</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
@@ -70,8 +70,30 @@
     <Reference Include="PresentationCore" />
     <Reference Include="PresentationFramework" />
     <Reference Include="WindowsFormsIntegration" />
+    <Reference Include="Xceed.Wpf.AvalonDock">
+      <HintPath>..\OGV2P_Main\packages\Extended.Wpf.Toolkit.2.5\lib\net40\Xceed.Wpf.AvalonDock.dll</HintPath>
+    </Reference>
+    <Reference Include="Xceed.Wpf.AvalonDock.Themes.Aero">
+      <HintPath>..\OGV2P_Main\packages\Extended.Wpf.Toolkit.2.5\lib\net40\Xceed.Wpf.AvalonDock.Themes.Aero.dll</HintPath>
+    </Reference>
+    <Reference Include="Xceed.Wpf.AvalonDock.Themes.Metro">
+      <HintPath>..\OGV2P_Main\packages\Extended.Wpf.Toolkit.2.5\lib\net40\Xceed.Wpf.AvalonDock.Themes.Metro.dll</HintPath>
+    </Reference>
+    <Reference Include="Xceed.Wpf.AvalonDock.Themes.VS2010">
+      <HintPath>..\OGV2P_Main\packages\Extended.Wpf.Toolkit.2.5\lib\net40\Xceed.Wpf.AvalonDock.Themes.VS2010.dll</HintPath>
+    </Reference>
+    <Reference Include="Xceed.Wpf.DataGrid">
+      <HintPath>..\OGV2P_Main\packages\Extended.Wpf.Toolkit.2.5\lib\net40\Xceed.Wpf.DataGrid.dll</HintPath>
+    </Reference>
+    <Reference Include="Xceed.Wpf.Toolkit">
+      <HintPath>..\OGV2P_Main\packages\Extended.Wpf.Toolkit.2.5\lib\net40\Xceed.Wpf.Toolkit.dll</HintPath>
+    </Reference>
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Models\Agenda.cs" />
+    <Compile Include="Interfaces\IMeeting.cs" />
+    <Compile Include="Models\Item.cs" />
+    <Compile Include="Models\Meeting.cs" />
     <Compile Include="Service References\Panopto.Session\Reference.cs">
       <AutoGen>True</AutoGen>
       <DesignTime>True</DesignTime>
@@ -111,37 +133,37 @@
       <LastGenOutput>Settings.Designer.cs</LastGenOutput>
     </None>
     <AppDesigner Include="Properties\" />
-    <None Include="Service References\Panopto.Session\OGV2P.Agenda.Panopto.Session.Folder.datasource">
+    <None Include="Service References\Panopto.Session\OGV2P.AgendaModule.Panopto.Session.Folder.datasource">
       <DependentUpon>Reference.svcmap</DependentUpon>
     </None>
-    <None Include="Service References\Panopto.Session\OGV2P.Agenda.Panopto.Session.FoldersWithAvailabilitySettings.datasource">
+    <None Include="Service References\Panopto.Session\OGV2P.AgendaModule.Panopto.Session.FoldersWithAvailabilitySettings.datasource">
       <DependentUpon>Reference.svcmap</DependentUpon>
     </None>
-    <None Include="Service References\Panopto.Session\OGV2P.Agenda.Panopto.Session.FolderWithExternalContext.datasource">
+    <None Include="Service References\Panopto.Session\OGV2P.AgendaModule.Panopto.Session.FolderWithExternalContext.datasource">
       <DependentUpon>Reference.svcmap</DependentUpon>
     </None>
-    <None Include="Service References\Panopto.Session\OGV2P.Agenda.Panopto.Session.ListFoldersResponse.datasource">
+    <None Include="Service References\Panopto.Session\OGV2P.AgendaModule.Panopto.Session.ListFoldersResponse.datasource">
       <DependentUpon>Reference.svcmap</DependentUpon>
     </None>
-    <None Include="Service References\Panopto.Session\OGV2P.Agenda.Panopto.Session.ListFoldersResponseWithExternalContext.datasource">
+    <None Include="Service References\Panopto.Session\OGV2P.AgendaModule.Panopto.Session.ListFoldersResponseWithExternalContext.datasource">
       <DependentUpon>Reference.svcmap</DependentUpon>
     </None>
-    <None Include="Service References\Panopto.Session\OGV2P.Agenda.Panopto.Session.ListNotesResponse.datasource">
+    <None Include="Service References\Panopto.Session\OGV2P.AgendaModule.Panopto.Session.ListNotesResponse.datasource">
       <DependentUpon>Reference.svcmap</DependentUpon>
     </None>
-    <None Include="Service References\Panopto.Session\OGV2P.Agenda.Panopto.Session.ListSessionsResponse.datasource">
+    <None Include="Service References\Panopto.Session\OGV2P.AgendaModule.Panopto.Session.ListSessionsResponse.datasource">
       <DependentUpon>Reference.svcmap</DependentUpon>
     </None>
-    <None Include="Service References\Panopto.Session\OGV2P.Agenda.Panopto.Session.Note.datasource">
+    <None Include="Service References\Panopto.Session\OGV2P.AgendaModule.Panopto.Session.Note.datasource">
       <DependentUpon>Reference.svcmap</DependentUpon>
     </None>
-    <None Include="Service References\Panopto.Session\OGV2P.Agenda.Panopto.Session.RecorderDownloadUrlResponse.datasource">
+    <None Include="Service References\Panopto.Session\OGV2P.AgendaModule.Panopto.Session.RecorderDownloadUrlResponse.datasource">
       <DependentUpon>Reference.svcmap</DependentUpon>
     </None>
-    <None Include="Service References\Panopto.Session\OGV2P.Agenda.Panopto.Session.Session.datasource">
+    <None Include="Service References\Panopto.Session\OGV2P.AgendaModule.Panopto.Session.Session.datasource">
       <DependentUpon>Reference.svcmap</DependentUpon>
     </None>
-    <None Include="Service References\Panopto.Session\OGV2P.Agenda.Panopto.Session.SessionsWithAvailabilitySettings.datasource">
+    <None Include="Service References\Panopto.Session\OGV2P.AgendaModule.Panopto.Session.SessionsWithAvailabilitySettings.datasource">
       <DependentUpon>Reference.svcmap</DependentUpon>
     </None>
     <None Include="Service References\Panopto.Session\SessionManagement.wsdl" />
@@ -190,6 +212,12 @@
       <Generator>WCF Proxy Generator</Generator>
       <LastGenOutput>Reference.cs</LastGenOutput>
     </None>
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\Infrastructure\Infrastructure.csproj">
+      <Project>{c7dba26a-38dc-4e6e-b386-99008004a915}</Project>
+      <Name>Infrastructure</Name>
+    </ProjectReference>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 

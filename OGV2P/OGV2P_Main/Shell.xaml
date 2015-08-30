@@ -19,6 +19,9 @@
             <RowDefinition />
         </Grid.RowDefinitions>
 
+        <GridSplitter Grid.Column="1" HorizontalAlignment="Left" Width="3" >
+            
+        </GridSplitter>
         <ContentControl Grid.Column="0" 
                         VerticalAlignment="Center" 
                         HorizontalAlignment="Center" Name="SideBarRegion" 

@@ -1,7 +1,7 @@
 ﻿using Microsoft.Practices.Prism.Modularity;
 using Microsoft.Practices.Prism.Regions;
 
-namespace OGV2P.Agenda
+namespace OGV2P.AgendaModule
 {
     public class AgendaModule : IModule
     {

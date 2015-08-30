@@ -9,7 +9,7 @@ using Infrastructure.Panopto.Session;
 
 namespace Infrastructure.Interfaces
 {
-    public interface IDevices
+    public interface IDevices : IShowActivity
     {
         List<string> Cameras { get; set; }
         List<string> Microphones { get; set; }
