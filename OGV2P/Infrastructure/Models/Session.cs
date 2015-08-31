@@ -16,5 +16,17 @@ namespace Infrastructure.Models
             set { _currentSession = value; }
         }
 
+        private Guid _recoderID;
+        public Guid RecorderID
+        {
+            get { return _recoderID; }
+            set { _recoderID = value; }
+        }
+
+        public Session()
+        {
+
+        }
+
     }
 }

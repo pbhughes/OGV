@@ -12,8 +12,10 @@
             <Setter Property="Margin" Value="10"/>
         </Style>
     </UserControl.Resources>
+    <UserControl.InputBindings>
+        <KeyBinding Key="Space" Modifiers="Shift" Command="{Binding StampItem}" CommandParameter="{Binding SelectedItem}" />
+    </UserControl.InputBindings>
     <Grid>
-        
         <StackPanel Orientation="Vertical">
             <StackPanel Orientation="Horizontal">
                 <Label>Load Agenda:</Label>

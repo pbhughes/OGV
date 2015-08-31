@@ -1,4 +1,5 @@
 ﻿using Microsoft.Practices.Prism.Regions;
+using Microsoft.Practices.Unity;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -13,6 +14,8 @@ using System.Windows.Media;
 using System.Windows.Media.Imaging;
 using System.Windows.Navigation;
 using System.Windows.Shapes;
+using Infrastructure.Interfaces;
+using Infrastructure.Models;
 
 namespace OGV2P.Admin.Views
 {
@@ -21,19 +24,22 @@ namespace OGV2P.Admin.Views
     /// </summary>
     public partial class LoginView : UserControl, INavigationAware, IRegionMemberLifetime
     {
+        private IUnityContainer _container;
+        private ISession _session;
+        private IUser _user;
+
         private IRegionManager _regionManager;
 
-        public LoginView()
+        public LoginView(IUnityContainer container, ISession session, IUser user)
         {
             InitializeComponent();
+            _container = container;
+            _session = session;
+            _user = user;
+            DataContext = _user;
+            
             _regionManager = Microsoft.Practices.ServiceLocation.ServiceLocator.Current.GetInstance<Microsoft.Practices.Prism.Regions.IRegionManager>();
 
-        }
-
-        private void Button_Click(object sender, RoutedEventArgs e)
-        {
-            Uri vv = new Uri(typeof(Views.CameraView).FullName, UriKind.RelativeOrAbsolute);
-            _regionManager.RequestNavigate("SideBarRegion", vv);
         }
 
         public bool IsNavigationTarget(NavigationContext navigationContext)

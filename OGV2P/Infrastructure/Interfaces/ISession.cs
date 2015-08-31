@@ -9,5 +9,7 @@ namespace Infrastructure.Interfaces
     public interface ISession
     {
         Guid CurrentSession { get; set; }
+
+        Guid RecorderID { get; set; }
     }
 }

@@ -37,7 +37,7 @@
                 <Label>Password</Label>
                 <TextBox x:Name="txt"  Text="{Binding Password}" />
                 <Button x:Name="cmdLoadRecorders" 
-                        FontSize="20" Command="{Binding GetRecorders}">∞..</Button>
+                        FontSize="20" Command="{Binding GetRecorders}" Content="∞.."/>
             </StackPanel>
 
             <StackPanel Orientation="Horizontal">

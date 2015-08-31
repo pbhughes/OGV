@@ -12,12 +12,15 @@ using OGV2P.AgendaModule.Models;
 using Infrastructure.Interfaces;
 
 using Infrastructure.Models;
+using Microsoft.Practices.Prism.Regions;
 
 namespace OGV2P
 {
     public class BootStrapper : UnityBootstrapper
     {
-        private ISession _session = new Session();
+        private ISession _session;
+        private IUser _user;
+        private IRegionManager _regionManager;
 
         protected override System.Windows.DependencyObject CreateShell()
         {
@@ -49,11 +52,27 @@ namespace OGV2P
 
             this.Container.RegisterType<object, OGV2P.Admin.Views.CameraView>(typeof(OGV2P.Admin.Views.CameraView).FullName);
             this.Container.RegisterType<object, OGV2P.Admin.Views.LoginView>(typeof(OGV2P.Admin.Views.LoginView).FullName);
+            this.Container.RegisterType<object, OGV2P.AgendaModule.Views.AgendaStartView>(typeof(OGV2P.AgendaModule.Views.AgendaStartView).FullName);
             this.Container.RegisterType<Infrastructure.Interfaces.IDevices, Infrastructure.Models.Devices>();
             this.Container.RegisterType<OGV2P.AgendaModule.Interfaces.IMeeting, OGV2P.AgendaModule.Models.Meeting>();
+            _session = new Session();
+            _user = new User(_session);
+            _user.RaiseLoginEvent += _user_RaiseLoginEvent;
             this.Container.RegisterInstance<ISession>(_session);
+            this.Container.RegisterInstance<IUser>(_user);
 
 
+        }
+
+        void _user_RaiseLoginEvent(object sender, EventArgs e)
+        {
+            _regionManager = Microsoft.Practices.ServiceLocation.ServiceLocator.Current.GetInstance<Microsoft.Practices.Prism.Regions.IRegionManager>();
+
+            Uri vv = new Uri(typeof(OGV2P.Admin.Views.CameraView).FullName, UriKind.RelativeOrAbsolute);
+            _regionManager.RequestNavigate("SideBarRegion", vv);
+
+            Uri uu = new Uri(typeof(OGV2P.AgendaModule.Views.AgendaStartView).FullName, UriKind.RelativeOrAbsolute);
+            _regionManager.RequestNavigate("MainRegion", uu);
         }
     }
 }

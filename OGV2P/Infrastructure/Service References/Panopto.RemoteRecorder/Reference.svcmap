@@ -1,0 +1,38 @@
+<?xml version="1.0" encoding="utf-8"?>
+<ReferenceGroup xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xsd="http://www.w3.org/2001/XMLSchema" ID="5102beb1-1189-4657-affd-47a934c02c28" xmlns="urn:schemas-microsoft-com:xml-wcfservicemap">
+  <ClientOptions>
+    <GenerateAsynchronousMethods>false</GenerateAsynchronousMethods>
+    <GenerateTaskBasedAsynchronousMethod>true</GenerateTaskBasedAsynchronousMethod>
+    <EnableDataBinding>true</EnableDataBinding>
+    <ExcludedTypes />
+    <ImportXmlTypes>false</ImportXmlTypes>
+    <GenerateInternalTypes>false</GenerateInternalTypes>
+    <GenerateMessageContracts>false</GenerateMessageContracts>
+    <NamespaceMappings />
+    <CollectionMappings />
+    <GenerateSerializableTypes>true</GenerateSerializableTypes>
+    <Serializer>Auto</Serializer>
+    <UseSerializerForFaults>true</UseSerializerForFaults>
+    <ReferenceAllAssemblies>true</ReferenceAllAssemblies>
+    <ReferencedAssemblies />
+    <ReferencedDataContractTypes />
+    <ServiceContractMappings />
+  </ClientOptions>
+  <MetadataSources>
+    <MetadataSource Address="http://clerkbase.hosted.panopto.com/Panopto/PublicAPI/4.6/RemoteRecorderManagement.svc" Protocol="http" SourceId="1" />
+  </MetadataSources>
+  <Metadata>
+    <MetadataFile FileName="RemoteRecorderManagement.xsd" MetadataType="Schema" ID="2b6f8162-51e4-43b2-a61b-2370873e14c6" SourceId="1" SourceUrl="http://clerkbase.hosted.panopto.com/Panopto/PublicAPI/4.6/RemoteRecorderManagement.svc?xsd=xsd4" />
+    <MetadataFile FileName="RemoteRecorderManagement1.xsd" MetadataType="Schema" ID="bbc31462-9183-4242-95ea-b06c2cdf4e4b" SourceId="1" SourceUrl="http://clerkbase.hosted.panopto.com/Panopto/PublicAPI/4.6/RemoteRecorderManagement.svc?xsd=xsd1" />
+    <MetadataFile FileName="RemoteRecorderManagement.wsdl" MetadataType="Wsdl" ID="24c8f7e6-5263-405b-88e7-ef89b05a18f3" SourceId="1" SourceUrl="http://clerkbase.hosted.panopto.com/Panopto/PublicAPI/4.6/RemoteRecorderManagement.svc?wsdl" />
+    <MetadataFile FileName="RemoteRecorderManagement2.xsd" MetadataType="Schema" ID="0f84a7f2-cf60-4157-bbcc-30d41d6828c9" SourceId="1" SourceUrl="http://clerkbase.hosted.panopto.com/Panopto/PublicAPI/4.6/RemoteRecorderManagement.svc?xsd=xsd0" />
+    <MetadataFile FileName="RemoteRecorderManagement3.xsd" MetadataType="Schema" ID="647782fd-2b9c-45d9-8a00-141946a68624" SourceId="1" SourceUrl="http://clerkbase.hosted.panopto.com/Panopto/PublicAPI/4.6/RemoteRecorderManagement.svc?xsd=xsd5" />
+    <MetadataFile FileName="RemoteRecorderManagement.disco" MetadataType="Disco" ID="06e67b7f-c2a0-4f1b-8b2c-ca45868ec947" SourceId="1" SourceUrl="http://clerkbase.hosted.panopto.com/Panopto/PublicAPI/4.6/RemoteRecorderManagement.svc?disco" />
+    <MetadataFile FileName="RemoteRecorderManagement4.xsd" MetadataType="Schema" ID="f55781f7-9ebe-4ed1-a131-a96d77eb192b" SourceId="1" SourceUrl="http://clerkbase.hosted.panopto.com/Panopto/PublicAPI/4.6/RemoteRecorderManagement.svc?xsd=xsd2" />
+    <MetadataFile FileName="RemoteRecorderManagement5.xsd" MetadataType="Schema" ID="8ed1caed-af98-4e74-90c8-4c710d9b7794" SourceId="1" SourceUrl="http://clerkbase.hosted.panopto.com/Panopto/PublicAPI/4.6/RemoteRecorderManagement.svc?xsd=xsd3" />
+  </Metadata>
+  <Extensions>
+    <ExtensionFile FileName="configuration91.svcinfo" Name="configuration91.svcinfo" />
+    <ExtensionFile FileName="configuration.svcinfo" Name="configuration.svcinfo" />
+  </Extensions>
+</ReferenceGroup>
