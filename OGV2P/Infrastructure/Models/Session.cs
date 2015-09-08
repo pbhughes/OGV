@@ -4,13 +4,30 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using p = Infrastructure.Panopto.Session;
+using System.ComponentModel;
 
 namespace Infrastructure.Models
 {
-    public class Session : ISession
+    public delegate void MeetingNameSetEventHandler(object sender, EventArgs e);
+
+    public class Session : ISession, INotifyPropertyChanged
     {
-        private Guid _currentSession;
-        public Guid CurrentSession
+        string _meetingName;
+
+        public string MeetingName
+        {
+            get { return _meetingName; }
+            set { 
+                _meetingName = value; 
+                OnPropertyChanged("MeetingName");
+                OnRaiseMeetingSetEvent();
+
+            }
+        }
+
+        private p.Session _currentSession;
+        public p.Session CurrentSession
         {
             get { return _currentSession; }
             set { _currentSession = value; }
@@ -23,10 +40,30 @@ namespace Infrastructure.Models
             set { _recoderID = value; }
         }
 
+        public event MeetingNameSetEventHandler RaiseMeetingNameSet;
+
+        public void OnRaiseMeetingSetEvent()
+        {
+            if (RaiseMeetingNameSet != null)
+                RaiseMeetingNameSet(this, new EventArgs());
+        }
         public Session()
         {
 
         }
 
+        #region INotifyPropertyChanged
+
+        public event PropertyChangedEventHandler PropertyChanged;
+
+        private void OnPropertyChanged(string name)
+        {
+           
+
+            if (PropertyChanged != null)
+                PropertyChanged(this, new PropertyChangedEventArgs(name));
+        }
+
+        #endregion
     }
 }

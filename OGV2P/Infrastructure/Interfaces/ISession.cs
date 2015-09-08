@@ -1,4 +1,6 @@
-﻿using System;
+﻿using Infrastructure.Models;
+using s = Infrastructure.Panopto.Session;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -8,8 +10,12 @@ namespace Infrastructure.Interfaces
 {
     public interface ISession
     {
-        Guid CurrentSession { get; set; }
+        s.Session CurrentSession { get; set; }
 
         Guid RecorderID { get; set; }
+
+        string MeetingName { get; set; }
+
+        event MeetingNameSetEventHandler RaiseMeetingNameSet;
     }
 }

@@ -4,12 +4,14 @@
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
              xmlns:tk="http://schemas.xceed.com/wpf/xaml/toolkit"
+             xmlns:vu="clr-namespace:AudioVUMeter.Controls;assembly=AudioVUMeterWPFControl"
              xmlns:frms="clr-namespace:System.Windows.Forms;assembly=System.Windows.Forms"
              mc:Ignorable="d" 
              d:DesignHeight="800" d:DesignWidth="800">
     <UserControl.Resources>
         
-        
+ 
+
     </UserControl.Resources>
     <Grid Background="Lavender" >
         <Grid.ColumnDefinitions>
@@ -30,17 +32,6 @@
                 <ComboBox x:Name="cboMicrophones" ItemsSource="{Binding Microphones}" SelectionChanged="cboMicrophones_SelectionChanged"  ></ComboBox>
             </StackPanel>
             <StackPanel Orientation="Horizontal">
-                <Label>UserID</Label>
-                <TextBox x:Name="txtUserID" Text="{Binding UserID}" />
-            </StackPanel>
-            <StackPanel Orientation="Horizontal">
-                <Label>Password</Label>
-                <TextBox x:Name="txt"  Text="{Binding Password}" />
-                <Button x:Name="cmdLoadRecorders" 
-                        FontSize="20" Command="{Binding GetRecorders}" Content="∞.."/>
-            </StackPanel>
-
-            <StackPanel Orientation="Horizontal">
                 <Label>Title</Label>
                 <TextBox x:Name="txtTitle"  Text="{Binding Title}" />
             </StackPanel>
@@ -53,10 +44,7 @@
                           ItemsSource="{Binding RemoteRecorders}" 
                           DisplayMemberPath="Name" SelectedItem="{Binding CurrentRecorder}"></ComboBox>
             </StackPanel>
-            <StackPanel Orientation="Horizontal">
-                <Label>Recorder ID</Label>
-                <TextBox x:Name="txtRecorderID"  Text="{Binding CurrentRecorder.Id}" FontSize="10" />
-            </StackPanel>
+
 
             <StackPanel Orientation="Horizontal">
                 <Label>Folders</Label>
@@ -64,28 +52,25 @@
                           ItemsSource="{Binding FolderList}" 
                           DisplayMemberPath="Name" SelectedItem="{Binding CurrentFolder}"></ComboBox>
             </StackPanel>
-            <StackPanel Orientation="Horizontal">
-                <Label>Folder ID</Label>
-                <TextBox x:Name="txtFolderID"  Text="{Binding CurrentFolder.Id}" FontSize="10" />
-            </StackPanel>
-            <StackPanel Orientation="Horizontal" VerticalAlignment="Center">
-                <Button x:Name="cmdStartRecording" 
+            <StackPanel Orientation="Horizontal" HorizontalAlignment="Center">
+                <Button x:Name="cmdStartRecording" Style="{StaticResource btn-primary}" Margin="10" Width="100"
                         FontSize="15" Command="{Binding StartRecording}">REC</Button>
-                <Button x:Name="cmdStopRecording" 
-                        FontSize="15" Command="{Binding StopRecording}">STP</Button>
+                <Button x:Name="cmdStopRecording"  Style="{StaticResource btn-danger}" Margin="10" Width="100"
+                        FontSize="15" Command="{Binding StopRecording}" >STOP</Button>
             </StackPanel>
-            <TextBox Margin ="0 10 0 0" Text="{Binding CurrentSessionGuid}"/>
 
         </StackPanel>
         <StackPanel Grid.Row="1" Grid.Column="0" HorizontalAlignment="Center"
                     Grid.ColumnSpan="2" Orientation="Vertical" >
             <StackPanel Orientation="Horizontal">
-                <Label>Camera View</Label>
+                <vu:AudioChannelVUMeter x:Name="vuMeter" Height="25px" 
+                                        Margin="5 5 0 5" 
+                                        HorizontalAlignment="Stretch"></vu:AudioChannelVUMeter>
                 <tk:BusyIndicator IsBusy="{Binding IsBusy}"></tk:BusyIndicator>
             </StackPanel>
             <Button Click="Button_Click">Load View</Button>
-            <WindowsFormsHost Width="640" Height="360" >
-                <frms:Panel x:Name="videoPanel" Width="640" Height="360" BackColor="WhiteSmoke"></frms:Panel>
+            <WindowsFormsHost Width="800" Height="600" >
+                <frms:Panel x:Name="videoPanel" Width="800" Height="600" BackColor="WhiteSmoke"></frms:Panel>
             </WindowsFormsHost>
         </StackPanel>
     </Grid>

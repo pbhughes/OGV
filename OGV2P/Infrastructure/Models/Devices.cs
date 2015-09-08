@@ -16,6 +16,8 @@ namespace Infrastructure.Models
 {
     public class Devices : Infrastructure.Interfaces.IDevices, INotifyPropertyChanged
     {
+        private IUser _user;
+
         Filters filter = new Filters();
 
         private ISession _sessionService;
@@ -48,25 +50,6 @@ namespace Infrastructure.Models
             set { _currentSessionGuid = value; OnPropertyChanged("CurrentSessionGuid"); }
         }
 
-        private string _title;
-        public string Title {
-            get
-            {
-                return _title;
-            }
-            set
-            {
-                _title = value;
-                
-                OnPropertyChanged("Title");
-                
-            }
-        }
-
-        public string Password { get; set; }
-
-        public string UserID { get; set; }
-
         public Folder[] FolderList {get; set;}
 
         private DelegateCommand _stopRecording;
@@ -83,15 +66,18 @@ namespace Infrastructure.Models
 
         private async void OnStopRecording()
         {
-            RemoteRecorderManagementClient client = new RemoteRecorderManagementClient();
-            Infrastructure.Panopto.RemoteRecorder.AuthenticationInfo authInfo = new Infrastructure.Panopto.RemoteRecorder.AuthenticationInfo()
+            try
             {
-                Password = this.Password,
-                UserKey = this.UserID
-            };
-            RecorderSettings settings = new RecorderSettings() { RecorderId = CurrentRecorder.Id, SuppressSecondary = true };
+                RemoteRecorderManagementClient client = new RemoteRecorderManagementClient();
+                RecorderSettings settings = new RecorderSettings() { RecorderId = CurrentRecorder.Id, SuppressSecondary = true };
+                ScheduledRecordingResult response = await client.UpdateRecordingTimeAsync(_user.GetRemoteRecorderAuthInfo(), _sessionService.CurrentSession.Id, DateTime.Now, DateTime.Now);
+            }
+            catch (Exception ex)
+            {
+                
+                throw;
+            }
             
-            ScheduledRecordingResult response = await client.UpdateRecordingTimeAsync(authInfo,CurrentSessionGuid, DateTime.Now, DateTime.Now);
            
         }
 
@@ -120,8 +106,8 @@ namespace Infrastructure.Models
             Infrastructure.Panopto.Session.SessionManagementClient sessionClient = new SessionManagementClient();
             Infrastructure.Panopto.Session.AuthenticationInfo authInfo = new Panopto.Session.AuthenticationInfo()
             {
-                Password = this.Password,
-                UserKey = this.UserID
+                Password = _user.Password,
+                UserKey = _user.UserID
             };
 
             var folderListResponse = await sessionClient.GetCreatorFoldersListAsync(authInfo, new ListFoldersRequest(), null);
@@ -157,25 +143,32 @@ namespace Infrastructure.Models
 
         private bool CanStartRecording()
         {
-            bool val = string.IsNullOrEmpty(_title);
+            bool val = string.IsNullOrEmpty(_sessionService.MeetingName);
 
             return !val && CurrentFolder != null && CurrentRecorder != null;
         }
 
         private async void OnStartRecording()
         {
-            IsBusy = true;
-            RemoteRecorderManagementClient client = new RemoteRecorderManagementClient();
-            Infrastructure.Panopto.RemoteRecorder.AuthenticationInfo authInfo = new Infrastructure.Panopto.RemoteRecorder.AuthenticationInfo()
+            try
             {
-                Password = this.Password,
-                UserKey = this.UserID
-            };
-            RecorderSettings settings = new RecorderSettings() { RecorderId = CurrentRecorder.Id, SuppressSecondary=true };
-            ScheduledRecordingResult response = await client.ScheduleRecordingAsync(authInfo, _title, CurrentFolder.Id, true, DateTime.Now, DateTime.Now.AddHours(1), new RecorderSettings[] { settings });
-            CurrentSessionGuid = response.SessionIDs[0];
-            _sessionService.CurrentSession = CurrentSessionGuid;
-            IsBusy = false;
+                IsBusy = true;
+                RemoteRecorderManagementClient remoteClient = new RemoteRecorderManagementClient();
+                Infrastructure.Panopto.Session.SessionManagementClient sessionClient = new Infrastructure.Panopto.Session.SessionManagementClient();
+                RecorderSettings settings = new RecorderSettings() { RecorderId = CurrentRecorder.Id, SuppressSecondary = true };
+                ScheduledRecordingResult response = await remoteClient.ScheduleRecordingAsync(_user.GetRemoteRecorderAuthInfo(), _sessionService.MeetingName, CurrentFolder.Id, true, DateTime.Now, DateTime.Now.AddHours(1), new RecorderSettings[] { settings });
+                Guid sessionID = response.SessionIDs[0];
+                Infrastructure.Panopto.Session.Session[] allSessions;
+                allSessions = await sessionClient.GetSessionsByIdAsync(_user.GetSessionAuthInfo(), new Guid[] { sessionID });
+                _sessionService.CurrentSession = allSessions[0];    
+                IsBusy = false;
+            
+            }
+            catch (Exception ex)
+            {
+                
+                throw;
+            }
             
         }
 
@@ -189,8 +182,8 @@ namespace Infrastructure.Models
             RemoteRecorderManagementClient client = new RemoteRecorderManagementClient();
             Infrastructure.Panopto.RemoteRecorder.AuthenticationInfo authInfo = new Infrastructure.Panopto.RemoteRecorder.AuthenticationInfo()
             {
-                Password = this.Password,
-                UserKey = this.UserID
+                Password = _user.Password,
+                UserKey = _user.UserID
             };
 
             ListRecordersResponse recorderResults = await client.ListRecordersAsync(authInfo, new Infrastructure.Panopto.RemoteRecorder.Pagination(), RecorderSortField.Name);
@@ -201,11 +194,16 @@ namespace Infrastructure.Models
            
         }
 
-        public Devices(ISession sessionService)
+        void _sessionService_RaiseMeetingNameSet(object sender, EventArgs e)
+        {
+            StartRecording.RaiseCanExecuteChanged();
+        }
+
+        public Devices(ISession sessionService, IUser user)
         {
             _sessionService = sessionService;
-            UserID = "barkley";
-            Password = "seri502/dupe";
+            _user = user;
+
             Cameras = new List<string>();
             Microphones = new List<string>();
             foreach (Filter c in filter.VideoInputDevices)
@@ -227,7 +225,11 @@ namespace Infrastructure.Models
             _startRecording = new DelegateCommand(OnStartRecording, CanStartRecording);
 
             _stopRecording = new DelegateCommand(OnStopRecording, CanStopRecording);
+
+            _sessionService.RaiseMeetingNameSet += _sessionService_RaiseMeetingNameSet;
         }
+
+       
 
 
         #region INotifyPropertyChanged

@@ -4,6 +4,7 @@
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
              xmlns:tk="http://schemas.xceed.com/wpf/xaml/toolkit"
+             xmlns:gif="http://wpfanimatedgif.codeplex.com"
              xmlns:wf="clr-namespace:System.Windows.Forms;assembly=System.Windows.Forms"
              mc:Ignorable="d" 
              d:DesignHeight="600" d:DesignWidth="800">
@@ -16,6 +17,28 @@
         <KeyBinding Key="Space" Modifiers="Shift" Command="{Binding StampItem}" CommandParameter="{Binding SelectedItem}" />
     </UserControl.InputBindings>
     <Grid>
+        <tk:BusyIndicator IsBusy="{Binding IsBusy}" HorizontalAlignment="Center" VerticalAlignment="Center" DisplayAfter="0" Panel.ZIndex="100">
+            <tk:BusyIndicator.BusyContentTemplate>
+                <DataTemplate>
+                    <StackPanel Margin="5">
+                        <Image gif:ImageBehavior.AnimatedSource="..\Images\loading.gif"  Width="100" Height="100" />
+                    </StackPanel>
+                </DataTemplate>
+            </tk:BusyIndicator.BusyContentTemplate>
+            <tk:BusyIndicator.OverlayStyle>
+                <Style TargetType="Rectangle">
+                    <Setter Property="Fill" Value="#ffffeeee"/>
+                </Style>
+            </tk:BusyIndicator.OverlayStyle>
+            <tk:BusyIndicator.ProgressBarStyle>
+
+                <Style TargetType="ProgressBar">
+                    <Setter Property="Visibility" Value="Collapsed"/>
+                </Style>
+            </tk:BusyIndicator.ProgressBarStyle>
+            <ContentControl />
+        </tk:BusyIndicator>
+
         <StackPanel Orientation="Vertical">
             <StackPanel Orientation="Horizontal">
                 <Label>Load Agenda:</Label>

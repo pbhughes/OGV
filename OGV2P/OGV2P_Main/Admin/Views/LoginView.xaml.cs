@@ -16,6 +16,7 @@ using System.Windows.Navigation;
 using System.Windows.Shapes;
 using Infrastructure.Interfaces;
 using Infrastructure.Models;
+using Infrastructure.Converters;
 
 namespace OGV2P.Admin.Views
 {
@@ -58,6 +59,11 @@ namespace OGV2P.Admin.Views
         public bool KeepAlive
         {
             get { return false; }
+        }
+
+        private void CheckBox_Checked(object sender, RoutedEventArgs e)
+        {
+
         }
     }
 }

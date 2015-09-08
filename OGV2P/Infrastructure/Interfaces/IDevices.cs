@@ -14,8 +14,6 @@ namespace Infrastructure.Interfaces
         List<string> Cameras { get; set; }
         List<string> Microphones { get; set; }
         RemoteRecorder[] RemoteRecorders { get; set; }
-        string UserID { get; set; }
-        string Password { get; set; }
         DelegateCommand GetFolders { get; }
         DelegateCommand GetRecorders { get;  }
         DelegateCommand StartRecording { get;  }
@@ -23,7 +21,6 @@ namespace Infrastructure.Interfaces
         RemoteRecorder CurrentRecorder { get; set; }
         Folder[] FolderList { get; set; }
         Folder CurrentFolder { get; set; }
-        string Title { get; set; }
         ScheduledRecordingResult CurrentSession { get;  }
         Guid CurrentSessionGuid { get; }
     }

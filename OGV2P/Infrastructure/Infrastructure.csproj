@@ -72,6 +72,7 @@
     <Reference Include="System.Core" />
     <Reference Include="System.Runtime.Serialization" />
     <Reference Include="System.ServiceModel" />
+    <Reference Include="System.ServiceProcess" />
     <Reference Include="System.Xaml" />
     <Reference Include="System.Xml.Linq" />
     <Reference Include="System.Data.DataSetExtensions" />
@@ -102,6 +103,7 @@
     </Reference>
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Converters\VisibilityConverter.cs" />
     <Compile Include="Interfaces\ISession.cs" />
     <Compile Include="Interfaces\IShowActivity.cs" />
     <Compile Include="Interfaces\IUser.cs" />
