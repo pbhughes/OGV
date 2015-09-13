@@ -86,13 +86,13 @@ namespace Infrastructure.Models
             return true;
         }
 
-        private async void OnLogin()
+        private async void  OnLogin()
         {
             try
             {
                 IsBusy = true;
                 IsCameraServiceReady = await CheckPanoptoService();
-                IsFilterServiceReady = await CheckCameraService();
+                IsFilterServiceReady = await CheckSpitCameraService();
 
                 if (IsCameraServiceReady && IsFilterServiceReady)
                 {
@@ -108,8 +108,11 @@ namespace Infrastructure.Models
                 else
                 {
                     Message = "Camera and Filter services are not running, attempting to start them...";
-                    await StartFilterService();
-                    await StartPanoptoService();
+                    if(!IsFilterServiceReady)
+                        await StartFilterService();
+
+                    if(!IsCameraServiceReady)
+                        await StartPanoptoService();
                     OnLogin();
                 }
                 
@@ -161,12 +164,13 @@ namespace Infrastructure.Models
             return controller;
         }
 
-        private async Task<bool> CheckCameraService()
+        private async Task<bool> CheckSpitCameraService()
         {
             bool retval = false;
             retval = await Task.Run<bool>(() =>
             {
-                return (GetPanoptoServiceController().Status == ServiceControllerStatus.Running);
+                ServiceControllerStatus current = GetSplitCamServiceController().Status;
+                return ( current == ServiceControllerStatus.Running);
             });
 
             return retval;
@@ -177,7 +181,7 @@ namespace Infrastructure.Models
             bool retval = false;
             retval = await Task.Run<bool>(() =>
             {
-                return (GetSplitCamServiceController().Status == ServiceControllerStatus.Running);
+                return (GetPanoptoServiceController().Status == ServiceControllerStatus.Running);
                 
             });
 
@@ -206,6 +210,7 @@ namespace Infrastructure.Models
             if (RaiseLoginEvent != null)
                 RaiseLoginEvent(this, new EventArgs());
         }
+
         public User(ISession session)
         {
             _loginCommand = new DelegateCommand(OnLogin, CanLogin);

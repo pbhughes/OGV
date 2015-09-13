@@ -4,19 +4,15 @@
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
              xmlns:tk="http://schemas.xceed.com/wpf/xaml/toolkit"
-             xmlns:vu="clr-namespace:AudioVUMeter.Controls;assembly=AudioVUMeterWPFControl"
              xmlns:frms="clr-namespace:System.Windows.Forms;assembly=System.Windows.Forms"
              mc:Ignorable="d" 
-             d:DesignHeight="800" d:DesignWidth="800">
+             d:DesignHeight="800" d:DesignWidth="900">
     <UserControl.Resources>
-        
- 
-
     </UserControl.Resources>
     <Grid Background="Lavender" >
         <Grid.ColumnDefinitions>
-            <ColumnDefinition Width="Auto" />
-            <ColumnDefinition Width="Auto" />
+            <ColumnDefinition Width="400" />
+            <ColumnDefinition Width="450" />
         </Grid.ColumnDefinitions>
         <Grid.RowDefinitions>
             <RowDefinition Height="Auto"/>
@@ -31,13 +27,6 @@
                 <Label>Microphones</Label>
                 <ComboBox x:Name="cboMicrophones" ItemsSource="{Binding Microphones}" SelectionChanged="cboMicrophones_SelectionChanged"  ></ComboBox>
             </StackPanel>
-            <StackPanel Orientation="Horizontal">
-                <Label>Title</Label>
-                <TextBox x:Name="txtTitle"  Text="{Binding Title}" />
-            </StackPanel>
-
-        </StackPanel>
-        <StackPanel Grid.Column="1" Grid.Row="0" Orientation="Vertical">
             <StackPanel Orientation="Horizontal">
                 <Label>Recorders</Label>
                 <ComboBox x:Name="cboRecorders" 
@@ -60,17 +49,46 @@
             </StackPanel>
 
         </StackPanel>
-        <StackPanel Grid.Row="1" Grid.Column="0" HorizontalAlignment="Center"
-                    Grid.ColumnSpan="2" Orientation="Vertical" >
-            <StackPanel Orientation="Horizontal">
-                <vu:AudioChannelVUMeter x:Name="vuMeter" Height="25px" 
-                                        Margin="5 5 0 5" 
-                                        HorizontalAlignment="Stretch"></vu:AudioChannelVUMeter>
-                <tk:BusyIndicator IsBusy="{Binding IsBusy}"></tk:BusyIndicator>
+        <StackPanel Grid.Column="1" Grid.Row="0" 
+                    Orientation="Vertical" Width="450">
+
+
+            <StackPanel Orientation="Horizontal" Width="445" Margin="5">
+                <Label Width="50">Status</Label>
+                <TextBlock x:Name="txtStatus" TextAlignment="Center" VerticalAlignment="Center" TextTrimming="CharacterEllipsis" Text="{Binding SessionService.CurrentSession.StatusMessage}"></TextBlock>
             </StackPanel>
-            <Button Click="Button_Click">Load View</Button>
-            <WindowsFormsHost Width="800" Height="600" >
-                <frms:Panel x:Name="videoPanel" Width="800" Height="600" BackColor="WhiteSmoke"></frms:Panel>
+
+            <StackPanel Orientation="Horizontal" Width="445" Margin="5">
+                <Label Width="50">IOS</Label>
+                <TextBlock x:Name="txtIOSUrl" TextAlignment="Center" VerticalAlignment="Center" TextTrimming="CharacterEllipsis" Text="{Binding SessionService.CurrentSession.IosVideoUrl}"></TextBlock>
+            </StackPanel>
+
+            <StackPanel Orientation="Horizontal" Width="445" Margin="5">
+                <Label Width="50">MP4</Label>
+                <TextBlock x:Name="txtMP4" TextAlignment="Center" VerticalAlignment="Center" TextTrimming="CharacterEllipsis" Text="{Binding SessionService.CurrentSession.MP4Url}"></TextBlock>
+            </StackPanel>
+
+            <StackPanel Orientation="Horizontal" Width="445" Margin="5">
+                <Label Width="50">URL</Label>
+                <TextBlock x:Name="txtSharePage" 
+                           Width="325"
+                           TextAlignment="Center" 
+                           VerticalAlignment="Center" 
+                           Text="{Binding SessionService.CurrentSession.SharePageUrl}"
+                           ScrollViewer.VerticalScrollBarVisibility="Disabled"></TextBlock>
+            </StackPanel>
+
+
+        </StackPanel>
+        <StackPanel Grid.Row="1" Grid.Column="0" HorizontalAlignment="Stretch"
+                    Grid.ColumnSpan="2" Orientation="Vertical">
+            <ProgressBar  x:Name="vuMeter" Height="10px" 
+                                        Margin="0 5 0 5" 
+                                        HorizontalAlignment="Stretch"></ProgressBar>
+            <tk:BusyIndicator IsBusy="{Binding IsBusy}"></tk:BusyIndicator>
+            <WindowsFormsHost Margin="10" HorizontalAlignment="Left" Height="400" Width="400">
+                <frms:Panel x:Name="videoPanel" BackColor="WhiteSmoke"
+                            ></frms:Panel>
             </WindowsFormsHost>
         </StackPanel>
     </Grid>

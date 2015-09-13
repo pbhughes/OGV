@@ -10,7 +10,6 @@ using System.Windows;
 using OGV2P.AgendaModule.Interfaces;
 using OGV2P.AgendaModule.Models;
 using Infrastructure.Interfaces;
-
 using Infrastructure.Models;
 using Microsoft.Practices.Prism.Regions;
 
@@ -21,17 +20,19 @@ namespace OGV2P
         private ISession _session;
         private IUser _user;
         private IRegionManager _regionManager;
+        private Window _shell;
 
         protected override System.Windows.DependencyObject CreateShell()
         {
-            return this.Container.Resolve<Shell>();
+            _shell = this.Container.Resolve<Shell>();
+            return _shell;
         }
 
         protected override void InitializeShell()
         {
             base.InitializeShell();
-
-            OGV2P.App.Current.MainWindow = (Window)this.Shell;
+            OGV2P.App.Current.MainWindow = (Window)Shell;
+            _shell = OGV2P.App.Current.MainWindow;
             OGV2P.App.Current.MainWindow.Show();
         }
 
@@ -68,6 +69,8 @@ namespace OGV2P
         {
             _regionManager = Microsoft.Practices.ServiceLocation.ServiceLocator.Current.GetInstance<Microsoft.Practices.Prism.Regions.IRegionManager>();
 
+            ((Shell)_shell).SetSideBarAllignmentTop();
+            
             Uri vv = new Uri(typeof(OGV2P.Admin.Views.CameraView).FullName, UriKind.RelativeOrAbsolute);
             _regionManager.RequestNavigate("SideBarRegion", vv);
 

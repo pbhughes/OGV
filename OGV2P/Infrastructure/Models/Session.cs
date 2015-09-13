@@ -30,7 +30,7 @@ namespace Infrastructure.Models
         public p.Session CurrentSession
         {
             get { return _currentSession; }
-            set { _currentSession = value; }
+            set { _currentSession = value; OnPropertyChanged("CurrentSession"); }
         }
 
         private Guid _recoderID;

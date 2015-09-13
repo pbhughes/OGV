@@ -13,13 +13,21 @@ using System.Windows.Media.Imaging;
 using System.Windows.Navigation;
 using System.Windows.Shapes;
 
+
 namespace OGV2P
 {
+    
     /// <summary>
     /// Interaction logic for MainWindow.xaml
     /// </summary>
     public partial class Shell : Window
     {
+       
+        public void SetSideBarAllignmentTop( )
+        {
+            SideBarRegion.VerticalContentAlignment = VerticalAlignment.Top;
+        }
+
         public Shell()
         {
             InitializeComponent();

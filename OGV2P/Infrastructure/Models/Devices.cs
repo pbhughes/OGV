@@ -11,6 +11,7 @@ using System.ComponentModel;
 using Infrastructure.Panopto.Session;
 using Infrastructure.Interfaces;
 using System.Windows.Input;
+using System.Timers;
 
 namespace Infrastructure.Models
 {
@@ -18,9 +19,17 @@ namespace Infrastructure.Models
     {
         private IUser _user;
 
+        private Timer _statusChecknTimer;
+
         Filters filter = new Filters();
 
         private ISession _sessionService;
+
+        public ISession SessionService
+        {
+            get { return _sessionService; }
+            set { _sessionService = value; OnPropertyChanged("SessionService"); }
+        }
 
         public List<string> Cameras { get; set; }
 
@@ -68,13 +77,15 @@ namespace Infrastructure.Models
         {
             try
             {
+                _statusChecknTimer.Stop();
                 RemoteRecorderManagementClient client = new RemoteRecorderManagementClient();
                 RecorderSettings settings = new RecorderSettings() { RecorderId = CurrentRecorder.Id, SuppressSecondary = true };
-                ScheduledRecordingResult response = await client.UpdateRecordingTimeAsync(_user.GetRemoteRecorderAuthInfo(), _sessionService.CurrentSession.Id, DateTime.Now, DateTime.Now);
+                ScheduledRecordingResult response = await 
+                    client.UpdateRecordingTimeAsync(_user.GetRemoteRecorderAuthInfo(), _sessionService.CurrentSession.Id, DateTime.Now, DateTime.Now);
             }
             catch (Exception ex)
             {
-                
+
                 throw;
             }
             
@@ -153,6 +164,13 @@ namespace Infrastructure.Models
             try
             {
                 IsBusy = true;
+                if (_statusChecknTimer == null)
+                {
+                    _statusChecknTimer = new Timer();
+                    _statusChecknTimer.Elapsed += _statusChecknTimer_Elapsed;
+                    _statusChecknTimer.Interval = 1000.0;
+                }
+                _statusChecknTimer.Start();
                 RemoteRecorderManagementClient remoteClient = new RemoteRecorderManagementClient();
                 Infrastructure.Panopto.Session.SessionManagementClient sessionClient = new Infrastructure.Panopto.Session.SessionManagementClient();
                 RecorderSettings settings = new RecorderSettings() { RecorderId = CurrentRecorder.Id, SuppressSecondary = true };
@@ -160,7 +178,7 @@ namespace Infrastructure.Models
                 Guid sessionID = response.SessionIDs[0];
                 Infrastructure.Panopto.Session.Session[] allSessions;
                 allSessions = await sessionClient.GetSessionsByIdAsync(_user.GetSessionAuthInfo(), new Guid[] { sessionID });
-                _sessionService.CurrentSession = allSessions[0];    
+                SessionService.CurrentSession = allSessions[0];    
                 IsBusy = false;
             
             }
@@ -170,6 +188,16 @@ namespace Infrastructure.Models
                 throw;
             }
             
+        }
+
+        private async void _statusChecknTimer_Elapsed(object sender, ElapsedEventArgs e)
+        {
+            if (SessionService != null && SessionService.CurrentSession != null)
+            {
+                Infrastructure.Panopto.Session.SessionManagementClient sessionClient = new Infrastructure.Panopto.Session.SessionManagementClient();
+                Infrastructure.Panopto.Session.Session[] allSessions = await sessionClient.GetSessionsByIdAsync(_user.GetSessionAuthInfo(), new Guid[] { SessionService.CurrentSession.Id });
+                SessionService.CurrentSession = allSessions[0];
+            }
         }
 
         private bool CanGetRecorders()
@@ -203,6 +231,7 @@ namespace Infrastructure.Models
         {
             _sessionService = sessionService;
             _user = user;
+
 
             Cameras = new List<string>();
             Microphones = new List<string>();

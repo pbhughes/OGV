@@ -38,10 +38,11 @@ namespace OGV2P.Admin.Views
             _session = session;
             _user = user;
             DataContext = _user;
-            
             _regionManager = Microsoft.Practices.ServiceLocation.ServiceLocator.Current.GetInstance<Microsoft.Practices.Prism.Regions.IRegionManager>();
 
         }
+
+
 
         public bool IsNavigationTarget(NavigationContext navigationContext)
         {
@@ -54,6 +55,7 @@ namespace OGV2P.Admin.Views
 
         public void OnNavigatedTo(NavigationContext navigationContext)
         {
+
         }
 
         public bool KeepAlive
