@@ -4,7 +4,6 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
-using p = Infrastructure.Panopto.Session;
 using System.ComponentModel;
 
 namespace Infrastructure.Models
@@ -13,6 +12,22 @@ namespace Infrastructure.Models
 
     public class Session : ISession, INotifyPropertyChanged
     {
+        string _localVideoFile;
+
+        public string LocalVideoFile
+        {
+            get
+            {
+                return _localVideoFile;
+            }
+
+            set
+            {
+                _localVideoFile = value;
+                OnPropertyChanged("LocalVideoFile");
+            }
+        }
+
         string _meetingName;
 
         public string MeetingName
@@ -26,12 +41,6 @@ namespace Infrastructure.Models
             }
         }
 
-        private p.Session _currentSession;
-        public p.Session CurrentSession
-        {
-            get { return _currentSession; }
-            set { _currentSession = value; OnPropertyChanged("CurrentSession"); }
-        }
 
         private Guid _recoderID;
         public Guid RecorderID
@@ -39,6 +48,10 @@ namespace Infrastructure.Models
             get { return _recoderID; }
             set { _recoderID = value; }
         }
+
+   
+
+       
 
         public event MeetingNameSetEventHandler RaiseMeetingNameSet;
 

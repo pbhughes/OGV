@@ -7,8 +7,6 @@ using System.Threading.Tasks;
 using System.ComponentModel;
 using Microsoft.Practices.Unity;
 using Microsoft.Practices.Prism.Commands;
-using r = Infrastructure.Panopto.RemoteRecorder;
-using s = Infrastructure.Panopto.Session;
 using Microsoft.Practices.Prism.Regions;
 using System.Threading;
 using System.Windows;
@@ -23,15 +21,6 @@ namespace Infrastructure.Models
     {
         private IUnityContainer _container;
         private ISession _session;
-
-
-        private s.AuthenticationInfo _sessionAuth;
-
-        public s.AuthenticationInfo SessionAuthInfo
-        {
-            get { return _sessionAuth; }
-            set { _sessionAuth = value; }
-        }
 
         private bool _isReady;
 
@@ -86,46 +75,37 @@ namespace Infrastructure.Models
             return true;
         }
 
-        private async void  OnLogin()
+        private async void OnLogin()
         {
             try
             {
                 IsBusy = true;
-                IsCameraServiceReady = await CheckPanoptoService();
-                IsFilterServiceReady = await CheckSpitCameraService();
 
-                if (IsCameraServiceReady && IsFilterServiceReady)
+                if(UserID.ToLower() == @"barkley")
                 {
-                    r.RemoteRecorderManagementClient client = new r.RemoteRecorderManagementClient();
-                    r.AuthenticationInfo authInfo = GetRemoteRecorderAuthInfo();
-                    r.ListRecordersResponse recorderResults = await client.ListRecordersAsync(authInfo,
-                        new Infrastructure.Panopto.RemoteRecorder.Pagination(), r.RecorderSortField.Name);
-                    r.RemoteRecorder[] recorders = recorderResults.PagedResults;
-                    _session.RecorderID = recorders[0].Id;
                     OnRaiseLoginEvent();
-                    OnPropertyChanged("RemoteRecorders");
                 }
                 else
                 {
                     Message = "Camera and Filter services are not running, attempting to start them...";
-                    if(!IsFilterServiceReady)
+                    if (!IsFilterServiceReady)
                         await StartFilterService();
 
-                    if(!IsCameraServiceReady)
+                    if (!IsCameraServiceReady)
                         await StartPanoptoService();
                     OnLogin();
                 }
-                
+
             }
             catch (Exception ex)
             {
-                Message = ex.Message;        
+                Message = ex.Message;
             }
             finally
             {
                 IsBusy = false;
             }
-            
+
         }
 
         private async Task StartPanoptoService()
@@ -164,43 +144,18 @@ namespace Infrastructure.Models
             return controller;
         }
 
-        private async Task<bool> CheckSpitCameraService()
-        {
-            bool retval = false;
-            retval = await Task.Run<bool>(() =>
-            {
-                ServiceControllerStatus current = GetSplitCamServiceController().Status;
-                return ( current == ServiceControllerStatus.Running);
-            });
-
-            return retval;
-        }
-
-        private async Task<bool> CheckPanoptoService()
-        {
-            bool retval = false;
-            retval = await Task.Run<bool>(() =>
-            {
-                return (GetPanoptoServiceController().Status == ServiceControllerStatus.Running);
-                
-            });
-
-            return retval;
-
-        }
-
         private string _userID;
         public string UserID
         {
             get { return _userID; }
-            set { _userID = value; OnPropertyChanged("UserID"); }
+            set { _userID = value; OnPropertyChanged("UserID"); LoginCommand.RaiseCanExecuteChanged(); }
         }
 
         private string _password;
         public string Password
         {
             get { return _password; }
-            set { _password = value; OnPropertyChanged("Password"); }
+            set { _password = value; OnPropertyChanged("Password"); LoginCommand.RaiseCanExecuteChanged(); }
         }
 
         public event LoginEventHandler RaiseLoginEvent;
@@ -219,27 +174,7 @@ namespace Infrastructure.Models
         }
 
 
-        public s.AuthenticationInfo GetSessionAuthInfo()
-        {
-            s.AuthenticationInfo authInfo = new s.AuthenticationInfo()
-            {
-                Password = this.Password,
-                UserKey = this.UserID
-            };
-
-            return authInfo;
-        }
-
-        public r.AuthenticationInfo GetRemoteRecorderAuthInfo()
-        {
-            Infrastructure.Panopto.RemoteRecorder.AuthenticationInfo authInfo = new Infrastructure.Panopto.RemoteRecorder.AuthenticationInfo()
-            {
-                Password = this.Password,
-                UserKey = this.UserID
-            };
-
-            return authInfo;
-        }
+        
 
         #region INotifyPropertyChanged
 
@@ -252,7 +187,13 @@ namespace Infrastructure.Models
                 PropertyChanged(this, new PropertyChangedEventArgs(name));
         }
 
+        public void EvaluateLoginCapability()
+        {
+            LoginCommand.RaiseCanExecuteChanged();
+        }
+
         #endregion
+
 
     }
 }

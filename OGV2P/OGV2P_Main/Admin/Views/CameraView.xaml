@@ -18,7 +18,8 @@
             <RowDefinition Height="Auto"/>
             <RowDefinition Height="Auto" />
         </Grid.RowDefinitions>
-        <StackPanel Grid.Column="0" Grid.Row="0" Orientation="Vertical" Width="Auto">
+        <StackPanel Grid.Column="0" Grid.Row="0" 
+                    Orientation="Vertical" Width="Auto">
             <StackPanel Orientation="Horizontal">
                 <Label>Cameras</Label>
                 <ComboBox x:Name="cboCameras" ItemsSource="{Binding Cameras}" ></ComboBox>
@@ -49,37 +50,56 @@
             </StackPanel>
 
         </StackPanel>
-        <StackPanel Grid.Column="1" Grid.Row="0" 
-                    Orientation="Vertical" Width="450">
+
+        <ItemsControl Grid.Column="1" Grid.Row="0">
 
 
-            <StackPanel Orientation="Horizontal" Width="445" Margin="5">
-                <Label Width="50">Status</Label>
+            <StackPanel Orientation="Horizontal"  Margin="5">
+                <Label Width="50" MinWidth="50">Status</Label>
                 <TextBlock x:Name="txtStatus" TextAlignment="Center" VerticalAlignment="Center" TextTrimming="CharacterEllipsis" Text="{Binding SessionService.CurrentSession.StatusMessage}"></TextBlock>
             </StackPanel>
-
-            <StackPanel Orientation="Horizontal" Width="445" Margin="5">
-                <Label Width="50">IOS</Label>
+ 
+            <StackPanel Orientation="Horizontal" Margin="5">
+                <Label Width="50" MinWidth="50">IOS</Label>
                 <TextBlock x:Name="txtIOSUrl" TextAlignment="Center" VerticalAlignment="Center" TextTrimming="CharacterEllipsis" Text="{Binding SessionService.CurrentSession.IosVideoUrl}"></TextBlock>
             </StackPanel>
 
-            <StackPanel Orientation="Horizontal" Width="445" Margin="5">
-                <Label Width="50">MP4</Label>
+            <StackPanel Orientation="Horizontal"  Margin="5">
+                <Label Width="50" MinWidth="50">MP4</Label>
                 <TextBlock x:Name="txtMP4" TextAlignment="Center" VerticalAlignment="Center" TextTrimming="CharacterEllipsis" Text="{Binding SessionService.CurrentSession.MP4Url}"></TextBlock>
             </StackPanel>
 
-            <StackPanel Orientation="Horizontal" Width="445" Margin="5">
-                <Label Width="50">URL</Label>
-                <TextBlock x:Name="txtSharePage" 
+            <StackPanel Orientation="Horizontal" Margin="5">
+                <Label Width="50" MinWidth="50">URL</Label>
+                <ScrollViewer>
+                    <TextBlock x:Name="txtSharePage" 
                            Width="325"
                            TextAlignment="Center" 
                            VerticalAlignment="Center" 
-                           Text="{Binding SessionService.CurrentSession.SharePageUrl}"
-                           ScrollViewer.VerticalScrollBarVisibility="Disabled"></TextBlock>
+                           Text="{Binding SessionService.CurrentSession.SharePageUrl}"></TextBlock>
+
+                </ScrollViewer>
+               
             </StackPanel>
 
+            <ScrollViewer Margin="5" CanContentScroll="True" 
+                          VerticalScrollBarVisibility="Hidden"
+                          HorizontalScrollBarVisibility="Visible">
+                
+                <StackPanel Orientation="Horizontal" >
+                    <Label Width="25">File</Label>
+                    <TextBlock x:Name="txtLocalVideo" 
+                           Width="325"
+                           TextAlignment="Center" 
+                           VerticalAlignment="Center" 
+                           TextWrapping="NoWrap"
+                           Text="{Binding SessionService.LocalVideoFile}"></TextBlock>
 
-        </StackPanel>
+                </StackPanel>
+            </ScrollViewer>
+            
+       </ItemsControl>
+        
         <StackPanel Grid.Row="1" Grid.Column="0" HorizontalAlignment="Stretch"
                     Grid.ColumnSpan="2" Orientation="Vertical">
             <ProgressBar  x:Name="vuMeter" Height="10px" 

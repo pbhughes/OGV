@@ -39,10 +39,10 @@ namespace OGV2P.Admin.Views
             _user = user;
             DataContext = _user;
             _regionManager = Microsoft.Practices.ServiceLocation.ServiceLocator.Current.GetInstance<Microsoft.Practices.Prism.Regions.IRegionManager>();
-
+            this.Loaded += LoginView_Loaded;
         }
 
-
+    
 
         public bool IsNavigationTarget(NavigationContext navigationContext)
         {
@@ -66,6 +66,21 @@ namespace OGV2P.Admin.Views
         private void CheckBox_Checked(object sender, RoutedEventArgs e)
         {
 
+        }
+
+        private void TextBox_KeyDown(object sender, KeyEventArgs e)
+        {
+            _user.EvaluateLoginCapability();
+            if (e.Key == Key.Enter)
+            {
+                cmdLogin.Focus();
+
+            }
+        }
+
+        private void LoginView_Loaded(object sender, RoutedEventArgs e)
+        {
+            txtUserID.Focus();
         }
     }
 }

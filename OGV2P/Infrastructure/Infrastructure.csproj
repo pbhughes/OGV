@@ -29,13 +29,25 @@
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
   </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'Debug|x86'">
+    <DebugSymbols>true</DebugSymbols>
+    <OutputPath>bin\x86\Debug\</OutputPath>
+    <DefineConstants>DEBUG;TRACE</DefineConstants>
+    <DebugType>full</DebugType>
+    <PlatformTarget>x86</PlatformTarget>
+    <ErrorReport>prompt</ErrorReport>
+    <CodeAnalysisRuleSet>MinimumRecommendedRules.ruleset</CodeAnalysisRuleSet>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'Release|x86'">
+    <OutputPath>bin\x86\Release\</OutputPath>
+    <DefineConstants>TRACE</DefineConstants>
+    <Optimize>true</Optimize>
+    <DebugType>pdbonly</DebugType>
+    <PlatformTarget>x86</PlatformTarget>
+    <ErrorReport>prompt</ErrorReport>
+    <CodeAnalysisRuleSet>MinimumRecommendedRules.ruleset</CodeAnalysisRuleSet>
+  </PropertyGroup>
   <ItemGroup>
-    <Reference Include="DirectX.Capture">
-      <HintPath>..\..\..\..\..\Documents\DirectShow\Condensed Version\DirectX.Capture.dll</HintPath>
-    </Reference>
-    <Reference Include="DShowNET">
-      <HintPath>..\..\..\..\..\Documents\DirectShow\Condensed Version\DShowNET.dll</HintPath>
-    </Reference>
     <Reference Include="Microsoft.Practices.Prism.Composition">
       <HintPath>..\OGV2P_Main\packages\Prism.Composition.5.0.0\lib\NET45\Microsoft.Practices.Prism.Composition.dll</HintPath>
     </Reference>
@@ -112,16 +124,6 @@
     <Compile Include="Models\Session.cs" />
     <Compile Include="Models\User.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
-    <Compile Include="Service References\Panopto.RemoteRecorder\Reference.cs">
-      <AutoGen>True</AutoGen>
-      <DesignTime>True</DesignTime>
-      <DependentUpon>Reference.svcmap</DependentUpon>
-    </Compile>
-    <Compile Include="Service References\Panopto.Session\Reference.cs">
-      <AutoGen>True</AutoGen>
-      <DesignTime>True</DesignTime>
-      <DependentUpon>Reference.svcmap</DependentUpon>
-    </Compile>
   </ItemGroup>
   <ItemGroup>
     <WCFMetadata Include="Service References\" />
@@ -129,126 +131,6 @@
   <ItemGroup>
     <None Include="app.config" />
     <None Include="packages.config" />
-    <None Include="Service References\Panopto.RemoteRecorder\Infrastructure.Panopto.RemoteRecorder.ListRecordersResponse.datasource">
-      <DependentUpon>Reference.svcmap</DependentUpon>
-    </None>
-    <None Include="Service References\Panopto.RemoteRecorder\Infrastructure.Panopto.RemoteRecorder.RemoteRecorder.datasource">
-      <DependentUpon>Reference.svcmap</DependentUpon>
-    </None>
-    <None Include="Service References\Panopto.RemoteRecorder\Infrastructure.Panopto.RemoteRecorder.ScheduledRecordingResult.datasource">
-      <DependentUpon>Reference.svcmap</DependentUpon>
-    </None>
-    <None Include="Service References\Panopto.RemoteRecorder\RemoteRecorderManagement.wsdl" />
-    <None Include="Service References\Panopto.RemoteRecorder\RemoteRecorderManagement.xsd">
-      <SubType>Designer</SubType>
-    </None>
-    <None Include="Service References\Panopto.RemoteRecorder\RemoteRecorderManagement1.xsd">
-      <SubType>Designer</SubType>
-    </None>
-    <None Include="Service References\Panopto.RemoteRecorder\RemoteRecorderManagement2.xsd">
-      <SubType>Designer</SubType>
-    </None>
-    <None Include="Service References\Panopto.RemoteRecorder\RemoteRecorderManagement3.xsd">
-      <SubType>Designer</SubType>
-    </None>
-    <None Include="Service References\Panopto.RemoteRecorder\RemoteRecorderManagement4.xsd">
-      <SubType>Designer</SubType>
-    </None>
-    <None Include="Service References\Panopto.RemoteRecorder\RemoteRecorderManagement5.xsd">
-      <SubType>Designer</SubType>
-    </None>
-    <None Include="Service References\Panopto.Session\Infrastructure.Panopto.Session.Folder.datasource">
-      <DependentUpon>Reference.svcmap</DependentUpon>
-    </None>
-    <None Include="Service References\Panopto.Session\Infrastructure.Panopto.Session.FoldersWithAvailabilitySettings.datasource">
-      <DependentUpon>Reference.svcmap</DependentUpon>
-    </None>
-    <None Include="Service References\Panopto.Session\Infrastructure.Panopto.Session.FolderWithExternalContext.datasource">
-      <DependentUpon>Reference.svcmap</DependentUpon>
-    </None>
-    <None Include="Service References\Panopto.Session\Infrastructure.Panopto.Session.ListFoldersResponse.datasource">
-      <DependentUpon>Reference.svcmap</DependentUpon>
-    </None>
-    <None Include="Service References\Panopto.Session\Infrastructure.Panopto.Session.ListFoldersResponseWithExternalContext.datasource">
-      <DependentUpon>Reference.svcmap</DependentUpon>
-    </None>
-    <None Include="Service References\Panopto.Session\Infrastructure.Panopto.Session.ListNotesResponse.datasource">
-      <DependentUpon>Reference.svcmap</DependentUpon>
-    </None>
-    <None Include="Service References\Panopto.Session\Infrastructure.Panopto.Session.ListSessionsResponse.datasource">
-      <DependentUpon>Reference.svcmap</DependentUpon>
-    </None>
-    <None Include="Service References\Panopto.Session\Infrastructure.Panopto.Session.Note.datasource">
-      <DependentUpon>Reference.svcmap</DependentUpon>
-    </None>
-    <None Include="Service References\Panopto.Session\Infrastructure.Panopto.Session.RecorderDownloadUrlResponse.datasource">
-      <DependentUpon>Reference.svcmap</DependentUpon>
-    </None>
-    <None Include="Service References\Panopto.Session\Infrastructure.Panopto.Session.Session.datasource">
-      <DependentUpon>Reference.svcmap</DependentUpon>
-    </None>
-    <None Include="Service References\Panopto.Session\Infrastructure.Panopto.Session.SessionsWithAvailabilitySettings.datasource">
-      <DependentUpon>Reference.svcmap</DependentUpon>
-    </None>
-    <None Include="Service References\Panopto.Session\SessionManagement.wsdl" />
-    <None Include="Service References\Panopto.Session\SessionManagement.xsd">
-      <SubType>Designer</SubType>
-    </None>
-    <None Include="Service References\Panopto.Session\SessionManagement1.xsd">
-      <SubType>Designer</SubType>
-    </None>
-    <None Include="Service References\Panopto.Session\SessionManagement2.xsd">
-      <SubType>Designer</SubType>
-    </None>
-    <None Include="Service References\Panopto.Session\SessionManagement3.xsd">
-      <SubType>Designer</SubType>
-    </None>
-    <None Include="Service References\Panopto.Session\SessionManagement4.xsd">
-      <SubType>Designer</SubType>
-    </None>
-    <None Include="Service References\Panopto.Session\SessionManagement5.xsd">
-      <SubType>Designer</SubType>
-    </None>
-    <None Include="Service References\Panopto.Session\SessionManagement6.xsd">
-      <SubType>Designer</SubType>
-    </None>
-    <None Include="Service References\Panopto.Session\SessionManagement7.xsd">
-      <SubType>Designer</SubType>
-    </None>
-  </ItemGroup>
-  <ItemGroup>
-    <WCFMetadataStorage Include="Service References\Panopto.RemoteRecorder\" />
-    <WCFMetadataStorage Include="Service References\Panopto.Session\" />
-  </ItemGroup>
-  <ItemGroup>
-    <None Include="Service References\Panopto.RemoteRecorder\RemoteRecorderManagement.disco" />
-  </ItemGroup>
-  <ItemGroup>
-    <None Include="Service References\Panopto.RemoteRecorder\configuration91.svcinfo" />
-  </ItemGroup>
-  <ItemGroup>
-    <None Include="Service References\Panopto.RemoteRecorder\configuration.svcinfo" />
-  </ItemGroup>
-  <ItemGroup>
-    <None Include="Service References\Panopto.RemoteRecorder\Reference.svcmap">
-      <Generator>WCF Proxy Generator</Generator>
-      <LastGenOutput>Reference.cs</LastGenOutput>
-    </None>
-  </ItemGroup>
-  <ItemGroup>
-    <None Include="Service References\Panopto.Session\SessionManagement.disco" />
-  </ItemGroup>
-  <ItemGroup>
-    <None Include="Service References\Panopto.Session\configuration91.svcinfo" />
-  </ItemGroup>
-  <ItemGroup>
-    <None Include="Service References\Panopto.Session\configuration.svcinfo" />
-  </ItemGroup>
-  <ItemGroup>
-    <None Include="Service References\Panopto.Session\Reference.svcmap">
-      <Generator>WCF Proxy Generator</Generator>
-      <LastGenOutput>Reference.cs</LastGenOutput>
-    </None>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 

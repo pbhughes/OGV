@@ -9,7 +9,6 @@ using OGV2P.AgendaModule.Interfaces;
 using System.IO;
 using System.Xml.Linq;
 using System.Windows.Forms;
-using OGV2P.AgendaModule.Panopto.Session;
 using Infrastructure.Interfaces;
 
 
@@ -47,11 +46,7 @@ namespace OGV2P.AgendaModule.Models
             try
             {
                 IsBusy = true;
-                SessionManagementClient session = new SessionManagementClient();
-                AuthenticationInfo authInfo = new AuthenticationInfo() { UserKey = "barkley", Password = "seri502/dupe" };
-                TimeSpan ticks = (DateTime.UtcNow - _sessionService.CurrentSession.StartTime.Value);
-                await session.CreateCaptionByRelativeTimeAsync(authInfo, _sessionService.CurrentSession.Id, SelectedItem.Title, Math.Abs(ticks.TotalSeconds) );
-
+            
             }
             catch (Exception)
             {

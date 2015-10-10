@@ -26,6 +26,7 @@ namespace OGV2P
         public void SetSideBarAllignmentTop( )
         {
             SideBarRegion.VerticalContentAlignment = VerticalAlignment.Top;
+            SideBarRegion.VerticalAlignment = VerticalAlignment.Top;
         }
 
         public Shell()

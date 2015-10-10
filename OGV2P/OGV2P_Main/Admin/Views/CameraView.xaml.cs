@@ -1,14 +1,9 @@
-﻿using DirectX.Capture;
-using DShowNET.Device;
-using System.Windows;
+﻿using System.Windows;
 using System.Windows.Controls;
 using Infrastructure.Interfaces;
 using Infrastructure.Models;
-using NAudio;
-using NAudio.CoreAudioApi;
 using System.Timers;
 using System;
-using NAudio.Wave;
 using System.Windows.Media;
 
 
@@ -20,10 +15,8 @@ namespace OGV2P.Admin.Views
     public partial class CameraView : UserControl
     {
         private Timer _timer;
-        Filter _video = null;
-        Filter _audio = null;
-        Capture _capture = null;
-        WaveIn  _audioDevice;
+        ISession _sessionService;
+
         LinearGradientBrush _yellow = 
             new LinearGradientBrush(Colors.Green, Colors.Yellow, 
                 new Point(0, 1), new Point(1, 0));
@@ -37,13 +30,7 @@ namespace OGV2P.Admin.Views
             set { _devices = value; }
         }
 
-        public CameraView(IDevices devices)
-        {
-            InitializeComponent();
-            _devices = devices;
-            DataContext = Devices;
-        }
-
+     
         private void Button_Click(object sender, RoutedEventArgs e)
         {
             StartCapture();
@@ -57,75 +44,17 @@ namespace OGV2P.Admin.Views
                 vuMeter.Maximum = 100;
                 vuMeter.Foreground = _yellow;
 
-                if (_capture != null)
-                {
-                    _capture.Stop();
-                    _capture.Dispose();
-                }
-                Filters filters = new Filters();
-                foreach (Filter v in filters.VideoInputDevices)
-                {
-                    if (v.Name == cboCameras.SelectedValue.ToString())
-                    {
-                        _video = v;
-                        break;
-                    }
-                }
-                foreach (Filter c in filters.AudioInputDevices)
-                {
-                    if (c.Name == cboMicrophones.SelectedValue.ToString())
-                    {
-                        _audio = c;
-                        break;
-                    }
 
-                }
-                _capture = new Capture(
-                    _video,
-                    _audio
-                );
-
-                int waveInDevices = WaveIn.DeviceCount;
-                for (int waveInDevice = 0; waveInDevice < waveInDevices; waveInDevice++)
-                { 
-                    WaveInCapabilities deviceInfo = WaveIn.GetCapabilities(waveInDevice);
-                    Console.WriteLine("Device {0}: {1}, {2} channels",
-                        waveInDevice, deviceInfo.ProductName, deviceInfo.Channels);
-                    if (deviceInfo.ProductName.ToLower().Contains("splitcam"))
-                    {
-                        if (_audioDevice == null)
-                        {
-                            _audioDevice = new WaveIn();
-                        }
-                        _audioDevice.DeviceNumber = 0;//waveInDevice;
-                        _audioDevice.DataAvailable += _audioDevice_DataAvailable;
-                
-                        _audioDevice.StartRecording();
-                    }
-
-                }
-                
-                _capture.PreviewWindow = videoPanel;
-                _capture.Start();
+                _sessionService.LocalVideoFile = "";
+          
             }
             catch (Exception ex)
             {
-
-                MessageBox.Show(string.Format("Unable to switch to devices  video: {0} audio: {1}", _video.Name, _audio.Name));
+                MessageBox.Show(string.Format("Unable to switch to devices  video: {0} audio: {1}", "Video Name", "audio Name"));
             }
         }
 
-        void _audioDevice_DataAvailable(object sender, WaveInEventArgs e)
-        {
-            for (int index = 0; index < e.BytesRecorded; index += 2)
-            {
-                short sample = (short)((e.Buffer[index + 1] << 8) |
-                                        e.Buffer[index + 0]);
-                float sample32 = sample / 32768f;
-                UpdateVUMeter(Math.Abs(sample32 * 10000));
-            }
-        }
-
+     
         private void UpdateVUMeter(float sampleVolume)
         {
             this.Dispatcher.InvokeAsync(() =>
@@ -145,6 +74,15 @@ namespace OGV2P.Admin.Views
         {
            
         }
+
+        public CameraView(IDevices devices, ISession sessionService)
+        {
+            InitializeComponent();
+            _devices = devices;
+            _sessionService = sessionService;
+            DataContext = Devices;
+        }
+
 
     }
 }

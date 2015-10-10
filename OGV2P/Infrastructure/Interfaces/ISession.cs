@@ -1,5 +1,4 @@
 ﻿using Infrastructure.Models;
-using s = Infrastructure.Panopto.Session;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -10,11 +9,12 @@ namespace Infrastructure.Interfaces
 {
     public interface ISession
     {
-        s.Session CurrentSession { get; set; }
 
         Guid RecorderID { get; set; }
 
         string MeetingName { get; set; }
+
+        string LocalVideoFile { get; set; }
 
         event MeetingNameSetEventHandler RaiseMeetingNameSet;
     }
