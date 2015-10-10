@@ -104,13 +104,13 @@ namespace OGV.Admin.Models
 
                 OGV.Infrastructure.Model.Session.Instance.Token = token;
 
-                //down load all the board files
-                Message = "Downloading Agenda Files...";
-                List<IAgenda> files = await DownLoadAgendaFiles(); //get the URL from the authentication token
+                ////down load all the board files
+                //Message = "Downloading Agenda Files...";
+                //List<IAgenda> files = await DownLoadAgendaFiles(); //get the URL from the authentication token
 
-                //load all the board files
-                Message = "Loading Agenda Files...";
-                await LoadAgendaFiles();
+                ////load all the board files
+                //Message = "Loading Agenda Files...";
+                //await LoadAgendaFiles();
 
                 IsBusy = false;
                 //show the BoardView in the main region
@@ -181,7 +181,7 @@ namespace OGV.Admin.Models
                     if (response.StatusCode != HttpStatusCode.OK)
                     {
                         //got a bad response error
-                        throw new UnauthorizedAccessException(response.ReasonPhrase);
+                        //throw new UnauthorizedAccessException(response.ReasonPhrase);
                         
                     }
                     else

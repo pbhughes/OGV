@@ -100,8 +100,8 @@ namespace OGV.Streaming.Models
 
         protected TimeSpan _totalRecordTime = new TimeSpan(0, 0, 0);
 
-
         IUserViewModel _user;
+
         #endregion
 
         #region Constructors
@@ -242,7 +242,7 @@ namespace OGV.Streaming.Models
 
                 //add streaming format
                 PushBroadcastPublishFormat pushFormat = new PushBroadcastPublishFormat();
-                Preset preset = Preset.SystemLivePresets.Where(p => p.Name.ToLower().Contains("iphone wifi")).First();
+                Preset preset = Preset.SystemLivePresets.Where(p => p.Name.ToLower().Contains("iphone cell")).First();
                 _job.ApplyPreset(preset);
                
                 pushFormat.PublishingPoint = new Uri(_user.BoardList.SelectedAgenda.PublishingPoint);
@@ -293,7 +293,6 @@ namespace OGV.Streaming.Models
                     _job.PublishFormats.Clear();
 
                 }
-                
 
                 if (StreamLive)
                 {
@@ -315,10 +314,6 @@ namespace OGV.Streaming.Models
                    
                 }
 
-
-
-               
-
                 if (LoadCompletedEvent != null)
                     LoadCompletedEvent(this, new EventArgs());
 
@@ -332,8 +327,6 @@ namespace OGV.Streaming.Models
 
 
         }
-
-     
 
         public void RemoveRootSource()
         {
@@ -505,8 +498,8 @@ namespace OGV.Streaming.Models
             VideoDevice = video;
             AudioDevice = audio;
             _liveSource = Job.AddDeviceSource(VideoDevice, AudioDevice);
-            System.Drawing.Size size = new System.Drawing.Size(600, 800);
-            _liveSource.PickBestVideoFormat(size, (long)15);
+            System.Drawing.Size size = new System.Drawing.Size(400, 300);
+            _liveSource.PickBestVideoFormat(size, (long)15); 
             SourceProperties sp = _liveSource.SourcePropertiesSnapshot();
             
             _newSize = new System.Drawing.Size(sp.Size.Width, sp.Size.Height);

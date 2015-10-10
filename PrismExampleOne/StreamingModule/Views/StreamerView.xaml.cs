@@ -227,8 +227,6 @@ namespace OGV.Streaming.Views
             SetupPreviewWindow();
         }
 
-
-
         public bool IsNavigationTarget(NavigationContext navigationContext)
         {
             return true;
