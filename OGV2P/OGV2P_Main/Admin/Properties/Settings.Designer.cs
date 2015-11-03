@@ -12,7 +12,7 @@ namespace OGV2P.Admin.Properties {
     
     
     [global::System.Runtime.CompilerServices.CompilerGeneratedAttribute()]
-    [global::System.CodeDom.Compiler.GeneratedCodeAttribute("Microsoft.VisualStudio.Editors.SettingsDesigner.SettingsSingleFileGenerator", "12.0.0.0")]
+    [global::System.CodeDom.Compiler.GeneratedCodeAttribute("Microsoft.VisualStudio.Editors.SettingsDesigner.SettingsSingleFileGenerator", "14.0.0.0")]
     internal sealed partial class Settings : global::System.Configuration.ApplicationSettingsBase {
         
         private static Settings defaultInstance = ((Settings)(global::System.Configuration.ApplicationSettingsBase.Synchronized(new Settings())));
@@ -23,66 +23,15 @@ namespace OGV2P.Admin.Properties {
             }
         }
         
-        [global::System.Configuration.ApplicationScopedSettingAttribute()]
-        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
-        [global::System.Configuration.DefaultSettingValueAttribute("284226f3-9990-4054-bbdb-e8d299c4a003")]
-        public string RecorderInternalID {
-            get {
-                return ((string)(this["RecorderInternalID"]));
-            }
-        }
-        
-        [global::System.Configuration.ApplicationScopedSettingAttribute()]
-        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
-        [global::System.Configuration.DefaultSettingValueAttribute("bd9254c2-9f11-4322-a8fd-9d0dc1627f0d")]
-        public string FolderID {
-            get {
-                return ((string)(this["FolderID"]));
-            }
-        }
-        
-        [global::System.Configuration.ApplicationScopedSettingAttribute()]
-        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
-        [global::System.Configuration.DefaultSettingValueAttribute("barkley")]
-        public string PanoptoUserID {
-            get {
-                return ((string)(this["PanoptoUserID"]));
-            }
-        }
-        
         [global::System.Configuration.UserScopedSettingAttribute()]
         [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
-        [global::System.Configuration.DefaultSettingValueAttribute("seri502/dupe")]
-        public string PanoptoPassword {
+        [global::System.Configuration.DefaultSettingValueAttribute("ClerkBase\\Videos")]
+        public string LocalVideoFolder {
             get {
-                return ((string)(this["PanoptoPassword"]));
+                return ((string)(this["LocalVideoFolder"]));
             }
             set {
-                this["PanoptoPassword"] = value;
-            }
-        }
-        
-        [global::System.Configuration.UserScopedSettingAttribute()]
-        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
-        [global::System.Configuration.DefaultSettingValueAttribute("PanoptoRemoteRecorderService")]
-        public string PanoptoRecorderServiceName {
-            get {
-                return ((string)(this["PanoptoRecorderServiceName"]));
-            }
-            set {
-                this["PanoptoRecorderServiceName"] = value;
-            }
-        }
-        
-        [global::System.Configuration.UserScopedSettingAttribute()]
-        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
-        [global::System.Configuration.DefaultSettingValueAttribute("PanoptoRecorderService")]
-        public string PanoptoUploadService {
-            get {
-                return ((string)(this["PanoptoUploadService"]));
-            }
-            set {
-                this["PanoptoUploadService"] = value;
+                this["LocalVideoFolder"] = value;
             }
         }
     }

@@ -10,6 +10,7 @@ using RTMPActiveX;
 using System.Diagnostics;
 using Microsoft.Practices.Prism.Regions;
 using Microsoft.Practices.Unity;
+using System.IO;
 
 namespace OGV2P.Admin.Views
 {
@@ -20,7 +21,6 @@ namespace OGV2P.Admin.Views
     {
         
         ISession _sessionService;
-
         private System.Timers.Timer cpuReadingTimer;
         private PerformanceCounter cpuCounter;
 
@@ -36,29 +36,7 @@ namespace OGV2P.Admin.Views
             }
         }
 
-        private void Button_Click(object sender, RoutedEventArgs e)
-        {
-            StartCapture();
-        }
-
-        private void StartCapture()
-        {
-            try
-            {
-                vuMeter.Minimum = 0;
-                vuMeter.Maximum = 100;
-                vuMeter.Foreground = _yellow;
-
-
-                _sessionService.LocalVideoFile = "";
-          
-            }
-            catch (Exception ex)
-            {
-                MessageBox.Show(string.Format("Unable to switch to devices  video: {0} audio: {1}", "Video Name", "audio Name"));
-            }
-        }
-
+        
      
         private void UpdateVUMeter(float sampleVolume)
         {
@@ -69,10 +47,7 @@ namespace OGV2P.Admin.Views
             });
         }
 
-        private void cboMicrophones_SelectionChanged(object sender, SelectionChangedEventArgs e)
-        {
-            StartCapture();
-        }
+       
 
 
         public CameraView()
@@ -86,6 +61,8 @@ namespace OGV2P.Admin.Views
 
             try
             {
+                this.DataContext = this;
+                _sessionService = sessionService;
                 axRControl.License = "nlic:1.2:LiveEnc:3.0:LvApp=1,LivePlg=1,MSDK=4,MPEG2DEC=1,MPEG2ENC=1,PS=1,TS=1,H264DEC=1,H264ENC=1,H264ENCQS=1,MP4=4,RTMPsrc=1,RtmpMsg=1,RTMPs=1,RTSP=1,RTSPsrc=1,UDP=1,UDPsrc=1,HLS=1,WMS=1,WMV=1,RTMPm=4,RTMPx=3,Resz=1,RSrv=1,VMix2=1,3DRemix=1,ScCap=1,AuCap=1,AEC=1,Demo=1,Ic=1,NoMsg=1,Tm=1800,T1=600,NoIc=1:win,win64,osx:20151030,20160111::0:0:nanocosmosdemo-292490-3:ncpt:f6044ea043c479af5911e60502f1a334";
                 axRControl.InitEncoder();
 
@@ -104,7 +81,50 @@ namespace OGV2P.Admin.Views
                 //axRTMPActiveX1.TextOverlayText = "c:\\temp\\icon.png";
                 axRControl.VideoEffect = 3;
 
+                // nanoStream Event Handlers
+                axRControl.OnEvent += new AxRTMPActiveX.IRTMPActiveXEvents_OnEventEventHandler(axRControl_OnEvent);
+                axRControl.OnStop += new AxRTMPActiveX.IRTMPActiveXEvents_OnStopEventHandler(axRControl_OnStop);
+
+                // Video/Audio Devices
+                int n = axRControl.NumberOfVideoSources;
+                for (int i = 0; i < n; i++)
+                    cboCameras.Items.Add(axRControl.GetVideoSource(i));
+                cboCameras.SelectedItem = axRControl.GetVideoSource(0);
+                n = axRControl.NumberOfAudioSources;
+                for (int i = 0; i < n; i++)
+                    cboMicrophones.Items.Add(axRControl.GetAudioSource(i));
+                cboMicrophones.SelectedItem = axRControl.GetAudioSource(0);
+
+                long num = axRControl.GetNumberOfResolutions(0);
+                axRControl.VideoWidth = 640;
+                axRControl.VideoHeight = 480;
+
+                // initialize performance counter
+                cpuReadingTimer = new Timer();
+                cpuReadingTimer.Interval = 1000;
+                cpuReadingTimer.Elapsed += cpuReadingTimer_Elapsed;
+                cpuCounter = new PerformanceCounter();
+                cpuCounter.CategoryName = "Processor";
+                cpuCounter.CounterName = "% Processor Time";
+                cpuCounter.InstanceName = "_Total";
+                cpuReadingTimer.Start();
+
+                //set local video folder
+                string path = Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments);
+                path = Path.Combine(path, OGV2P.Admin.Properties.Settings.Default.LocalVideoFolder);
+                if (!Directory.Exists(path))
+                    Directory.CreateDirectory(path);
+                Guid guid = Guid.NewGuid();
+                path = Path.Combine(path, string.Format("{0}.mp4", guid.ToString()));
+                txtLocalFile.Text = path;
+                axRControl.DestinationURL2 = path;
+
+                //change status
+                txtStatus.Text = "Idle";
+
+                //start the preview
                 axRControl.StartPreview();
+
 
           
 
@@ -121,25 +141,54 @@ namespace OGV2P.Admin.Views
         private void cpuReadingTimer_Elapsed(object p1, object p2)
         {
             // get the CPU reading
-            float cpuUtilization = cpuCounter.NextValue();
-            lblCpu.Content = "CPU: " + cpuUtilization + "%";
+            Dispatcher.Invoke(() =>
+            {
+                float cpuUtilization = cpuCounter.NextValue();
+                txtCpuUsage.Text = cpuUtilization + "%";
+            });
+          
         }
 
-        void axRTMPActiveX1_OnStop(object sender, AxRTMPActiveX.IRTMPActiveXEvents_OnStopEvent e)
+        void axRControl_OnStop(object sender, AxRTMPActiveX.IRTMPActiveXEvents_OnStopEvent e)
         {
-            //throw new NotImplementedException();
-            lblStatus.Content = "Stopped.";
+            txtStatus.Text = "Stopped.";
             MessageBox.Show(e.ToString() + " - " + e.result);
         }
 
-        void axRTMPActiveX1_OnEvent(object sender, AxRTMPActiveX.IRTMPActiveXEvents_OnEventEvent e)
+        void axRControl_OnEvent(object sender, AxRTMPActiveX.IRTMPActiveXEvents_OnEventEvent e)
         {
             if (e.type == "10")
-                lblStatus.Content = "Running...";
+                txtStatus.Text = "Running...";
             else
-                lblStatus.Content = "Event Status " + e.type + " Text: " + e.result;
+                txtStatus.Text = "Event Status " + e.type + " Text: " + e.result;
 
-            //throw new NotImplementedException();
+        }
+
+        private void cmdStartRecording_Click(object sender, RoutedEventArgs e)
+        {
+            try
+            {
+                //axRControl.DestinationURL = cmbUrl.Text;
+                //axRTMPActiveX1.DestinationURL2 = cmbUrl2.Text;
+
+                //axRTMPActiveX1.SetConfig("UseColorConverter", "2");
+                //axRTMPActiveX1.StartConnect();
+                axRControl.StartBroadcast();
+                txtStatus.Text = "Running.";
+            }
+            catch (Exception ex)
+            {
+                txtStatus.Text = "Stopped.";
+                MessageBox.Show(ex.Message + "-" + axRControl.LastErrorMessage);
+            }
+        }
+
+        private void cmdStopRecording_Click(object sender, RoutedEventArgs e)
+        {
+            axRControl.StopBroadcast();
+            txtStatus.Text = "Stopped.";
+            axRControl.StartPreview();
+
         }
 
         public void OnNavigatedTo(NavigationContext navigationContext)
@@ -148,12 +197,28 @@ namespace OGV2P.Admin.Views
 
         public bool IsNavigationTarget(NavigationContext navigationContext)
         {
-            throw new NotImplementedException();
+            return true;
         }
 
         public void OnNavigatedFrom(NavigationContext navigationContext)
         {
-            throw new NotImplementedException();
         }
+
+        private void PreviewLocalFileLocation(object sender, RoutedEventArgs e)
+        {
+            DirectoryInfo root = Directory.GetParent(txtLocalFile.Text);
+            
+            Process.Start(root.FullName);
+        }
+
+        private void cmdStamp_Click(object sender, RoutedEventArgs e)
+        {
+            String s = axRControl.GetConfig("StreamTime");
+            int milliSeconds = int.Parse(s);
+            TimeSpan current = new TimeSpan(0,0,0,0,milliSeconds);
+            txtLastStamp.Text = string.Format("{0}:{1}:{2}", current.Hours, current.Minutes, current.Seconds);
+        }
+
+       
     }
 }

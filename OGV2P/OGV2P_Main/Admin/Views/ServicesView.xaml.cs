@@ -35,16 +35,8 @@ namespace OGV2P.Admin.Views
 
         async void  ServicesView_Loaded(object sender, RoutedEventArgs e)
         {
-            ServiceController recorder = new ServiceController(OGV2P.Admin.Properties.Settings.Default.PanoptoRecorderServiceName);
-            ServiceController uploader = new ServiceController(OGV2P.Admin.Properties.Settings.Default.PanoptoUploadService);
 
-            if (recorder.Status != ServiceControllerStatus.Running || uploader.Status != ServiceControllerStatus.Running)
-                System.Diagnostics.Process.Start("services.msc");
-            else
-            {
-                Uri vv = new Uri(typeof(Views.LoginView).FullName, UriKind.RelativeOrAbsolute);
-                _regionManager.RequestNavigate("SideBarRegion", vv);
-            }
+
            
         }
     }

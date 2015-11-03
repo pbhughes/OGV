@@ -19,7 +19,7 @@
             <RowDefinition Height="Auto"/>
             <RowDefinition Height="Auto" />
         </Grid.RowDefinitions>
-        <StackPanel Grid.Column="0" Grid.Row="0" 
+        <StackPanel Grid.Column="0" Grid.Row="1" Grid.ColumnSpan="2"
                     Orientation="Vertical" Width="Auto">
             <StackPanel Orientation="Horizontal">
                 <Label>Cameras</Label>
@@ -27,86 +27,54 @@
             </StackPanel>
             <StackPanel Orientation="Horizontal">
                 <Label>Microphones</Label>
-                <ComboBox x:Name="cboMicrophones" ItemsSource="{Binding Microphones}" SelectionChanged="cboMicrophones_SelectionChanged"  ></ComboBox>
-            </StackPanel>
-            <StackPanel Orientation="Horizontal">
-                <Label>Recorders</Label>
-                <ComboBox x:Name="cboRecorders" 
-                          ItemsSource="{Binding RemoteRecorders}" 
-                          DisplayMemberPath="Name" SelectedItem="{Binding CurrentRecorder}"></ComboBox>
+                <ComboBox x:Name="cboMicrophones" ItemsSource="{Binding Microphones}" ></ComboBox>
             </StackPanel>
 
-
-            <StackPanel Orientation="Horizontal">
-                <Label>Folders</Label>
-                <ComboBox x:Name="cboFolders" 
-                          ItemsSource="{Binding FolderList}" 
-                          DisplayMemberPath="Name" SelectedItem="{Binding CurrentFolder}"></ComboBox>
-            </StackPanel>
             <StackPanel Orientation="Horizontal" HorizontalAlignment="Center">
-                <Button x:Name="cmdStartRecording" Style="{StaticResource btn-primary}" Margin="10" Width="100"
-                        FontSize="15" Command="{Binding StartRecording}">REC</Button>
-                <Button x:Name="cmdStopRecording"  Style="{StaticResource btn-danger}" Margin="10" Width="100"
-                        FontSize="15" Command="{Binding StopRecording}" >STOP</Button>
+                <Button x:Name="cmdStartRecording" Click="cmdStartRecording_Click"  Style="{StaticResource btn-primary}" Margin="10" Width="100"
+                        FontSize="15">REC</Button>
+                <Button x:Name="cmdStopRecording" Click="cmdStopRecording_Click"  Style="{StaticResource btn-danger}" Margin="10" Width="100"
+                        FontSize="15">STOP</Button>
+                <Button x:Name="cmdStamp"  Style="{StaticResource btn-info}" Margin="10" Width="100"
+                        FontSize="15" Click="cmdStamp_Click">Stamp</Button>
+                <TextBlock x:Name="txtLastStamp"></TextBlock>
             </StackPanel>
-            <StackPanel Orientation="Vertical">
-                <Label x:Name="lblStatus"></Label>
-                <Label x:Name="lblCpu"></Label>
-              
-            </StackPanel>
-
-        </StackPanel>
-
-        <ItemsControl Grid.Column="1" Grid.Row="0">
-
-
+            
             <StackPanel Orientation="Horizontal"  Margin="5">
-                <Label Width="50" MinWidth="50">Status</Label>
+                <Label Width="75" MinWidth="50">Status</Label>
                 <TextBlock x:Name="txtStatus" TextAlignment="Center" VerticalAlignment="Center" TextTrimming="CharacterEllipsis" Text="{Binding SessionService.CurrentSession.StatusMessage}"></TextBlock>
             </StackPanel>
- 
-            <StackPanel Orientation="Horizontal" Margin="5">
-                <Label Width="50" MinWidth="50">IOS</Label>
-                <TextBlock x:Name="txtIOSUrl" TextAlignment="Center" VerticalAlignment="Center" TextTrimming="CharacterEllipsis" Text="{Binding SessionService.CurrentSession.IosVideoUrl}"></TextBlock>
+
+            <StackPanel Orientation="Horizontal"  Margin="5">
+                <Label Width="75" MinWidth="50">CPU</Label>
+                <TextBlock x:Name="txtCpuUsage" TextAlignment="Center" VerticalAlignment="Center" TextTrimming="CharacterEllipsis" Text="{Binding SessionService.CurrentSession.StatusMessage}"></TextBlock>
             </StackPanel>
 
             <StackPanel Orientation="Horizontal"  Margin="5">
-                <Label Width="50" MinWidth="50">MP4</Label>
-                <TextBlock x:Name="txtMP4" TextAlignment="Center" VerticalAlignment="Center" TextTrimming="CharacterEllipsis" Text="{Binding SessionService.CurrentSession.MP4Url}"></TextBlock>
+                <Label Width="75" MinWidth="50">Local File</Label>
+                <ScrollViewer VerticalScrollBarVisibility="Hidden">
+                    <TextBlock x:Name="txtLocalFile" Margin="0 0 5 0"
+                               MinWidth="500"
+                           TextAlignment="Center" 
+                           VerticalAlignment="Center"></TextBlock>
+                </ScrollViewer>
+                <Button Style="{StaticResource btn-primary-small}" Click="PreviewLocalFileLocation">Open Folder</Button>
             </StackPanel>
 
             <StackPanel Orientation="Horizontal" Margin="5">
-                <Label Width="50" MinWidth="50">URL</Label>
-                <ScrollViewer>
-                    <TextBlock x:Name="txtSharePage" 
-                           Width="325"
+                <Label Width="75" MinWidth="50">URL</Label>
+                <ScrollViewer VerticalScrollBarVisibility="Hidden">
+                    <TextBlock x:Name="txtUrl" Margin="0 0 5 0"
+                               MinWidth="500"
                            TextAlignment="Center" 
                            VerticalAlignment="Center" 
                            Text="{Binding SessionService.CurrentSession.SharePageUrl}"></TextBlock>
-
                 </ScrollViewer>
-               
+                <Button Style="{StaticResource btn-primary-small}">Preview Url</Button>
             </StackPanel>
+        </StackPanel>
 
-            <ScrollViewer Margin="5" CanContentScroll="True" 
-                          VerticalScrollBarVisibility="Hidden"
-                          HorizontalScrollBarVisibility="Visible">
-                
-                <StackPanel Orientation="Horizontal" >
-                    <Label Width="25">File</Label>
-                    <TextBlock x:Name="txtLocalVideo" 
-                           Width="325"
-                           TextAlignment="Center" 
-                           VerticalAlignment="Center" 
-                           TextWrapping="NoWrap"
-                           Text="{Binding SessionService.LocalVideoFile}"></TextBlock>
-
-                </StackPanel>
-            </ScrollViewer>
-            
-       </ItemsControl>
-        
-        <StackPanel Grid.Row="1" Grid.Column="0" HorizontalAlignment="Stretch"
+        <StackPanel Grid.Row="0" Grid.Column="0" HorizontalAlignment="Stretch"
                     Grid.ColumnSpan="2" Orientation="Vertical">
             <ProgressBar  x:Name="vuMeter" Height="10px" 
                                         Margin="0 5 0 5" 

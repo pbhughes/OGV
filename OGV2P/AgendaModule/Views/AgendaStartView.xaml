@@ -58,8 +58,8 @@
                 </StackPanel>
             </StackPanel>
             
-            <WindowsFormsHost x:Name="frmHost" Width="800" Height="600">
-                <wf:TreeView x:Name="agendaTree" />
+            <WindowsFormsHost x:Name="frmHost" Width="800" Height="600" FontSize="16">
+                <wf:TreeView x:Name="agendaTree"  />
             </WindowsFormsHost>
 
             <StackPanel Orientation="Vertical" Width="Auto">
