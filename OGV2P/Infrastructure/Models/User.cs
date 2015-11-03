@@ -87,12 +87,7 @@ namespace Infrastructure.Models
                 }
                 else
                 {
-                    Message = "Camera and Filter services are not running, attempting to start them...";
-                    if (!IsFilterServiceReady)
-                        await StartFilterService();
-
-                    if (!IsCameraServiceReady)
-                        await StartPanoptoService();
+                    
                     OnLogin();
                 }
 

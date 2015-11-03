@@ -42,7 +42,6 @@ namespace OGV2P
 
             ModuleCatalog moduleCatalog = (ModuleCatalog)this.ModuleCatalog;
             moduleCatalog.AddModule(typeof(OGV2P.Admin.AdminModule));
-
             moduleCatalog.AddModule(typeof(OGV2P.AgendaModule.AgendaModule));
 
         }

@@ -50,6 +50,13 @@
     <CodeAnalysisRuleSet>MinimumRecommendedRules.ruleset</CodeAnalysisRuleSet>
   </PropertyGroup>
   <ItemGroup>
+    <Reference Include="AxInterop.RTMPActiveX">
+      <HintPath>..\..\..\..\..\..\Documents\OGV\samples\nanoStream\nanoStream-WinForms-CSharp\obj\x86\Release\AxInterop.RTMPActiveX.dll</HintPath>
+    </Reference>
+    <Reference Include="Interop.RTMPActiveX">
+      <HintPath>..\..\..\..\..\..\Documents\OGV\samples\nanoStream\nanoStream-WinForms-CSharp\obj\x86\Release\Interop.RTMPActiveX.dll</HintPath>
+      <EmbedInteropTypes>True</EmbedInteropTypes>
+    </Reference>
     <Reference Include="Microsoft.Practices.Prism.Composition">
       <HintPath>..\packages\Prism.Composition.5.0.0\lib\NET45\Microsoft.Practices.Prism.Composition.dll</HintPath>
     </Reference>
