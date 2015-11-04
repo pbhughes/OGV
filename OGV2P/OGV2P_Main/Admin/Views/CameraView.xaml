@@ -23,7 +23,10 @@
                     Orientation="Vertical" Width="Auto">
             <StackPanel Orientation="Horizontal">
                 <Label>Cameras</Label>
-                <ComboBox x:Name="cboCameras"  Width="500" ItemsSource="{Binding Cameras}" ></ComboBox>
+                <ComboBox x:Name="cboCameras"  Width="500" 
+                          VerticalContentAlignment="Center"
+                          ItemsSource="{Binding Cameras}"
+                          SelectionChanged="cboCameras_SelectionChanged"></ComboBox>
                 <StackPanel Orientation="Horizontal"  Margin="5">
                     <Label Width="75" MinWidth="50">Status</Label>
                     <TextBlock x:Name="txtStatus" TextAlignment="Center" VerticalAlignment="Center" TextTrimming="CharacterEllipsis" Text="{Binding SessionService.CurrentSession.StatusMessage}"></TextBlock>
@@ -31,7 +34,10 @@
             </StackPanel>
             <StackPanel Orientation="Horizontal">
                 <Label>Microphones</Label>
-                <ComboBox x:Name="cboMicrophones" Width="500" ItemsSource="{Binding Microphones}" ></ComboBox>
+                <ComboBox x:Name="cboMicrophones" 
+                          Width="500" ItemsSource="{Binding Microphones}"
+                          VerticalContentAlignment="Center"
+                          SelectionChanged="cboMicrophones_SelectionChanged"></ComboBox>
                 <StackPanel Orientation="Horizontal"  Margin="5">
                     <Label Width="75" MinWidth="50">CPU</Label>
                     <TextBlock x:Name="txtCpuUsage" TextAlignment="Center" VerticalAlignment="Center" TextTrimming="CharacterEllipsis" Text="{Binding SessionService.CurrentSession.StatusMessage}"></TextBlock>
