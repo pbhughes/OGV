@@ -16,6 +16,10 @@ namespace Infrastructure.Interfaces
 
         string LocalVideoFile { get; set; }
 
+        void Stamp(TimeSpan sessionTime);
+
         event MeetingNameSetEventHandler RaiseMeetingNameSet;
+
+        event StampedEventHandler RaiseStamped;
     }
 }

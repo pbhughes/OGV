@@ -119,6 +119,12 @@ namespace OGV2P.Admin.Views
                 txtLocalFile.Text = path;
                 axRControl.DestinationURL2 = path;
 
+                //set the publishing point url
+                axRControl.DestinationURL = @"rtmp://devob2.opengovideo.com:1935/ogv2/myStream";
+
+                //set the preview url
+                txtUrl.Text = @"http://mytestserver.com/ogv2playerlive.html";
+
                 //change status
                 txtStatus.Text = "Idle";
 
@@ -191,6 +197,28 @@ namespace OGV2P.Admin.Views
 
         }
 
+        private void cmdPreviewVideo_CLick(object sender, RoutedEventArgs e)
+        {
+            Process.Start(txtUrl.Text);
+        }
+
+        private void PreviewLocalFileLocation(object sender, RoutedEventArgs e)
+        {
+            DirectoryInfo root = Directory.GetParent(txtLocalFile.Text);
+
+            Process.Start(root.FullName);
+        }
+
+        private void cmdStamp_Click(object sender, RoutedEventArgs e)
+        {
+            String s = axRControl.GetConfig("StreamTime");
+            int milliSeconds = int.Parse(s);
+            TimeSpan current = new TimeSpan(0, 0, 0, 0, milliSeconds);
+            txtLastStamp.Text = string.Format("{0}:{1}:{2}", current.Hours, current.Minutes, current.Seconds);
+            _sessionService.Stamp(current);
+            
+        }
+
         public void OnNavigatedTo(NavigationContext navigationContext)
         {
         }
@@ -204,21 +232,8 @@ namespace OGV2P.Admin.Views
         {
         }
 
-        private void PreviewLocalFileLocation(object sender, RoutedEventArgs e)
-        {
-            DirectoryInfo root = Directory.GetParent(txtLocalFile.Text);
-            
-            Process.Start(root.FullName);
-        }
+      
 
-        private void cmdStamp_Click(object sender, RoutedEventArgs e)
-        {
-            String s = axRControl.GetConfig("StreamTime");
-            int milliSeconds = int.Parse(s);
-            TimeSpan current = new TimeSpan(0,0,0,0,milliSeconds);
-            txtLastStamp.Text = string.Format("{0}:{1}:{2}", current.Hours, current.Minutes, current.Seconds);
-        }
-
-       
+        
     }
 }

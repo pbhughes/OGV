@@ -23,6 +23,7 @@ namespace OGV2P.AgendaModule.Views
     public partial class AgendaStartView : UserControl
     {
         private IMeeting _currentMeeting;
+        
 
         public AgendaStartView( IMeeting meeting )
         {

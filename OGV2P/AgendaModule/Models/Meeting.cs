@@ -28,43 +28,11 @@ namespace OGV2P.AgendaModule.Models
             set { _isBusy = value; OnPropertyChanged("IsBusy"); }
         }
 
-
-        private DelegateCommand<Item> _stampItem;
-        public DelegateCommand<Item> StampItem
-        {
-            get { return _stampItem; }
-            set { _stampItem = value; }
-        }
-
-        private bool CanStampItem(Item item)
-        {
-            return (item != null);
-        }
-
-        private async void OnStampItem(Item item)
-        {
-            try
-            {
-                IsBusy = true;
-            
-            }
-            catch (Exception)
-            {
-                
-                throw;
-            }
-            finally
-            {
-                IsBusy = false;
-            }
-         
-        }
-
         private Item _selectedItem;
         public Item SelectedItem
         {
             get { return _selectedItem; }
-            set { _selectedItem = value; OnPropertyChanged("SelectedItem"); StampItem.RaiseCanExecuteChanged(); }
+            set { _selectedItem = value; OnPropertyChanged("SelectedItem"); }
         }
 
         private DelegateCommand<TreeView> _loadAgenda;
@@ -204,9 +172,14 @@ namespace OGV2P.AgendaModule.Models
         public Meeting(ISession sessionService)
         {
             _sessionService = sessionService;
+            _sessionService.RaiseStamped += _sessionService_RaiseStamped;
             _loadAgenda = new DelegateCommand<TreeView>(OnLoadAgenda, CanLoadAgenda);
-            _stampItem = new DelegateCommand<Item>(OnStampItem, CanStampItem);
             _agenda = new Agenda();
+        }
+
+        private void _sessionService_RaiseStamped(TimeSpan sessionTime)
+        {
+            _selectedItem.TimeStamp = sessionTime;
         }
 
         #region INotifyPropertyChanged

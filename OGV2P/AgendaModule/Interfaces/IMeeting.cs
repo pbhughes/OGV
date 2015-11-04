@@ -10,7 +10,6 @@ namespace OGV2P.AgendaModule.Interfaces
         string FileName { get; set; }
         bool IsBusy { get; set; }
         Microsoft.Practices.Prism.Commands.DelegateCommand<TreeView> LoadAgenda { get; set; }
-        Microsoft.Practices.Prism.Commands.DelegateCommand<Item> StampItem { get; set; }
         DateTime MeetingDate { get; set; }
         string MeetingName { get; set; }
         event System.ComponentModel.PropertyChangedEventHandler PropertyChanged;

@@ -10,6 +10,8 @@ namespace Infrastructure.Models
 {
     public delegate void MeetingNameSetEventHandler(object sender, EventArgs e);
 
+    public delegate void StampedEventHandler(TimeSpan sessionTime);
+
     public class Session : ISession, INotifyPropertyChanged
     {
         string _localVideoFile;
@@ -60,6 +62,20 @@ namespace Infrastructure.Models
             if (RaiseMeetingNameSet != null)
                 RaiseMeetingNameSet(this, new EventArgs());
         }
+
+        public event StampedEventHandler RaiseStamped;
+
+        public void RaiseStampedEvent(TimeSpan sessionTime)
+        {
+            if (RaiseStamped != null)
+                RaiseStamped(sessionTime);
+        }
+
+        void ISession.Stamp(TimeSpan sessionTime)
+        {
+            RaiseStampedEvent(sessionTime);
+        }
+
         public Session()
         {
 
@@ -76,6 +92,8 @@ namespace Infrastructure.Models
             if (PropertyChanged != null)
                 PropertyChanged(this, new PropertyChangedEventArgs(name));
         }
+
+       
 
         #endregion
     }

@@ -7,7 +7,7 @@
              xmlns:gif="http://wpfanimatedgif.codeplex.com"
              xmlns:wf="clr-namespace:System.Windows.Forms;assembly=System.Windows.Forms"
              mc:Ignorable="d" 
-             d:DesignHeight="600" d:DesignWidth="800">
+             d:DesignHeight="900" d:DesignWidth="800">
     <UserControl.Resources>
         <Style TargetType="UserControl">
             <Setter Property="Margin" Value="10"/>
@@ -52,7 +52,9 @@
                 <TextBox x:Name="txtMeetingName" Text="{Binding MeetingName}"/>
                 <StackPanel Orientation="Horizontal">
                     <Label>Meeting Date:</Label>
-                    <DatePicker SelectedDateFormat="Long" SelectedDate="{Binding MeetingDate}"  
+                    <DatePicker SelectedDateFormat="Long"
+                                SelectedDate="{Binding MeetingDate}" 
+                                VerticalContentAlignment="Center"
                   FirstDayOfWeek="Monday" Width="256" Height="37"  />
                     
                 </StackPanel>
@@ -70,10 +72,13 @@
                 <StackPanel Orientation="Horizontal" Width="Auto">
                     <Label>Description:</Label>
                     <TextBox Text="{Binding SelectedItem.Description}" ></TextBox>
-                    
+
                 </StackPanel>
-                <Button  Style="{DynamicResource btn-primary}" Command="{Binding StampItem}" 
-                             CommandParameter="{Binding SelectedItem}">Stamp</Button>
+                <StackPanel Orientation="Horizontal" Width="Auto">
+                    <Label>Time Stamp:</Label>
+                    <TextBox Text="{Binding SelectedItem.TimeStamp}" ></TextBox>
+
+                </StackPanel>
             </StackPanel>
           
         </StackPanel>

@@ -55,7 +55,7 @@
                 <ScrollViewer VerticalScrollBarVisibility="Hidden">
                     <TextBlock x:Name="txtLocalFile" Margin="0 0 5 0"
                                MinWidth="500"
-                           TextAlignment="Center" 
+                           TextAlignment="left" 
                            VerticalAlignment="Center"></TextBlock>
                 </ScrollViewer>
                 <Button Style="{StaticResource btn-primary-small}" Click="PreviewLocalFileLocation">Open Folder</Button>
@@ -66,11 +66,13 @@
                 <ScrollViewer VerticalScrollBarVisibility="Hidden">
                     <TextBlock x:Name="txtUrl" Margin="0 0 5 0"
                                MinWidth="500"
-                           TextAlignment="Center" 
+                           TextAlignment="left" 
                            VerticalAlignment="Center" 
                            Text="{Binding SessionService.CurrentSession.SharePageUrl}"></TextBlock>
                 </ScrollViewer>
-                <Button Style="{StaticResource btn-primary-small}">Preview Url</Button>
+                <Button Style="{StaticResource btn-primary-small}"
+                        Click="cmdPreviewVideo_CLick"
+                        RenderTransformOrigin="0.5,0.506">Preview Url</Button>
             </StackPanel>
         </StackPanel>
 
