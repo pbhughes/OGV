@@ -7,6 +7,8 @@
         
         <infra:BoolToVisibilityConverter x:Key="BoolToVisibility"
                                          TrueValue="Visible" FalseValue="Collapsed"></infra:BoolToVisibilityConverter>
+
+        <infra:InverseBooleanConverter x:Key="InverseBoolConverter"></infra:InverseBooleanConverter>
         
         <Style TargetType="UserControl">
             <Setter Property="MinWidth" Value="400" />

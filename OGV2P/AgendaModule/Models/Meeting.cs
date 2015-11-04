@@ -179,7 +179,8 @@ namespace OGV2P.AgendaModule.Models
 
         private void _sessionService_RaiseStamped(TimeSpan sessionTime)
         {
-            _selectedItem.TimeStamp = sessionTime;
+            if (_selectedItem != null)
+                _selectedItem.TimeStamp = sessionTime;
         }
 
         #region INotifyPropertyChanged

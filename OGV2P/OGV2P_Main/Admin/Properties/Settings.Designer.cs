@@ -34,5 +34,41 @@ namespace OGV2P.Admin.Properties {
                 this["LocalVideoFolder"] = value;
             }
         }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("0")]
+        public int VuMeterMinimum {
+            get {
+                return ((int)(this["VuMeterMinimum"]));
+            }
+            set {
+                this["VuMeterMinimum"] = value;
+            }
+        }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("50000")]
+        public int VuMeterMaximum {
+            get {
+                return ((int)(this["VuMeterMaximum"]));
+            }
+            set {
+                this["VuMeterMaximum"] = value;
+            }
+        }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("2000")]
+        public double VuMeterUpdateRate {
+            get {
+                return ((double)(this["VuMeterUpdateRate"]));
+            }
+            set {
+                this["VuMeterUpdateRate"] = value;
+            }
+        }
     }
 }

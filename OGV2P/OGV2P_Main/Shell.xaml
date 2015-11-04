@@ -21,11 +21,14 @@
         
         <GridSplitter Grid.Column="1" HorizontalAlignment="Left" Width="3" >
         </GridSplitter>
-        
-        <ContentControl Grid.Column="0" VerticalAlignment="Center"
+
+        <ScrollViewer HorizontalScrollBarVisibility="Hidden">
+            <ContentControl Grid.Column="0" VerticalAlignment="Center"
                         HorizontalAlignment="Center" Name="SideBarRegion" 
                         cal:RegionManager.RegionName="SideBarRegion"
                         Background="AliceBlue" />
+        </ScrollViewer>
+ 
 
 
 

@@ -5,5 +5,14 @@
     <Setting Name="LocalVideoFolder" Type="System.String" Scope="User">
       <Value Profile="(Default)">ClerkBase\Videos</Value>
     </Setting>
+    <Setting Name="VuMeterMinimum" Type="System.Int32" Scope="User">
+      <Value Profile="(Default)">0</Value>
+    </Setting>
+    <Setting Name="VuMeterMaximum" Type="System.Int32" Scope="User">
+      <Value Profile="(Default)">50000</Value>
+    </Setting>
+    <Setting Name="VuMeterUpdateRate" Type="System.Double" Scope="User">
+      <Value Profile="(Default)">2000</Value>
+    </Setting>
   </Settings>
 </SettingsFile>

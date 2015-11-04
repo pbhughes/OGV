@@ -23,32 +23,40 @@
                     Orientation="Vertical" Width="Auto">
             <StackPanel Orientation="Horizontal">
                 <Label>Cameras</Label>
-                <ComboBox x:Name="cboCameras" ItemsSource="{Binding Cameras}" ></ComboBox>
+                <ComboBox x:Name="cboCameras"  Width="500" ItemsSource="{Binding Cameras}" ></ComboBox>
+                <StackPanel Orientation="Horizontal"  Margin="5">
+                    <Label Width="75" MinWidth="50">Status</Label>
+                    <TextBlock x:Name="txtStatus" TextAlignment="Center" VerticalAlignment="Center" TextTrimming="CharacterEllipsis" Text="{Binding SessionService.CurrentSession.StatusMessage}"></TextBlock>
+                </StackPanel>
             </StackPanel>
             <StackPanel Orientation="Horizontal">
                 <Label>Microphones</Label>
-                <ComboBox x:Name="cboMicrophones" ItemsSource="{Binding Microphones}" ></ComboBox>
+                <ComboBox x:Name="cboMicrophones" Width="500" ItemsSource="{Binding Microphones}" ></ComboBox>
+                <StackPanel Orientation="Horizontal"  Margin="5">
+                    <Label Width="75" MinWidth="50">CPU</Label>
+                    <TextBlock x:Name="txtCpuUsage" TextAlignment="Center" VerticalAlignment="Center" TextTrimming="CharacterEllipsis" Text="{Binding SessionService.CurrentSession.StatusMessage}"></TextBlock>
+                </StackPanel>
             </StackPanel>
 
             <StackPanel Orientation="Horizontal" HorizontalAlignment="Center">
-                <Button x:Name="cmdStartRecording" Click="cmdStartRecording_Click"  Style="{StaticResource btn-primary}" Margin="10" Width="100"
+                <Button x:Name="cmdStartRecording"
+                        IsEnabled="{Binding Path=IsBusy, Converter={StaticResource InverseBoolConverter}}"
+                        Click="cmdStartRecording_Click"  Style="{StaticResource btn-primary}" Margin="10" Width="100"
                         FontSize="15">REC</Button>
-                <Button x:Name="cmdStopRecording" Click="cmdStopRecording_Click"  Style="{StaticResource btn-danger}" Margin="10" Width="100"
+                <Button x:Name="cmdStopRecording"
+                        IsEnabled="{Binding IsBusy}"
+                        Click="cmdStopRecording_Click"  Style="{StaticResource btn-danger}" Margin="10" Width="100"
                         FontSize="15">STOP</Button>
-                <Button x:Name="cmdStamp"  Style="{StaticResource btn-info}" Margin="10" Width="100"
+                <Button x:Name="cmdStamp" 
+                        IsEnabled="{Binding IsBusy}"
+                        Style="{StaticResource btn-info}" Margin="10" Width="100"
                         FontSize="15" Click="cmdStamp_Click">Stamp</Button>
                 <TextBlock x:Name="txtLastStamp"></TextBlock>
             </StackPanel>
             
-            <StackPanel Orientation="Horizontal"  Margin="5">
-                <Label Width="75" MinWidth="50">Status</Label>
-                <TextBlock x:Name="txtStatus" TextAlignment="Center" VerticalAlignment="Center" TextTrimming="CharacterEllipsis" Text="{Binding SessionService.CurrentSession.StatusMessage}"></TextBlock>
-            </StackPanel>
+           
 
-            <StackPanel Orientation="Horizontal"  Margin="5">
-                <Label Width="75" MinWidth="50">CPU</Label>
-                <TextBlock x:Name="txtCpuUsage" TextAlignment="Center" VerticalAlignment="Center" TextTrimming="CharacterEllipsis" Text="{Binding SessionService.CurrentSession.StatusMessage}"></TextBlock>
-            </StackPanel>
+           
 
             <StackPanel Orientation="Horizontal"  Margin="5">
                 <Label Width="75" MinWidth="50">Local File</Label>
@@ -81,8 +89,10 @@
             <ProgressBar  x:Name="vuMeter" Height="10px" 
                                         Margin="0 5 0 5" 
                                         HorizontalAlignment="Stretch"></ProgressBar>
-            <tk:BusyIndicator IsBusy="{Binding IsBusy}"></tk:BusyIndicator>
-            <WindowsFormsHost x:Name="winFrmHost" Width="400" Height="400" >
+            <TextBlock x:Name="txtAudioLevel"
+                       HorizontalAlignment="Left"
+                       TextAlignment="Left"></TextBlock>
+            <WindowsFormsHost x:Name="winFrmHost" Width="640" Height="420" >
                 <ax:AxRTMPActiveX x:Name="axRControl"></ax:AxRTMPActiveX>
             </WindowsFormsHost>
         </StackPanel>
