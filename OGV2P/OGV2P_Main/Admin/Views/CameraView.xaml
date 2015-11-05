@@ -7,6 +7,7 @@
              xmlns:frms="clr-namespace:System.Windows.Forms;assembly=System.Windows.Forms"
              xmlns:ax="clr-namespace:AxRTMPActiveX;assembly=AxInterop.RTMPActiveX"
              mc:Ignorable="d" 
+             Loaded="UserControl_Loaded"
              d:DesignHeight="800" d:DesignWidth="900">
     <UserControl.Resources>
     </UserControl.Resources>

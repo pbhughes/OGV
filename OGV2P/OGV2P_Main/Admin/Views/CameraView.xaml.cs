@@ -15,6 +15,8 @@ using System.Configuration;
 using System.Collections;
 using System.ComponentModel;
 using System.Collections.Generic;
+using Forms = System.Windows.Forms;
+using System.Windows.Interop;
 
 namespace OGV2P.Admin.Views
 {
@@ -28,6 +30,7 @@ namespace OGV2P.Admin.Views
         private System.Timers.Timer cpuReadingTimer;
         private PerformanceCounter cpuCounter;
         private Timer _vuMeterTimer;
+        private Forms.NativeWindow _window = new Forms.NativeWindow();
 
         LinearGradientBrush _yellow = 
             new LinearGradientBrush(Colors.Green, Colors.Yellow, 
@@ -118,7 +121,12 @@ namespace OGV2P.Admin.Views
                 _cameras = new List<string>();
                 _microphones = new List<string>();
 
-                //read appsettings from main app.config
+                //initialize the window to listen for usb devices to be added
+                OGV2P.Admin.Helpers.UsbNotification.RegisterUsbDeviceNotification(_window.Handle);
+
+                //set the user id / password
+                //axRControl.SetConfig("Auth", "barkley:hughes");
+
                 var settings = ConfigurationSettings.AppSettings;
 
                 // Video Source Device (0...n)
@@ -141,21 +149,19 @@ namespace OGV2P.Admin.Views
                 axRControl.OnStop += new AxRTMPActiveX.IRTMPActiveXEvents_OnStopEventHandler(axRControl_OnStop);
 
                 // Video/Audio Devices
-                int n = axRControl.NumberOfVideoSources;
-                for (int i = 0; i < n; i++)
-                    Cameras.Add(axRControl.GetVideoSource(i));
+                int n;
+                AddVideoSources();
                 cboCameras.SelectedItem = axRControl.GetVideoSource(0);
 
-                n = axRControl.NumberOfAudioSources;
-                for (int i = 0; i < n; i++)
-                    Microphones.Add(axRControl.GetAudioSource(i));
+                AddAudioSources();
                 cboMicrophones.SelectedItem = axRControl.GetAudioSource(0);
 
                 long num = axRControl.GetNumberOfResolutions(0);
-                axRControl.VideoWidth = int.Parse(settings["PreviewVideoWidth"]); 
+                axRControl.VideoWidth = int.Parse(settings["PreviewVideoWidth"]);
                 axRControl.VideoHeight = int.Parse(settings["PreviewVideoHeight"]);
                 winFrmHost.Width = axRControl.VideoWidth;
                 winFrmHost.Height = axRControl.VideoHeight;
+
 
                 // initialize performance counter
                 cpuReadingTimer = new Timer();
@@ -187,7 +193,7 @@ namespace OGV2P.Admin.Views
                 txtStatus.Text = "Idle";
 
                 //setup the vu meter
-                
+
                 vuMeter.Minimum = double.Parse(settings["VuMeterMinimum"]);
                 vuMeter.Maximum = double.Parse(settings["VuMeterMaximum"]);
                 _vuMeterTimer = new Timer();
@@ -199,7 +205,7 @@ namespace OGV2P.Admin.Views
                 axRControl.StartPreview();
 
 
-          
+
 
             }
             catch (Exception ex)
@@ -209,6 +215,71 @@ namespace OGV2P.Admin.Views
             }
             
 
+        }
+
+        private void AddAudioSources()
+        {
+            int n = axRControl.NumberOfAudioSources;
+            for (int i = 0; i < n; i++)
+                Microphones.Add(axRControl.GetAudioSource(i));
+        }
+
+        private void AddVideoSources()
+        {
+            int n = axRControl.NumberOfVideoSources;
+            for (int i = 0; i < n; i++)
+                Cameras.Add(axRControl.GetVideoSource(i));
+        }
+
+        private void UserControl_Loaded(object sender, RoutedEventArgs e)
+        {
+            try
+            {
+                base.OnInitialized(e);
+                HwndSource source = PresentationSource.FromVisual(this) as HwndSource;
+                source.AddHook(WndProc);
+            }
+            catch (Exception ex)
+            {
+
+                throw;
+            }
+        }
+
+        private IntPtr WndProc(IntPtr hwnd, int msg, IntPtr wParam, IntPtr lParam, ref bool handled)
+        {
+            // Handle messages...
+
+            if( msg == OGV2P.Admin.Helpers.UsbNotification.WmDevicechange && !IsBusy)
+            {
+                Dispatcher.Invoke(() =>
+                {
+                    int selectedCameraIndex = cboCameras.SelectedIndex;
+                    Cameras.Clear();
+                    OnPropertyChanged("Cameras");
+                    cboCameras.SelectedItem = null;
+                    System.Threading.Thread.Sleep(250);
+                    AddVideoSources();
+                    if (selectedCameraIndex <= Cameras.Count)
+                        cboCameras.SelectedIndex = selectedCameraIndex;
+                    else
+                        cboCameras.SelectedIndex = 0;
+
+                    int selectedMicIndex = cboMicrophones.SelectedIndex;
+                    Microphones.Clear();
+                    OnPropertyChanged("Microphones");
+                    cboMicrophones.SelectedItem = null;
+                    System.Threading.Thread.Sleep(250);
+                    AddAudioSources();
+                    if (selectedMicIndex <= Microphones.Count)
+                        cboMicrophones.SelectedIndex = selectedMicIndex;
+                    else
+                        cboMicrophones.SelectedIndex = 0;
+                });
+                
+
+            }
+            return IntPtr.Zero;
         }
 
         private void _vuMeterTimer_Elapsed(object sender, ElapsedEventArgs e)
@@ -351,6 +422,7 @@ namespace OGV2P.Admin.Views
             if (PropertyChanged != null)
                 PropertyChanged(this, new PropertyChangedEventArgs(name));
         }
+
 
 
         #endregion
