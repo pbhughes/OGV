@@ -5,7 +5,7 @@ using System.Text;
 using System.Threading.Tasks;
 using System.ComponentModel;
 
-namespace OGV2P.AgendaModule.Models
+namespace Infrastructure.Models
 {
     public class Agenda : INotifyPropertyChanged
     {

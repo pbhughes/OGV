@@ -15,8 +15,10 @@ using System.Configuration;
 using System.Collections;
 using System.ComponentModel;
 using System.Collections.Generic;
-using Forms = System.Windows.Forms;
 using System.Windows.Interop;
+using System.Management.Instrumentation;
+using System.Management;
+using System.Collections.Specialized;
 
 namespace OGV2P.Admin.Views
 {
@@ -26,15 +28,44 @@ namespace OGV2P.Admin.Views
     public partial class CameraView : UserControl, INavigationAware, IRegionMemberLifetime, INotifyPropertyChanged
     {
         private const string RECORDING_IN_PROGRESS = "Recording in progress, please stop recording before changing devices";
-        ISession _sessionService;
         private System.Timers.Timer cpuReadingTimer;
         private PerformanceCounter cpuCounter;
         private Timer _vuMeterTimer;
-        private Forms.NativeWindow _window = new Forms.NativeWindow();
+        private ManagementEventWatcher usbWatcher = new ManagementEventWatcher();
+        NameValueCollection _settings;
 
-        LinearGradientBrush _yellow = 
-            new LinearGradientBrush(Colors.Green, Colors.Yellow, 
-                new Point(0, 1), new Point(1, 0));
+        LinearGradientBrush _yellow =
+        new LinearGradientBrush(Colors.Green, Colors.Yellow,
+            new Point(0, 1), new Point(1, 0));
+
+        ISession _sessionService;
+        public ISession SessionService
+        {
+            get
+            {
+                return _sessionService;
+            }
+
+            set
+            {
+                _sessionService = value;
+                OnPropertyChanged("SessionService");
+            }
+        }
+        IMeeting _meeting;
+        public IMeeting Meeting
+        {
+            get
+            {
+                return _meeting;
+            }
+
+            set
+            {
+                _meeting = value;
+                OnPropertyChanged("Meeting");
+            }
+        }
 
         private bool _isBusy;
         public bool IsBusy
@@ -59,37 +90,7 @@ namespace OGV2P.Admin.Views
             }
         }
 
-        private List<string> _cameras;
-        public List<string> Cameras
-        {
-            get
-            {
-                return _cameras;
-            }
-
-            set
-            {
-                _cameras = value;
-                OnPropertyChanged("Cameras");
-            }
-        }
-
-        private List<string> _microphones;
-        public List<string> Microphones
-        {
-            get
-            {
-                return _microphones;
-            }
-
-            set
-            {
-                _microphones = value;
-                OnPropertyChanged("Microphones");
-            }
-        }
-
-
+        
 
         private void UpdateVUMeter(int sampleVolume)
         {
@@ -107,7 +108,7 @@ namespace OGV2P.Admin.Views
            
         }
 
-        public CameraView(IDevices devices, ISession sessionService)
+        public CameraView(IDevices devices, ISession sessionService, IMeeting meeting)
         {
             InitializeComponent();
 
@@ -115,53 +116,17 @@ namespace OGV2P.Admin.Views
             {
                 this.DataContext = this;
                 _sessionService = sessionService;
-                axRControl.License = "nlic:1.2:LiveEnc:3.0:LvApp=1,LivePlg=1,MSDK=4,MPEG2DEC=1,MPEG2ENC=1,PS=1,TS=1,H264DEC=1,H264ENC=1,H264ENCQS=1,MP4=4,RTMPsrc=1,RtmpMsg=1,RTMPs=1,RTSP=1,RTSPsrc=1,UDP=1,UDPsrc=1,HLS=1,WMS=1,WMV=1,RTMPm=4,RTMPx=3,Resz=1,RSrv=1,VMix2=1,3DRemix=1,ScCap=1,AuCap=1,AEC=1,Demo=1,Ic=1,NoMsg=1,Tm=1800,T1=600,NoIc=1:win,win64,osx:20151030,20160111::0:0:nanocosmosdemo-292490-3:ncpt:f6044ea043c479af5911e60502f1a334";
-                axRControl.InitEncoder();
+                _meeting = meeting;
 
-                _cameras = new List<string>();
-                _microphones = new List<string>();
+     
+                //get the application settings
+                _settings = ConfigurationSettings.AppSettings;
 
                 //initialize the window to listen for usb devices to be added
-                OGV2P.Admin.Helpers.UsbNotification.RegisterUsbDeviceNotification(_window.Handle);
-
-                //set the user id / password
-                //axRControl.SetConfig("Auth", "barkley:hughes");
-
-                var settings = ConfigurationSettings.AppSettings;
-
-                // Video Source Device (0...n)
-                axRControl.VideoSource = 0;
-
-                // Device/Camera Resolution
-                axRControl.VideoWidth = 320;
-                axRControl.VideoHeight = 240;
-                axRControl.VideoFrameRate = 25;
-
-                // Video Encoder Bitrate (Bits/s)
-                axRControl.VideoBitrate = 500000;
-
-                axRControl.TextOverlayText = "Hello World!";
-                //axRTMPActiveX1.TextOverlayText = "c:\\temp\\icon.png";
-                axRControl.VideoEffect = 3;
-
-                // nanoStream Event Handlers
-                axRControl.OnEvent += new AxRTMPActiveX.IRTMPActiveXEvents_OnEventEventHandler(axRControl_OnEvent);
-                axRControl.OnStop += new AxRTMPActiveX.IRTMPActiveXEvents_OnStopEventHandler(axRControl_OnStop);
-
-                // Video/Audio Devices
-                int n;
-                AddVideoSources();
-                cboCameras.SelectedItem = axRControl.GetVideoSource(0);
-
-                AddAudioSources();
-                cboMicrophones.SelectedItem = axRControl.GetAudioSource(0);
-
-                long num = axRControl.GetNumberOfResolutions(0);
-                axRControl.VideoWidth = int.Parse(settings["PreviewVideoWidth"]);
-                axRControl.VideoHeight = int.Parse(settings["PreviewVideoHeight"]);
-                winFrmHost.Width = axRControl.VideoWidth;
-                winFrmHost.Height = axRControl.VideoHeight;
-
+                var query = new WqlEventQuery("SELECT * FROM Win32_DeviceChangeEvent WHERE EventType = 2 OR EventType = 3");
+                usbWatcher.EventArrived += UsbWatcher_EventArrived;
+                usbWatcher.Query = query;
+                usbWatcher.Start();
 
                 // initialize performance counter
                 cpuReadingTimer = new Timer();
@@ -173,39 +138,27 @@ namespace OGV2P.Admin.Views
                 cpuCounter.InstanceName = "_Total";
                 cpuReadingTimer.Start();
 
-                //set local video folder
-                string path = Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments);
-                path = Path.Combine(path, OGV2P.Admin.Properties.Settings.Default.LocalVideoFolder);
-                if (!Directory.Exists(path))
-                    Directory.CreateDirectory(path);
-                Guid guid = Guid.NewGuid();
-                path = Path.Combine(path, string.Format("{0}.mp4", guid.ToString()));
-                txtLocalFile.Text = path;
-                axRControl.DestinationURL2 = path;
-
-                //set the publishing point url
-                axRControl.DestinationURL = @"rtmp://devob2.opengovideo.com:1935/ogv2/myStream";
-
+                //set preview URL
                 //set the preview url
                 txtUrl.Text = @"http://mytestserver.com/ogv2playerlive.html";
+
 
                 //change status
                 txtStatus.Text = "Idle";
 
                 //setup the vu meter
-
-                vuMeter.Minimum = double.Parse(settings["VuMeterMinimum"]);
-                vuMeter.Maximum = double.Parse(settings["VuMeterMaximum"]);
+                vuMeter.Minimum = double.Parse(_settings["VuMeterMinimum"]);
+                vuMeter.Maximum = double.Parse(_settings["VuMeterMaximum"]);
                 _vuMeterTimer = new Timer();
-                _vuMeterTimer.Interval = double.Parse(settings["VuMeterInterval"]);
+                _vuMeterTimer.Interval = double.Parse(_settings["VuMeterInterval"]);
                 _vuMeterTimer.Elapsed += _vuMeterTimer_Elapsed;
                 _vuMeterTimer.Start();
 
-                //start the preview
-                axRControl.StartPreview();
 
 
 
+                //INIT AXRTMP Control
+                InitRTMPControl();
 
             }
             catch (Exception ex)
@@ -217,78 +170,128 @@ namespace OGV2P.Admin.Views
 
         }
 
+        private void InitRTMPControl()
+        {
+            
+
+            axRControl.License = "nlic:1.2:LiveEnc:3.0:LvApp=1,LivePlg=1,MSDK=4,MPEG2DEC=1,MPEG2ENC=1,PS=1,TS=1,H264DEC=1,H264ENC=1,H264ENCQS=1,MP4=4,RTMPsrc=1,RtmpMsg=1,RTMPs=1,RTSP=1,RTSPsrc=1,UDP=1,UDPsrc=1,HLS=1,WMS=1,WMV=1,RTMPm=4,RTMPx=3,Resz=1,RSrv=1,VMix2=1,3DRemix=1,ScCap=1,AuCap=1,AEC=1,Demo=1,Ic=1,NoMsg=1,Tm=1800,T1=600,NoIc=1:win,win64,osx:20151030,20160111::0:0:nanocosmosdemo-292490-3:ncpt:f6044ea043c479af5911e60502f1a334";
+            axRControl.InitEncoder();
+
+            //set the user id / password
+            axRControl.SetConfig("Auth", "barkley:hughes");
+
+          
+
+            // Video Source Device (0...n)
+            axRControl.VideoSource = 0;
+
+            // Device/Camera Resolution
+            axRControl.VideoWidth = 640;
+            axRControl.VideoHeight = 480;
+            axRControl.VideoFrameRate = 25;
+
+            // Video Encoder Bitrate (Bits/s)
+            axRControl.VideoBitrate = 500000;
+
+            axRControl.TextOverlayText = "Hello World!";
+            //axRTMPActiveX1.TextOverlayText = "c:\\temp\\icon.png";
+            axRControl.VideoEffect = 3;
+
+            // nanoStream Event Handlers
+            axRControl.OnEvent += new AxRTMPActiveX.IRTMPActiveXEvents_OnEventEventHandler(axRControl_OnEvent);
+            axRControl.OnStop += new AxRTMPActiveX.IRTMPActiveXEvents_OnStopEventHandler(axRControl_OnStop);
+
+            // Video/Audio Devices
+            AddVideoSources();
+            cboCameras.SelectedItem = axRControl.GetVideoSource(0);
+
+            AddAudioSources();
+            cboMicrophones.SelectedItem = axRControl.GetAudioSource(0);
+
+            long num = axRControl.GetNumberOfResolutions(0);
+            axRControl.VideoWidth = int.Parse(_settings["PreviewVideoWidth"]);
+            axRControl.VideoHeight = int.Parse(_settings["PreviewVideoHeight"]);
+            winFrmHost.Width = axRControl.VideoWidth;
+            winFrmHost.Height = axRControl.VideoHeight;
+
+            //set local video folder
+            string path = Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments);
+            path = Path.Combine(path, OGV2P.Admin.Properties.Settings.Default.LocalVideoFolder);
+            if (!Directory.Exists(path))
+                Directory.CreateDirectory(path);
+            Guid guid = Guid.NewGuid();
+            path = Path.Combine(path, string.Format("{0}.mp4", guid.ToString()));
+            txtLocalFile.Text = path;
+            axRControl.DestinationURL2 = path;
+
+            //set the publishing point url
+            //axRControl.DestinationURL = @"rtmp://devob2.opengovideo.com:1935/RI_SouthKingstown_Live/LicenseBoard";
+            axRControl.DestinationURL = _meeting.ClientPathLiveStream;
+            
+
+
+
+
+            //start the preview
+            axRControl.StartPreview();
+        }
+
+        private void UsbWatcher_EventArrived(object sender, EventArrivedEventArgs e)
+        {
+            Dispatcher.Invoke(() => {
+                if( !IsBusy)
+                {
+                    System.Threading.Thread.Sleep(2000);
+                    InitRTMPControl();
+
+                }
+            });
+        }
+
         private void AddAudioSources()
         {
             int n = axRControl.NumberOfAudioSources;
+            cboMicrophones.Items.Clear();
             for (int i = 0; i < n; i++)
-                Microphones.Add(axRControl.GetAudioSource(i));
+            {
+                string source = axRControl.GetAudioSource(i);
+                if ( ! cboMicrophones.Items.Contains(source))
+                {
+                    cboMicrophones.Items.Add(source);
+                }
+                  
+            }
+                
         }
 
         private void AddVideoSources()
         {
+           
             int n = axRControl.NumberOfVideoSources;
+            cboCameras.Items.Clear();
             for (int i = 0; i < n; i++)
-                Cameras.Add(axRControl.GetVideoSource(i));
-        }
-
-        private void UserControl_Loaded(object sender, RoutedEventArgs e)
-        {
-            try
             {
-                base.OnInitialized(e);
-                HwndSource source = PresentationSource.FromVisual(this) as HwndSource;
-                source.AddHook(WndProc);
-            }
-            catch (Exception ex)
-            {
-
-                throw;
-            }
-        }
-
-        private IntPtr WndProc(IntPtr hwnd, int msg, IntPtr wParam, IntPtr lParam, ref bool handled)
-        {
-            // Handle messages...
-
-            if( msg == OGV2P.Admin.Helpers.UsbNotification.WmDevicechange && !IsBusy)
-            {
-                Dispatcher.Invoke(() =>
+                string source = axRControl.GetVideoSource(i);
+                if (! cboCameras.Items.Contains(source))
                 {
-                    int selectedCameraIndex = cboCameras.SelectedIndex;
-                    Cameras.Clear();
-                    OnPropertyChanged("Cameras");
-                    cboCameras.SelectedItem = null;
-                    System.Threading.Thread.Sleep(250);
-                    AddVideoSources();
-                    if (selectedCameraIndex <= Cameras.Count)
-                        cboCameras.SelectedIndex = selectedCameraIndex;
-                    else
-                        cboCameras.SelectedIndex = 0;
-
-                    int selectedMicIndex = cboMicrophones.SelectedIndex;
-                    Microphones.Clear();
-                    OnPropertyChanged("Microphones");
-                    cboMicrophones.SelectedItem = null;
-                    System.Threading.Thread.Sleep(250);
-                    AddAudioSources();
-                    if (selectedMicIndex <= Microphones.Count)
-                        cboMicrophones.SelectedIndex = selectedMicIndex;
-                    else
-                        cboMicrophones.SelectedIndex = 0;
-                });
-                
-
+                    cboCameras.Items.Add(source);
+                }
             }
-            return IntPtr.Zero;
+               
         }
 
+    
+
+     
         private void _vuMeterTimer_Elapsed(object sender, ElapsedEventArgs e)
         {
             if(IsBusy)
             {
                 Dispatcher.Invoke(() =>
                 {
-                    int volumeLevel = axRControl.GetAudioLevel(0);
+                    int volumeLevel = 0;
+                    if (axRControl != null)
+                        volumeLevel = axRControl.GetAudioLevel(0);
                     UpdateVUMeter(volumeLevel);
                     txtAudioLevel.Text = volumeLevel.ToString();
                 });

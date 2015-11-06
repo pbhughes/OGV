@@ -1,17 +1,12 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using Microsoft.Practices.Prism.Modularity;
 using Microsoft.Practices.Unity;
 using Microsoft.Practices.Prism.UnityExtensions;
 using System.Windows;
-using OGV2P.AgendaModule.Interfaces;
-using OGV2P.AgendaModule.Models;
 using Infrastructure.Interfaces;
 using Infrastructure.Models;
 using Microsoft.Practices.Prism.Regions;
+
 
 namespace OGV2P
 {
@@ -21,6 +16,7 @@ namespace OGV2P
         private IUser _user;
         private IRegionManager _regionManager;
         private Window _shell;
+        private IMeeting _meeting;
 
         protected override System.Windows.DependencyObject CreateShell()
         {
@@ -54,12 +50,15 @@ namespace OGV2P
             this.Container.RegisterType<object, OGV2P.Admin.Views.LoginView>(typeof(OGV2P.Admin.Views.LoginView).FullName);
             this.Container.RegisterType<object, OGV2P.AgendaModule.Views.AgendaStartView>(typeof(OGV2P.AgendaModule.Views.AgendaStartView).FullName);
             this.Container.RegisterType<Infrastructure.Interfaces.IDevices, Infrastructure.Models.Devices>();
-            this.Container.RegisterType<OGV2P.AgendaModule.Interfaces.IMeeting, OGV2P.AgendaModule.Models.Meeting>();
+                    
             _session = new Session();
             _user = new User(_session);
+            _meeting = new Meeting(_session);
+
             _user.RaiseLoginEvent += _user_RaiseLoginEvent;
             this.Container.RegisterInstance<ISession>(_session);
             this.Container.RegisterInstance<IUser>(_user);
+            this.Container.RegisterInstance<IMeeting>(_meeting);
 
 
         }

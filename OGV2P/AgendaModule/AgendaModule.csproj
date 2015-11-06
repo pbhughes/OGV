@@ -121,10 +121,6 @@
     </Reference>
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="Models\Agenda.cs" />
-    <Compile Include="Interfaces\IMeeting.cs" />
-    <Compile Include="Models\Item.cs" />
-    <Compile Include="Models\Meeting.cs" />
     <Compile Include="AgendaModule.cs" />
     <Compile Include="Views\AgendaStartView.xaml.cs">
       <DependentUpon>AgendaStartView.xaml</DependentUpon>
@@ -181,6 +177,10 @@
   </ItemGroup>
   <ItemGroup>
     <Resource Include="Images\loggingin.gif" />
+  </ItemGroup>
+  <ItemGroup>
+    <Folder Include="Interfaces\" />
+    <Folder Include="Models\" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 

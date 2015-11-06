@@ -1,18 +1,15 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using System.ComponentModel;
 using Microsoft.Practices.Prism.Commands;
-using OGV2P.AgendaModule.Interfaces;
+using Infrastructure.Interfaces;
 using System.IO;
 using System.Xml.Linq;
-using System.Windows.Forms;
-using Infrastructure.Interfaces;
+using System.Net;
+using System.Windows.Controls;
+using BuckSoft.Controls.FtpBrowseDialog;
+using forms = System.Windows.Forms;
 
-
-namespace OGV2P.AgendaModule.Models
+namespace Infrastructure.Models
 {
     public class Meeting : INotifyPropertyChanged, IMeeting
     {
@@ -35,8 +32,8 @@ namespace OGV2P.AgendaModule.Models
             set { _selectedItem = value; OnPropertyChanged("SelectedItem"); }
         }
 
-        private DelegateCommand<TreeView> _loadAgenda;
-        public DelegateCommand<TreeView> LoadAgenda
+        private DelegateCommand<forms.TreeView> _loadAgenda;
+        public DelegateCommand<forms.TreeView> LoadAgenda
         {
             get { return _loadAgenda; }
             set { _loadAgenda = value; }
@@ -78,42 +75,71 @@ namespace OGV2P.AgendaModule.Models
             set { _agenda = value; OnPropertyChanged("MeetingAgenda"); }
         }
 
-        private bool CanLoadAgenda(TreeView agendaTree)
+        private string _clientPathLive;
+        public string ClientPathLive
+        {
+            get
+            {
+                return _clientPathLive;
+            }
+
+            set
+            {
+                _clientPathLive = value;
+                OnPropertyChanged("ClientPathLive");
+            }
+        }
+
+        private string _clientPathLiveStream;
+        public string ClientPathLiveStream
+        {
+            get
+            {
+                return _clientPathLiveStream;
+            }
+
+            set
+            {
+                _clientPathLiveStream = value;
+                OnPropertyChanged("ClientPathLiveStream");
+            }
+        }
+
+        private bool CanLoadAgenda(forms.TreeView agendaTree)
         {
             return true;
         }
 
-        private void OnLoadAgenda(TreeView agendaTree)
+        private void OnLoadAgenda(forms.TreeView agendaTree)
         {
             // Create OpenFileDialog 
-            Microsoft.Win32.OpenFileDialog dlg = new Microsoft.Win32.OpenFileDialog();
+            FtpBrowseDialog dlg = new FtpBrowseDialog("ftp.coreyware.com", "test", 21, "barkley", "mep-005a", true);
 
-
-
-            // Set filter for file extension and default file extension 
-            dlg.DefaultExt = ".xml";
-            dlg.Filter = "JPEG Files (*.xml)|*.xml";
-
-            //set the starting directory
-            dlg.InitialDirectory = Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments);
-
-            // Display OpenFileDialog by calling ShowDialog method 
-            Nullable<bool> result = dlg.ShowDialog();
-
-
+            var result = dlg.ShowDialog();
             // Get the selected file name and display in a TextBox 
-            if (result == true)
+            if (result == forms.DialogResult.OK)
             {
                 // Open document 
-                FileName = dlg.FileName;
+                FileName = dlg.SelectedFile;
 
                 //parse the agenda file
-                string allText = File.ReadAllText(FileName);
+                FtpWebRequest req = (FtpWebRequest)WebRequest.Create(dlg.SelectedFile);
+                NetworkCredential creds = new NetworkCredential("barkley", "mep-005a");
+                req.Credentials = creds;
+                req.Method = WebRequestMethods.Ftp.DownloadFile;
+
+                FtpWebResponse response = (FtpWebResponse)req.GetResponse();
+                StreamReader sr = new StreamReader(response.GetResponseStream());
+
+                string allText = sr.ReadToEnd();
                 _orginalHash = allText.GetHashCode();
+
 
                 XDocument xDoc = XDocument.Parse(allText);
                 MeetingName = xDoc.Element("meeting").Element("meetingname").Value;
-               
+
+                ClientPathLive = xDoc.Element("meeting").Element("clientpathLive").Value;
+                ClientPathLiveStream = xDoc.Element("meeting").Element("clientpathlivestream").Value;
 
                 MeetingDate = (xDoc.Element("meeting").Element("meetingdate") != null) ?
                     DateTime.Parse(xDoc.Element("meeting").Element("meetingdate").Value) :
@@ -123,10 +149,10 @@ namespace OGV2P.AgendaModule.Models
                 XElement items = xDoc.Element("meeting").Element("agenda").Element("items");
                 if (items != null)
                 {
-                    TreeNode root = new TreeNode();
+                    forms.TreeNode root = new forms.TreeNode();
                     Agenda a = new Agenda();
                     ParseItems(items, ref a, ref root);
-                    foreach(TreeNode x in root.Nodes){
+                    foreach(forms.TreeNode x in root.Nodes){
                         agendaTree.Nodes.Add(x);
                     }
                     agendaTree.ShowPlusMinus = false;
@@ -137,7 +163,7 @@ namespace OGV2P.AgendaModule.Models
 
         }
 
-        private void ParseItems(XElement items, ref Agenda a, ref TreeNode node)
+        private void ParseItems(XElement items, ref Agenda a, ref forms.TreeNode node)
         {
             if (items != null)
             {
@@ -147,7 +173,7 @@ namespace OGV2P.AgendaModule.Models
                     x.Title = (item.Element("title") != null) ? item.Element("title").Value : null;
                     x.Description = (item.Element("desc") != null) ? item.Element("desc").Value : null;
                     _agenda.Items.Add(x);
-                    TreeNode xn = new TreeNode() { Text = x.Title };
+                    forms.TreeNode xn = new forms.TreeNode() { Text = x.Title };
                     
                     if (item.Element("items") == null || item.Element("items").Elements("item") != null)
                     {
@@ -173,7 +199,7 @@ namespace OGV2P.AgendaModule.Models
         {
             _sessionService = sessionService;
             _sessionService.RaiseStamped += _sessionService_RaiseStamped;
-            _loadAgenda = new DelegateCommand<TreeView>(OnLoadAgenda, CanLoadAgenda);
+            _loadAgenda = new DelegateCommand<forms.TreeView>(OnLoadAgenda, CanLoadAgenda);
             _agenda = new Agenda();
         }
 

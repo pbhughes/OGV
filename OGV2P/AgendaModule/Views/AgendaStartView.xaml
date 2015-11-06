@@ -41,22 +41,22 @@
 
         <StackPanel Orientation="Vertical">
             <StackPanel Orientation="Horizontal">
-                <Label>Load Agenda:</Label>
-                <TextBox x:Name="txtFileName" Text="{Binding FileName}"></TextBox>
-                <Button Command="{Binding LoadAgenda}"
+                <Label Content="Meeting Name:"/>
+                <TextBox  x:Name="txtMeetingName" Margin="0 0 5 0" Width="500" Text="{Binding MeetingName}"/>
+                <Button Command="{Binding LoadAgenda}" Margin="5 0 0 0"
                         Style="{DynamicResource btn-primary}"
                         CommandParameter="{Binding ElementName=agendaTree}">Choose File</Button>
             </StackPanel>
             <StackPanel Orientation="Horizontal">
-                <Label>Meeting Name:</Label>
-                <TextBox x:Name="txtMeetingName" Text="{Binding MeetingName}"/>
+            
                 <StackPanel Orientation="Horizontal">
-                    <Label>Meeting Date:</Label>
+                    <Label Content="Meeting Date:"/>
                     <DatePicker SelectedDateFormat="Long"
                                 SelectedDate="{Binding MeetingDate}" 
                                 VerticalContentAlignment="Center"
+                                VerticalAlignment="Center"
                   FirstDayOfWeek="Monday" Width="256" Height="37"  />
-                    
+
                 </StackPanel>
             </StackPanel>
             
