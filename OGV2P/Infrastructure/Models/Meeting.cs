@@ -138,7 +138,7 @@ namespace Infrastructure.Models
                 XDocument xDoc = XDocument.Parse(allText);
                 MeetingName = xDoc.Element("meeting").Element("meetingname").Value;
 
-                ClientPathLive = xDoc.Element("meeting").Element("clientpathLive").Value;
+                ClientPathLive = xDoc.Element("meeting").Element("clientpathlive").Value;
                 ClientPathLiveStream = xDoc.Element("meeting").Element("clientpathlivestream").Value;
 
                 MeetingDate = (xDoc.Element("meeting").Element("meetingdate") != null) ?
@@ -159,6 +159,8 @@ namespace Infrastructure.Models
                     agendaTree.ShowLines = false;
                     agendaTree.ExpandAll();
                 }
+
+               
             }
 
         }

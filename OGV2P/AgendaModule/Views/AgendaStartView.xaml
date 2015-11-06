@@ -42,7 +42,7 @@
         <StackPanel Orientation="Vertical">
             <StackPanel Orientation="Horizontal">
                 <Label Content="Meeting Name:"/>
-                <TextBox  x:Name="txtMeetingName" Margin="0 0 5 0" Width="500" Text="{Binding MeetingName}"/>
+                <TextBox  x:Name="txtMeetingName" Margin="0 0 5 0" Width="600" Text="{Binding MeetingName}"/>
                 <Button Command="{Binding LoadAgenda}" Margin="5 0 0 0"
                         Style="{DynamicResource btn-primary}"
                         CommandParameter="{Binding ElementName=agendaTree}">Choose File</Button>

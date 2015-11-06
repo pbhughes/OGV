@@ -69,11 +69,11 @@ namespace OGV2P
 
             ((Shell)_shell).SetSideBarAllignmentTop();
             
-            Uri vv = new Uri(typeof(OGV2P.Admin.Views.CameraView).FullName, UriKind.RelativeOrAbsolute);
-            _regionManager.RequestNavigate("SideBarRegion", vv);
+            Uri vv = new Uri(typeof(OGV2P.AgendaModule.Views.AgendaStartView).FullName, UriKind.RelativeOrAbsolute);
+            _regionManager.RequestNavigate(Infrastructure.Models.Regions.SideBar, vv);
 
-            Uri uu = new Uri(typeof(OGV2P.AgendaModule.Views.AgendaStartView).FullName, UriKind.RelativeOrAbsolute);
-            _regionManager.RequestNavigate("MainRegion", uu);
+            Uri uu = new Uri(typeof(OGV2P.Admin.Views.CameraView).FullName, UriKind.RelativeOrAbsolute);
+            _regionManager.RequestNavigate(Infrastructure.Models.Regions.Main, uu);
         }
     }
 }
