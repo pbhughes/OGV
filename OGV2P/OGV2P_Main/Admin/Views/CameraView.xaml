@@ -12,7 +12,7 @@
     <UserControl.Resources>
     </UserControl.Resources>
     
-    <Grid Background="Lavender" >
+    <Grid >
         <Grid.RowDefinitions>
             <RowDefinition Height="500"/>
             <RowDefinition Height="10" />
@@ -22,7 +22,7 @@
             <ColumnDefinition Width="400" />
             <ColumnDefinition Width="450" />
         </Grid.ColumnDefinitions>
-
+     
 
         <WindowsFormsHost Grid.Row="0" Grid.Column="0" Grid.ColumnSpan="2"
                           x:Name="winFrmHost" 
@@ -30,6 +30,39 @@
                           HorizontalAlignment="Center" >
             <!--<ax:AxRTMPActiveX x:Name="axRControl"></ax:AxRTMPActiveX>-->
         </WindowsFormsHost>
+
+        <Canvas Grid.Row="1" Grid.Column="0" Grid.ColumnSpan="2" Panel.ZIndex="100">
+            <Expander  
+                  Background="AliceBlue" >
+                <StackPanel Orientation="Vertical">
+                    <StackPanel Orientation="Horizontal"  Margin="5">
+                        <Label Width="75" MinWidth="50">Local File</Label>
+                        <ScrollViewer VerticalScrollBarVisibility="Hidden">
+                            <TextBlock x:Name="txtLocalFile" Margin="0 0 5 0"
+                               MinWidth="500"
+                           TextAlignment="left" 
+                           VerticalAlignment="Center"></TextBlock>
+                        </ScrollViewer>
+                        <Button Style="{StaticResource btn-primary-small}" Click="PreviewLocalFileLocation">Open Folder</Button>
+                    </StackPanel>
+
+                    <StackPanel Orientation="Horizontal" Margin="5">
+                        <Label Width="75" MinWidth="50">URL</Label>
+                        <ScrollViewer VerticalScrollBarVisibility="Hidden">
+                            <TextBlock x:Name="txtUrl" Margin="0 0 5 0"
+                               MinWidth="500"
+                           TextAlignment="left" 
+                           VerticalAlignment="Center" 
+                           Text="{Binding SessionService.CurrentSession.SharePageUrl}"></TextBlock>
+                        </ScrollViewer>
+                        <Button Style="{StaticResource btn-primary-small}"
+                        Click="cmdPreviewVideo_CLick"
+                        RenderTransformOrigin="0.5,0.506">Preview Url</Button>
+                    </StackPanel>
+                </StackPanel>
+
+            </Expander>
+        </Canvas>
 
         <Grid Grid.Row="1" Grid.Column="0" Grid.ColumnSpan="2">
             <Grid.ColumnDefinitions>
@@ -94,51 +127,8 @@
             <Label Grid.Column="0" Grid.Row="4" Width="75" MinWidth="50">CPU</Label>
             <TextBlock Grid.Column="1" Grid.Row="4" x:Name="txtCpuUsage" TextAlignment="Center" VerticalAlignment="Center" TextTrimming="CharacterEllipsis" Text="{Binding SessionService.CurrentSession.StatusMessage}"></TextBlock>
 
-            <Expander Grid.Column="0" Grid.Row="5">
-                <StackPanel Orientation="Vertical">
-                    <StackPanel Orientation="Horizontal"  Margin="5">
-                        <Label Width="75" MinWidth="50">Local File</Label>
-                        <ScrollViewer VerticalScrollBarVisibility="Hidden">
-                            <TextBlock x:Name="txtLocalFile" Margin="0 0 5 0"
-                               MinWidth="500"
-                           TextAlignment="left" 
-                           VerticalAlignment="Center"></TextBlock>
-                        </ScrollViewer>
-                        <Button Style="{StaticResource btn-primary-small}" Click="PreviewLocalFileLocation">Open Folder</Button>
-                    </StackPanel>
-
-                    <StackPanel Orientation="Horizontal" Margin="5">
-                        <Label Width="75" MinWidth="50">URL</Label>
-                        <ScrollViewer VerticalScrollBarVisibility="Hidden">
-                            <TextBlock x:Name="txtUrl" Margin="0 0 5 0"
-                               MinWidth="500"
-                           TextAlignment="left" 
-                           VerticalAlignment="Center" 
-                           Text="{Binding SessionService.CurrentSession.SharePageUrl}"></TextBlock>
-                        </ScrollViewer>
-                        <Button Style="{StaticResource btn-primary-small}"
-                        Click="cmdPreviewVideo_CLick"
-                        RenderTransformOrigin="0.5,0.506">Preview Url</Button>
-                    </StackPanel>
-                </StackPanel>
-               
-            </Expander>
+            
         </Grid>
-
-     
-           
-
-        
-
-
-
-
-        
-        <StackPanel Grid.Row="0" Grid.Column="0" HorizontalAlignment="Center"
-                    Grid.ColumnSpan="2" Orientation="Vertical">
-
-           
-           
-        </StackPanel>
+   
     </Grid>
 </UserControl>
