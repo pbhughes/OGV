@@ -25,8 +25,7 @@
                         cal:RegionManager.RegionName="SideBarRegion"
                         Background="AliceBlue" />
         
-        <GridSplitter Grid.Column="1" HorizontalAlignment="Left" Width="3" >
-        </GridSplitter>
+       
 
         <ContentControl Grid.Column="1" 
                          Name="MiddleRegion" VerticalAlignment="Center"
