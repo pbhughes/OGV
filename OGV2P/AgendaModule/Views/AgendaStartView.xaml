@@ -16,71 +16,62 @@
     <UserControl.InputBindings>
         <KeyBinding Key="Space" Modifiers="Shift" Command="{Binding StampItem}" CommandParameter="{Binding SelectedItem}" />
     </UserControl.InputBindings>
-    <Grid>
-        <tk:BusyIndicator IsBusy="{Binding IsBusy}" HorizontalAlignment="Center" VerticalAlignment="Center" DisplayAfter="0" Panel.ZIndex="100">
-            <tk:BusyIndicator.BusyContentTemplate>
-                <DataTemplate>
-                    <StackPanel Margin="5">
-                        <Image gif:ImageBehavior.AnimatedSource="..\Images\loading.gif"  Width="100" Height="100" />
-                    </StackPanel>
-                </DataTemplate>
-            </tk:BusyIndicator.BusyContentTemplate>
-            <tk:BusyIndicator.OverlayStyle>
-                <Style TargetType="Rectangle">
-                    <Setter Property="Fill" Value="#ffffeeee"/>
-                </Style>
-            </tk:BusyIndicator.OverlayStyle>
-            <tk:BusyIndicator.ProgressBarStyle>
-
-                <Style TargetType="ProgressBar">
-                    <Setter Property="Visibility" Value="Collapsed"/>
-                </Style>
-            </tk:BusyIndicator.ProgressBarStyle>
-            <ContentControl />
-        </tk:BusyIndicator>
-
-        <StackPanel Orientation="Vertical">
-            <StackPanel Orientation="Horizontal">
-                <Label Content="Meeting Name:"/>
-                <TextBox  x:Name="txtMeetingName" Margin="0 0 5 0" Width="600" Text="{Binding MeetingName}"/>
-                <Button Command="{Binding LoadAgenda}" Margin="5 0 0 0"
+  
+        <Grid>
+            <Grid.RowDefinitions>
+                <RowDefinition Height="auto"/>
+                <RowDefinition Height="auto" />
+                <RowDefinition Height="*"/>
+                <RowDefinition Height="auto"/>
+                <RowDefinition Height="auto"/>
+                <RowDefinition Height="auto"/>
+            </Grid.RowDefinitions>
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="100" />
+                <ColumnDefinition  />
+                <ColumnDefinition Width="125"/>
+            </Grid.ColumnDefinitions>
+            <Label Grid.Column="0" Content="Meeting Name:"/>
+        <ScrollViewer Grid.Column="1" HorizontalScrollBarVisibility="Auto"
+                          VerticalScrollBarVisibility="Disabled">
+            <TextBox  x:Name="txtMeetingName" 
+                          Margin="0 0 5 0" Text="{Binding MeetingName}"/>
+        </ScrollViewer>
+           
+            <Button  Grid.Column="2" Command="{Binding LoadAgenda}" Margin="5 0 5 0"
                         Style="{DynamicResource btn-primary}"
                         CommandParameter="{Binding ElementName=agendaTree}">Choose File</Button>
-            </StackPanel>
-            <StackPanel Orientation="Horizontal">
-            
-                <StackPanel Orientation="Horizontal">
-                    <Label Content="Meeting Date:"/>
-                    <DatePicker SelectedDateFormat="Long"
+            <Label Grid.Row="1" Grid.Column="0" Content="Meeting Date:"/>
+            <DatePicker Grid.Column="1" Grid.Row="1" SelectedDateFormat="Long"
                                 SelectedDate="{Binding MeetingDate}" 
                                 VerticalContentAlignment="Center"
                                 VerticalAlignment="Center"
-                  FirstDayOfWeek="Monday" Width="256" Height="37"  />
-
-                </StackPanel>
-            </StackPanel>
-            
-            <WindowsFormsHost x:Name="frmHost" Width="800" Height="600" FontSize="16">
-                <wf:TreeView x:Name="agendaTree"  />
+                  FirstDayOfWeek="Monday"  />
+            <WindowsFormsHost Grid.Row="2" Grid.Column="0" HorizontalAlignment="Stretch"
+                                  VerticalAlignment="Stretch" 
+                                  Grid.ColumnSpan="3" MinHeight="525"  Margin="20" x:Name="frmHost"  FontSize="16">
+                <wf:TreeView x:Name="agendaTree" />
             </WindowsFormsHost>
+            <Label Grid.Row="3" Grid.Column="0">Title:</Label>
+            <ScrollViewer 
+                    Grid.Row="3" Grid.Column="1" Grid.ColumnSpan="2"
+                    VerticalScrollBarVisibility="Disabled" HorizontalScrollBarVisibility="Auto">
+                <TextBox Text="{Binding SelectedItem.Title}" ></TextBox>
+            </ScrollViewer>
 
-            <StackPanel Orientation="Vertical" Width="Auto">
-                <StackPanel Orientation="Horizontal" Width="Auto">
-                    <Label>Title:</Label>
-                    <TextBox Text="{Binding SelectedItem.Title}" ></TextBox>
-                </StackPanel>
-                <StackPanel Orientation="Horizontal" Width="Auto">
-                    <Label>Description:</Label>
-                    <TextBox Text="{Binding SelectedItem.Description}" ></TextBox>
+        <Label Grid.Row="4" Grid.Column="0">Description:</Label>
+        <ScrollViewer Grid.Row="4" Grid.Column="1" Grid.ColumnSpan="2"
+                      VerticalScrollBarVisibility="Disabled" HorizontalScrollBarVisibility="Auto">
+            <TextBox Text="{Binding SelectedItem.Description}" ></TextBox>
+        </ScrollViewer>
 
-                </StackPanel>
-                <StackPanel Orientation="Horizontal" Width="Auto">
-                    <Label>Time Stamp:</Label>
-                    <TextBox Text="{Binding SelectedItem.TimeStamp}" ></TextBox>
+            <Label Grid.Row="5" Grid.Column="0">Time Stamp:</Label>
+        <ScrollViewer Grid.Row="5" Grid.Column="1" Grid.ColumnSpan="2"
+                      VerticalScrollBarVisibility="Disabled" HorizontalScrollBarVisibility="Auto">
+            <TextBox  Text="{Binding SelectedItem.TimeStamp}" ></TextBox>
 
-                </StackPanel>
-            </StackPanel>
-          
-        </StackPanel>
-    </Grid>
+        </ScrollViewer>
+
+        </Grid>
+   
 </UserControl>

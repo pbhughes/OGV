@@ -7,43 +7,69 @@
              xmlns:frms="clr-namespace:System.Windows.Forms;assembly=System.Windows.Forms"
              xmlns:ax="clr-namespace:AxRTMPActiveX;assembly=AxInterop.RTMPActiveX"
              mc:Ignorable="d" 
-             d:DesignHeight="800" d:DesignWidth="900">
+             Loaded="UserControl_Loaded"
+             d:DesignHeight="1024" d:DesignWidth="900">
     <UserControl.Resources>
     </UserControl.Resources>
+    
     <Grid Background="Lavender" >
+        <Grid.RowDefinitions>
+            <RowDefinition Height="500"/>
+            <RowDefinition Height="10" />
+            <RowDefinition Height="300" />
+        </Grid.RowDefinitions>
         <Grid.ColumnDefinitions>
             <ColumnDefinition Width="400" />
             <ColumnDefinition Width="450" />
         </Grid.ColumnDefinitions>
-        <Grid.RowDefinitions>
-            <RowDefinition Height="Auto"/>
-            <RowDefinition Height="Auto" />
-        </Grid.RowDefinitions>
-        <StackPanel Grid.Column="0" Grid.Row="1" Grid.ColumnSpan="2"
-                    Orientation="Vertical" Width="Auto">
-            <StackPanel Orientation="Horizontal">
-                <Label>Cameras</Label>
-                <ComboBox x:Name="cboCameras"  Width="500" 
+
+
+        <WindowsFormsHost Grid.Row="0" Grid.Column="0" Grid.ColumnSpan="2"   x:Name="winFrmHost" Width="640" Height="420" HorizontalAlignment="Center" >
+            <ax:AxRTMPActiveX x:Name="axRControl"></ax:AxRTMPActiveX>
+        </WindowsFormsHost>
+
+        <Grid Grid.Row="1" Grid.Column="0" Grid.ColumnSpan="2">
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="*" />
+                <ColumnDefinition Width="45" />
+            </Grid.ColumnDefinitions>
+            <ProgressBar  x:Name="vuMeter" Height="10px" Grid.Column="0"
+                                        Margin="0 5 0 5" 
+                                        HorizontalAlignment="Stretch"></ProgressBar>
+            <TextBlock x:Name="txtAudioLevel" Grid.Column="1"
+                       HorizontalAlignment="Left"
+                       TextAlignment="Left"></TextBlock>
+        </Grid>
+
+        <Grid Grid.Row="2" Grid.Column="0" Grid.ColumnSpan="2">
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="100" />
+                <ColumnDefinition Width="*" />
+            </Grid.ColumnDefinitions>
+            <Grid.RowDefinitions>
+                <RowDefinition />
+                <RowDefinition />
+                <RowDefinition />
+                <RowDefinition />
+                <RowDefinition />
+                <RowDefinition Height="Auto" />
+            </Grid.RowDefinitions>
+
+            <Label Grid.Column="0" Grid.Row="0">Cameras:</Label>
+            <ComboBox Grid.Column="1" Grid.Row="0" x:Name="cboCameras"  Width="500" 
                           VerticalContentAlignment="Center"
                           SelectionChanged="cboCameras_SelectionChanged"></ComboBox>
-                <StackPanel Orientation="Horizontal"  Margin="5">
-                    <Label Width="75" MinWidth="50">Status</Label>
-                    <TextBlock x:Name="txtStatus" TextAlignment="Center" VerticalAlignment="Center" TextTrimming="CharacterEllipsis" Text="{Binding SessionService.CurrentSession.StatusMessage}"></TextBlock>
-                </StackPanel>
-            </StackPanel>
-            <StackPanel Orientation="Horizontal">
-                <Label>Microphones</Label>
-                <ComboBox x:Name="cboMicrophones" 
+
+            <Label Grid.Column="0" Grid.Row="1">Microphones</Label>
+            <ComboBox Grid.Column="1" Grid.Row="1" x:Name="cboMicrophones" 
                           Width="500" 
                           VerticalContentAlignment="Center"
                           SelectionChanged="cboMicrophones_SelectionChanged"></ComboBox>
-                <StackPanel Orientation="Horizontal"  Margin="5">
-                    <Label Width="75" MinWidth="50">CPU</Label>
-                    <TextBlock x:Name="txtCpuUsage" TextAlignment="Center" VerticalAlignment="Center" TextTrimming="CharacterEllipsis" Text="{Binding SessionService.CurrentSession.StatusMessage}"></TextBlock>
-                </StackPanel>
-            </StackPanel>
-
-            <StackPanel Orientation="Horizontal" HorizontalAlignment="Center">
+            
+            <StackPanel Grid.Row="2" Grid.ColumnSpan="2" Orientation="Horizontal" HorizontalAlignment="Center">
+                <Button x:Name="cmdPreview" 
+                        Style="{StaticResource btn-info}" Margin="10" Width="100"
+                        FontSize="15" Click="cmdPreview_Click">Stamp</Button>
                 <Button x:Name="cmdStartRecording"
                         IsEnabled="{Binding Path=IsBusy, Converter={StaticResource InverseBoolConverter}}"
                         Click="cmdStartRecording_Click"  Style="{StaticResource btn-primary}" Margin="10" Width="100"
@@ -59,43 +85,57 @@
                 <TextBlock x:Name="txtLastStamp"></TextBlock>
             </StackPanel>
 
-            <StackPanel Orientation="Horizontal"  Margin="5">
-                <Label Width="75" MinWidth="50">Local File</Label>
-                <ScrollViewer VerticalScrollBarVisibility="Hidden">
-                    <TextBlock x:Name="txtLocalFile" Margin="0 0 5 0"
+            <Label Grid.Column="0" Grid.Row="3" Width="75" MinWidth="50">Status</Label>
+            <TextBlock Grid.Column="1" Grid.Row="3" x:Name="txtStatus" TextAlignment="Center" VerticalAlignment="Center" TextTrimming="CharacterEllipsis" Text="{Binding SessionService.CurrentSession.StatusMessage}"></TextBlock>
+
+            <Label Grid.Column="0" Grid.Row="4" Width="75" MinWidth="50">CPU</Label>
+            <TextBlock Grid.Column="1" Grid.Row="4" x:Name="txtCpuUsage" TextAlignment="Center" VerticalAlignment="Center" TextTrimming="CharacterEllipsis" Text="{Binding SessionService.CurrentSession.StatusMessage}"></TextBlock>
+
+            <Expander Grid.Column="0" Grid.Row="5">
+                <StackPanel Orientation="Vertical">
+                    <StackPanel Orientation="Horizontal"  Margin="5">
+                        <Label Width="75" MinWidth="50">Local File</Label>
+                        <ScrollViewer VerticalScrollBarVisibility="Hidden">
+                            <TextBlock x:Name="txtLocalFile" Margin="0 0 5 0"
                                MinWidth="500"
                            TextAlignment="left" 
                            VerticalAlignment="Center"></TextBlock>
-                </ScrollViewer>
-                <Button Style="{StaticResource btn-primary-small}" Click="PreviewLocalFileLocation">Open Folder</Button>
-            </StackPanel>
+                        </ScrollViewer>
+                        <Button Style="{StaticResource btn-primary-small}" Click="PreviewLocalFileLocation">Open Folder</Button>
+                    </StackPanel>
 
-            <StackPanel Orientation="Horizontal" Margin="5">
-                <Label Width="75" MinWidth="50">URL</Label>
-                <ScrollViewer VerticalScrollBarVisibility="Hidden">
-                    <TextBlock x:Name="txtUrl" Margin="0 0 5 0"
+                    <StackPanel Orientation="Horizontal" Margin="5">
+                        <Label Width="75" MinWidth="50">URL</Label>
+                        <ScrollViewer VerticalScrollBarVisibility="Hidden">
+                            <TextBlock x:Name="txtUrl" Margin="0 0 5 0"
                                MinWidth="500"
                            TextAlignment="left" 
                            VerticalAlignment="Center" 
                            Text="{Binding SessionService.CurrentSession.SharePageUrl}"></TextBlock>
-                </ScrollViewer>
-                <Button Style="{StaticResource btn-primary-small}"
+                        </ScrollViewer>
+                        <Button Style="{StaticResource btn-primary-small}"
                         Click="cmdPreviewVideo_CLick"
                         RenderTransformOrigin="0.5,0.506">Preview Url</Button>
-            </StackPanel>
-        </StackPanel>
+                    </StackPanel>
+                </StackPanel>
+               
+            </Expander>
+        </Grid>
 
-        <StackPanel Grid.Row="0" Grid.Column="0" HorizontalAlignment="Stretch"
+     
+           
+
+        
+
+
+
+
+        
+        <StackPanel Grid.Row="0" Grid.Column="0" HorizontalAlignment="Center"
                     Grid.ColumnSpan="2" Orientation="Vertical">
-            <ProgressBar  x:Name="vuMeter" Height="10px" 
-                                        Margin="0 5 0 5" 
-                                        HorizontalAlignment="Stretch"></ProgressBar>
-            <TextBlock x:Name="txtAudioLevel"
-                       HorizontalAlignment="Left"
-                       TextAlignment="Left"></TextBlock>
-            <WindowsFormsHost x:Name="winFrmHost" Width="640" Height="420" >
-                <ax:AxRTMPActiveX x:Name="axRControl"></ax:AxRTMPActiveX>
-            </WindowsFormsHost>
+
+           
+           
         </StackPanel>
     </Grid>
 </UserControl>

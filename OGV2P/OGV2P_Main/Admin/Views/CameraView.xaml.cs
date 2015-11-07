@@ -157,8 +157,6 @@ namespace OGV2P.Admin.Views
 
 
 
-                //INIT AXRTMP Control
-                InitRTMPControl();
 
             }
             catch (Exception ex)
@@ -227,13 +225,8 @@ namespace OGV2P.Admin.Views
             //set the publishing point url
             //axRControl.DestinationURL = @"rtmp://devob2.opengovideo.com:1935/RI_SouthKingstown_Live/LicenseBoard";
             axRControl.DestinationURL = _meeting.ClientPathLiveStream;
-            
 
-
-
-
-            //start the preview
-            axRControl.StartPreview();
+          
         }
 
         private void UsbWatcher_EventArrived(object sender, EventArrivedEventArgs e)
@@ -356,6 +349,7 @@ namespace OGV2P.Admin.Views
 
         private void cmdPreviewVideo_CLick(object sender, RoutedEventArgs e)
         {
+           
             Process.Start(txtUrl.Text);
         }
 
@@ -428,8 +422,20 @@ namespace OGV2P.Admin.Views
 
 
 
+
         #endregion
 
-       
+        private void UserControl_Loaded(object sender, RoutedEventArgs e)
+        {
+
+            //INIT AXRTMP Control
+            InitRTMPControl();
+        }
+
+        private void cmdPreview_Click(object sender, RoutedEventArgs e)
+        {
+            //start the preview
+            axRControl.StartPreview();
+        }
     }
 }
