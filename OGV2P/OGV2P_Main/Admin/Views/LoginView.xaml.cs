@@ -23,6 +23,8 @@ namespace OGV2P.Admin.Views
     /// <summary>
     /// Interaction logic for LoginView.xaml
     /// </summary>
+    /// 
+    [RegionMemberLifetime(KeepAlive = false)]
     public partial class LoginView : UserControl, INavigationAware, IRegionMemberLifetime
     {
         private IUnityContainer _container;
@@ -46,7 +48,7 @@ namespace OGV2P.Admin.Views
 
         public bool IsNavigationTarget(NavigationContext navigationContext)
         {
-            return false;
+            return true;
         }
 
         public void OnNavigatedFrom(NavigationContext navigationContext)

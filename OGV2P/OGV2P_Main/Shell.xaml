@@ -11,6 +11,7 @@
     <Grid Margin="2">
         <Grid.ColumnDefinitions>
             <ColumnDefinition Width="*"  /> 
+            <ColumnDefinition Width="auto" />
             <ColumnDefinition Width="*"  />
         </Grid.ColumnDefinitions>
         
@@ -27,9 +28,12 @@
         <GridSplitter Grid.Column="1" HorizontalAlignment="Left" Width="3" >
         </GridSplitter>
 
-       
-
         <ContentControl Grid.Column="1" 
+                         Name="MiddleRegion" VerticalAlignment="Center"
+                        HorizontalAlignment="Center"
+                        cal:RegionManager.RegionName="MiddleRegion" />
+
+        <ContentControl Grid.Column="2" 
                          Name="MainRegion" 
                         cal:RegionManager.RegionName="MainRegion" />
 

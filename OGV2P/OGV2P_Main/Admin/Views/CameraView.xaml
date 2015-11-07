@@ -24,8 +24,11 @@
         </Grid.ColumnDefinitions>
 
 
-        <WindowsFormsHost Grid.Row="0" Grid.Column="0" Grid.ColumnSpan="2"   x:Name="winFrmHost" Width="640" Height="420" HorizontalAlignment="Center" >
-            <ax:AxRTMPActiveX x:Name="axRControl"></ax:AxRTMPActiveX>
+        <WindowsFormsHost Grid.Row="0" Grid.Column="0" Grid.ColumnSpan="2"
+                          x:Name="winFrmHost" 
+                          Width="640" Height="420" 
+                          HorizontalAlignment="Center" >
+            <!--<ax:AxRTMPActiveX x:Name="axRControl"></ax:AxRTMPActiveX>-->
         </WindowsFormsHost>
 
         <Grid Grid.Row="1" Grid.Column="0" Grid.ColumnSpan="2">

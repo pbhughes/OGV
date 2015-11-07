@@ -8,7 +8,19 @@ namespace Infrastructure.Models
 {
     public class Regions
     {
-       
+        private static string _middle = "MiddleRegion";
+        public static string Middle
+        {
+            get
+            {
+                return _middle;
+            }
+
+            set
+            {
+                _middle = value;
+            }
+        }
 
         private static string _main = "MainRegion";
 
@@ -41,5 +53,7 @@ namespace Infrastructure.Models
                 _sideBar = value;
             }
         }
+
+        
     }
 }

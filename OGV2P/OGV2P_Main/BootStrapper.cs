@@ -50,6 +50,7 @@ namespace OGV2P
             this.Container.RegisterType<object, OGV2P.Admin.Views.LoginView>(typeof(OGV2P.Admin.Views.LoginView).FullName);
             this.Container.RegisterType<object, OGV2P.AgendaModule.Views.AgendaStartView>(typeof(OGV2P.AgendaModule.Views.AgendaStartView).FullName);
             this.Container.RegisterType<Infrastructure.Interfaces.IDevices, Infrastructure.Models.Devices>();
+            
                     
             _session = new Session();
             _user = new User(_session);
@@ -67,13 +68,17 @@ namespace OGV2P
         {
             _regionManager = Microsoft.Practices.ServiceLocation.ServiceLocator.Current.GetInstance<Microsoft.Practices.Prism.Regions.IRegionManager>();
 
+            var loginView = _regionManager.Regions[Infrastructure.Models.Regions.Middle].GetView("LoginView");
+            _regionManager.Regions[Infrastructure.Models.Regions.Middle].Deactivate (loginView);
+            _regionManager.Regions.Remove(Infrastructure.Models.Regions.Middle);
+
             ((Shell)_shell).SetSideBarAllignmentTop();
             
             Uri vv = new Uri(typeof(OGV2P.AgendaModule.Views.AgendaStartView).FullName, UriKind.RelativeOrAbsolute);
-            _regionManager.RequestNavigate(Infrastructure.Models.Regions.SideBar, vv);
+            _regionManager.RequestNavigate(Infrastructure.Models.Regions.Main, vv);
 
             Uri uu = new Uri(typeof(OGV2P.Admin.Views.CameraView).FullName, UriKind.RelativeOrAbsolute);
-            _regionManager.RequestNavigate(Infrastructure.Models.Regions.Main, uu);
+            _regionManager.RequestNavigate(Infrastructure.Models.Regions.SideBar, uu);
         }
     }
 }

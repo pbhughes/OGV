@@ -33,7 +33,7 @@ namespace OGV2P.Admin.Views
         private Timer _vuMeterTimer;
         private ManagementEventWatcher usbWatcher = new ManagementEventWatcher();
         NameValueCollection _settings;
-
+        private AxRTMPActiveX.AxRTMPActiveX axRControl;
         LinearGradientBrush _yellow =
         new LinearGradientBrush(Colors.Green, Colors.Yellow,
             new Point(0, 1), new Point(1, 0));
@@ -99,14 +99,8 @@ namespace OGV2P.Admin.Views
                 vuMeter.Value = (double)sampleVolume;
             });
         }
+    
 
-       
-
-
-        public CameraView()
-        {
-           
-        }
 
         public CameraView(IDevices devices, ISession sessionService, IMeeting meeting)
         {
@@ -155,7 +149,8 @@ namespace OGV2P.Admin.Views
                 _vuMeterTimer.Start();
 
 
-
+                axRControl = new AxRTMPActiveX.AxRTMPActiveX();
+                winFrmHost.Child = axRControl;
 
 
             }
@@ -171,14 +166,11 @@ namespace OGV2P.Admin.Views
         private void InitRTMPControl()
         {
             
-
             axRControl.License = "nlic:1.2:LiveEnc:3.0:LvApp=1,LivePlg=1,MSDK=4,MPEG2DEC=1,MPEG2ENC=1,PS=1,TS=1,H264DEC=1,H264ENC=1,H264ENCQS=1,MP4=4,RTMPsrc=1,RtmpMsg=1,RTMPs=1,RTSP=1,RTSPsrc=1,UDP=1,UDPsrc=1,HLS=1,WMS=1,WMV=1,RTMPm=4,RTMPx=3,Resz=1,RSrv=1,VMix2=1,3DRemix=1,ScCap=1,AuCap=1,AEC=1,Demo=1,Ic=1,NoMsg=1,Tm=1800,T1=600,NoIc=1:win,win64,osx:20151030,20160111::0:0:nanocosmosdemo-292490-3:ncpt:f6044ea043c479af5911e60502f1a334";
             axRControl.InitEncoder();
 
             //set the user id / password
             axRControl.SetConfig("Auth", "barkley:hughes");
-
-          
 
             // Video Source Device (0...n)
             axRControl.VideoSource = 0;
