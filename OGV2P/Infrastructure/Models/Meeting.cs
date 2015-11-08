@@ -8,9 +8,12 @@ using System.Net;
 using System.Windows.Controls;
 using BuckSoft.Controls.FtpBrowseDialog;
 using forms = System.Windows.Forms;
+using System.Collections.Specialized;
+using System.Configuration;
 
 namespace Infrastructure.Models
 {
+
     public class Meeting : INotifyPropertyChanged, IMeeting
     {
 
@@ -87,6 +90,7 @@ namespace Infrastructure.Models
             {
                 _clientPathLive = value;
                 OnPropertyChanged("ClientPathLive");
+                OnPropertyChanged("PublishingPoint");
             }
         }
 
@@ -102,6 +106,91 @@ namespace Infrastructure.Models
             {
                 _clientPathLiveStream = value;
                 OnPropertyChanged("ClientPathLiveStream");
+                OnPropertyChanged("PublishingPoint");
+            }
+        }
+
+        private int _videoWidth;
+        public int VideoWidth
+        {
+            get
+            {
+                return _videoWidth;
+            }
+
+            set
+            {
+                _videoWidth = value;
+                OnPropertyChanged("VideoWidth");
+            }
+        }
+
+        private int _videoHeight;
+        public int VideoHeight
+        {
+            get
+            {
+                return _videoHeight;
+            }
+
+            set
+            {
+                _videoHeight = value;
+                OnPropertyChanged("VideoHeight");
+            }
+        }
+
+        private int _frameRate;
+        public int FrameRate
+        {
+            get
+            {
+                return _frameRate;
+            }
+
+            set
+            {
+                _frameRate = value;
+                OnPropertyChanged("FrameRate");
+            }
+        }
+
+        private string _landingPage;
+        public string LandingPage
+        {
+            get
+            {
+                return _landingPage;
+            }
+
+            set
+            {
+                _landingPage = value;
+                OnPropertyChanged("LandingPage");
+            }
+        }
+
+        public string PublishingPoint
+        {
+            get
+            {
+                UriBuilder urib = new UriBuilder(_clientPathLive);
+                urib.Path += "/" + _clientPathLiveStream;
+                return urib.ToString();
+            }
+            private set
+            {
+                ;
+            }
+        }
+
+        public event MeetingSetEventHandler RaiseMeetingSetEvent;
+
+        private void OnRaiseMeetingSetEvent()
+        {
+            if(RaiseMeetingSetEvent != null)
+            {
+                RaiseMeetingSetEvent(this, new EventArgs());
             }
         }
 
@@ -144,7 +233,11 @@ namespace Infrastructure.Models
                 MeetingDate = (xDoc.Element("meeting").Element("meetingdate") != null) ?
                     DateTime.Parse(xDoc.Element("meeting").Element("meetingdate").Value) :
                     DateTime.Now;
-                
+
+                VideoHeight = int.Parse(xDoc.Element("meeting").Element("videoheight").Value);
+                VideoWidth = int.Parse(xDoc.Element("meeting").Element("videowidth").Value);
+                FrameRate = int.Parse(xDoc.Element("meeting").Element("framerate").Value);
+                LandingPage = xDoc.Element("meeting").Element("landingpage").Value;
 
                 XElement items = xDoc.Element("meeting").Element("agenda").Element("items");
                 if (items != null)
@@ -159,6 +252,8 @@ namespace Infrastructure.Models
                     agendaTree.ShowLines = false;
                     agendaTree.ExpandAll();
                 }
+
+                OnRaiseMeetingSetEvent();
 
                
             }
@@ -203,6 +298,7 @@ namespace Infrastructure.Models
             _sessionService.RaiseStamped += _sessionService_RaiseStamped;
             _loadAgenda = new DelegateCommand<forms.TreeView>(OnLoadAgenda, CanLoadAgenda);
             _agenda = new Agenda();
+          
         }
 
         private void _sessionService_RaiseStamped(TimeSpan sessionTime)

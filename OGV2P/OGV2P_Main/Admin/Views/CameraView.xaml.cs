@@ -19,6 +19,7 @@ using System.Windows.Interop;
 using System.Management.Instrumentation;
 using System.Management;
 using System.Collections.Specialized;
+using System.Threading.Tasks;
 
 namespace OGV2P.Admin.Views
 {
@@ -67,6 +68,36 @@ namespace OGV2P.Admin.Views
             }
         }
 
+        private int _bandwidthCheckInterval;
+        public int BandwidthCheckInterval
+        {
+            get
+            {
+                return _bandwidthCheckInterval;
+            }
+
+            set
+            {
+                _bandwidthCheckInterval = value;
+                OnPropertyChanged("BandwithCheckInterval");
+            }
+        }
+
+        private bool _isCheckingBandwidth;
+        public bool IsCheckingBandwidth
+        {
+            get
+            {
+                return _isCheckingBandwidth;
+            }
+
+            set
+            {
+                _isCheckingBandwidth = value;
+                OnPropertyChanged("IsCheckingBandwidth");
+            }
+        }
+
         private bool _isBusy;
         public bool IsBusy
         {
@@ -90,7 +121,7 @@ namespace OGV2P.Admin.Views
             }
         }
 
-        
+       
 
         private void UpdateVUMeter(int sampleVolume)
         {
@@ -99,7 +130,7 @@ namespace OGV2P.Admin.Views
                 vuMeter.Value = (double)sampleVolume;
             });
         }
-    
+
 
 
         public CameraView(IDevices devices, ISession sessionService, IMeeting meeting)
@@ -111,8 +142,9 @@ namespace OGV2P.Admin.Views
                 this.DataContext = this;
                 _sessionService = sessionService;
                 _meeting = meeting;
+                _meeting.RaiseMeetingSetEvent += Meeting_SetEvent;
 
-     
+
                 //get the application settings
                 _settings = ConfigurationSettings.AppSettings;
 
@@ -132,9 +164,7 @@ namespace OGV2P.Admin.Views
                 cpuCounter.InstanceName = "_Total";
                 cpuReadingTimer.Start();
 
-                //set preview URL
-                //set the preview url
-                txtUrl.Text = @"http://mytestserver.com/ogv2playerlive.html";
+
 
 
                 //change status
@@ -159,13 +189,22 @@ namespace OGV2P.Admin.Views
 
                 throw;
             }
-            
 
+
+        }
+
+        private void Meeting_SetEvent(object sender, EventArgs e)
+        {
+            axRControl.StopPreview();
+            axRControl.DestinationURL = _meeting.PublishingPoint;
+
+            axRControl.StartConnect();
+            axRControl.StartPreview();
         }
 
         private void InitRTMPControl()
         {
-            
+
             axRControl.License = "nlic:1.2:LiveEnc:3.0:LvApp=1,LivePlg=1,MSDK=4,MPEG2DEC=1,MPEG2ENC=1,PS=1,TS=1,H264DEC=1,H264ENC=1,H264ENCQS=1,MP4=4,RTMPsrc=1,RtmpMsg=1,RTMPs=1,RTSP=1,RTSPsrc=1,UDP=1,UDPsrc=1,HLS=1,WMS=1,WMV=1,RTMPm=4,RTMPx=3,Resz=1,RSrv=1,VMix2=1,3DRemix=1,ScCap=1,AuCap=1,AEC=1,Demo=1,Ic=1,NoMsg=1,Tm=1800,T1=600,NoIc=1:win,win64,osx:20151030,20160111::0:0:nanocosmosdemo-292490-3:ncpt:f6044ea043c479af5911e60502f1a334";
             axRControl.InitEncoder();
 
@@ -218,13 +257,20 @@ namespace OGV2P.Admin.Views
             //axRControl.DestinationURL = @"rtmp://devob2.opengovideo.com:1935/RI_SouthKingstown_Live/LicenseBoard";
             axRControl.DestinationURL = _meeting.ClientPathLiveStream;
 
-          
+            //reconnect settings
+            axRControl.ReconnectAttempts = 3;
+            axRControl.ReconnectDelay = 2000;
+
+
+
+
         }
 
         private void UsbWatcher_EventArrived(object sender, EventArrivedEventArgs e)
         {
-            Dispatcher.Invoke(() => {
-                if( !IsBusy)
+            Dispatcher.Invoke(() =>
+            {
+                if (!IsBusy)
                 {
                     System.Threading.Thread.Sleep(2000);
                     InitRTMPControl();
@@ -240,37 +286,34 @@ namespace OGV2P.Admin.Views
             for (int i = 0; i < n; i++)
             {
                 string source = axRControl.GetAudioSource(i);
-                if ( ! cboMicrophones.Items.Contains(source))
+                if (!cboMicrophones.Items.Contains(source))
                 {
                     cboMicrophones.Items.Add(source);
                 }
-                  
+
             }
-                
+
         }
 
         private void AddVideoSources()
         {
-           
+
             int n = axRControl.NumberOfVideoSources;
             cboCameras.Items.Clear();
             for (int i = 0; i < n; i++)
             {
                 string source = axRControl.GetVideoSource(i);
-                if (! cboCameras.Items.Contains(source))
+                if (!cboCameras.Items.Contains(source))
                 {
                     cboCameras.Items.Add(source);
                 }
             }
-               
+
         }
 
-    
-
-     
         private void _vuMeterTimer_Elapsed(object sender, ElapsedEventArgs e)
         {
-            if(IsBusy)
+            if (IsBusy)
             {
                 Dispatcher.Invoke(() =>
                 {
@@ -281,7 +324,7 @@ namespace OGV2P.Admin.Views
                     txtAudioLevel.Text = volumeLevel.ToString();
                 });
             }
-            
+
         }
 
         private void cpuReadingTimer_Elapsed(object p1, object p2)
@@ -292,7 +335,7 @@ namespace OGV2P.Admin.Views
                 float cpuUtilization = cpuCounter.NextValue();
                 txtCpuUsage.Text = cpuUtilization + "%";
             });
-          
+
         }
 
         void axRControl_OnStop(object sender, AxRTMPActiveX.IRTMPActiveXEvents_OnStopEvent e)
@@ -341,7 +384,7 @@ namespace OGV2P.Admin.Views
 
         private void cmdPreviewVideo_CLick(object sender, RoutedEventArgs e)
         {
-           
+
             Process.Start(txtUrl.Text);
         }
 
@@ -359,7 +402,7 @@ namespace OGV2P.Admin.Views
             TimeSpan current = new TimeSpan(0, 0, 0, 0, milliSeconds);
             txtLastStamp.Text = string.Format("{0}:{1}:{2}", current.Hours, current.Minutes, current.Seconds);
             _sessionService.Stamp(current);
-            
+
         }
 
         public void OnNavigatedTo(NavigationContext navigationContext)
@@ -424,10 +467,31 @@ namespace OGV2P.Admin.Views
             InitRTMPControl();
         }
 
-        private void cmdPreview_Click(object sender, RoutedEventArgs e)
+        private void cmdStartBandwidthCheck_Click(object sender, RoutedEventArgs e)
         {
-            //start the preview
-            axRControl.StartPreview();
+            IsCheckingBandwidth = true;
+            Task checkBandwith = new Task(() =>
+           {
+               int keepgoing = 0;
+               axRControl.StartBandwidthChecker();
+               while (keepgoing <= 9)
+               {
+                   
+                   System.Threading.Thread.Sleep(250);
+                   keepgoing++;
+                   BandwidthCheckInterval = keepgoing;
+               }
+
+
+               Dispatcher.Invoke(() =>
+               {
+                   int bandwidth = axRControl.StopBandwidthChecker();
+                   IsCheckingBandwidth = false;
+                   axRControl.StartPreview();
+               });
+           });
+            checkBandwith.Start();
+
         }
     }
 }

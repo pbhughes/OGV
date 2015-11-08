@@ -9,7 +9,8 @@ using Infrastructure.Models;
 
 namespace Infrastructure.Interfaces
 {
-    
+
+    public delegate void LoginEventHandler(object sender, EventArgs e);
 
     public interface IUser
     {

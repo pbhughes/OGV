@@ -15,7 +15,6 @@ using System.ServiceProcess;
 
 namespace Infrastructure.Models
 {
-    public delegate void LoginEventHandler(object sender, EventArgs e);
 
     public class User : IUser, INotifyPropertyChanged
     {

@@ -5,6 +5,8 @@ using forms = System.Windows.Forms;
 
 namespace Infrastructure.Interfaces
 {
+    public delegate void MeetingSetEventHandler(object sender, EventArgs e);
+
     public interface IMeeting
     {
         Agenda MeetingAgenda { get; set; }
@@ -18,5 +20,13 @@ namespace Infrastructure.Interfaces
         void FindItem(int hashCode);
         string ClientPathLive { get; set; }
         string ClientPathLiveStream { get; set; }
+        int VideoWidth { get; set; }
+        int VideoHeight { get; set; }
+        int FrameRate { get; set; }
+        string LandingPage { get; set; }
+        string PublishingPoint { get;  }
+
+
+        event MeetingSetEventHandler RaiseMeetingSetEvent;
     }
 }
