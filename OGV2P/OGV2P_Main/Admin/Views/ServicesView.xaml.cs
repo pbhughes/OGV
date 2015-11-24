@@ -15,29 +15,120 @@ using System.Windows.Shapes;
 using System.ServiceProcess;
 using Microsoft.Practices.Prism.Regions;
 using System.Threading.Tasks;
+using Infrastructure.Interfaces;
+using System.ComponentModel;
+using Microsoft.Practices.Unity;
 
 namespace OGV2P.Admin.Views
 {
     /// <summary>
     /// Interaction logic for ServicesView.xaml
     /// </summary>
-    public partial class ServicesView : UserControl
+    /// 
+    [RegionMemberLifetime(KeepAlive = true)]
+    public partial class ServicesView : UserControl, INavigationAware, IRegionMemberLifetime, INotifyPropertyChanged
     {
-        private IRegionManager _regionManager;
 
-        public ServicesView()
+        private IUnityContainer _container;
+        private IRegionManager _regionManager;
+        private IMeeting _meeting;
+        public IMeeting Meeting
+        {
+            get
+            {
+                return _meeting;
+            }
+
+            set
+            {
+                _meeting = value;
+                OnPropertyChanged("Meeting");
+            }
+        }
+        private IUser _user;
+        private ISession _session;
+
+        public bool KeepAlive
+        {
+            get
+            {
+                return true;
+            }
+        }
+
+        public IRegionManager RegionManager
+        {
+            get
+            {
+                return _regionManager;
+            }
+
+            set
+            {
+                _regionManager = value;
+            }
+        }
+
+       
+
+        public ServicesView(IRegionManager regionManager, IMeeting meeting, IUser user, ISession session, IUnityContainer container)
         {
             this.Loaded += ServicesView_Loaded;
-            _regionManager = Microsoft.Practices.ServiceLocation.ServiceLocator.Current.GetInstance<Microsoft.Practices.Prism.Regions.IRegionManager>();
+            RegionManager = regionManager;
+            _meeting = meeting;
+            _user = user;
+            _session = session;
             InitializeComponent();
+            this.Name = "SettingsView";
+            _container = container;
+            this.DataContext = Meeting;
 
         }
 
         async void  ServicesView_Loaded(object sender, RoutedEventArgs e)
         {
+            Meeting = _container.Resolve<IMeeting>();
+            txtPublishingPoint.Text = Meeting.PublishingPoint;
+            txtUrl.Text = Meeting.LandingPage;
+            txtLocalFile.Text = Meeting.LocalFile;
+            
+        }
+
+        public void OnNavigatedTo(NavigationContext navigationContext)
+        {
+        }
+
+        public bool IsNavigationTarget(NavigationContext navigationContext)
+        {
+            return false;
+        }
+
+        public void OnNavigatedFrom(NavigationContext navigationContext)
+        {
+        }
+
+        #region INotifyPropertyChanged
+
+        public event PropertyChangedEventHandler PropertyChanged;
+
+        private void OnPropertyChanged(string name)
+        {
+
+            if (PropertyChanged != null)
+                PropertyChanged(this, new PropertyChangedEventArgs(name));
+        }
 
 
-           
+
+
+        #endregion
+
+        private void Button_Click(object sender, RoutedEventArgs e)
+        {
+            if (txtUrl.Text == null || txtUrl.Text == string.Empty)
+                ;//do nothing
+            else
+                System.Diagnostics.Process.Start(txtUrl.Text);
         }
     }
 }

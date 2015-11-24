@@ -25,6 +25,7 @@ namespace Infrastructure.Interfaces
         int FrameRate { get; set; }
         string LandingPage { get; set; }
         string PublishingPoint { get;  }
+        string LocalFile { get; set; }
 
 
         event MeetingSetEventHandler RaiseMeetingSetEvent;

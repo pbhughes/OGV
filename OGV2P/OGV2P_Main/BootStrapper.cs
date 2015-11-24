@@ -45,10 +45,11 @@ namespace OGV2P
         protected override void ConfigureContainer()
         {
             base.ConfigureContainer();
-
+            
             this.Container.RegisterType<object, OGV2P.Admin.Views.CameraView>(typeof(OGV2P.Admin.Views.CameraView).FullName);
             this.Container.RegisterType<object, OGV2P.Admin.Views.LoginView>(typeof(OGV2P.Admin.Views.LoginView).FullName);
             this.Container.RegisterType<object, OGV2P.AgendaModule.Views.AgendaStartView>(typeof(OGV2P.AgendaModule.Views.AgendaStartView).FullName);
+            this.Container.RegisterType<object, OGV2P.Admin.Views.ServicesView>(typeof(OGV2P.Admin.Views.ServicesView).FullName);
             this.Container.RegisterType<Infrastructure.Interfaces.IDevices, Infrastructure.Models.Devices>();
             
                     
@@ -69,8 +70,7 @@ namespace OGV2P
             _regionManager = Microsoft.Practices.ServiceLocation.ServiceLocator.Current.GetInstance<Microsoft.Practices.Prism.Regions.IRegionManager>();
 
             var loginView = _regionManager.Regions[Infrastructure.Models.Regions.Middle].GetView("LoginView");
-            _regionManager.Regions[Infrastructure.Models.Regions.Middle].Deactivate (loginView);
-            _regionManager.Regions.Remove(Infrastructure.Models.Regions.Middle);
+            _regionManager.Regions[Infrastructure.Models.Regions.Middle].Deactivate ( loginView );
 
             ((Shell)_shell).SetSideBarAllignmentTop();
             

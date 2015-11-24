@@ -20,6 +20,10 @@ using System.Management.Instrumentation;
 using System.Management;
 using System.Collections.Specialized;
 using System.Threading.Tasks;
+using Microsoft.Practices.Prism.Interactivity.InteractionRequest;
+using Microsoft.Practices.Prism.Interactivity;
+using Microsoft.Practices.Prism.Commands;
+using forms = System.Windows.Forms;
 
 namespace OGV2P.Admin.Views
 {
@@ -34,10 +38,16 @@ namespace OGV2P.Admin.Views
         private Timer _vuMeterTimer;
         private ManagementEventWatcher usbWatcher = new ManagementEventWatcher();
         NameValueCollection _settings;
+        private IRegionManager _regionManager;
+        private IUser _user;
         private AxRTMPActiveX.AxRTMPActiveX axRControl;
+        public InteractionRequest<INotification> NotificationRequest { get; set; }
+
         LinearGradientBrush _yellow =
         new LinearGradientBrush(Colors.Green, Colors.Yellow,
             new Point(0, 1), new Point(1, 0));
+
+        public DelegateCommand NotificationCommand { get; set; }
 
         ISession _sessionService;
         public ISession SessionService
@@ -133,18 +143,24 @@ namespace OGV2P.Admin.Views
 
 
 
-        public CameraView(IDevices devices, ISession sessionService, IMeeting meeting)
+        public CameraView(IRegionManager regionManager, IDevices devices, ISession sessionService, IMeeting meeting, IUser user)
         {
             InitializeComponent();
 
             try
             {
                 this.DataContext = this;
+                NotificationRequest = new InteractionRequest<INotification>();
+                NotificationCommand = new DelegateCommand(() =>
+                {
+                    NotificationRequest.Raise(new Notification { Title = "Settings", Content = "Notfication Set" }, null);
+                });
+
                 _sessionService = sessionService;
                 _meeting = meeting;
                 _meeting.RaiseMeetingSetEvent += Meeting_SetEvent;
-
-
+                _regionManager = regionManager;
+                _user = user;
                 //get the application settings
                 _settings = ConfigurationSettings.AppSettings;
 
@@ -195,11 +211,24 @@ namespace OGV2P.Admin.Views
 
         private void Meeting_SetEvent(object sender, EventArgs e)
         {
-            axRControl.StopPreview();
-            axRControl.DestinationURL = _meeting.PublishingPoint;
+            try
+            {
+                axRControl.StopPreview();
+                axRControl.DestinationURL = _meeting.PublishingPoint;
 
-            axRControl.StartConnect();
-            axRControl.StartPreview();
+                axRControl.StartConnect();
+                axRControl.StartPreview();
+            }
+            catch(AccessViolationException aex)
+            {
+                ;//ignore
+            }
+            catch (Exception ex)
+            {
+
+                throw;
+            }
+           
         }
 
         private void InitRTMPControl()
@@ -250,8 +279,9 @@ namespace OGV2P.Admin.Views
                 Directory.CreateDirectory(path);
             Guid guid = Guid.NewGuid();
             path = Path.Combine(path, string.Format("{0}.mp4", guid.ToString()));
-            txtLocalFile.Text = path;
+            //txtLocalFile.Text = path;
             axRControl.DestinationURL2 = path;
+            _meeting.LocalFile = path;
 
             //set the publishing point url
             //axRControl.DestinationURL = @"rtmp://devob2.opengovideo.com:1935/RI_SouthKingstown_Live/LicenseBoard";
@@ -321,7 +351,6 @@ namespace OGV2P.Admin.Views
                     if (axRControl != null)
                         volumeLevel = axRControl.GetAudioLevel(0);
                     UpdateVUMeter(volumeLevel);
-                    txtAudioLevel.Text = volumeLevel.ToString();
                 });
             }
 
@@ -363,9 +392,10 @@ namespace OGV2P.Admin.Views
                 //axRTMPActiveX1.SetConfig("UseColorConverter", "2");
                 //axRTMPActiveX1.StartConnect();
                 axRControl.StartBroadcast();
+                _vuMeterTimer.Start();
                 txtStatus.Text = "Running.";
                 IsBusy = true;
-            }
+            } 
             catch (Exception ex)
             {
                 txtStatus.Text = "Stopped.";
@@ -385,14 +415,14 @@ namespace OGV2P.Admin.Views
         private void cmdPreviewVideo_CLick(object sender, RoutedEventArgs e)
         {
 
-            Process.Start(txtUrl.Text);
+            //Process.Start(txtUrl.Text);
         }
 
         private void PreviewLocalFileLocation(object sender, RoutedEventArgs e)
         {
-            DirectoryInfo root = Directory.GetParent(txtLocalFile.Text);
+            //DirectoryInfo root = Directory.GetParent(txtLocalFile.Text);
 
-            Process.Start(root.FullName);
+            //Process.Start(root.FullName);
         }
 
         private void cmdStamp_Click(object sender, RoutedEventArgs e)
@@ -492,6 +522,40 @@ namespace OGV2P.Admin.Views
            });
             checkBandwith.Start();
 
+        }
+
+     
+
+        private void SettingsButton_Click(object sender, RoutedEventArgs e)
+        {
+
+            try
+            {
+                if (winFrmHost.Visibility == Visibility.Visible)
+                {
+                   
+
+                    winFrmHost.Visibility = Visibility.Hidden;
+                    var settingsView = _regionManager.Regions[Infrastructure.Models.Regions.Middle].GetView("SettingsView");
+                    _regionManager.Regions[Infrastructure.Models.Regions.Middle].Activate(settingsView);
+
+                }
+                else
+                {
+                    winFrmHost.Visibility = Visibility.Visible;
+                    var settingsView = _regionManager.Regions[Infrastructure.Models.Regions.Middle].GetView("SettingsView");
+                    _regionManager.Regions[Infrastructure.Models.Regions.Middle].Deactivate(settingsView);
+
+             
+                }
+                    
+            }
+            catch (Exception ex)
+            {
+
+                System.Windows.MessageBox.Show(ex.Message);
+            }
+           
         }
     }
 }

@@ -6,16 +6,21 @@
              xmlns:tk="http://schemas.xceed.com/wpf/xaml/toolkit"
              xmlns:frms="clr-namespace:System.Windows.Forms;assembly=System.Windows.Forms"
              xmlns:ax="clr-namespace:AxRTMPActiveX;assembly=AxInterop.RTMPActiveX"
+             xmlns:interact="clr-namespace:Microsoft.Practices.Prism.Interactivity;assembly=Microsoft.Practices.Prism.Interactivity"
+             xmlns:prism="http://www.codeplex.com/prism"
              mc:Ignorable="d" 
              Loaded="UserControl_Loaded"
              d:DesignHeight="1024" d:DesignWidth="900">
     <UserControl.Resources>
     </UserControl.Resources>
+
+
     
     <Grid >
         <Grid.RowDefinitions>
+            <RowDefinition Height="auto"/>
             <RowDefinition Height="500"/>
-            <RowDefinition Height="10" />
+            <RowDefinition Height="20" />
             <RowDefinition Height="300" />
         </Grid.RowDefinitions>
         <Grid.ColumnDefinitions>
@@ -23,114 +28,39 @@
             <ColumnDefinition Width="450" />
         </Grid.ColumnDefinitions>
 
+        <StackPanel  Orientation="Horizontal" Grid.Row="0" 
+                     Grid.Column="0" Grid.ColumnSpan="2" Margin="5 0 0 5">
+            <Button Margin="30 0 30 0" Style="{StaticResource btn-primary}" Click="SettingsButton_Click">
+                Settings
+            </Button>
+        </StackPanel>
 
-        <DockPanel  Grid.Row="0" Grid.Column="0" Grid.ColumnSpan="2"
-                   LastChildFill="True">
+        <DockPanel  Grid.Row="1" Grid.Column="0" Grid.ColumnSpan="2"
+                   LastChildFill="True" Panel.ZIndex="1">
             <WindowsFormsHost Grid.Row="0" Grid.Column="0" Grid.ColumnSpan="2"
                           x:Name="winFrmHost" 
-                          Width="640" Height="480" 
-                          HorizontalAlignment="Stretch" >
+                          Width="640" Height="480">
                 <!--<ax:AxRTMPActiveX x:Name="axRControl"></ax:AxRTMPActiveX>-->
             </WindowsFormsHost>
         </DockPanel>
 
 
-        <Canvas Grid.Row="1" Grid.Column="0" Grid.ColumnSpan="2" Panel.ZIndex="100">
-            <Expander  
-                  Background="AliceBlue" >
-                <StackPanel Orientation="Vertical">
-                    <StackPanel Orientation="Horizontal"  Margin="5">
-                        <Label Width="110" MinWidth="50">Local File:</Label>
-                        <ScrollViewer VerticalScrollBarVisibility="Hidden">
-                            <TextBlock x:Name="txtLocalFile" Margin="0 0 5 0"
-                               MinWidth="500"
-                           TextAlignment="left" 
-                           VerticalAlignment="Center"></TextBlock>
-                        </ScrollViewer>
-                        <Button Style="{StaticResource btn-primary-small}" Click="PreviewLocalFileLocation">Open Folder</Button>
-                    </StackPanel>
 
-                    <StackPanel Orientation="Horizontal" Margin="5">
-                        <Label Width="110" MinWidth="50">URL:</Label>
-                        <ScrollViewer VerticalScrollBarVisibility="Hidden">
-                            <TextBlock x:Name="txtUrl" Margin="0 0 5 0"
-                               MinWidth="500"
-                           TextAlignment="left" 
-                           VerticalAlignment="Center" 
-                           Text="{Binding Meeting.LandingPage}"></TextBlock>
-                        </ScrollViewer>
-                        <Button Style="{StaticResource btn-primary-small}"
-                        Click="cmdPreviewVideo_CLick"
-                        RenderTransformOrigin="0.5,0.506">Preview Url</Button>
-                    </StackPanel>
-
-                    <StackPanel Orientation="Horizontal" Margin="5">
-                        <Label Width="110" MinWidth="50">Publishing Point:</Label>
-                        <ScrollViewer VerticalScrollBarVisibility="Hidden">
-                            <TextBlock x:Name="txtPublishingPoint" Margin="0 0 5 0"
-                               MinWidth="500"
-                           TextAlignment="left" 
-                           VerticalAlignment="Center" 
-                           Text="{Binding Meeting.PublishingPoint}"></TextBlock>
-                        </ScrollViewer>
-                        <Button Style="{StaticResource btn-primary-small}"
-                        Click="cmdPreviewVideo_CLick"
-                        RenderTransformOrigin="0.5,0.506">Preview Url</Button>
-                    </StackPanel>
-
-                    <StackPanel Orientation="Horizontal">
-                        <Label Width="110">Bandwith:</Label>
-                        <tk:BusyIndicator IsBusy="{Binding IsCheckingBandwidth}" DisplayAfter="0">
-                            <tk:BusyIndicator.BusyContentTemplate>
-                                <DataTemplate>
-                                    <StackPanel Margin="4">
-                                        <TextBlock Text="Checking Bandwidth" FontWeight="Bold" HorizontalAlignment="Center"/>
-                                        <StackPanel Margin="4">
-                                            <ProgressBar Value="{Binding BandwithCheckInterval}" Height="15" Minimum="0" Maximum="9"/>
-                                        </StackPanel>
-                                        <Grid>
-                                            <Grid.ColumnDefinitions>
-                                                <ColumnDefinition />
-                                            </Grid.ColumnDefinitions>
-                                            <Button HorizontalAlignment="Center" Grid.Column="1" Content="Cancel" Margin="2"/>
-                                        </Grid>
-                                    </StackPanel>
-                                </DataTemplate>
-                            </tk:BusyIndicator.BusyContentTemplate>
-                            <tk:BusyIndicator.OverlayStyle>
-                                <Style TargetType="Rectangle">
-                                    <Setter Property="Fill" Value="#ffffeeee"/>
-                                </Style>
-                            </tk:BusyIndicator.OverlayStyle>
-                            <tk:BusyIndicator.ProgressBarStyle>
-                                <Style TargetType="ProgressBar">
-                                    <Setter Property="Visibility" Value="Collapsed"/>
-                                </Style>
-                            </tk:BusyIndicator.ProgressBarStyle>
-                            <ContentControl/>
-                        </tk:BusyIndicator>
-                        <TextBlock Width="auto" x:Name="txtBandwidth"></TextBlock>
-                        <Button Style="{StaticResource btn-primary-small}" Margin="10" Click="cmdStartBandwidthCheck_Click">Check Bandwidth</Button>
-                    </StackPanel>
-                </StackPanel>
-
-            </Expander>
-        </Canvas>
-
-        <Grid Grid.Row="1" Grid.Column="0" Grid.ColumnSpan="2">
+        <Grid Grid.Row="2" Grid.Column="0" Grid.ColumnSpan="2">
             <Grid.ColumnDefinitions>
                 <ColumnDefinition Width="*" />
                 <ColumnDefinition Width="45" />
             </Grid.ColumnDefinitions>
+            
             <ProgressBar  x:Name="vuMeter" Height="10px" Grid.Column="0"
                                         Margin="0 5 0 5" 
-                                        HorizontalAlignment="Stretch"></ProgressBar>
-            <TextBlock x:Name="txtAudioLevel" Grid.Column="1"
-                       HorizontalAlignment="Left"
-                       TextAlignment="Left"></TextBlock>
+                                        HorizontalAlignment="Stretch">
+                
+            </ProgressBar>
+            
         </Grid>
 
-        <Grid Grid.Row="2" Grid.Column="0" Grid.ColumnSpan="2">
+        <Grid Grid.Row="3" Grid.Column="0" Grid.ColumnSpan="2">
             <Grid.ColumnDefinitions>
                 <ColumnDefinition Width="100" />
                 <ColumnDefinition Width="*" />

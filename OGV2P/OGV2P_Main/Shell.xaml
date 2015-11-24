@@ -24,13 +24,15 @@
                         Name="SideBarRegion" 
                         cal:RegionManager.RegionName="SideBarRegion"
                         Background="AliceBlue" />
-        
-       
 
-        <ContentControl Grid.Column="1" 
+
+        <Border Grid.Column="1" MaxHeight="300" Margin="10" CornerRadius="8" Background="LightBlue">
+            <ContentControl   Panel.ZIndex="200"
                          Name="MiddleRegion" VerticalAlignment="Center"
                         HorizontalAlignment="Center"
                         cal:RegionManager.RegionName="MiddleRegion" />
+        </Border>
+        
 
         <ContentControl Grid.Column="2" 
                          Name="MainRegion" 

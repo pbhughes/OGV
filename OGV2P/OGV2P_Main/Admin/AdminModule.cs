@@ -5,6 +5,7 @@ namespace OGV2P.Admin
     using Microsoft.Practices.Prism.Modularity;
     using Microsoft.Practices.Prism.Regions;
     using Microsoft.Practices.Unity;
+    using System.Windows.Forms;
 
     public class AdminModule : IModule
     {
@@ -25,8 +26,11 @@ namespace OGV2P.Admin
 
         public void Initialize()
         {
-            _regionManager.Regions[Infrastructure.Models.Regions.Middle].Add(new OGV2P.Admin.Views.LoginView(_container, _session, _user), "LoginView");
-            //_regionViewRegistry.RegisterViewWithRegion(Infrastructure.Models.Regions.Middle, typeof(Views.LoginView));
+            _regionManager.Regions[Infrastructure.Models.Regions.Middle].Add(new Views.LoginView(_container, _session, _user), "LoginView");
+            _regionManager.Regions[Infrastructure.Models.Regions.Middle].Add(new Views.ServicesView(_regionManager, null, _user, _session,_container), "SettingsView");
+
+            var v = _regionManager.Regions[Infrastructure.Models.Regions.Middle].GetView("LoginView");
+            _regionManager.Regions[Infrastructure.Models.Regions.Middle].Activate( v );
         }
     }
 }

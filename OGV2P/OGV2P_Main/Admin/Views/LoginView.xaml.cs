@@ -24,7 +24,7 @@ namespace OGV2P.Admin.Views
     /// Interaction logic for LoginView.xaml
     /// </summary>
     /// 
-    [RegionMemberLifetime(KeepAlive = false)]
+    [RegionMemberLifetime(KeepAlive = true)]
     public partial class LoginView : UserControl, INavigationAware, IRegionMemberLifetime
     {
         private IUnityContainer _container;
@@ -42,6 +42,7 @@ namespace OGV2P.Admin.Views
             DataContext = _user;
             _regionManager = Microsoft.Practices.ServiceLocation.ServiceLocator.Current.GetInstance<Microsoft.Practices.Prism.Regions.IRegionManager>();
             this.Loaded += LoginView_Loaded;
+            this.Name = "LoginView";
         }
 
     

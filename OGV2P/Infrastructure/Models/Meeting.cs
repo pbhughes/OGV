@@ -35,6 +35,8 @@ namespace Infrastructure.Models
             set { _selectedItem = value; OnPropertyChanged("SelectedItem"); }
         }
 
+      
+
         private DelegateCommand<forms.TreeView> _loadAgenda;
         public DelegateCommand<forms.TreeView> LoadAgenda
         {
@@ -59,6 +61,20 @@ namespace Infrastructure.Models
                 _meetingName = value; 
                 _sessionService.MeetingName = value; 
                 OnPropertyChanged("MeetingName"); 
+            }
+        }
+
+        private string _localFile;
+        public string LocalFile
+        {
+            get
+            {
+                return _localFile;
+            }
+
+            set
+            {
+                _localFile = value;
             }
         }
 
@@ -174,6 +190,9 @@ namespace Infrastructure.Models
         {
             get
             {
+                if (_clientPathLive == null || _clientPathLiveStream == null)
+                    return string.Empty;
+
                 UriBuilder urib = new UriBuilder(_clientPathLive);
                 urib.Path += "/" + _clientPathLiveStream;
                 return urib.ToString();
@@ -183,6 +202,8 @@ namespace Infrastructure.Models
                 ;
             }
         }
+
+      
 
         public event MeetingSetEventHandler RaiseMeetingSetEvent;
 
@@ -300,6 +321,8 @@ namespace Infrastructure.Models
             _agenda = new Agenda();
           
         }
+
+     
 
         private void _sessionService_RaiseStamped(TimeSpan sessionTime)
         {
