@@ -85,5 +85,11 @@ namespace OGV2P.Admin.Views
         {
             txtUserID.Focus();
         }
+
+        private void cmdLogin_Click(object sender, RoutedEventArgs e)
+        {
+            txtUserID.SelectAll();
+            txtUserID.Focus();
+        }
     }
 }

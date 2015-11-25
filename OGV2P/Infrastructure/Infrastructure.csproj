@@ -119,11 +119,15 @@
   <ItemGroup>
     <Compile Include="Converters\InverseBoolConverter.cs" />
     <Compile Include="Converters\VisibilityConverter.cs" />
+    <Compile Include="Interfaces\IBoard.cs" />
+    <Compile Include="Interfaces\IBoardList.cs" />
     <Compile Include="Interfaces\IMeeting.cs" />
     <Compile Include="Interfaces\ISession.cs" />
     <Compile Include="Interfaces\IShowActivity.cs" />
     <Compile Include="Interfaces\IUser.cs" />
     <Compile Include="Models\Agenda.cs" />
+    <Compile Include="Models\BoardList.cs" />
+    <Compile Include="Models\Boards.cs" />
     <Compile Include="Models\Devices.cs" />
     <Compile Include="Interfaces\IDevices.cs" />
     <Compile Include="Models\Item.cs" />

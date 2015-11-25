@@ -6,13 +6,17 @@ using System.Windows;
 using Infrastructure.Interfaces;
 using Infrastructure.Models;
 using Microsoft.Practices.Prism.Regions;
-
+using System.Collections;
+using System.Collections.Generic;
+using System.IO;
+using System.Xml.Linq;
 
 namespace OGV2P
 {
     public class BootStrapper : UnityBootstrapper
     {
         private ISession _session;
+        private IBoardList _boardList;
         private IUser _user;
         private IRegionManager _regionManager;
         private Window _shell;
@@ -51,16 +55,18 @@ namespace OGV2P
             this.Container.RegisterType<object, OGV2P.AgendaModule.Views.AgendaStartView>(typeof(OGV2P.AgendaModule.Views.AgendaStartView).FullName);
             this.Container.RegisterType<object, OGV2P.Admin.Views.ServicesView>(typeof(OGV2P.Admin.Views.ServicesView).FullName);
             this.Container.RegisterType<Infrastructure.Interfaces.IDevices, Infrastructure.Models.Devices>();
-            
-                    
+
+            _boardList = LoadBoards();
             _session = new Session();
-            _user = new User(_session);
+            _user = new User(_session, _boardList);
             _meeting = new Meeting(_session);
+           
 
             _user.RaiseLoginEvent += _user_RaiseLoginEvent;
             this.Container.RegisterInstance<ISession>(_session);
             this.Container.RegisterInstance<IUser>(_user);
             this.Container.RegisterInstance<IMeeting>(_meeting);
+            this.Container.RegisterInstance<IBoardList>(_boardList);
 
 
         }
@@ -79,6 +85,34 @@ namespace OGV2P
 
             Uri uu = new Uri(typeof(OGV2P.Admin.Views.CameraView).FullName, UriKind.RelativeOrAbsolute);
             _regionManager.RequestNavigate(Infrastructure.Models.Regions.SideBar, uu);
+        }
+
+        private IBoardList LoadBoards()
+        {
+            try
+            {
+                BoardList boards = new BoardList();
+                string boardsxml = File.ReadAllText("boards.xml");
+              
+                XDocument xdoc = XDocument.Parse(boardsxml, LoadOptions.PreserveWhitespace );
+                foreach (XElement org in xdoc.Element("organizations").Elements("org"))
+                {
+                    Board x = new Board();
+                    x.Name = org.Element("name").Value;
+                    x.State = org.Element("state").Value;
+                    x.City = org.Element("city").Value;
+                    x.UserID = org.Element("ftpserver").Element("username").Value;
+                    x.Password = org.Element("ftpserver").Element("password").Value;
+                    boards.AddBoard(x);
+                }
+                return boards;
+            }
+            catch (Exception ex)
+            {
+
+                throw new Exception("Error processing the boards.xml file", ex);
+            }
+            
         }
     }
 }

@@ -11,8 +11,15 @@
              FocusManager.FocusedElement="{Binding ElementName=txtUserID}">
     <UserControl.Resources>
     </UserControl.Resources>
-    <Grid>
-        <tk:BusyIndicator IsBusy="{Binding IsBusy}" HorizontalAlignment="Center" VerticalAlignment="Center" DisplayAfter="0" Panel.ZIndex="100">
+    <Grid VerticalAlignment="Center" HorizontalAlignment="Center">
+        <Grid.RowDefinitions>
+            <RowDefinition Height="65"/>
+            <RowDefinition Height="Auto"/>
+        </Grid.RowDefinitions>
+        <ComboBox ItemsSource="{Binding Boards.Boards}" 
+                  DisplayMemberPath="Name" x:Name="lstBoards"
+                  VerticalContentAlignment="Center" SelectedItem="{Binding SelectedBoard}" ></ComboBox>
+        <tk:BusyIndicator Grid.Row="1" IsBusy="{Binding IsBusy}" HorizontalAlignment="Center" VerticalAlignment="Center" DisplayAfter="0" Panel.ZIndex="100">
             <tk:BusyIndicator.BusyContentTemplate>
                 <DataTemplate>
                     <StackPanel Margin="5">
@@ -33,7 +40,7 @@
             </tk:BusyIndicator.ProgressBarStyle>
             <ContentControl />
         </tk:BusyIndicator>
-        <StackPanel Orientation="Vertical" HorizontalAlignment="Center">
+        <StackPanel Grid.Row="1" Orientation="Vertical" HorizontalAlignment="Center">
             <StackPanel Orientation="Horizontal">
                 <Label>User ID:</Label>
                 <TextBox x:Name="txtUserID" Text="{Binding UserID}"></TextBox>
@@ -49,9 +56,9 @@
                         HorizontalAlignment="Right" Margin="0 10 5 0">
                 <Button x:Name="cmdLogin" IsDefault="True" 
                         Command="{Binding LoginCommand}" 
-                        Style="{DynamicResource btn-primary}">Login</Button>
+                        Style="{DynamicResource btn-primary}" Click="cmdLogin_Click">Login</Button>
             </StackPanel>
-            <TextBlock Text="{Binding Message}" 
+            <TextBlock Text="{Binding Message}" Foreground="Red" 
                        Margin="10 10 10 10"></TextBlock>
             
             <StackPanel Orientation="Vertical" 

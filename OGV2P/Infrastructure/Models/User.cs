@@ -71,7 +71,7 @@ namespace Infrastructure.Models
 
         private bool CanLogin()
         {
-            return true;
+            return SelectedBoard != null;
         }
 
         private async void OnLogin()
@@ -80,15 +80,22 @@ namespace Infrastructure.Models
             {
                 IsBusy = true;
 
-                if(UserID.ToLower() == @"barkley")
+                if(UserID.ToLower() != SelectedBoard.UserID.ToLower())
                 {
-                    OnRaiseLoginEvent();
+
+                    throw new UnauthorizedAccessException("Invalid user id or password");
+
                 }
-                else
+
+                if (Password.ToLower() != SelectedBoard.Password.ToLower())
                 {
-                    
-                    OnLogin();
+
+                    throw new UnauthorizedAccessException("Invalid user id or password");
+
                 }
+
+                OnRaiseLoginEvent();
+                
 
             }
             catch (Exception ex)
@@ -104,6 +111,7 @@ namespace Infrastructure.Models
 
         private async Task StartPanoptoService()
         {
+            
             await Task.Run(() =>
             {
 
@@ -152,6 +160,42 @@ namespace Infrastructure.Models
             set { _password = value; OnPropertyChanged("Password"); LoginCommand.RaiseCanExecuteChanged(); }
         }
 
+        private IBoardList _boards;
+
+        public IBoardList Boards
+        {
+            get
+            {
+                return _boards;
+            }
+
+            set
+            {
+                _boards = value;
+                OnPropertyChanged("Boards");
+            }
+        }
+
+        private IBoard _selectedBoard;
+
+        public IBoard SelectedBoard
+        {
+            get
+            {
+                return _selectedBoard;
+            }
+
+            set
+            {
+                _selectedBoard = value;
+                OnPropertyChanged("SelectedBoard");
+                LoginCommand.RaiseCanExecuteChanged();
+            }
+        }
+
+
+
+
         public event LoginEventHandler RaiseLoginEvent;
 
         private void OnRaiseLoginEvent()
@@ -160,15 +204,13 @@ namespace Infrastructure.Models
                 RaiseLoginEvent(this, new EventArgs());
         }
 
-        public User(ISession session)
+        public User(ISession session, IBoardList boards)
         {
             _loginCommand = new DelegateCommand(OnLogin, CanLogin);
             _session = session;
+            _boards = boards;
 
         }
-
-
-        
 
         #region INotifyPropertyChanged
 
