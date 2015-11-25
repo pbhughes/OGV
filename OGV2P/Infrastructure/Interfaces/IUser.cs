@@ -35,5 +35,7 @@ namespace Infrastructure.Interfaces
         void EvaluateLoginCapability();
         
         IBoardList Boards { get; set; }
+
+        IBoard SelectedBoard { get; set; }
     }
 }

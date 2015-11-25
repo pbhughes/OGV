@@ -18,6 +18,7 @@ using System.Threading.Tasks;
 using Infrastructure.Interfaces;
 using System.ComponentModel;
 using Microsoft.Practices.Unity;
+using System.IO;
 
 namespace OGV2P.Admin.Views
 {
@@ -129,6 +130,16 @@ namespace OGV2P.Admin.Views
                 ;//do nothing
             else
                 System.Diagnostics.Process.Start(txtUrl.Text);
+        }
+
+        private void Button_Click_1(object sender, RoutedEventArgs e)
+        {
+            if(! string.IsNullOrEmpty(txtLocalFile.Text))
+            {
+                string fullPath = txtLocalFile.Text;
+                var dInfo = Directory.GetParent(fullPath);
+                System.Diagnostics.Process.Start(dInfo.FullName);
+            }
         }
     }
 }

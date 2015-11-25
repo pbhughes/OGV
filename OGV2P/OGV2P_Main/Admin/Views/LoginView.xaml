@@ -18,7 +18,9 @@
         </Grid.RowDefinitions>
         <ComboBox ItemsSource="{Binding Boards.Boards}" 
                   DisplayMemberPath="Name" x:Name="lstBoards"
-                  VerticalContentAlignment="Center" SelectedItem="{Binding SelectedBoard}" ></ComboBox>
+                  VerticalContentAlignment="Center"
+                  SelectedItem="{Binding SelectedBoard}"
+                  SelectionChanged="lstBoards_SelectionChanged"></ComboBox>
         <tk:BusyIndicator Grid.Row="1" IsBusy="{Binding IsBusy}" HorizontalAlignment="Center" VerticalAlignment="Center" DisplayAfter="0" Panel.ZIndex="100">
             <tk:BusyIndicator.BusyContentTemplate>
                 <DataTemplate>
@@ -48,7 +50,7 @@
 
             <StackPanel Orientation="Horizontal">
                 <Label>Password:</Label>
-                <TextBox Text="{Binding Password}" KeyDown="TextBox_KeyDown">
+                <TextBox  x:Name="txtPassword" Text="{Binding Password}" GotFocus="TextBox_GotFocus" KeyDown="TextBox_KeyDown">
                 </TextBox>
             </StackPanel>
 

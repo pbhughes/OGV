@@ -260,6 +260,7 @@ namespace Infrastructure.Models
                 FrameRate = int.Parse(xDoc.Element("meeting").Element("framerate").Value);
                 LandingPage = xDoc.Element("meeting").Element("landingpage").Value;
 
+                this.LocalFile = string.Format("{0}-{1}-{2}_{3}.mp4", this.MeetingDate.Day, this.MeetingDate.Month, this.MeetingDate.Year, this.MeetingName);
                 XElement items = xDoc.Element("meeting").Element("agenda").Element("items");
                 if (items != null)
                 {

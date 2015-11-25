@@ -91,5 +91,16 @@ namespace OGV2P.Admin.Views
             txtUserID.SelectAll();
             txtUserID.Focus();
         }
+
+        private void TextBox_GotFocus(object sender, RoutedEventArgs e)
+        {
+            txtPassword.SelectAll();
+        }
+
+        private void lstBoards_SelectionChanged(object sender, SelectionChangedEventArgs e)
+        {
+            txtUserID.Focus();
+            txtUserID.SelectAll();
+        }
     }
 }

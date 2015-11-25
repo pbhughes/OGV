@@ -238,7 +238,7 @@ namespace OGV2P.Admin.Views
             axRControl.InitEncoder();
 
             //set the user id / password
-            axRControl.SetConfig("Auth", "barkley:hughes");
+            axRControl.SetConfig("Auth", string.Format("{0}:{1}",_user.SelectedBoard.UserID, _user.SelectedBoard.Password));
 
             // Video Source Device (0...n)
             axRControl.VideoSource = 0;
@@ -272,16 +272,8 @@ namespace OGV2P.Admin.Views
             winFrmHost.Width = axRControl.VideoWidth;
             winFrmHost.Height = axRControl.VideoHeight;
 
-            //set local video folder
-            string path = Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments);
-            path = Path.Combine(path, OGV2P.Admin.Properties.Settings.Default.LocalVideoFolder);
-            if (!Directory.Exists(path))
-                Directory.CreateDirectory(path);
-            Guid guid = Guid.NewGuid();
-            path = Path.Combine(path, string.Format("{0}.mp4", guid.ToString()));
-            //txtLocalFile.Text = path;
-            axRControl.DestinationURL2 = path;
-            _meeting.LocalFile = path;
+            
+
 
             //set the publishing point url
             //axRControl.DestinationURL = @"rtmp://devob2.opengovideo.com:1935/RI_SouthKingstown_Live/LicenseBoard";
@@ -386,11 +378,16 @@ namespace OGV2P.Admin.Views
         {
             try
             {
-                //axRControl.DestinationURL = cmbUrl.Text;
-                //axRTMPActiveX1.DestinationURL2 = cmbUrl2.Text;
+                //set local video folder
+                string path = Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments);
+                path = Path.Combine(path, OGV2P.Admin.Properties.Settings.Default.LocalVideoFolder);
+                if (!Directory.Exists(path))
+                    Directory.CreateDirectory(path);
 
-                //axRTMPActiveX1.SetConfig("UseColorConverter", "2");
-                //axRTMPActiveX1.StartConnect();
+                path = Path.Combine(path,  _meeting.LocalFile);
+                axRControl.DestinationURL2 = path;
+                _meeting.LocalFile = path;
+
                 axRControl.StartBroadcast();
                 _vuMeterTimer.Start();
                 txtStatus.Text = "Running.";
