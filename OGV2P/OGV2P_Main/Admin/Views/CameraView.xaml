@@ -12,10 +12,17 @@
              Loaded="UserControl_Loaded"
              d:DesignHeight="1024" d:DesignWidth="900">
     <UserControl.Resources>
+        <Style TargetType="ProgressBar">
+            <Setter Property="Foreground">
+                <Setter.Value>
+                    <SolidColorBrush Color="{Binding VuMeterReading,Converter={StaticResource DoubleToColorConverter}}"></SolidColorBrush>
+                </Setter.Value>
+            </Setter>
+        </Style>
     </UserControl.Resources>
 
 
-    
+
     <Grid >
         <Grid.RowDefinitions>
             <RowDefinition Height="auto"/>
@@ -28,12 +35,7 @@
             <ColumnDefinition Width="450" />
         </Grid.ColumnDefinitions>
 
-        <StackPanel  Orientation="Horizontal" Grid.Row="0" 
-                     Grid.Column="0" Grid.ColumnSpan="2" Margin="5 0 0 5">
-            <Button Margin="30 0 30 0" Style="{StaticResource btn-primary}" Click="SettingsButton_Click">
-                Settings
-            </Button>
-        </StackPanel>
+
 
         <DockPanel  Grid.Row="1" Grid.Column="0" Grid.ColumnSpan="2"
                    LastChildFill="True" Panel.ZIndex="1">
@@ -51,24 +53,26 @@
                 <ColumnDefinition Width="*" />
                 <ColumnDefinition Width="45" />
             </Grid.ColumnDefinitions>
-            
-            <ProgressBar  x:Name="vuMeter" Height="10px" Grid.Column="0"
-                                        Margin="0 5 0 5" 
-                                        HorizontalAlignment="Stretch">
-                
+
+            <ProgressBar Background="Transparent"  x:Name="vuMeter" 
+                         Height="10px" 
+                         Grid.ColumnSpan="2" Grid.Column="0"
+                         Margin="5" 
+                         HorizontalAlignment="Stretch" Value="{Binding VuMeterReading}">
+
             </ProgressBar>
-            
+
         </Grid>
 
-        <Grid Grid.Row="3" Grid.Column="0" Grid.ColumnSpan="2">
+        <Grid Grid.Row="2" Grid.Column="0" Grid.ColumnSpan="2" Margin="0,20.4,0.2,0.2" Grid.RowSpan="2">
             <Grid.ColumnDefinitions>
                 <ColumnDefinition Width="100" />
                 <ColumnDefinition Width="*" />
             </Grid.ColumnDefinitions>
             <Grid.RowDefinitions>
-                <RowDefinition />
-                <RowDefinition />
-                <RowDefinition />
+                <RowDefinition Height="auto" />
+                <RowDefinition  Height="auto"/>
+                <RowDefinition Height="auto" />
                 <RowDefinition />
                 <RowDefinition />
                 <RowDefinition Height="Auto" />
@@ -85,8 +89,14 @@
                           Width="500" 
                           VerticalContentAlignment="Center"
                           SelectionChanged="cboMicrophones_SelectionChanged"></ComboBox>
-            
-            <StackPanel Grid.Row="2" Grid.ColumnSpan="2" Orientation="Horizontal" HorizontalAlignment="Center">
+
+            <StackPanel Grid.Row="2" Grid.ColumnSpan="1" Grid.Column="2" Width="500"
+                        Orientation="Horizontal">
+                <Button Style="{StaticResource btn-primary}" FontSize="15"
+                        Margin="10" Width="100"
+                        Click="SettingsButton_Click">
+                    Settings
+                </Button>
                 <Button x:Name="cmdStartRecording"
                         IsEnabled="{Binding Path=IsBusy, Converter={StaticResource InverseBoolConverter}}"
                         Click="cmdStartRecording_Click"  Style="{StaticResource btn-primary}" Margin="10" Width="100"
@@ -99,17 +109,23 @@
                         IsEnabled="{Binding IsBusy}"
                         Style="{StaticResource btn-info}" Margin="10" Width="100"
                         FontSize="15" Click="cmdStamp_Click">Stamp</Button>
-                <TextBlock x:Name="txtLastStamp"></TextBlock>
+
             </StackPanel>
 
-            <Label Grid.Column="0" Grid.Row="3" Width="75" MinWidth="50">Status</Label>
-            <TextBlock Grid.Column="1" Grid.Row="3" x:Name="txtStatus" TextAlignment="Center" VerticalAlignment="Center" TextTrimming="CharacterEllipsis" Text="{Binding SessionService.CurrentSession.StatusMessage}"></TextBlock>
+            <Label Grid.Column="0" Grid.Row="3" 
+                   Width="75" MinWidth="50">Timer</Label>
+            <TextBlock Grid.Column="1" x:Name="txtTimer"
+                       VerticalAlignment="Center" HorizontalAlignment="Center"
+                       FontSize="15" Grid.Row="3" Text="{Binding TimerStamp}"/>
 
-            <Label Grid.Column="0" Grid.Row="4" Width="75" MinWidth="50">CPU</Label>
-            <TextBlock Grid.Column="1" Grid.Row="4" x:Name="txtCpuUsage" TextAlignment="Center" VerticalAlignment="Center" TextTrimming="CharacterEllipsis" Text="{Binding SessionService.CurrentSession.StatusMessage}"></TextBlock>
+            <Label Grid.Column="0" Grid.Row="4" Width="75" MinWidth="50">Status</Label>
+            <TextBlock Grid.Column="1" Grid.Row="4" x:Name="txtStatus" TextAlignment="Center" VerticalAlignment="Center" TextTrimming="CharacterEllipsis" Text="{Binding SessionService.CurrentSession.StatusMessage}"></TextBlock>
 
-            
+            <Label Grid.Column="0" Grid.Row="5" Width="75" MinWidth="50">CPU</Label>
+            <TextBlock Grid.Column="1" Grid.Row="5" x:Name="txtCpuUsage" TextAlignment="Center" VerticalAlignment="Center" TextTrimming="CharacterEllipsis" Text="{Binding SessionService.CurrentSession.StatusMessage}"></TextBlock>
+
+
         </Grid>
-   
+
     </Grid>
 </UserControl>

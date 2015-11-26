@@ -9,6 +9,8 @@
                                          TrueValue="Visible" FalseValue="Collapsed"></infra:BoolToVisibilityConverter>
 
         <infra:InverseBooleanConverter x:Key="InverseBoolConverter"></infra:InverseBooleanConverter>
+
+        <infra:DoubleToColorConverter x:Key="DoubleToColorConverter"></infra:DoubleToColorConverter>
         
         <Style TargetType="UserControl">
             <Setter Property="MinWidth" Value="400" />

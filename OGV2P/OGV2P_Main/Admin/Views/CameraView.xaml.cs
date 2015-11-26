@@ -131,13 +131,85 @@ namespace OGV2P.Admin.Views
             }
         }
 
+        private double _vuMeterReading;
+
+        public double VuMeterReading
+        {
+            get
+            {
+                return _vuMeterReading;
+            }
+
+            set
+            {
+                _vuMeterReading = value;
+                OnPropertyChanged("VuMeterReading");
+            }
+        }
+
+        private int _hours;
+        public int Hours
+        {
+            get
+            {
+                return _hours;
+            }
+
+            set
+            {
+                _hours = value;
+                OnPropertyChanged("Hours");
+                OnPropertyChanged("TimerStamp");
+            }
+        }
+
+        private int _minutes;
+        public int Minutes
+        {
+            get
+            {
+                return _minutes;
+            }
+
+            set
+            {
+                _minutes = value;
+                OnPropertyChanged("Minutes");
+            }
+        }
+
+        private int _seconds;
+        public int Seconds
+        {
+            get
+            {
+                return _seconds;
+            }
+
+            set
+            {
+                _seconds = value;
+                OnPropertyChanged("Seconds");
+            }
+        }
+
+        public string TimerStamp
+        {
+            get
+            {
+                return string.Format("{0}:{1}:{2}", _hours, _minutes, _seconds);
+            }
+
+           
+        }
+
        
 
         private void UpdateVUMeter(int sampleVolume)
         {
             this.Dispatcher.InvokeAsync(() =>
             {
-                vuMeter.Value = (double)sampleVolume;
+                VuMeterReading = (double)sampleVolume;
             });
         }
 
@@ -179,9 +251,6 @@ namespace OGV2P.Admin.Views
                 cpuCounter.CounterName = "% Processor Time";
                 cpuCounter.InstanceName = "_Total";
                 cpuReadingTimer.Start();
-
-
-
 
                 //change status
                 txtStatus.Text = "Idle";
@@ -342,6 +411,14 @@ namespace OGV2P.Admin.Views
                     int volumeLevel = 0;
                     if (axRControl != null)
                         volumeLevel = axRControl.GetAudioLevel(0);
+
+                    string s = axRControl.GetConfig("StreamTime");
+                    int milliSeconds = int.Parse(s);
+                    TimeSpan current = new TimeSpan(0, 0, 0, 0, milliSeconds);
+                    Hours = (int)current.TotalHours;
+                    Minutes = (int)current.TotalMinutes;
+                    Seconds = (int)current.TotalSeconds;
+
                     UpdateVUMeter(volumeLevel);
                 });
             }
@@ -378,6 +455,7 @@ namespace OGV2P.Admin.Views
         {
             try
             {
+
                 //set local video folder
                 string path = Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments);
                 path = Path.Combine(path, OGV2P.Admin.Properties.Settings.Default.LocalVideoFolder);
@@ -388,6 +466,7 @@ namespace OGV2P.Admin.Views
                 axRControl.DestinationURL2 = path;
                 _meeting.LocalFile = path;
 
+                
                 axRControl.StartBroadcast();
                 _vuMeterTimer.Start();
                 txtStatus.Text = "Running.";
@@ -396,7 +475,7 @@ namespace OGV2P.Admin.Views
             catch (Exception ex)
             {
                 txtStatus.Text = "Stopped.";
-                MessageBox.Show(ex.Message + "-" + axRControl.LastErrorMessage);
+                MessageBox.Show("Error trying to record be sure to choose a valid agenda file" + "-" + axRControl.LastErrorMessage);
             }
         }
 
@@ -405,8 +484,13 @@ namespace OGV2P.Admin.Views
             axRControl.StopBroadcast();
             txtStatus.Text = "Stopped.";
             IsBusy = false;
+            VuMeterReading = 0;
+            _vuMeterTimer.Stop();
+            Hours = 0;
+            Minutes = 0;
+            Seconds = 0;
             axRControl.StartPreview();
-
+            txtTimer.Text = string.Empty;
         }
 
         private void cmdPreviewVideo_CLick(object sender, RoutedEventArgs e)
@@ -427,7 +511,6 @@ namespace OGV2P.Admin.Views
             String s = axRControl.GetConfig("StreamTime");
             int milliSeconds = int.Parse(s);
             TimeSpan current = new TimeSpan(0, 0, 0, 0, milliSeconds);
-            txtLastStamp.Text = string.Format("{0}:{1}:{2}", current.Hours, current.Minutes, current.Seconds);
             _sessionService.Stamp(current);
 
         }

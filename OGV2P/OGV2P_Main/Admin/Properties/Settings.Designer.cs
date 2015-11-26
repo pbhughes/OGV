@@ -49,7 +49,7 @@ namespace OGV2P.Admin.Properties {
         
         [global::System.Configuration.UserScopedSettingAttribute()]
         [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
-        [global::System.Configuration.DefaultSettingValueAttribute("50000")]
+        [global::System.Configuration.DefaultSettingValueAttribute("33000")]
         public int VuMeterMaximum {
             get {
                 return ((int)(this["VuMeterMaximum"]));

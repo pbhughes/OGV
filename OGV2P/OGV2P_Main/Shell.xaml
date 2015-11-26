@@ -16,25 +16,28 @@
         </Grid.ColumnDefinitions>
         
         <Grid.RowDefinitions>
-            <RowDefinition Height="*" />
+            <RowDefinition />
+            <RowDefinition Height="300"  />
+            <RowDefinition />
         </Grid.RowDefinitions>
 
 
-        <ContentControl Grid.Column="0" VerticalAlignment="Center"
+        <ContentControl Grid.Column="0" Grid.RowSpan="3" VerticalAlignment="Center"
                         Name="SideBarRegion" 
                         cal:RegionManager.RegionName="SideBarRegion"
                         Background="AliceBlue" />
 
 
-        <Border Grid.Column="1" MaxHeight="300" Margin="10" CornerRadius="8" Background="LightBlue">
-            <ContentControl   Panel.ZIndex="200"
+        <Border Grid.Column="1" Grid.Row="1" 
+                Margin="10" CornerRadius="8" Background="LightBlue">
+            <ContentControl Panel.ZIndex="200" MaxHeight="300" 
                          Name="MiddleRegion" VerticalAlignment="Center"
                         HorizontalAlignment="Center"
                         cal:RegionManager.RegionName="MiddleRegion" />
         </Border>
         
 
-        <ContentControl Grid.Column="2" 
+        <ContentControl Grid.Column="2" Grid.RowSpan="3"
                          Name="MainRegion" 
                         cal:RegionManager.RegionName="MainRegion" />
 
