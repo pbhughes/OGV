@@ -24,6 +24,7 @@ using Microsoft.Practices.Prism.Interactivity.InteractionRequest;
 using Microsoft.Practices.Prism.Interactivity;
 using Microsoft.Practices.Prism.Commands;
 using forms = System.Windows.Forms;
+using System.Xml.Linq;
 
 namespace OGV2P.Admin.Views
 {
@@ -42,6 +43,7 @@ namespace OGV2P.Admin.Views
         private IUser _user;
         private AxRTMPActiveX.AxRTMPActiveX axRControl;
         public InteractionRequest<INotification> NotificationRequest { get; set; }
+        private string PREFERED_DEVICE_FILE = "preferedDevices.xml";
 
         LinearGradientBrush _yellow =
         new LinearGradientBrush(Colors.Green, Colors.Yellow,
@@ -309,8 +311,7 @@ namespace OGV2P.Admin.Views
             //set the user id / password
             axRControl.SetConfig("Auth", string.Format("{0}:{1}",_user.SelectedBoard.UserID, _user.SelectedBoard.Password));
 
-            // Video Source Device (0...n)
-            axRControl.VideoSource = 0;
+          
 
             // Device/Camera Resolution
             axRControl.VideoWidth = 640;
@@ -329,11 +330,34 @@ namespace OGV2P.Admin.Views
             axRControl.OnStop += new AxRTMPActiveX.IRTMPActiveXEvents_OnStopEventHandler(axRControl_OnStop);
 
             // Video/Audio Devices
+            string[] lastUsedDevices = ReadDefaultDeviceCache();
+
             AddVideoSources();
-            cboCameras.SelectedItem = axRControl.GetVideoSource(0);
+            if(lastUsedDevices != null)
+            {
+                cboCameras.SelectedItem = lastUsedDevices[0];
+                axRControl.VideoSource = FindVideoSource(lastUsedDevices[0]); ;
+            }
+            else
+            {
+                cboCameras.SelectedItem = axRControl.GetVideoSource(0);
+                axRControl.VideoSource = 0;
+            }
+            
 
             AddAudioSources();
-            cboMicrophones.SelectedItem = axRControl.GetAudioSource(0);
+            if (lastUsedDevices != null)
+            {
+                cboMicrophones.SelectedItem = lastUsedDevices[1];
+                axRControl.AudioSource = FindAudioSource(lastUsedDevices[1]);
+
+            }
+            else
+            {
+                cboMicrophones.SelectedItem = axRControl.GetAudioSource(0);
+                axRControl.AudioSource = 0;
+            }
+           
 
             long num = axRControl.GetNumberOfResolutions(0);
             axRControl.VideoWidth = int.Parse(_settings["PreviewVideoWidth"]);
@@ -386,6 +410,29 @@ namespace OGV2P.Admin.Views
 
         }
 
+        private int FindAudioSource(string deviceName)
+        {
+            int result = 0;
+
+            try
+            {
+                int n = axRControl.NumberOfAudioSources;
+                for (int i = 0; i < n; i++)
+                {
+                    string source = axRControl.GetAudioSource(i);
+                    if (source == deviceName)
+                        return i;
+                }
+            }
+            catch (Exception ex)
+            {
+
+                MessageBox.Show("Unable to find the last audio device used {0}", deviceName);
+            }
+
+            return result;
+        }
+
         private void AddVideoSources()
         {
 
@@ -400,6 +447,29 @@ namespace OGV2P.Admin.Views
                 }
             }
 
+        }
+
+        private int FindVideoSource(string deviceName)
+        {
+            int result = 0;
+
+            try
+            {
+                int n = axRControl.NumberOfVideoSources;
+                for (int i = 0; i < n; i++)
+                {
+                    string source = axRControl.GetVideoSource(i);
+                    if (source == deviceName)
+                        return i;
+                }
+            }
+            catch (Exception ex)
+            {
+
+                MessageBox.Show("Unable to find the last audio device used {0}", deviceName);
+            }
+
+            return result;
         }
 
         private void _vuMeterTimer_Elapsed(object sender, ElapsedEventArgs e)
@@ -455,6 +525,7 @@ namespace OGV2P.Admin.Views
         {
             try
             {
+                WriteDefaultDeviceCache();
 
                 //set local video folder
                 string path = Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments);
@@ -462,21 +533,76 @@ namespace OGV2P.Admin.Views
                 if (!Directory.Exists(path))
                     Directory.CreateDirectory(path);
 
-                path = Path.Combine(path,  _meeting.LocalFile);
+                path = Path.Combine(path, _meeting.LocalFile);
                 axRControl.DestinationURL2 = path;
                 _meeting.LocalFile = path;
 
-                
                 axRControl.StartBroadcast();
                 _vuMeterTimer.Start();
                 txtStatus.Text = "Running.";
                 IsBusy = true;
-            } 
+            }
             catch (Exception ex)
             {
                 txtStatus.Text = "Stopped.";
                 MessageBox.Show("Error trying to record be sure to choose a valid agenda file" + "-" + axRControl.LastErrorMessage);
             }
+        }
+
+
+        private string[] ReadDefaultDeviceCache()
+        {
+            try
+            {
+                string video = string.Empty;
+                string audio = string.Empty;
+                if (File.Exists(PREFERED_DEVICE_FILE))
+                {
+                    string xml = File.ReadAllText(PREFERED_DEVICE_FILE);
+                    XDocument xDoc = XDocument.Parse(xml);
+                    video = xDoc.Element("devices").Element("videodevice").Value;
+                    audio = xDoc.Element("devices").Element("audiodevice").Value;
+
+                    string[] result = new string[] { video, audio };
+
+                    return result;
+                }
+
+                
+            }
+            catch (Exception ex)
+            {
+
+                MessageBox.Show(string.Format("Tried to read the default device cache file and failed. " +
+                    "Please verify the selected camera and micrphone before recording.  {0}", ex.Message));
+            }
+
+            return null;
+
+        }
+        private void WriteDefaultDeviceCache()
+        {
+            try
+            {
+                //remember the chosen audio and video devices
+                string videoCacheDevice = cboCameras.SelectedItem.ToString();
+                string audioCacheDevice = cboMicrophones.SelectedItem.ToString();
+                XDocument xDoc = new XDocument();
+                XElement root = new XElement("devices", null);
+                XElement videoElement = new XElement("videodevice", videoCacheDevice);
+                XElement audioElement = new XElement("audiodevice", audioCacheDevice);
+                root.Add(videoElement);
+                root.Add(audioElement);
+                xDoc.Add(root);
+                File.WriteAllText(PREFERED_DEVICE_FILE, xDoc.ToString());
+            }
+            catch (Exception ex)
+            {
+
+                MessageBox.Show(string.Format("Tried to write the default device cache file and failed. " +
+                    "Please verify the selected camera and micrphone before recording.  {0}", ex.Message));
+            }
+            
         }
 
         private void cmdStopRecording_Click(object sender, RoutedEventArgs e)
@@ -508,6 +634,8 @@ namespace OGV2P.Admin.Views
 
         private void cmdStamp_Click(object sender, RoutedEventArgs e)
         {
+           
+
             String s = axRControl.GetConfig("StreamTime");
             int milliSeconds = int.Parse(s);
             TimeSpan current = new TimeSpan(0, 0, 0, 0, milliSeconds);
