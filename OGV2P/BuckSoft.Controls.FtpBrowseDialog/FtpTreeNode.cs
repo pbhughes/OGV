@@ -81,7 +81,7 @@ namespace BuckSoft.Controls.FtpBrowseDialog
 
         #region Public Methods
         public int AddFile(String file)
-        {
+        { 
             return files.Add(file);
         }
         public int AddDirectory(String dir)

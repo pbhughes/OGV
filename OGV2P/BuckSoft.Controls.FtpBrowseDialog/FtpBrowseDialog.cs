@@ -171,7 +171,10 @@ namespace BuckSoft.Controls.FtpBrowseDialog
                     else
                     {
                         String[] filetokens = str.Split(new String[] { " " }, StringSplitOptions.RemoveEmptyEntries);
-                        rootnode.AddFile(filetokens[filetokens.Length - 1].Trim());
+
+                        if(filetokens.Length >= 9 )
+                            if(filetokens[8] != "." && filetokens[8] != "..")
+                                rootnode.AddFile(filetokens[filetokens.Length - 1].Trim());
                     }
                 }
             }

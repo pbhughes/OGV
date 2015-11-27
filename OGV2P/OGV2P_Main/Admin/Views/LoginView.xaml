@@ -58,7 +58,8 @@
                         HorizontalAlignment="Right" Margin="0 10 5 0">
                 <Button x:Name="cmdLogin" IsDefault="True" 
                         Command="{Binding LoginCommand}" 
-                        Style="{DynamicResource btn-primary}" Click="cmdLogin_Click">Login</Button>
+                        Style="{DynamicResource btn-primary}" 
+                        Click="cmdLogin_Click">Login</Button>
             </StackPanel>
             <TextBlock Text="{Binding Message}" Foreground="Red" 
                        Margin="10 10 10 10"></TextBlock>

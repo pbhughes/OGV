@@ -10,6 +10,7 @@ using BuckSoft.Controls.FtpBrowseDialog;
 using forms = System.Windows.Forms;
 using System.Collections.Specialized;
 using System.Configuration;
+using System.Runtime.InteropServices;
 
 namespace Infrastructure.Models
 {
@@ -19,7 +20,7 @@ namespace Infrastructure.Models
 
         private int _orginalHash;
         private ISession _sessionService;
-
+        private IUser _user;
         private bool _isBusy;
 
         public bool IsBusy
@@ -222,63 +223,80 @@ namespace Infrastructure.Models
 
         private void OnLoadAgenda(forms.TreeView agendaTree)
         {
-            // Create OpenFileDialog 
-            FtpBrowseDialog dlg = new FtpBrowseDialog("ftp.coreyware.com", "test", 21, "barkley", "mep-005a", true);
-
-            var result = dlg.ShowDialog();
-            // Get the selected file name and display in a TextBox 
-            if (result == forms.DialogResult.OK)
+            string fileName = string.Empty;
+            try
             {
-                // Open document 
-                FileName = dlg.SelectedFile;
+                // Create OpenFileDialog 
+                FtpBrowseDialog dlg = new FtpBrowseDialog("ftp.coreyware.com", "test", 21, _user.UserID, _user.Password, true);
 
-                //parse the agenda file
-                FtpWebRequest req = (FtpWebRequest)WebRequest.Create(dlg.SelectedFile);
-                NetworkCredential creds = new NetworkCredential("barkley", "mep-005a");
-                req.Credentials = creds;
-                req.Method = WebRequestMethods.Ftp.DownloadFile;
-
-                FtpWebResponse response = (FtpWebResponse)req.GetResponse();
-                StreamReader sr = new StreamReader(response.GetResponseStream());
-
-                string allText = sr.ReadToEnd();
-                _orginalHash = allText.GetHashCode();
-
-
-                XDocument xDoc = XDocument.Parse(allText);
-                MeetingName = xDoc.Element("meeting").Element("meetingname").Value;
-
-                ClientPathLive = xDoc.Element("meeting").Element("clientpathlive").Value;
-                ClientPathLiveStream = xDoc.Element("meeting").Element("clientpathlivestream").Value;
-
-                MeetingDate = (xDoc.Element("meeting").Element("meetingdate") != null) ?
-                    DateTime.Parse(xDoc.Element("meeting").Element("meetingdate").Value) :
-                    DateTime.Now;
-
-                VideoHeight = int.Parse(xDoc.Element("meeting").Element("videoheight").Value);
-                VideoWidth = int.Parse(xDoc.Element("meeting").Element("videowidth").Value);
-                FrameRate = int.Parse(xDoc.Element("meeting").Element("framerate").Value);
-                LandingPage = xDoc.Element("meeting").Element("landingpage").Value;
-
-                this.LocalFile = string.Format("{0}-{1}-{2}_{3}.mp4", this.MeetingDate.Day, this.MeetingDate.Month, this.MeetingDate.Year, this.MeetingName);
-                XElement items = xDoc.Element("meeting").Element("agenda").Element("items");
-                if (items != null)
+                var result = dlg.ShowDialog();
+                // Get the selected file name and display in a TextBox 
+                if (result == forms.DialogResult.OK)
                 {
-                    forms.TreeNode root = new forms.TreeNode();
-                    Agenda a = new Agenda();
-                    ParseItems(items, ref a, ref root);
-                    foreach(forms.TreeNode x in root.Nodes){
-                        agendaTree.Nodes.Add(x);
+                    // Open document 
+                    fileName = dlg.SelectedFile;
+
+                    //parse the agenda file
+                    FtpWebRequest req = (FtpWebRequest)WebRequest.Create(fileName);
+                    NetworkCredential creds = new NetworkCredential(_user.UserID, _user.Password);
+                    req.Credentials = creds;
+                    req.Method = WebRequestMethods.Ftp.DownloadFile;
+
+                    FtpWebResponse response = (FtpWebResponse)req.GetResponse();
+                    StreamReader sr = new StreamReader(response.GetResponseStream());
+
+                    string allText = sr.ReadToEnd();
+                    _orginalHash = allText.GetHashCode();
+
+
+                    XDocument xDoc = XDocument.Parse(allText);
+                    MeetingName = xDoc.Element("meeting").Element("meetingname").Value;
+
+                    ClientPathLive = xDoc.Element("meeting").Element("clientpathlive").Value;
+                    ClientPathLiveStream = xDoc.Element("meeting").Element("clientpathlivestream").Value;
+
+                    MeetingDate = (xDoc.Element("meeting").Element("meetingdate") != null) ?
+                        DateTime.Parse(xDoc.Element("meeting").Element("meetingdate").Value) :
+                        DateTime.Now;
+
+                    VideoHeight = int.Parse(xDoc.Element("meeting").Element("videoheight").Value);
+                    VideoWidth = int.Parse(xDoc.Element("meeting").Element("videowidth").Value);
+                    FrameRate = int.Parse(xDoc.Element("meeting").Element("framerate").Value);
+                    LandingPage = xDoc.Element("meeting").Element("landingpage").Value;
+
+                    this.LocalFile = string.Format("{0}-{1}-{2}_{3}.mp4", this.MeetingDate.Day, this.MeetingDate.Month, this.MeetingDate.Year, this.MeetingName);
+                    XElement items = xDoc.Element("meeting").Element("agenda").Element("items");
+                    if (items != null)
+                    {
+                        forms.TreeNode root = new forms.TreeNode();
+                        Agenda a = new Agenda();
+                        ParseItems(items, ref a, ref root);
+                        foreach (forms.TreeNode x in root.Nodes)
+                        {
+                            agendaTree.Nodes.Add(x);
+                        }
+                        agendaTree.ShowPlusMinus = false;
+                        agendaTree.ShowLines = false;
+                        agendaTree.ExpandAll();
                     }
-                    agendaTree.ShowPlusMinus = false;
-                    agendaTree.ShowLines = false;
-                    agendaTree.ExpandAll();
+
+                    OnRaiseMeetingSetEvent();
+
+
                 }
-
-                OnRaiseMeetingSetEvent();
-
-               
             }
+            catch ( COMException cex)
+            {
+                ; //ignore it
+
+            }
+            catch (Exception ex)
+            {
+
+                System.Windows.MessageBox.Show(string.Format("Unable to download file :{0} verify the filename is correct.", fileName));
+
+            }
+
 
         }
 
@@ -314,9 +332,10 @@ namespace Infrastructure.Models
         }
 
 
-        public Meeting(ISession sessionService)
+        public Meeting(ISession sessionService, IUser user)
         {
             _sessionService = sessionService;
+            _user = user;
             _sessionService.RaiseStamped += _sessionService_RaiseStamped;
             _loadAgenda = new DelegateCommand<forms.TreeView>(OnLoadAgenda, CanLoadAgenda);
             _agenda = new Agenda();

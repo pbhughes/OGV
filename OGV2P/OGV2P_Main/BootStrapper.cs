@@ -59,7 +59,7 @@ namespace OGV2P
             _boardList = LoadBoards();
             _session = new Session();
             _user = new User(_session, _boardList);
-            _meeting = new Meeting(_session);
+            _meeting = new Meeting(_session, _user);
            
 
             _user.RaiseLoginEvent += _user_RaiseLoginEvent;
