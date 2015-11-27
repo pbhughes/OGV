@@ -54,10 +54,10 @@
                 <ColumnDefinition Width="45" />
             </Grid.ColumnDefinitions>
 
-            <ProgressBar Background="Transparent"  x:Name="vuMeter" 
+            <ProgressBar BorderThickness="0" Background="Transparent"  x:Name="vuMeter" 
                          Height="10px" 
                          Grid.ColumnSpan="2" Grid.Column="0"
-                         Margin="5" 
+                         Margin="50 5 50 5" 
                          HorizontalAlignment="Stretch" Value="{Binding VuMeterReading}">
 
             </ProgressBar>
@@ -119,7 +119,11 @@
                        FontSize="15" Grid.Row="3" Text="{Binding TimerStamp}"/>
 
             <Label Grid.Column="0" Grid.Row="4" Width="75" MinWidth="50">Status</Label>
-            <TextBlock Grid.Column="1" Grid.Row="4" x:Name="txtStatus" TextAlignment="Center" VerticalAlignment="Center" TextTrimming="CharacterEllipsis" Text="{Binding SessionService.CurrentSession.StatusMessage}"></TextBlock>
+            <TextBlock Grid.Column="1" Grid.Row="4"
+                       TextAlignment="Center" 
+                       VerticalAlignment="Center" 
+                       TextTrimming="CharacterEllipsis"
+                       Text="{Binding Message}"></TextBlock>
 
             <Label Grid.Column="0" Grid.Row="5" Width="75" MinWidth="50">CPU</Label>
             <TextBlock Grid.Column="1" Grid.Row="5" x:Name="txtCpuUsage" TextAlignment="Center" VerticalAlignment="Center" TextTrimming="CharacterEllipsis" Text="{Binding SessionService.CurrentSession.StatusMessage}"></TextBlock>

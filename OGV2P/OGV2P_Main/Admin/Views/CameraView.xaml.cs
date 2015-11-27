@@ -25,6 +25,7 @@ using Microsoft.Practices.Prism.Interactivity;
 using Microsoft.Practices.Prism.Commands;
 using forms = System.Windows.Forms;
 using System.Xml.Linq;
+using Newtonsoft.Json;
 
 namespace OGV2P.Admin.Views
 {
@@ -205,7 +206,23 @@ namespace OGV2P.Admin.Views
            
         }
 
+        private string _message;
+        public string Message
+        {
+            get
+            {
+                return _message;
+            }
+
+            set
+            {
+                _message = value;
+                OnPropertyChanged("Message");
+            }
+        }
+
        
+
 
         private void UpdateVUMeter(int sampleVolume)
         {
@@ -254,9 +271,6 @@ namespace OGV2P.Admin.Views
                 cpuCounter.InstanceName = "_Total";
                 cpuReadingTimer.Start();
 
-                //change status
-                txtStatus.Text = "Idle";
-
                 //setup the vu meter
                 vuMeter.Minimum = double.Parse(_settings["VuMeterMinimum"]);
                 vuMeter.Maximum = double.Parse(_settings["VuMeterMaximum"]);
@@ -269,7 +283,7 @@ namespace OGV2P.Admin.Views
                 axRControl = new AxRTMPActiveX.AxRTMPActiveX();
                 winFrmHost.Child = axRControl;
 
-
+                
             }
             catch (Exception ex)
             {
@@ -328,6 +342,7 @@ namespace OGV2P.Admin.Views
             // nanoStream Event Handlers
             axRControl.OnEvent += new AxRTMPActiveX.IRTMPActiveXEvents_OnEventEventHandler(axRControl_OnEvent);
             axRControl.OnStop += new AxRTMPActiveX.IRTMPActiveXEvents_OnStopEventHandler(axRControl_OnStop);
+            
 
             // Video/Audio Devices
             string[] lastUsedDevices = ReadDefaultDeviceCache();
@@ -508,16 +523,64 @@ namespace OGV2P.Admin.Views
 
         void axRControl_OnStop(object sender, AxRTMPActiveX.IRTMPActiveXEvents_OnStopEvent e)
         {
-            txtStatus.Text = "Stopped.";
-            MessageBox.Show(e.ToString() + " - " + e.result);
+            int result = 0;
+            bool parsed = int.TryParse(e.result, out result);
+            if (parsed)
+            {
+                if (result < 64)
+                {
+
+                    switch (result)
+                    {
+                        case 1:
+                            Message = "Streaming Error";
+                            break;
+                        case 2:
+                            Message = "Connection Lost";
+                            break;
+                        case 3:
+                            Message = "No input data, timeout";
+                            break;
+                        case 4:
+                            Message = "License expired";
+                            break;
+                        default:
+                            Message = "Stopped";
+                            break;
+                            
+                    }
+                    return;
+                }
+                else
+                {
+                    Message = string.Format("Connection lost, reconnecting");
+                    return;
+                }
+            }
+
+            Message = "Streaming stopped for an unkown reason";
+
+            System.Diagnostics.Debug.WriteLine(e.result);
         }
 
         void axRControl_OnEvent(object sender, AxRTMPActiveX.IRTMPActiveXEvents_OnEventEvent e)
         {
-            if (e.type == "10")
-                txtStatus.Text = "Running...";
-            else
-                txtStatus.Text = "Event Status " + e.type + " Text: " + e.result;
+
+            int result = 0;
+            bool parsed = int.TryParse(e.type, out result);
+
+            if (parsed)
+            {
+                if (result == 10)
+                    ;
+                if (result == 11)
+                {
+                    RTMPStatus status = Newtonsoft.Json.JsonConvert.DeserializeObject<RTMPStatus>(e.result);
+                    Message = status.ConnectionStatus;
+                }
+
+            }
+            System.Diagnostics.Debug.WriteLine(e.result);
 
         }
 
@@ -539,12 +602,10 @@ namespace OGV2P.Admin.Views
 
                 axRControl.StartBroadcast();
                 _vuMeterTimer.Start();
-                txtStatus.Text = "Running.";
                 IsBusy = true;
             }
             catch (Exception ex)
             {
-                txtStatus.Text = "Stopped.";
                 MessageBox.Show("Error trying to record be sure to choose a valid agenda file" + "-" + axRControl.LastErrorMessage);
             }
         }
@@ -608,7 +669,6 @@ namespace OGV2P.Admin.Views
         private void cmdStopRecording_Click(object sender, RoutedEventArgs e)
         {
             axRControl.StopBroadcast();
-            txtStatus.Text = "Stopped.";
             IsBusy = false;
             VuMeterReading = 0;
             _vuMeterTimer.Stop();
@@ -619,19 +679,7 @@ namespace OGV2P.Admin.Views
             txtTimer.Text = string.Empty;
         }
 
-        private void cmdPreviewVideo_CLick(object sender, RoutedEventArgs e)
-        {
-
-            //Process.Start(txtUrl.Text);
-        }
-
-        private void PreviewLocalFileLocation(object sender, RoutedEventArgs e)
-        {
-            //DirectoryInfo root = Directory.GetParent(txtLocalFile.Text);
-
-            //Process.Start(root.FullName);
-        }
-
+       
         private void cmdStamp_Click(object sender, RoutedEventArgs e)
         {
            
