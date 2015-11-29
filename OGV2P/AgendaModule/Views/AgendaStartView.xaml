@@ -47,10 +47,12 @@
                                 VerticalContentAlignment="Center"
                                 VerticalAlignment="Center"
                   FirstDayOfWeek="Monday"  />
-            <WindowsFormsHost Grid.Row="2" Grid.Column="0" HorizontalAlignment="Stretch"
+            <WindowsFormsHost Grid.Row="2" Grid.Column="0" 
+                              HorizontalAlignment="Stretch"
                                   VerticalAlignment="Stretch" 
-                                  Grid.ColumnSpan="3" MinHeight="525"  Margin="20" x:Name="frmHost"  FontSize="16">
-                <wf:TreeView x:Name="agendaTree" />
+                                  Grid.ColumnSpan="3" MinHeight="525"
+                              Margin="20" x:Name="frmHost"  FontSize="16">
+                <wf:TreeView x:Name="agendaTree" DoubleClick="agendaTree_DoubleClick"  />
             </WindowsFormsHost>
             <Label Grid.Row="3" Grid.Column="0">Title:</Label>
             <ScrollViewer 

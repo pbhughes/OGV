@@ -46,7 +46,10 @@ namespace Infrastructure.Models
         public TimeSpan TimeStamp
         {
             get { return _timeStamp; }
-            set { _timeStamp = value; OnPropertyChanged("TimeStamp"); }
+            set {
+                _timeStamp = value;
+                OnPropertyChanged("TimeStamp");
+            }
         }
 
         private List<Item> _items;

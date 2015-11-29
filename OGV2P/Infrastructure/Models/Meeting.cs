@@ -322,13 +322,18 @@ namespace Infrastructure.Models
             }
         }
 
-        public void FindItem(int hashCode)
+        public Item FindItem(int hashCode)
         {
             foreach (Item i in this.MeetingAgenda.Items)
             {
                 if (i.Title.GetHashCode() == hashCode)
-                    SelectedItem = i;
+                {
+                    return i;
+                }
+                    
             }
+
+            return null;
         }
 
 
@@ -347,7 +352,11 @@ namespace Infrastructure.Models
         private void _sessionService_RaiseStamped(TimeSpan sessionTime)
         {
             if (_selectedItem != null)
+            {
                 _selectedItem.TimeStamp = sessionTime;
+                
+            }
+               
         }
 
         #region INotifyPropertyChanged

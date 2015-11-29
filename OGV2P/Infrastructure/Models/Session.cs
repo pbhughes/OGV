@@ -30,6 +30,23 @@ namespace Infrastructure.Models
             }
         }
 
+        private TimeSpan _currentVideoTime;
+        public TimeSpan CurrentVideoTime
+        {
+            get
+            {
+                return _currentVideoTime;
+            }
+
+            set
+            {
+                _currentVideoTime = value;
+                OnPropertyChanged("CurrentVideoTime");
+            }
+        }
+
+
+
         string _meetingName;
 
         public string MeetingName
@@ -51,10 +68,7 @@ namespace Infrastructure.Models
             set { _recoderID = value; }
         }
 
-   
-
-       
-
+     
         public event MeetingNameSetEventHandler RaiseMeetingNameSet;
 
         public void OnRaiseMeetingSetEvent()
@@ -71,9 +85,9 @@ namespace Infrastructure.Models
                 RaiseStamped(sessionTime);
         }
 
-        void ISession.Stamp(TimeSpan sessionTime)
+        void ISession.Stamp()
         {
-            RaiseStampedEvent(sessionTime);
+            RaiseStampedEvent(CurrentVideoTime);
         }
 
         public Session()

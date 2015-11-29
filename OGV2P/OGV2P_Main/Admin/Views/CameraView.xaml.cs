@@ -298,10 +298,9 @@ namespace OGV2P.Admin.Views
         {
             try
             {
-                axRControl.StopPreview();
                 axRControl.DestinationURL = _meeting.PublishingPoint;
 
-                axRControl.StartConnect();
+                //axRControl.StartConnect();
                 axRControl.StartPreview();
             }
             catch(AccessViolationException aex)
@@ -503,7 +502,7 @@ namespace OGV2P.Admin.Views
                     Hours = (int)current.TotalHours;
                     Minutes = (int)current.TotalMinutes;
                     Seconds = (int)current.TotalSeconds;
-
+                    _sessionService.CurrentVideoTime = current;
                     UpdateVUMeter(volumeLevel);
                 });
             }
@@ -682,12 +681,8 @@ namespace OGV2P.Admin.Views
        
         private void cmdStamp_Click(object sender, RoutedEventArgs e)
         {
-           
 
-            String s = axRControl.GetConfig("StreamTime");
-            int milliSeconds = int.Parse(s);
-            TimeSpan current = new TimeSpan(0, 0, 0, 0, milliSeconds);
-            _sessionService.Stamp(current);
+            _sessionService.Stamp();
 
         }
 

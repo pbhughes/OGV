@@ -17,7 +17,7 @@ namespace Infrastructure.Interfaces
         string MeetingName { get; set; }
         event System.ComponentModel.PropertyChangedEventHandler PropertyChanged;
         Item SelectedItem { get; set; }
-        void FindItem(int hashCode);
+        Item FindItem(int hashCode);
         string ClientPathLive { get; set; }
         string ClientPathLiveStream { get; set; }
         int VideoWidth { get; set; }
