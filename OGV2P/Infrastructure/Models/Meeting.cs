@@ -22,7 +22,7 @@ namespace Infrastructure.Models
         private ISession _sessionService;
         private IUser _user;
         private bool _isBusy;
-        private forms.ContextMenuStrip _docMenu;
+      
 
         public bool IsBusy
         {
@@ -322,13 +322,6 @@ namespace Infrastructure.Models
                     string assingedText = (x.Title.Length < 150) ? x.Title : x.Title.Substring(0, 150);
                     forms.TreeNode xn = new forms.TreeNode() { Text = assingedText , ToolTipText = x.Title };
 
-                    _docMenu = new System.Windows.Forms.ContextMenuStrip();
-                    forms.ToolStripMenuItem unstamp = new forms.ToolStripMenuItem("Clear Stamp");
-                    unstamp.Click += Unstamp_Click;
-                    _docMenu.Items.Add(unstamp);
-
-                    xn.ContextMenuStrip = _docMenu;
-
                     if (item.Element("items") == null || item.Element("items").Elements("item") != null)
                     {
                         ParseItems(item.Element("items"), ref a, ref xn);
@@ -339,11 +332,7 @@ namespace Infrastructure.Models
             }
         }
 
-        private void Unstamp_Click(object sender, EventArgs e)
-        {
-
-        }
-
+      
 
         public Item FindItem(int hashCode)
         {

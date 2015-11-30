@@ -18,7 +18,8 @@ namespace OGV2P.AgendaModule.Views
         private IMeeting _currentMeeting;
         private ISession _sessionService;
         private forms.ImageList _treeImages = new forms.ImageList();
-       
+        private forms.ContextMenuStrip _docMenu;
+
 
         public AgendaStartView(IMeeting meeting, ISession sessionService)
         {
@@ -77,16 +78,33 @@ namespace OGV2P.AgendaModule.Views
         {
             if (agendaTree != null)
                 if (agendaTree.Nodes.Count > 0)
+                {
                     agendaTree.SelectedNode = agendaTree.Nodes[0];
+                    foreach( forms.TreeNode tn in agendaTree.Nodes)
+                    {
+                        _docMenu = new System.Windows.Forms.ContextMenuStrip();
+                        forms.ToolStripMenuItem stamp = new forms.ToolStripMenuItem("Stamp");
+                        stamp.Click += Stamp_Click;
+                        forms.ToolStripMenuItem unstamp = new forms.ToolStripMenuItem("Clear Stamp");
+                        unstamp.Click += Unstamp_Click;
+                        _docMenu.Items.Add(stamp);
+                        _docMenu.Items.Add(unstamp);
+                        tn.ContextMenuStrip = _docMenu;
+                    }
+                  
+                }
+                    
+
+          
         }
 
         private void _sessionService_RaiseStamped(System.TimeSpan sessionTime)
         {
-            MarkStampedItem();
+            MarkItemStamped();
 
         }
 
-        private void MarkStampedItem()
+        private void MarkItemStamped()
         {
             if (_currentMeeting.IsBusy)
             {
@@ -120,7 +138,7 @@ namespace OGV2P.AgendaModule.Views
         {
 
             _sessionService.Stamp();
-            MarkStampedItem();
+            MarkItemStamped();
            
         }
 
@@ -152,5 +170,16 @@ namespace OGV2P.AgendaModule.Views
                 
             }
         }
+
+        private void Stamp_Click(object sender, EventArgs e)
+        {
+            MarkItemStamped();
+        }
+
+        private void Unstamp_Click(object sender, EventArgs e)
+        {
+
+        }
+
     }
 }
