@@ -74,6 +74,7 @@ namespace OGV2P.AgendaModule.Views
         }
 
      
+
         private void _currentMeeting_RaiseMeetingSetEvent(object sender, EventArgs e)
         {
             if (agendaTree != null)
@@ -82,26 +83,43 @@ namespace OGV2P.AgendaModule.Views
                     agendaTree.SelectedNode = agendaTree.Nodes[0];
                     foreach( forms.TreeNode tn in agendaTree.Nodes)
                     {
-                        _docMenu = new System.Windows.Forms.ContextMenuStrip();
-                        forms.ToolStripMenuItem stamp = new forms.ToolStripMenuItem("Stamp");
-                        stamp.Click += Stamp_Click;
-                        forms.ToolStripMenuItem unstamp = new forms.ToolStripMenuItem("Clear Stamp");
-                        unstamp.Click += Unstamp_Click;
-                        _docMenu.Items.Add(stamp);
-                        _docMenu.Items.Add(unstamp);
-                        tn.ContextMenuStrip = _docMenu;
+                        AssignContextMenu(tn);
                     }
-                  
-                }
-                    
 
-          
+                }
+
+        }
+
+        private void AssignContextMenu(forms.TreeNode tn)
+        {
+           
+            foreach(forms.TreeNode tnSub in tn.Nodes)
+            {
+                AssignContextMenu(tnSub);
+
+            }
+
+            _docMenu = new System.Windows.Forms.ContextMenuStrip();
+            forms.ToolStripMenuItem stamp = new forms.ToolStripMenuItem("Stamp");
+            stamp.Click += Stamp_Click;
+            forms.ToolStripMenuItem unstamp = new forms.ToolStripMenuItem("Clear Stamp");
+            unstamp.Click += Unstamp_Click;
+            _docMenu.Items.Add(stamp);
+            _docMenu.Items.Add(unstamp);
+            tn.ContextMenuStrip = _docMenu;
+
+
         }
 
         private void _sessionService_RaiseStamped(System.TimeSpan sessionTime)
         {
             MarkItemStamped();
 
+        }
+
+        private void _sessionService_ClearStamp()
+        {
+            UnstampItem();
         }
 
         private void MarkItemStamped()
@@ -123,7 +141,32 @@ namespace OGV2P.AgendaModule.Views
                             agendaTree.SelectedNode.SelectedImageKey = "stamped";
                         }
                     }
+                    
 
+                }
+            }
+        }
+
+        private void UnstampItem()
+        {
+            if (_currentMeeting.IsBusy)
+            {
+                if (agendaTree.SelectedNode != null)
+                {
+                    if (agendaTree.ImageList.Images.Count >= 2)
+                    {
+                        if (agendaTree.SelectedNode.ImageKey.ToLower().Contains("edited"))
+                        {
+                            agendaTree.SelectedNode.ImageKey = "unstamped_edited";
+                            agendaTree.SelectedNode.SelectedImageKey = "unstamped_edited";
+                        }
+                        else
+                        {
+                            agendaTree.SelectedNode.ImageKey = "unselected";
+                            agendaTree.SelectedNode.SelectedImageKey = "unselected";
+                        }
+                    }
+                    _currentMeeting.SelectedItem.TimeStamp = TimeSpan.Zero;
                 }
             }
         }
@@ -174,12 +217,18 @@ namespace OGV2P.AgendaModule.Views
         private void Stamp_Click(object sender, EventArgs e)
         {
             MarkItemStamped();
+            _currentMeeting.SelectedItem.TimeStamp = _sessionService.CurrentVideoTime;
         }
 
         private void Unstamp_Click(object sender, EventArgs e)
         {
-
+            UnstampItem();
         }
 
+        private void agendaTree_MouseUp(object sender, forms.MouseEventArgs e)
+        {
+            if (e.Button == System.Windows.Forms.MouseButtons.Right)
+                agendaTree.SelectedNode = agendaTree.GetNodeAt(e.X, e.Y);
+        }
     }
 }

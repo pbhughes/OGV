@@ -23,5 +23,6 @@ namespace Infrastructure.Interfaces
         event MeetingNameSetEventHandler RaiseMeetingNameSet;
 
         event StampedEventHandler RaiseStamped;
+
     }
 }

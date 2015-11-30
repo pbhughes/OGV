@@ -21,9 +21,8 @@ namespace Infrastructure.Models
         private int _orginalHash;
         private ISession _sessionService;
         private IUser _user;
-        private bool _isBusy;
-      
 
+        private bool _isBusy;
         public bool IsBusy
         {
             get { return _isBusy; }
@@ -36,8 +35,6 @@ namespace Infrastructure.Models
             get { return _selectedItem; }
             set { _selectedItem = value; OnPropertyChanged("SelectedItem"); }
         }
-
-       
 
         private DelegateCommand<forms.TreeView> _loadAgenda;
         public DelegateCommand<forms.TreeView> LoadAgenda
@@ -318,6 +315,7 @@ namespace Infrastructure.Models
                     Item x = new Item();
                     x.Title = (item.Element("title") != null) ? item.Element("title").Value : null;
                     x.Description = (item.Element("desc") != null) ? item.Element("desc").Value : null;
+                    x.TimeStamp = (item.Element("timestamp") != null) ? TimeSpan.Parse(item.Element("timespan").Value) : TimeSpan.Zero;
                     _agenda.Items.Add(x);
                     string assingedText = (x.Title.Length < 150) ? x.Title : x.Title.Substring(0, 150);
                     forms.TreeNode xn = new forms.TreeNode() { Text = assingedText , ToolTipText = x.Title };
@@ -331,8 +329,6 @@ namespace Infrastructure.Models
                 }
             }
         }
-
-      
 
         public Item FindItem(int hashCode)
         {
@@ -357,6 +353,8 @@ namespace Infrastructure.Models
             _agenda = new Agenda();
           
         }
+
+       
 
         private void _sessionService_RaiseStamped(TimeSpan sessionTime)
         {

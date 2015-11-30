@@ -90,6 +90,8 @@ namespace Infrastructure.Models
             RaiseStampedEvent(CurrentVideoTime);
         }
 
+        
+
         public Session()
         {
 

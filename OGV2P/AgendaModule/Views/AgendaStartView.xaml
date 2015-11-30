@@ -54,7 +54,8 @@
                                   Grid.ColumnSpan="3" MinHeight="525"
                               Margin="20" x:Name="frmHost"  FontSize="16">
                 <wf:TreeView x:Name="agendaTree" 
-                             DoubleClick="agendaTree_DoubleClick" />
+                             DoubleClick="agendaTree_DoubleClick"
+                             MouseUp="agendaTree_MouseUp" />
                 
             </WindowsFormsHost>
             <Label Grid.Row="3" Grid.Column="0">Title:</Label>
