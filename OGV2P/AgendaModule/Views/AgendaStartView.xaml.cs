@@ -187,9 +187,20 @@ namespace OGV2P.AgendaModule.Views
 
         private void DescriptionBox_KeyDown(object sender, KeyEventArgs e)
         {
-            if (e.Key == Key.Enter)
+            if (e.Key == Key.Enter || e.Key == Key.Tab)
             {
-
+                string newDescription = txtDescription.Text;
+                agendaTree.SelectedNode.Text = newDescription;
+                if (agendaTree.SelectedNode.ImageKey == "stamped")
+                {
+                    agendaTree.SelectedNode.ImageKey = "stamped_edited";
+                    agendaTree.SelectedNode.SelectedImageKey = "stamped_edited";
+                }
+                else
+                {
+                    agendaTree.SelectedNode.ImageKey = "unstamped_edited";
+                    agendaTree.SelectedNode.SelectedImageKey = "unstamped_edited";
+                }
             }
         }
         
