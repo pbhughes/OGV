@@ -205,8 +205,6 @@ namespace Infrastructure.Models
             }
         }
 
-        
-
         public event MeetingSetEventHandler RaiseMeetingSetEvent;
 
         private void OnRaiseMeetingSetEvent()
