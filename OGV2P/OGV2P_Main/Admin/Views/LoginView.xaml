@@ -21,27 +21,7 @@
                   VerticalContentAlignment="Center"
                   SelectedItem="{Binding SelectedBoard}"
                   SelectionChanged="lstBoards_SelectionChanged"></ComboBox>
-        <tk:BusyIndicator Grid.Row="1" IsBusy="{Binding IsBusy}" HorizontalAlignment="Center" VerticalAlignment="Center" DisplayAfter="0" Panel.ZIndex="100">
-            <tk:BusyIndicator.BusyContentTemplate>
-                <DataTemplate>
-                    <StackPanel Margin="5">
-                        <Image gif:ImageBehavior.AnimatedSource="..\Images\loggingin.gif"  Width="100" Height="100" />
-                    </StackPanel>
-                </DataTemplate>
-            </tk:BusyIndicator.BusyContentTemplate>
-            <tk:BusyIndicator.OverlayStyle>
-                <Style TargetType="Rectangle">
-                    <Setter Property="Fill" Value="#ffffeeee"/>
-                </Style>
-            </tk:BusyIndicator.OverlayStyle>
-            <tk:BusyIndicator.ProgressBarStyle>
-                
-                <Style TargetType="ProgressBar">
-                    <Setter Property="Visibility" Value="Collapsed"/>
-                </Style>
-            </tk:BusyIndicator.ProgressBarStyle>
-            <ContentControl />
-        </tk:BusyIndicator>
+
         <StackPanel Grid.Row="1" Orientation="Vertical" HorizontalAlignment="Center">
             <StackPanel Orientation="Horizontal">
                 <Label>User ID:</Label>

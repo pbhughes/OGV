@@ -6,6 +6,7 @@
              xmlns:tk="http://schemas.xceed.com/wpf/xaml/toolkit"
              xmlns:gif="http://wpfanimatedgif.codeplex.com"
              xmlns:wf="clr-namespace:System.Windows.Forms;assembly=System.Windows.Forms"
+             xmlns:input="clr-namespace:System.Windows.Input;assembly=System"
              mc:Ignorable="d" 
              d:DesignHeight="900" d:DesignWidth="800">
     <UserControl.Resources>
@@ -52,28 +53,35 @@
                                   VerticalAlignment="Stretch" 
                                   Grid.ColumnSpan="3" MinHeight="525"
                               Margin="20" x:Name="frmHost"  FontSize="16">
-                <wf:TreeView x:Name="agendaTree" DoubleClick="agendaTree_DoubleClick"  />
+                <wf:TreeView x:Name="agendaTree" 
+                             DoubleClick="agendaTree_DoubleClick" />
+                
             </WindowsFormsHost>
             <Label Grid.Row="3" Grid.Column="0">Title:</Label>
             <ScrollViewer 
                     Grid.Row="3" Grid.Column="1" Grid.ColumnSpan="2"
                     VerticalScrollBarVisibility="Disabled" HorizontalScrollBarVisibility="Auto">
-                <TextBox Text="{Binding SelectedItem.Title}" ></TextBox>
+                <TextBox x:Name="txtTitle" 
+                         Text="{Binding SelectedItem.Title}"
+                         KeyDown="txtTitle_KeyDown"></TextBox>
             </ScrollViewer>
 
         <Label Grid.Row="4" Grid.Column="0">Description:</Label>
         <ScrollViewer Grid.Row="4" Grid.Column="1" Grid.ColumnSpan="2"
                       VerticalScrollBarVisibility="Disabled" HorizontalScrollBarVisibility="Auto">
-            <TextBox Text="{Binding SelectedItem.Description}" ></TextBox>
+            <TextBox Text="{Binding SelectedItem.Description}"
+                     x:Name="txtDescription"
+                     KeyDown="DescriptionBox_KeyDown" />
         </ScrollViewer>
 
-            <Label Grid.Row="5" Grid.Column="0">Time Stamp:</Label>
-        <ScrollViewer Grid.Row="5" Grid.Column="1" Grid.ColumnSpan="2"
-                      VerticalScrollBarVisibility="Disabled" HorizontalScrollBarVisibility="Auto">
-            <TextBox  Text="{Binding SelectedItem.TimeStamp}" ></TextBox>
-
-        </ScrollViewer>
-
-        </Grid>
+        <Label Grid.Row="5" Grid.Column="0">Time Stamp:</Label>
+        <StackPanel Orientation="Horizontal" Grid.Row="5" Grid.Column="1" Grid.ColumnSpan="2">
+            <TextBlock VerticalAlignment="Center" Margin="7 0 0 0" Width="150"
+                       Text="{Binding SelectedItem.TimeStamp}" >
+               
+            </TextBlock>
+            
+        </StackPanel>
+    </Grid>
    
 </UserControl>

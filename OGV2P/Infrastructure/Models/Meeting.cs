@@ -22,6 +22,7 @@ namespace Infrastructure.Models
         private ISession _sessionService;
         private IUser _user;
         private bool _isBusy;
+        private forms.ContextMenuStrip _docMenu;
 
         public bool IsBusy
         {
@@ -36,7 +37,7 @@ namespace Infrastructure.Models
             set { _selectedItem = value; OnPropertyChanged("SelectedItem"); }
         }
 
-      
+       
 
         private DelegateCommand<forms.TreeView> _loadAgenda;
         public DelegateCommand<forms.TreeView> LoadAgenda
@@ -204,7 +205,7 @@ namespace Infrastructure.Models
             }
         }
 
-      
+        
 
         public event MeetingSetEventHandler RaiseMeetingSetEvent;
 
@@ -275,8 +276,8 @@ namespace Infrastructure.Models
                         {
                             agendaTree.Nodes.Add(x);
                         }
-                        agendaTree.ShowPlusMinus = false;
-                        agendaTree.ShowLines = false;
+                        agendaTree.ShowPlusMinus = true;
+                        agendaTree.ShowLines = true;
                         agendaTree.ExpandAll();
                     }
 
@@ -300,6 +301,16 @@ namespace Infrastructure.Models
 
         }
 
+        private bool CanUpateSelectedItem()
+        {
+            return true;
+        }
+
+        private void OnUpateSelectedItem()
+        {
+            int x = 0;
+        }
+
         private void ParseItems(XElement items, ref Agenda a, ref forms.TreeNode node)
         {
             if (items != null)
@@ -310,8 +321,16 @@ namespace Infrastructure.Models
                     x.Title = (item.Element("title") != null) ? item.Element("title").Value : null;
                     x.Description = (item.Element("desc") != null) ? item.Element("desc").Value : null;
                     _agenda.Items.Add(x);
-                    forms.TreeNode xn = new forms.TreeNode() { Text = x.Title };
-                    
+                    string assingedText = (x.Title.Length < 150) ? x.Title : x.Title.Substring(0, 150);
+                    forms.TreeNode xn = new forms.TreeNode() { Text = assingedText , ToolTipText = x.Title };
+
+                    _docMenu = new System.Windows.Forms.ContextMenuStrip();
+                    forms.ToolStripMenuItem unstamp = new forms.ToolStripMenuItem("Clear Stamp");
+                    unstamp.Click += Unstamp_Click;
+                    _docMenu.Items.Add(unstamp);
+
+                    xn.ContextMenuStrip = _docMenu;
+
                     if (item.Element("items") == null || item.Element("items").Elements("item") != null)
                     {
                         ParseItems(item.Element("items"), ref a, ref xn);
@@ -321,6 +340,12 @@ namespace Infrastructure.Models
                 }
             }
         }
+
+        private void Unstamp_Click(object sender, EventArgs e)
+        {
+
+        }
+
 
         public Item FindItem(int hashCode)
         {
@@ -336,7 +361,6 @@ namespace Infrastructure.Models
             return null;
         }
 
-
         public Meeting(ISession sessionService, IUser user)
         {
             _sessionService = sessionService;
@@ -346,8 +370,6 @@ namespace Infrastructure.Models
             _agenda = new Agenda();
           
         }
-
-     
 
         private void _sessionService_RaiseStamped(TimeSpan sessionTime)
         {

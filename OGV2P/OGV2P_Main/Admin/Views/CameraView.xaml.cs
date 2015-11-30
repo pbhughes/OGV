@@ -598,7 +598,7 @@ namespace OGV2P.Admin.Views
                 path = Path.Combine(path, _meeting.LocalFile);
                 axRControl.DestinationURL2 = path;
                 _meeting.LocalFile = path;
-
+                _meeting.IsBusy = true;
                 axRControl.StartBroadcast();
                 _vuMeterTimer.Start();
                 IsBusy = true;
