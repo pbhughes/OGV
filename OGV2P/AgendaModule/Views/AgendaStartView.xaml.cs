@@ -29,9 +29,13 @@ namespace OGV2P.AgendaModule.Views
                 agendaTree = new forms.TreeView();
             }
 
-         
+            agendaTree.ItemDrag += AgendaTree_ItemDrag;
+            agendaTree.DragEnter += AgendaTree_DragEnter;
+            agendaTree.DragOver += AgendaTree_DragOver;
+            agendaTree.DragDrop += AgendaTree_DragDrop;
 
 
+            agendaTree.AllowDrop = true;
             agendaTree.ShowNodeToolTips = true;
             agendaTree.ShowPlusMinus = true;
             agendaTree.ItemHeight = agendaTree.ItemHeight * 2; 
@@ -73,7 +77,86 @@ namespace OGV2P.AgendaModule.Views
             DataContext = _currentMeeting;
         }
 
-     
+        private void AgendaTree_DragDrop(object sender, forms.DragEventArgs e)
+        {
+            // Retrieve the client coordinates of the drop location.
+            System.Drawing.Point targetPoint = agendaTree.PointToClient(new System.Drawing.Point(e.X, e.Y));
+
+            // Retrieve the node at the drop location.
+            forms.TreeNode targetNode = agendaTree.GetNodeAt(targetPoint);
+
+            // Retrieve the node that was dragged.
+            forms.TreeNode draggedNode = (forms.TreeNode)e.Data.GetData(typeof(forms.TreeNode));
+
+            // Confirm that the node at the drop location is not 
+            // the dragged node or a descendant of the dragged node.
+            if (!draggedNode.Equals(targetNode) && !ContainsNode(draggedNode, targetNode))
+            {
+                // If it is a move operation, remove the node from its current 
+                // location and add it to the node at the drop location.
+                if (e.Effect == forms.DragDropEffects.Move)
+                {
+                    draggedNode.Remove();
+                    targetNode.Nodes.Add(draggedNode);
+                }
+
+                // If it is a copy operation, clone the dragged node 
+                // and add it to the node at the drop location.
+                else if (e.Effect == forms.DragDropEffects.Copy)
+                {
+                    targetNode.Nodes.Add((forms.TreeNode)draggedNode.Clone());
+                }
+
+                // Expand the node at the location 
+                // to show the dropped node.
+                targetNode.Expand();
+            }
+        }
+
+        // Determine whether one node is a parent 
+        // or ancestor of a second node.
+        private bool ContainsNode(forms.TreeNode node1, forms.TreeNode node2)
+        {
+            // Check the parent node of the second node.
+            if (node2.Parent == null) return false;
+            if (node2.Parent.Equals(node1)) return true;
+
+            // If the parent node is not null or equal to the first node, 
+            // call the ContainsNode method recursively using the parent of 
+            // the second node.
+            return ContainsNode(node1, node2.Parent);
+        }
+
+        private void AgendaTree_DragOver(object sender, forms.DragEventArgs e)
+        {
+            // Retrieve the client coordinates of the mouse position.
+            System.Drawing.Point targetPoint = agendaTree.PointToClient(new System.Drawing.Point(e.X, e.Y));
+
+            // Select the node at the mouse position.
+            agendaTree.SelectedNode = agendaTree.GetNodeAt(targetPoint);
+        }
+
+        private void AgendaTree_DragEnter(object sender, forms.DragEventArgs e)
+        {
+            e.Effect = e.AllowedEffect;
+        }
+
+        private void AgendaTree_ItemDrag(object sender, forms.ItemDragEventArgs e)
+        {
+            // Move the dragged node when the left mouse button is used.
+            if (e.Button == forms.MouseButtons.Left)
+            {
+                agendaTree.DoDragDrop(e.Item, forms.DragDropEffects.Move);
+            }
+
+            // Copy the dragged node when the right mouse button is used.
+            else if (e.Button == forms.MouseButtons.Right)
+            {
+                agendaTree.DoDragDrop(e.Item, forms.DragDropEffects.Copy);
+            }
+        }
+
+        
 
         private void _currentMeeting_RaiseMeetingSetEvent(object sender, EventArgs e)
         {

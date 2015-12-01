@@ -53,7 +53,7 @@
                                   VerticalAlignment="Stretch" 
                                   Grid.ColumnSpan="3" MinHeight="525"
                               Margin="20" x:Name="frmHost"  FontSize="16">
-                <wf:TreeView x:Name="agendaTree" 
+                <wf:TreeView x:Name="agendaTree"  
                              DoubleClick="agendaTree_DoubleClick"
                              MouseUp="agendaTree_MouseUp" />
                 
@@ -71,7 +71,7 @@
         <ScrollViewer Grid.Row="4" Grid.Column="1" Grid.ColumnSpan="2"
                       VerticalScrollBarVisibility="Disabled" HorizontalScrollBarVisibility="Auto">
             <TextBox Text="{Binding SelectedItem.Description}"
-                     x:Name="txtDescription"
+                     x:Name="txtDescription" AllowDrop="True"
                      KeyDown="DescriptionBox_KeyDown" />
         </ScrollViewer>
 
