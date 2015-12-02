@@ -82,17 +82,30 @@ namespace Infrastructure.Models
 
                 if (SelectedBoard.RequireLogin)
                 {
+                    if( string.IsNullOrEmpty(UserID))
+                    {
+                        Message = "Login required enter a valid user ID and password.";
+                        return;
+                    }
+
+                    if (string.IsNullOrEmpty(Password))
+                    {
+                        Message = "Login required enter a valid user ID and password.";
+                        return;
+                    }
+
                     if (UserID.ToLower() != SelectedBoard.UserID.ToLower())
                     {
 
-                        throw new UnauthorizedAccessException("Invalid user id or password");
+                        Message = "Invalid user id or password";
+                        throw new UnauthorizedAccessException("Invalid user ID or password.");
 
                     }
 
                     if (Password.ToLower() != SelectedBoard.Password.ToLower())
                     {
-
-                        throw new UnauthorizedAccessException("Invalid user id or password");
+                        Message = "Invalid user ID or password";
+                        throw new UnauthorizedAccessException("Invalid user ID or password");
 
                     }
                 }
