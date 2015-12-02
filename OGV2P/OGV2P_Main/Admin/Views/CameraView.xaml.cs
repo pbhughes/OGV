@@ -609,7 +609,6 @@ namespace OGV2P.Admin.Views
             }
         }
 
-
         private string[] ReadDefaultDeviceCache()
         {
             try
@@ -640,6 +639,7 @@ namespace OGV2P.Admin.Views
             return null;
 
         }
+
         private void WriteDefaultDeviceCache()
         {
             try
@@ -678,7 +678,6 @@ namespace OGV2P.Admin.Views
             txtTimer.Text = string.Empty;
         }
 
-       
         private void cmdStamp_Click(object sender, RoutedEventArgs e)
         {
 

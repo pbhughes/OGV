@@ -103,6 +103,7 @@ namespace OGV2P
                     x.City = org.Element("city").Value;
                     x.UserID = org.Element("ftpserver").Element("username").Value;
                     x.Password = org.Element("ftpserver").Element("password").Value;
+                    x.RequireLogin = ( org.Element("ftpserver").Element("login") == null)? false : bool.Parse( org.Element("ftpserver").Element("login").Value);
                     boards.AddBoard(x);
                 }
                 return boards;

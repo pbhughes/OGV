@@ -187,11 +187,20 @@ namespace OGV2P.AgendaModule.Views
             stamp.Click += Stamp_Click;
             forms.ToolStripMenuItem unstamp = new forms.ToolStripMenuItem("Clear Stamp");
             unstamp.Click += Unstamp_Click;
+            forms.ToolStripMenuItem insert = new forms.ToolStripMenuItem("Insert Item");
+            insert.Click += Insert_Click;
+
+            _docMenu.Items.Add(insert);
             _docMenu.Items.Add(stamp);
             _docMenu.Items.Add(unstamp);
             tn.ContextMenuStrip = _docMenu;
 
 
+        }
+
+        private void Insert_Click(object sender, EventArgs e)
+        {
+            var response = MessageBox.Show("Insert Where?");
         }
 
         private void _sessionService_RaiseStamped(System.TimeSpan sessionTime)

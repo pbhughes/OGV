@@ -13,6 +13,7 @@ namespace Infrastructure.Interfaces
         string City { get; set; }
         string UserID { get; set; }
         string Password { get; set; }
+        bool RequireLogin { get; set; }
 
     }
 }

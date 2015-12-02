@@ -23,12 +23,12 @@
                   SelectionChanged="lstBoards_SelectionChanged"></ComboBox>
 
         <StackPanel Grid.Row="1" Orientation="Vertical" HorizontalAlignment="Center">
-            <StackPanel Orientation="Horizontal">
+            <StackPanel x:Name="pnlUserID"  Orientation="Horizontal">
                 <Label>User ID:</Label>
                 <TextBox x:Name="txtUserID" Text="{Binding UserID}"></TextBox>
             </StackPanel>
 
-            <StackPanel Orientation="Horizontal">
+            <StackPanel x:Name="pnlPassword" Orientation="Horizontal">
                 <Label>Password:</Label>
                 <TextBox  x:Name="txtPassword" Text="{Binding Password}" GotFocus="TextBox_GotFocus" KeyDown="TextBox_KeyDown">
                 </TextBox>

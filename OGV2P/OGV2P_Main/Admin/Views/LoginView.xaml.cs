@@ -40,6 +40,11 @@ namespace OGV2P.Admin.Views
             _session = session;
             _user = user;
             DataContext = _user;
+            if(_user.Boards.Boards.Count >0)
+            {
+                _user.SelectedBoard = _user.Boards.Boards[0];
+            }
+
             _regionManager = Microsoft.Practices.ServiceLocation.ServiceLocator.Current.GetInstance<Microsoft.Practices.Prism.Regions.IRegionManager>();
             this.Loaded += LoginView_Loaded;
             this.Name = "LoginView";
@@ -84,6 +89,25 @@ namespace OGV2P.Admin.Views
         private void LoginView_Loaded(object sender, RoutedEventArgs e)
         {
             txtUserID.Focus();
+
+            DecorateLoginScreen();
+        }
+
+        private void DecorateLoginScreen()
+        {
+            if (_user.SelectedBoard.RequireLogin)
+            {
+                pnlPassword.Visibility = Visibility.Visible;
+                pnlUserID.Visibility = Visibility.Visible;
+                cmdLogin.Content = "Login";
+            }
+            else
+            {
+                pnlPassword.Visibility = Visibility.Collapsed;
+                pnlUserID.Visibility = Visibility.Collapsed;
+                cmdLogin.Content = "Start";
+
+            }
         }
 
         private void cmdLogin_Click(object sender, RoutedEventArgs e)
@@ -99,8 +123,11 @@ namespace OGV2P.Admin.Views
 
         private void lstBoards_SelectionChanged(object sender, SelectionChangedEventArgs e)
         {
+            DecorateLoginScreen();
             txtUserID.Focus();
             txtUserID.SelectAll();
         }
+
+      
     }
 }

@@ -80,6 +80,23 @@ namespace Infrastructure.Models
             }
         }
 
+        public bool RequireLogin
+        {
+            get
+            {
+                return _requireLogin;
+            }
+
+            set
+            {
+                _requireLogin = value;
+                OnPropertyChanged("RequireLogin");
+            }
+        }
+
+        private bool _requireLogin;
+
+
         #region INotifyPropertyChanged
 
         public event PropertyChangedEventHandler PropertyChanged;

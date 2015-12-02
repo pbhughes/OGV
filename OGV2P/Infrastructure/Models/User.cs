@@ -80,19 +80,30 @@ namespace Infrastructure.Models
             {
                 IsBusy = true;
 
-                if(UserID.ToLower() != SelectedBoard.UserID.ToLower())
+                if (SelectedBoard.RequireLogin)
                 {
+                    if (UserID.ToLower() != SelectedBoard.UserID.ToLower())
+                    {
 
-                    throw new UnauthorizedAccessException("Invalid user id or password");
+                        throw new UnauthorizedAccessException("Invalid user id or password");
 
+                    }
+
+                    if (Password.ToLower() != SelectedBoard.Password.ToLower())
+                    {
+
+                        throw new UnauthorizedAccessException("Invalid user id or password");
+
+                    }
                 }
 
-                if (Password.ToLower() != SelectedBoard.Password.ToLower())
+                else
                 {
-
-                    throw new UnauthorizedAccessException("Invalid user id or password");
-
+                    UserID = SelectedBoard.UserID;
+                    Password = SelectedBoard.Password;
                 }
+
+                
 
                 OnRaiseLoginEvent();
                 
@@ -109,43 +120,7 @@ namespace Infrastructure.Models
 
         }
 
-        private async Task StartPanoptoService()
-        {
-            
-            await Task.Run(() =>
-            {
-
-                ServiceController controller = GetPanoptoServiceController();
-                controller.Start(  );
-                Thread.Sleep(2000);
-            });
-        }
-
-        private static ServiceController GetPanoptoServiceController()
-        {
-            ServiceController controller = new ServiceController();
-            controller.ServiceName = "PanoptoRemoteRecorderService";
-            return controller;
-        }
-
-        private async Task StartFilterService()
-        {
-
-            await Task.Run(() =>
-            {
-                ServiceController controller = GetSplitCamServiceController();
-                controller.Start();
-                Thread.Sleep(2000);
-            });
-        }
-
-        private static ServiceController GetSplitCamServiceController()
-        {
-            ServiceController controller = new ServiceController();
-            controller.ServiceName = "SpliCamService";
-            return controller;
-        }
-
+    
         private string _userID;
         public string UserID
         {
