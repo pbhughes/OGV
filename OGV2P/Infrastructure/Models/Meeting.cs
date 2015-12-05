@@ -376,6 +376,19 @@ namespace Infrastructure.Models
                 PropertyChanged(this, new PropertyChangedEventArgs(name));
         }
 
+        public void AddNode(Item item, Item Parent)
+        {
+            if(Parent.Items == null)
+            {
+                Parent.Items = new System.Collections.Generic.List<Item>();
+            }
+            Parent.Items.Add(item);
+
+            SelectedItem = item;
+        }
+
+
+
         #endregion
     }
 }

@@ -7,6 +7,8 @@ using System;
 using System.Drawing;
 using System.IO;
 using System.Windows.Input;
+using System.Windows;
+using Infrastructure.Models;
 
 namespace OGV2P.AgendaModule.Views
 {
@@ -24,6 +26,9 @@ namespace OGV2P.AgendaModule.Views
         public AgendaStartView(IMeeting meeting, ISession sessionService)
         {
             InitializeComponent();
+
+            Application.Current.MainWindow.LocationChanged += MainWindow_LocationChanged;
+            
             if (agendaTree == null)
             {
                 agendaTree = new forms.TreeView();
@@ -104,16 +109,7 @@ namespace OGV2P.AgendaModule.Views
                 cmdDown.Content = "Down";
             }
 
-            if (File.Exists(@"Images\right_arrow.png"))
-            {
-                var brush = new System.Windows.Media.ImageBrush();
-                brush.ImageSource = new BitmapImage(new Uri("Images/right_arrow.png", UriKind.Relative));
-                cmdRight.Background = brush;
-            }
-            else
-            {
-                cmdRight.Content = "Right";
-            }
+           
 
             agendaTree.ImageList = _treeImages;
             agendaTree.AfterSelect += agendaTree_AfterSelect;
@@ -125,7 +121,11 @@ namespace OGV2P.AgendaModule.Views
             DataContext = _currentMeeting;
         }
 
-    
+        private void MainWindow_LocationChanged(object sender, EventArgs e)
+        {
+            floater.IsOpen = false;
+        }
+
         private void AgendaTree_DragDrop(object sender, forms.DragEventArgs e)
         {
             // Retrieve the client coordinates of the drop location.
@@ -253,7 +253,28 @@ namespace OGV2P.AgendaModule.Views
 
         private void Insert_Click(object sender, EventArgs e)
         {
-            var response = MessageBox.Show("Insert Where?");
+            _docMenu = new System.Windows.Forms.ContextMenuStrip();
+            forms.ToolStripMenuItem stamp = new forms.ToolStripMenuItem("Stamp");
+            stamp.Click += Stamp_Click;
+            forms.ToolStripMenuItem unstamp = new forms.ToolStripMenuItem("Clear Stamp");
+            unstamp.Click += Unstamp_Click;
+            forms.ToolStripMenuItem insert = new forms.ToolStripMenuItem("Insert Item");
+            insert.Click += Insert_Click;
+
+            _docMenu.Items.Add(insert);
+            _docMenu.Items.Add(stamp);
+            _docMenu.Items.Add(unstamp);
+            
+
+            Item item = new Infrastructure.Models.Item() { Title = "Please add a title..." };
+            forms.TreeNode tn = new forms.TreeNode() { Text = item.Title, ToolTipText = item.Title };
+            tn.ContextMenuStrip = _docMenu;
+            var selectedNode = agendaTree.SelectedNode;
+            selectedNode.Nodes.Add(tn);
+            _currentMeeting.AddNode(item, _currentMeeting.SelectedItem);
+            agendaTree.SelectedNode = tn;
+           
+
         }
 
         private void _sessionService_RaiseStamped(System.TimeSpan sessionTime)
@@ -362,6 +383,8 @@ namespace OGV2P.AgendaModule.Views
             {
                 string newTitle = txtTitle.Text;
                 agendaTree.SelectedNode.Text = newTitle;
+                _currentMeeting.SelectedItem.Title = newTitle;
+                _currentMeeting.SelectedItem.Description = txtDescription.Text;
                 if(agendaTree.SelectedNode.ImageKey == "stamped")
                 {
                     agendaTree.SelectedNode.ImageKey = "stamped_edited";
@@ -419,104 +442,87 @@ namespace OGV2P.AgendaModule.Views
 
         private void floaterMoveLeft_Click(object sender, RoutedEventArgs e)
         {
-
-            if (agendaTree.SelectedNode == null)
-                return;
-
-            var selectedNode = agendaTree.SelectedNode;
-
-            var parent = agendaTree.SelectedNode.Parent;
-            var grandparent = parent.Parent;
-
-            var parentIndex = parent.Index;
-            selectedNode.Remove();
-
-            if(grandparent == null)
+            if(agendaTree.SelectedNode != null && agendaTree.SelectedNode.Parent != null)
             {
-                //the parent is a root node
-                agendaTree.Nodes.Insert(parentIndex + 1, selectedNode);
+                forms.TreeNodeCollection collection = null;
+                if (agendaTree.SelectedNode.Parent.Parent == null)
+                {
+                    collection = agendaTree.Nodes;
+                }
+                else
+                {
+                    collection = agendaTree.SelectedNode.Parent.Parent.Nodes;
+                }
+                MoveLeft(agendaTree.SelectedNode,collection);
             }
-            else
-            {
-                //this is not a root node insert into the 
-                //grand parent node below the parent node
-                grandparent.Nodes.Insert(parentIndex + 1, selectedNode);
-            }
-            
-            
         }
 
         private void floaterMoveUp_Click(object sender, RoutedEventArgs e)
         {
-            if (agendaTree.SelectedNode == null)
-                return;
-
-            var selectedNode = agendaTree.SelectedNode;
-            if(selectedNode.Index > 0)
+           
+            if(agendaTree.SelectedNode != null &&  agendaTree.SelectedNode.Index > 0)
             {
-                //move inside parent
-                var topNode = (agendaTree.SelectedNode.Parent == null) ? agendaTree.Nodes[selectedNode.Index -1] : agendaTree.SelectedNode.Parent.Nodes[selectedNode.Index - 1];
-                MoveNodesUp(selectedNode, topNode);
-                
-            }
-            else
-            {
-                //top level node move below parent
-                if(selectedNode.Parent == null)
+                forms.TreeNodeCollection collection = null;
+                if (agendaTree.SelectedNode.Parent == null)
                 {
-                    //root node climb the ladder
-                    if(selectedNode.Index == 0)
-                    {
-                        //cant move up
-                        return;
-                    }
-                    else
-                    {
-                       
-                    }
+                    collection = agendaTree.Nodes;
                 }
                 else
                 {
-                    MoveNodesUp(selectedNode, selectedNode.Parent);
+                    collection = agendaTree.SelectedNode.Parent.Nodes;
                 }
-            }
-        }
 
-        private void MoveNodesUp(forms.TreeNode moving, forms.TreeNode pivot )
-        {
-            if(moving.Parent == pivot)
-            {
-                if(pivot.Parent == null)
-                {
-                    var temp = moving;
-                    moving.Remove();
-                    agendaTree.Nodes.Insert(pivot.Index - 1, moving);
-                }
-            }
-            if(moving.Parent != null)
-            {
-                var parent = moving.Parent;
-                var temp = pivot;
-                pivot.Remove();
-                parent.Nodes.Insert(moving.Index + 1, pivot);
-            }
-            else
-            {
-                var temp = pivot;
-                pivot.Remove();
-                agendaTree.Nodes.Insert(moving.Index + 1, pivot);
-            }
-          
+                MoveUp(agendaTree.SelectedNode, agendaTree.SelectedNode.PrevNode, collection);
 
-            
+            }
         }
 
         private void floaterMoveDown_Click(object sender, RoutedEventArgs e)
         {
+            if(agendaTree.SelectedNode != null)
+            {
+                forms.TreeNodeCollection collection = null;
+                if(agendaTree.SelectedNode.Parent == null)
+                {
+                    collection = agendaTree.Nodes;
+                }
+                else
+                {
+                    collection = agendaTree.SelectedNode.Parent.Nodes;
+                }
 
+                MoveDown(agendaTree.SelectedNode, agendaTree.SelectedNode.NextNode, collection);
+            }
         }
 
-        private void floaterMoveRight_Click(object sender, RoutedEventArgs e)
+        private void MoveUp(forms.TreeNode moving, forms.TreeNode pivot, forms.TreeNodeCollection collection)
+        {
+            if(moving.Index > 0)
+            {
+                var temp = moving;
+                pivot.Remove();
+                collection.Insert(moving.Index + 1, pivot);
+            }
+        }
+
+        private void MoveDown(forms.TreeNode moving, forms.TreeNode pivot, forms.TreeNodeCollection collection)
+        {
+            if (moving.Index < collection.Count - 1)
+            {
+                moving.Remove();
+                collection.Insert(pivot.Index + 1, moving);
+            }
+        }
+
+        private void MoveLeft(forms.TreeNode moving, forms.TreeNodeCollection colleciton)
+        {
+
+            int index = moving.Parent.Index;
+            moving.Remove();
+            colleciton.Insert(index + 1, moving);
+        }
+
+        private void MoveRight(forms.TreeNode moving, forms.TreeNodeCollection collection)
         {
 
         }

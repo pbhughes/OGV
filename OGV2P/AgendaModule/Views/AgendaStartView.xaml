@@ -8,7 +8,7 @@
              xmlns:wf="clr-namespace:System.Windows.Forms;assembly=System.Windows.Forms"
              xmlns:input="clr-namespace:System.Windows.Input;assembly=System"
              mc:Ignorable="d" 
-             d:DesignHeight="900" d:DesignWidth="800" Name="host">
+             d:DesignHeight="900" d:DesignWidth="800" Name="host"  >
     <UserControl.Resources>
         <Style TargetType="UserControl">
             <Setter Property="Margin" Value="10"/>
@@ -101,10 +101,7 @@
                         Click="floaterMoveDown_Click" 
                         Style="{StaticResource btn-Small}" 
                         Grid.Row="3" Grid.Column="1"></Button>
-                <Button Name="cmdRight" 
-                        Click="floaterMoveRight_Click" 
-                        Style="{StaticResource btn-Small}" 
-                        Grid.Row="2" Grid.Column="3"></Button>
+               
             </Grid>
         </Popup>
             <Label Grid.Row="3" Grid.Column="0">Title:</Label>

@@ -26,6 +26,7 @@ namespace Infrastructure.Interfaces
         string LandingPage { get; set; }
         string PublishingPoint { get;  }
         string LocalFile { get; set; }
+        void  AddNode(Item item, Item Parent);
 
 
         event MeetingSetEventHandler RaiseMeetingSetEvent;
