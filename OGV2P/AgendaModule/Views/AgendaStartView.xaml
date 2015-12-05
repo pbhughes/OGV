@@ -59,9 +59,8 @@
                               Margin="20" x:Name="frmHost" 
                                FontSize="16">
                 <wf:TreeView x:Name="agendaTree" 
-                             
-                             DoubleClick="agendaTree_DoubleClick"
-                             MouseUp="agendaTree_MouseUp" />
+                              KeyDown="agendaTree_KeyDown"
+                              MouseUp="agendaTree_MouseUp" />
 
             </WindowsFormsHost>
         </DockPanel>

@@ -350,13 +350,7 @@ namespace OGV2P.AgendaModule.Views
             floater.VerticalOffset = agendaTree.Location.Y + 120;
         }
 
-        private void agendaTree_DoubleClick(object sender, EventArgs e)
-        {
-
-            _sessionService.Stamp();
-            MarkItemStamped();
-           
-        }
+      
 
         private void DescriptionBox_KeyDown(object sender, KeyEventArgs e)
         {
@@ -525,6 +519,15 @@ namespace OGV2P.AgendaModule.Views
         private void MoveRight(forms.TreeNode moving, forms.TreeNodeCollection collection)
         {
 
+        }
+
+        private void agendaTree_KeyDown(object sender, forms.KeyEventArgs e)
+        {
+            if(e.KeyCode == System.Windows.Forms.Keys.Enter || e.KeyCode == forms.Keys.Space)
+            {
+                _sessionService.Stamp();
+                MarkItemStamped();
+            }
         }
     }
 }
