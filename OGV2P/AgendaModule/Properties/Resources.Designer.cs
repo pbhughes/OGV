@@ -59,5 +59,15 @@ namespace OGV2P.AgendaModule.Properties {
                 resourceCulture = value;
             }
         }
+        
+        /// <summary>
+        ///   Looks up a localized resource of type System.Drawing.Bitmap.
+        /// </summary>
+        internal static System.Drawing.Bitmap up_arrow {
+            get {
+                object obj = ResourceManager.GetObject("up_arrow", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
     }
 }

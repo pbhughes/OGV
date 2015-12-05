@@ -8,11 +8,13 @@
              xmlns:wf="clr-namespace:System.Windows.Forms;assembly=System.Windows.Forms"
              xmlns:input="clr-namespace:System.Windows.Input;assembly=System"
              mc:Ignorable="d" 
-             d:DesignHeight="900" d:DesignWidth="800">
+             d:DesignHeight="900" d:DesignWidth="800" Name="host">
     <UserControl.Resources>
         <Style TargetType="UserControl">
             <Setter Property="Margin" Value="10"/>
         </Style>
+
+
     </UserControl.Resources>
     <UserControl.InputBindings>
         <KeyBinding Key="Space" Modifiers="Shift" Command="{Binding StampItem}" CommandParameter="{Binding SelectedItem}" />
@@ -48,16 +50,63 @@
                                 VerticalContentAlignment="Center"
                                 VerticalAlignment="Center"
                   FirstDayOfWeek="Monday"  />
-            <WindowsFormsHost Grid.Row="2" Grid.Column="0" 
+        <DockPanel Name="treePanel"  Grid.Row="2" Grid.Column="0" 
+                    Grid.ColumnSpan="3" MinHeight="525"
+                   LastChildFill="True" >
+            <WindowsFormsHost 
                               HorizontalAlignment="Stretch"
                                   VerticalAlignment="Stretch" 
-                                  Grid.ColumnSpan="3" MinHeight="525"
-                              Margin="20" x:Name="frmHost"  FontSize="16">
-                <wf:TreeView x:Name="agendaTree"  
+                              Margin="20" x:Name="frmHost" 
+                               FontSize="16">
+                <wf:TreeView x:Name="agendaTree" 
+                             
                              DoubleClick="agendaTree_DoubleClick"
                              MouseUp="agendaTree_MouseUp" />
-                
+
             </WindowsFormsHost>
+        </DockPanel>
+      
+        <Popup Name="floater" IsOpen="false" AllowsTransparency="True"
+                   Placement="Relative" Width="100" Height="100"
+               PlacementTarget="{Binding ElementName=agendaTree}">
+            <Grid>
+                <Grid.RowDefinitions>
+                    <RowDefinition />
+                    <RowDefinition />
+                    <RowDefinition />
+                    <RowDefinition />
+                </Grid.RowDefinitions>
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition />
+                    <ColumnDefinition />
+                    <ColumnDefinition />
+                </Grid.ColumnDefinitions>
+                <Button Name="cmdClose" Click="floaterClose_Click" 
+                        Style="{StaticResource btn-Small}" 
+                        Background="Red"
+                        Foreground="White"
+                        FontSize="7"
+                        FontWeight="Heavy"
+                        Grid.Row="0" Grid.Column="2" Grid.ColumnSpan="1" 
+                         VerticalAlignment="Top">X
+                </Button>
+                <Button x:Name="cmdLeft"
+                    Click="floaterMoveLeft_Click" 
+                    Style="{StaticResource btn-Small}" 
+                    Grid.Row="2" Grid.Column="0"></Button>
+                <Button Name="cmdUp" Click="floaterMoveUp_Click" 
+                        Style="{StaticResource btn-Small}" 
+                        Grid.Row="1" Grid.Column="1"></Button>
+                <Button Name="cmdDown"
+                        Click="floaterMoveDown_Click" 
+                        Style="{StaticResource btn-Small}" 
+                        Grid.Row="3" Grid.Column="1"></Button>
+                <Button Name="cmdRight" 
+                        Click="floaterMoveRight_Click" 
+                        Style="{StaticResource btn-Small}" 
+                        Grid.Row="2" Grid.Column="3"></Button>
+            </Grid>
+        </Popup>
             <Label Grid.Row="3" Grid.Column="0">Title:</Label>
             <ScrollViewer 
                     Grid.Row="3" Grid.Column="1" Grid.ColumnSpan="2"

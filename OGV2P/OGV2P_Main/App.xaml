@@ -54,7 +54,7 @@
 
             <Setter Property="BorderThickness" Value="1"/>
 
-            <Setter Property="Height" Value="17" />
+            <Setter Property="Height" Value="22" />
 
             <Setter Property="Template">
 
