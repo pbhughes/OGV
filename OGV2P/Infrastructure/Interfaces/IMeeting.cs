@@ -17,7 +17,7 @@ namespace Infrastructure.Interfaces
         string MeetingName { get; set; }
         event System.ComponentModel.PropertyChangedEventHandler PropertyChanged;
         Item SelectedItem { get; set; }
-        Item FindItem(int hashCode);
+        Item FindItem(string title);
         string ClientPathLive { get; set; }
         string ClientPathLiveStream { get; set; }
         int VideoWidth { get; set; }
@@ -26,7 +26,7 @@ namespace Infrastructure.Interfaces
         string LandingPage { get; set; }
         string PublishingPoint { get;  }
         string LocalFile { get; set; }
-        void  AddNode(Item item, Item Parent);
+        void  AddNode(Item item);
 
 
         event MeetingSetEventHandler RaiseMeetingSetEvent;

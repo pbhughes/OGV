@@ -73,7 +73,6 @@
                     <RowDefinition />
                     <RowDefinition />
                     <RowDefinition />
-                    <RowDefinition />
                 </Grid.RowDefinitions>
                 <Grid.ColumnDefinitions>
                     <ColumnDefinition />
@@ -86,20 +85,20 @@
                         Foreground="White"
                         FontSize="7"
                         FontWeight="Heavy"
-                        Grid.Row="0" Grid.Column="2" Grid.ColumnSpan="1" 
-                         VerticalAlignment="Top">X
+                        Grid.Row="1" Grid.Column="2" Grid.ColumnSpan="1" 
+                         VerticalAlignment="Center">X
                 </Button>
                 <Button x:Name="cmdLeft"
                     Click="floaterMoveLeft_Click" 
                     Style="{StaticResource btn-Small}" 
-                    Grid.Row="2" Grid.Column="0"></Button>
+                    Grid.Row="1" Grid.Column="0"></Button>
                 <Button Name="cmdUp" Click="floaterMoveUp_Click" 
                         Style="{StaticResource btn-Small}" 
-                        Grid.Row="1" Grid.Column="1"></Button>
+                        Grid.Row="0" Grid.Column="1"></Button>
                 <Button Name="cmdDown"
                         Click="floaterMoveDown_Click" 
                         Style="{StaticResource btn-Small}" 
-                        Grid.Row="3" Grid.Column="1"></Button>
+                        Grid.Row="2" Grid.Column="1"></Button>
                
             </Grid>
         </Popup>

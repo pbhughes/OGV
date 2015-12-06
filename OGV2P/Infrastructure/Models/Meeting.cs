@@ -11,13 +11,13 @@ using forms = System.Windows.Forms;
 using System.Collections.Specialized;
 using System.Configuration;
 using System.Runtime.InteropServices;
+using System.Collections.Generic;
 
 namespace Infrastructure.Models
 {
 
     public class Meeting : INotifyPropertyChanged, IMeeting
     {
-
         private int _orginalHash;
         private ISession _sessionService;
         private IUser _user;
@@ -50,9 +50,7 @@ namespace Infrastructure.Models
             set { _fileName = value; OnPropertyChanged("FileName"); }
         }
 
-
         private string _meetingName;
-
         public string MeetingName
         {
             get { return _meetingName; }
@@ -330,8 +328,9 @@ namespace Infrastructure.Models
             }
         }
 
-        public Item FindItem(int hashCode)
+        public Item FindItem(string title )
         {
+            int hashCode = title.GetHashCode();
             foreach (Item i in this.MeetingAgenda.Items)
             {
                 if (i.Title.GetHashCode() == hashCode)
@@ -354,8 +353,6 @@ namespace Infrastructure.Models
           
         }
 
-       
-
         private void _sessionService_RaiseStamped(TimeSpan sessionTime)
         {
             if (_selectedItem != null)
@@ -376,14 +373,22 @@ namespace Infrastructure.Models
                 PropertyChanged(this, new PropertyChangedEventArgs(name));
         }
 
-        public void AddNode(Item item, Item Parent)
+        public void AddNode(Item item)
         {
-            if(Parent.Items == null)
+            List<Item> collection;
+            if(SelectedItem == null)
             {
-                Parent.Items = new System.Collections.Generic.List<Item>();
+                collection = SelectedItem.Items;
             }
-            Parent.Items.Add(item);
+            else
+            {
+                collection = MeetingAgenda.Items;
+            }
 
+            if (collection == null)
+                collection = new List<Item>();
+
+            collection.Add(item);
             SelectedItem = item;
         }
 

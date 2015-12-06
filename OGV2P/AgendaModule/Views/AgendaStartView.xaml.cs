@@ -253,6 +253,7 @@ namespace OGV2P.AgendaModule.Views
 
         private void Insert_Click(object sender, EventArgs e)
         {
+            //build the context menu
             _docMenu = new System.Windows.Forms.ContextMenuStrip();
             forms.ToolStripMenuItem stamp = new forms.ToolStripMenuItem("Stamp");
             stamp.Click += Stamp_Click;
@@ -265,15 +266,18 @@ namespace OGV2P.AgendaModule.Views
             _docMenu.Items.Add(stamp);
             _docMenu.Items.Add(unstamp);
             
-
+            //build up the item and the visual node
             Item item = new Infrastructure.Models.Item() { Title = "Please add a title..." };
             forms.TreeNode tn = new forms.TreeNode() { Text = item.Title, ToolTipText = item.Title };
+
+            //add the context menu
             tn.ContextMenuStrip = _docMenu;
-            var selectedNode = agendaTree.SelectedNode;
-            selectedNode.Nodes.Add(tn);
-            _currentMeeting.AddNode(item, _currentMeeting.SelectedItem);
-            agendaTree.SelectedNode = tn;
-           
+            
+            //add the node to the data source
+            _currentMeeting.AddNode(item);
+            agendaTree.SelectedNode.Nodes.Add(tn);
+
+            _currentMeeting.SelectedItem = item;           
 
         }
 
@@ -340,7 +344,7 @@ namespace OGV2P.AgendaModule.Views
         void agendaTree_AfterSelect(object sender, forms.TreeViewEventArgs e)
         {
             forms.TreeNode selectedNode = ((forms.TreeView)sender).SelectedNode;
-            _currentMeeting.SelectedItem = _currentMeeting.FindItem(selectedNode.Text.GetHashCode());
+            _currentMeeting.SelectedItem = _currentMeeting.FindItem(selectedNode.Text);
             if(!floater.IsOpen)
             {
                 floater.IsOpen = true;
