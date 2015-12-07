@@ -26,7 +26,13 @@ namespace Infrastructure.Models
         public bool IsBusy
         {
             get { return _isBusy; }
-            set { _isBusy = value; OnPropertyChanged("IsBusy"); }
+            set {
+                _isBusy = value;
+                OnPropertyChanged("IsBusy");
+                CreateNewAgenda.RaiseCanExecuteChanged();
+                LoadAgendaFromFile.RaiseCanExecuteChanged();
+                LoadAgendaFromFTP.RaiseCanExecuteChanged();
+            }
         }
 
         private Item _selectedItem;
@@ -35,12 +41,39 @@ namespace Infrastructure.Models
             get { return _selectedItem; }
             set { _selectedItem = value; OnPropertyChanged("SelectedItem"); }
         }
-
-        private DelegateCommand<forms.TreeView> _loadAgenda;
-        public DelegateCommand<forms.TreeView> LoadAgenda
+        private DelegateCommand<forms.TreeView> _createNewAgenda;
+        public DelegateCommand<forms.TreeView> CreateNewAgenda
         {
-            get { return _loadAgenda; }
-            set { _loadAgenda = value; }
+            get
+            {
+                return _createNewAgenda;
+            }
+
+            set
+            {
+                _createNewAgenda = value;
+            }
+        }
+
+        private DelegateCommand<forms.TreeView> _loadAgendaFromFile;
+        public DelegateCommand<forms.TreeView> LoadAgendaFromFile
+        {
+            get
+            {
+                return _loadAgendaFromFile;
+            }
+
+            set
+            {
+                _loadAgendaFromFile = value;
+            }
+        }
+
+        private DelegateCommand<forms.TreeView> _loadAgendaFromFTP;
+        public DelegateCommand<forms.TreeView> LoadAgendaFromFTP
+        {
+            get { return _loadAgendaFromFTP; }
+            set { _loadAgendaFromFTP = value; }
         }
         private string _fileName;
 
@@ -210,12 +243,110 @@ namespace Infrastructure.Models
             }
         }
 
-        private bool CanLoadAgenda(forms.TreeView agendaTree)
+       
+
+        private bool CanUpateSelectedItem()
         {
             return true;
         }
 
-        private void OnLoadAgenda(forms.TreeView agendaTree)
+        private void OnUpateSelectedItem()
+        {
+            int x = 0;
+        }
+
+        private void ParseItems(XElement items, ref Agenda a, ref forms.TreeNode node)
+        {
+            if (items != null)
+            {
+                foreach (XElement item in items.Elements("item"))
+                {
+                    Item x = new Item();
+                    x.Title = (item.Element("title") != null) ? item.Element("title").Value : null;
+                    x.Description = (item.Element("desc") != null) ? item.Element("desc").Value : null;
+                    x.TimeStamp = (item.Element("timestamp") != null) ? TimeSpan.Parse(item.Element("timespan").Value) : TimeSpan.Zero;
+                    _agenda.Items.Add(x);
+                    string assingedText = (x.Title.Length < 150) ? x.Title : x.Title.Substring(0, 150);
+                    forms.TreeNode xn = new forms.TreeNode() { Text = assingedText , ToolTipText = x.Title };
+
+                    if (item.Element("items") == null || item.Element("items").Elements("item") != null)
+                    {
+                        ParseItems(item.Element("items"), ref a, ref xn);
+                    }
+                    node.Nodes.Add(xn);
+                    a.Items.Add(x);
+                }
+            }
+        }
+
+        public Item FindItem(string title )
+        {
+            int hashCode = title.GetHashCode();
+            foreach (Item i in this.MeetingAgenda.Items)
+            {
+                if (i.Title.GetHashCode() == hashCode)
+                {
+                    return i;
+                }
+                    
+            }
+
+            return null;
+        }
+
+        public Meeting(ISession sessionService, IUser user)
+        {
+            _sessionService = sessionService;
+            _user = user;
+            _sessionService.RaiseStamped += _sessionService_RaiseStamped;
+            _loadAgendaFromFTP = new DelegateCommand<forms.TreeView>(OnLoadAgendaFromFTP, CanLoadAgendaFromFTP);
+            _loadAgendaFromFile = new DelegateCommand<System.Windows.Forms.TreeView>(OnLoadAgendaFromFile, CanLoadAgendaFromFile);
+            _createNewAgenda = new DelegateCommand<System.Windows.Forms.TreeView>(OnCreateNewAgenda, CanCreateNewAgenda);
+            _agenda = new Agenda();
+          
+        }
+
+        private bool CanCreateNewAgenda(forms.TreeView arg)
+        {
+            return !IsBusy;
+        }
+
+        private void OnCreateNewAgenda(forms.TreeView obj)
+        {
+            this.MeetingAgenda = new Agenda();
+            if(MeetingAgenda.Items == null)
+            {
+                MeetingAgenda.Items = new List<Item>();
+            }
+
+            MeetingName = "Please enter a meeting name...";
+            MeetingDate = DateTime.Now;
+
+            Item newItem = new Item() { Title = "Please add a new title..." };
+            MeetingAgenda.Items.Add(newItem);
+
+            forms.TreeNode x = new forms.TreeNode() { Text = newItem.Title, ToolTipText = newItem.Title };
+            obj.Nodes.Add(x);
+
+            OnRaiseMeetingSetEvent();
+        }
+
+        private bool CanLoadAgendaFromFile(forms.TreeView arg)
+        {
+            return !IsBusy;
+        }
+
+        private void OnLoadAgendaFromFile(forms.TreeView obj)
+        {
+            throw new NotImplementedException();
+        }
+
+        private bool CanLoadAgendaFromFTP(forms.TreeView agendaTree)
+        {
+            return ! IsBusy;
+        }
+
+        private void OnLoadAgendaFromFTP(forms.TreeView agendaTree)
         {
             string fileName = string.Empty;
             try
@@ -279,7 +410,7 @@ namespace Infrastructure.Models
 
                 }
             }
-            catch ( COMException cex)
+            catch (COMException cex)
             {
                 ; //ignore it
 
@@ -292,65 +423,6 @@ namespace Infrastructure.Models
             }
 
 
-        }
-
-        private bool CanUpateSelectedItem()
-        {
-            return true;
-        }
-
-        private void OnUpateSelectedItem()
-        {
-            int x = 0;
-        }
-
-        private void ParseItems(XElement items, ref Agenda a, ref forms.TreeNode node)
-        {
-            if (items != null)
-            {
-                foreach (XElement item in items.Elements("item"))
-                {
-                    Item x = new Item();
-                    x.Title = (item.Element("title") != null) ? item.Element("title").Value : null;
-                    x.Description = (item.Element("desc") != null) ? item.Element("desc").Value : null;
-                    x.TimeStamp = (item.Element("timestamp") != null) ? TimeSpan.Parse(item.Element("timespan").Value) : TimeSpan.Zero;
-                    _agenda.Items.Add(x);
-                    string assingedText = (x.Title.Length < 150) ? x.Title : x.Title.Substring(0, 150);
-                    forms.TreeNode xn = new forms.TreeNode() { Text = assingedText , ToolTipText = x.Title };
-
-                    if (item.Element("items") == null || item.Element("items").Elements("item") != null)
-                    {
-                        ParseItems(item.Element("items"), ref a, ref xn);
-                    }
-                    node.Nodes.Add(xn);
-                    a.Items.Add(x);
-                }
-            }
-        }
-
-        public Item FindItem(string title )
-        {
-            int hashCode = title.GetHashCode();
-            foreach (Item i in this.MeetingAgenda.Items)
-            {
-                if (i.Title.GetHashCode() == hashCode)
-                {
-                    return i;
-                }
-                    
-            }
-
-            return null;
-        }
-
-        public Meeting(ISession sessionService, IUser user)
-        {
-            _sessionService = sessionService;
-            _user = user;
-            _sessionService.RaiseStamped += _sessionService_RaiseStamped;
-            _loadAgenda = new DelegateCommand<forms.TreeView>(OnLoadAgenda, CanLoadAgenda);
-            _agenda = new Agenda();
-          
         }
 
         private void _sessionService_RaiseStamped(TimeSpan sessionTime)

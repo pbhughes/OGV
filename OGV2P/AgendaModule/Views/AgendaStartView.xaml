@@ -40,10 +40,24 @@
             <TextBox  x:Name="txtMeetingName" 
                           Margin="0 0 5 0" Text="{Binding MeetingName}"/>
         </ScrollViewer>
-           
-            <Button  Grid.Column="2" Command="{Binding LoadAgenda}" Margin="5 0 5 0"
-                        Style="{DynamicResource btn-primary}"
-                        CommandParameter="{Binding ElementName=agendaTree}">Choose File</Button>
+        <tk:SplitButton Name="agendaCommandDropDown" Click="agendaCommandDropDown_Click" Grid.Column="2" Content="Agenda">
+            <tk:SplitButton.DropDownContent>
+                <ItemsControl>
+                    <Button  Command="{Binding LoadAgendaFromFTP}" Margin="5"
+                        Style="{DynamicResource btn-default}"
+                        CommandParameter="{Binding Source={x:Reference Name=agendaTree}}">Choose File From FTP Site</Button>
+
+                    <Button  Command="{Binding LoadAgendaFromFile}" Margin="5"
+                        Style="{DynamicResource btn-default}"
+                        CommandParameter="{Binding Source={x:Reference Name=agendaTree}}">Choose File From Computer</Button>
+
+                    <Button  Command="{Binding CreateNewAgenda}" Margin="5"
+                        Style="{DynamicResource btn-default}"
+                        CommandParameter="{Binding Source={x:Reference Name=agendaTree}}">Start A New File</Button>
+                </ItemsControl>
+            </tk:SplitButton.DropDownContent>
+        </tk:SplitButton>
+
             <Label Grid.Row="1" Grid.Column="0" Content="Meeting Date:"/>
             <DatePicker Grid.Column="1" Grid.Row="1" SelectedDateFormat="Long"
                                 SelectedDate="{Binding MeetingDate}" 
@@ -58,7 +72,7 @@
                                   VerticalAlignment="Stretch" 
                               Margin="20" x:Name="frmHost" 
                                FontSize="16">
-                <wf:TreeView x:Name="agendaTree" 
+                <wf:TreeView  x:Name="agendaTree" 
                               KeyDown="agendaTree_KeyDown"
                               MouseUp="agendaTree_MouseUp" />
 

@@ -12,7 +12,9 @@ namespace Infrastructure.Interfaces
         Agenda MeetingAgenda { get; set; }
         string FileName { get; set; }
         bool IsBusy { get; set; }
-        Microsoft.Practices.Prism.Commands.DelegateCommand<forms.TreeView> LoadAgenda { get; set; }
+        Microsoft.Practices.Prism.Commands.DelegateCommand<forms.TreeView> LoadAgendaFromFTP { get; set; }
+        Microsoft.Practices.Prism.Commands.DelegateCommand<forms.TreeView> LoadAgendaFromFile { get; set; }
+        Microsoft.Practices.Prism.Commands.DelegateCommand<forms.TreeView> CreateNewAgenda { get; set; }
         DateTime MeetingDate { get; set; }
         string MeetingName { get; set; }
         event System.ComponentModel.PropertyChangedEventHandler PropertyChanged;

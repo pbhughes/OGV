@@ -277,6 +277,9 @@ namespace OGV2P.AgendaModule.Views
             _currentMeeting.AddNode(item);
             agendaTree.SelectedNode.Nodes.Add(tn);
 
+            if (tn.Parent != null)
+                tn.Parent.Expand();
+
             _currentMeeting.SelectedItem = item;           
 
         }
@@ -533,6 +536,14 @@ namespace OGV2P.AgendaModule.Views
                 _sessionService.Stamp();
                 MarkItemStamped();
             }
+        }
+
+        private void agendaCommandDropDown_Click(object sender, RoutedEventArgs e)
+        {
+             if (agendaCommandDropDown.IsOpen)
+                agendaCommandDropDown.IsOpen = false;
+            else
+                agendaCommandDropDown.IsOpen = true;
         }
     }
 }
