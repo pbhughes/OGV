@@ -109,7 +109,7 @@ namespace OGV2P.AgendaModule.Views
                 cmdDown.Content = "Down";
             }
 
-           
+
 
             agendaTree.ImageList = _treeImages;
             agendaTree.AfterSelect += agendaTree_AfterSelect;
@@ -509,6 +509,7 @@ namespace OGV2P.AgendaModule.Views
             {
                 moving.Remove();
                 collection.Insert(pivot.Index + 1, moving);
+                agendaTree.SelectedNode = moving;
             }
         }
 

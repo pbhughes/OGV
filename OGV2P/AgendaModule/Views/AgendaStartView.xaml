@@ -66,7 +66,7 @@
         </DockPanel>
       
         <Popup Name="floater" IsOpen="false" AllowsTransparency="True"
-                   Placement="Relative" Width="100" Height="100"
+                   Placement="Relative"  IsHitTestVisible="False"
                PlacementTarget="{Binding ElementName=agendaTree}">
             <Grid>
                 <Grid.RowDefinitions>
@@ -80,24 +80,25 @@
                     <ColumnDefinition />
                 </Grid.ColumnDefinitions>
                 <Button Name="cmdClose" Click="floaterClose_Click" 
-                        Style="{StaticResource btn-Small}" 
                         Background="Red"
                         Foreground="White"
                         FontSize="7"
+                        Margin="5"
                         FontWeight="Heavy"
                         Grid.Row="1" Grid.Column="2" Grid.ColumnSpan="1" 
-                         VerticalAlignment="Center">X
-                </Button>
-                <Button x:Name="cmdLeft"
+                        Width="35" Height="35"
+                         VerticalAlignment="Center">X</Button>
+                <Button x:Name="cmdLeft" Margin="5"
                     Click="floaterMoveLeft_Click" 
-                    Style="{StaticResource btn-Small}" 
+                        Width="35" Height="35"
                     Grid.Row="1" Grid.Column="0"></Button>
-                <Button Name="cmdUp" Click="floaterMoveUp_Click" 
-                        Style="{StaticResource btn-Small}" 
+                <Button Name="cmdUp" Click="floaterMoveUp_Click"
+                        Margin="5" 
+                        Width="35" Height="35"
                         Grid.Row="0" Grid.Column="1"></Button>
-                <Button Name="cmdDown"
+                <Button Name="cmdDown" Margin="5"
                         Click="floaterMoveDown_Click" 
-                        Style="{StaticResource btn-Small}" 
+                        Width="35" Height="35"
                         Grid.Row="2" Grid.Column="1"></Button>
                
             </Grid>
