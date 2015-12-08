@@ -15,6 +15,7 @@ namespace Infrastructure.Interfaces
         Microsoft.Practices.Prism.Commands.DelegateCommand<forms.TreeView> LoadAgendaFromFTP { get; set; }
         Microsoft.Practices.Prism.Commands.DelegateCommand<forms.TreeView> LoadAgendaFromFile { get; set; }
         Microsoft.Practices.Prism.Commands.DelegateCommand<forms.TreeView> CreateNewAgenda { get; set; }
+        Microsoft.Practices.Prism.Commands.DelegateCommand<forms.TreeView> SaveAgendaFile { get; set; }
         DateTime MeetingDate { get; set; }
         string MeetingName { get; set; }
         event System.ComponentModel.PropertyChangedEventHandler PropertyChanged;
@@ -29,7 +30,8 @@ namespace Infrastructure.Interfaces
         string PublishingPoint { get;  }
         string LocalFile { get; set; }
         void  AddNode(Item item);
-
+        long WriteAgendaFile(forms.TreeView agendaTree, string location);
+        long BytesWritten { get; set; }
 
         event MeetingSetEventHandler RaiseMeetingSetEvent;
     }

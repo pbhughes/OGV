@@ -45,15 +45,19 @@
                 <ItemsControl>
                     <Button  Command="{Binding LoadAgendaFromFTP}" Margin="5"
                         Style="{DynamicResource btn-default}"
-                        CommandParameter="{Binding Source={x:Reference Name=agendaTree}}">Choose File From FTP Site</Button>
+                        CommandParameter="{Binding Source={x:Reference Name=agendaTree}}">Choose Agenda From FTP Site</Button>
 
                     <Button  Command="{Binding LoadAgendaFromFile}" Margin="5"
                         Style="{DynamicResource btn-default}"
-                        CommandParameter="{Binding Source={x:Reference Name=agendaTree}}">Choose File From Computer</Button>
+                        CommandParameter="{Binding Source={x:Reference Name=agendaTree}}">Choose Agenda From Computer</Button>
 
                     <Button  Command="{Binding CreateNewAgenda}" Margin="5"
                         Style="{DynamicResource btn-default}"
-                        CommandParameter="{Binding Source={x:Reference Name=agendaTree}}">Start A New File</Button>
+                        CommandParameter="{Binding Source={x:Reference Name=agendaTree}}">Start A New Agenda</Button>
+
+                    <Button  Command="{Binding SaveAgendaFile}" Margin="5"
+                        Style="{DynamicResource btn-default}"
+                        CommandParameter="{Binding Source={x:Reference Name=agendaTree}}">Save the Agenda</Button>
                 </ItemsControl>
             </tk:SplitButton.DropDownContent>
         </tk:SplitButton>

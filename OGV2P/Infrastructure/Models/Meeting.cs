@@ -41,6 +41,7 @@ namespace Infrastructure.Models
             get { return _selectedItem; }
             set { _selectedItem = value; OnPropertyChanged("SelectedItem"); }
         }
+
         private DelegateCommand<forms.TreeView> _createNewAgenda;
         public DelegateCommand<forms.TreeView> CreateNewAgenda
         {
@@ -75,6 +76,21 @@ namespace Infrastructure.Models
             get { return _loadAgendaFromFTP; }
             set { _loadAgendaFromFTP = value; }
         }
+
+        private DelegateCommand<forms.TreeView> _saveAgendaFile;
+        public DelegateCommand<forms.TreeView> SaveAgendaFile
+        {
+            get
+            {
+                return _saveAgendaFile;
+            }
+
+            set
+            {
+                _saveAgendaFile = value;
+            }
+        }
+
         private string _fileName;
 
         public string FileName
@@ -233,6 +249,21 @@ namespace Infrastructure.Models
             }
         }
 
+        private long _bytesWritten;
+        public long BytesWritten
+        {
+            get
+            {
+                return _bytesWritten;
+            }
+
+            set
+            {
+                _bytesWritten = value;
+                OnPropertyChanged("BytesWritten");
+            }
+        }
+
         public event MeetingSetEventHandler RaiseMeetingSetEvent;
 
         private void OnRaiseMeetingSetEvent()
@@ -302,8 +333,29 @@ namespace Infrastructure.Models
             _loadAgendaFromFTP = new DelegateCommand<forms.TreeView>(OnLoadAgendaFromFTP, CanLoadAgendaFromFTP);
             _loadAgendaFromFile = new DelegateCommand<System.Windows.Forms.TreeView>(OnLoadAgendaFromFile, CanLoadAgendaFromFile);
             _createNewAgenda = new DelegateCommand<System.Windows.Forms.TreeView>(OnCreateNewAgenda, CanCreateNewAgenda);
+            _saveAgendaFile = new DelegateCommand<System.Windows.Forms.TreeView>(OnSaveAgendaFile, CanSaveAgendaFile);
             _agenda = new Agenda();
           
+        }
+
+        private bool CanSaveAgendaFile(forms.TreeView arg)
+        {
+            return MeetingAgenda != null && MeetingAgenda.Items.Count > 0;
+        }
+
+        private void OnSaveAgendaFile(forms.TreeView obj)
+        {
+            try
+            {
+                long bytes = WriteAgendaFile(obj, @"c:\agendaTest.xml");
+                BytesWritten = bytes;
+            }
+            catch (Exception ex)
+            {
+
+                string msg = ex.Message;
+            }
+        
         }
 
         private bool CanCreateNewAgenda(forms.TreeView arg)
@@ -329,6 +381,7 @@ namespace Infrastructure.Models
             obj.Nodes.Add(x);
 
             OnRaiseMeetingSetEvent();
+            ReevaluateCommands();
         }
 
         private bool CanLoadAgendaFromFile(forms.TreeView arg)
@@ -406,7 +459,7 @@ namespace Infrastructure.Models
                     }
 
                     OnRaiseMeetingSetEvent();
-
+                    ReevaluateCommands();
 
                 }
             }
@@ -423,6 +476,10 @@ namespace Infrastructure.Models
             }
 
 
+        }
+        private void ReevaluateCommands()
+        {
+            SaveAgendaFile.RaiseCanExecuteChanged();
         }
 
         private void _sessionService_RaiseStamped(TimeSpan sessionTime)
@@ -466,6 +523,30 @@ namespace Infrastructure.Models
 
 
 
+
+
         #endregion
+
+        public long WriteAgendaFile(forms.TreeView agendaTree, string location)
+        {
+            string outputFileName;
+            XDocument xdoc = new XDocument(
+                    new XElement("meeting",
+                        new XElement("clientpathlive", ClientPathLive),
+                        new XElement("clientpathlivestream", ClientPathLiveStream),
+                        new XElement("meetingdate", MeetingDate.ToShortDateString()),
+                        new XElement("videoheight", VideoHeight.ToString()),
+                        new XElement("videowidth", VideoWidth.ToString()),
+                        new XElement("framerate", FrameRate.ToString()),
+                        new XElement("landingpage", LandingPage),
+                        new XElement("agenda")
+                    )
+            );
+            xdoc.Save(location);
+            FileInfo fInfo = new FileInfo(location);
+            return fInfo.Length;
+
+           
+        }
     }
 }
