@@ -4,6 +4,7 @@
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
              xmlns:tk="http://schemas.xceed.com/wpf/xaml/toolkit"
+             xmlns:infra="clr-namespace:Infrastructure.Converters;assembly=Infrastructure"
              xmlns:frms="clr-namespace:System.Windows.Forms;assembly=System.Windows.Forms"
              xmlns:ax="clr-namespace:AxRTMPActiveX;assembly=AxInterop.RTMPActiveX"
              xmlns:interact="clr-namespace:Microsoft.Practices.Prism.Interactivity;assembly=Microsoft.Practices.Prism.Interactivity"
@@ -12,13 +13,18 @@
              Loaded="UserControl_Loaded"
              d:DesignHeight="1024" d:DesignWidth="900">
     <UserControl.Resources>
+        <infra:DoubleToColorConverter  x:Key="progBarConverter"></infra:DoubleToColorConverter>
         <Style TargetType="ProgressBar">
             <Setter Property="Foreground">
                 <Setter.Value>
-                    <SolidColorBrush Color="{Binding VuMeterReading,Converter={StaticResource DoubleToColorConverter}}"></SolidColorBrush>
+                    <LinearGradientBrush StartPoint="0,0.5" EndPoint="1,0.5">
+                        <GradientStop Color="Green" Offset="0" />
+                        <GradientStop Color="{Binding VuMeterReading, Converter={StaticResource progBarConverter}}" Offset="1" />
+                    </LinearGradientBrush>
                 </Setter.Value>
             </Setter>
         </Style>
+        
     </UserControl.Resources>
 
 
@@ -54,11 +60,15 @@
                 <ColumnDefinition Width="45" />
             </Grid.ColumnDefinitions>
 
-            <ProgressBar BorderThickness="0" Background="Transparent"  x:Name="vuMeter" 
-                         Height="10px" 
+            <ProgressBar BorderThickness="0" 
+                         x:Name="vuMeter" 
+                         Value="{Binding VuMeterReading}"
+                         Height="10px"
+                         HorizontalAlignment="Stretch"
+                         Width="auto"
                          Grid.ColumnSpan="2" Grid.Column="0"
-                         Margin="50 5 50 5" 
-                         HorizontalAlignment="Stretch" Value="{Binding VuMeterReading}">
+                         Background="Transparent"
+                         Margin="50 5 50 5">
 
             </ProgressBar>
 

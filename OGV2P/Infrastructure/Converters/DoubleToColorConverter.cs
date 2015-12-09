@@ -13,10 +13,11 @@ namespace Infrastructure.Converters
         public object Convert(object value, Type targetType, object parameter, System.Globalization.CultureInfo culture)
         {
             System.Diagnostics.Debug.Write(string.Format("Vu Meter Reading: {0}", value.ToString()));
-            if ((double)value <= 11000)
+
+            if ((double)value <= 10260)
                 return Colors.Green;
 
-            if ((double)value > 11000 && (double)value <= 22000)
+            if ((double)value > 20521 && (double)value <= 28000)
                 return Colors.Yellow;
 
             return Colors.Red;

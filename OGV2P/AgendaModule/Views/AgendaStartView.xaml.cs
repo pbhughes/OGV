@@ -22,12 +22,15 @@ namespace OGV2P.AgendaModule.Views
         private forms.ImageList _treeImages = new forms.ImageList();
         private forms.ContextMenuStrip _docMenu;
 
-
         public AgendaStartView(IMeeting meeting, ISession sessionService)
         {
             InitializeComponent();
 
             Application.Current.MainWindow.LocationChanged += MainWindow_LocationChanged;
+            Application.Current.MainWindow.Deactivated += MainWindow_Deactivated;
+            Application.Current.MainWindow.StateChanged += MainWindow_StateChanged;
+
+           
             
             if (agendaTree == null)
             {
@@ -121,6 +124,39 @@ namespace OGV2P.AgendaModule.Views
             DataContext = _currentMeeting;
         }
 
+        private void MainWindow_StateChanged(object sender, EventArgs e)
+        {
+            if(Application.Current.MainWindow.WindowState == WindowState.Maximized)
+            {
+                if (agendaTree != null && agendaTree.Nodes.Count > 0)
+                    if (floater != null)
+                        floater.IsOpen = true;
+
+                return;
+            }
+
+            if (Application.Current.MainWindow.WindowState == WindowState.Minimized)
+            {
+                if (floater != null)
+                    floater.IsOpen = false;
+                return;
+            }
+
+            if (Application.Current.MainWindow.WindowState == WindowState.Normal)
+            {
+                if (agendaTree != null && agendaTree.Nodes.Count > 0)
+                    if (floater != null)
+                        floater.IsOpen = true;
+
+                return;
+            }
+        }
+
+        private void MainWindow_Deactivated(object sender, EventArgs e)
+        {
+            floater.IsOpen = false;
+        }
+
         private void MainWindow_LocationChanged(object sender, EventArgs e)
         {
             floater.IsOpen = false;
@@ -159,6 +195,9 @@ namespace OGV2P.AgendaModule.Views
                 // Expand the node at the location 
                 // to show the dropped node.
                 targetNode.Expand();
+
+                //select the dragged node
+                agendaTree.SelectedNode = draggedNode;
             }
         }
 
@@ -544,6 +583,11 @@ namespace OGV2P.AgendaModule.Views
                 agendaCommandDropDown.IsOpen = false;
             else
                 agendaCommandDropDown.IsOpen = true;
+        }
+
+        private void Button_Click(object sender, RoutedEventArgs e)
+        {
+            agendaCommandDropDown.IsOpen = false;
         }
     }
 }

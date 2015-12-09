@@ -529,7 +529,6 @@ namespace Infrastructure.Models
 
         public long WriteAgendaFile(forms.TreeView agendaTree, string location)
         {
-            string outputFileName;
             XDocument xdoc = new XDocument(
                     new XElement("meeting",
                         new XElement("clientpathlive", ClientPathLive),
@@ -539,14 +538,48 @@ namespace Infrastructure.Models
                         new XElement("videowidth", VideoWidth.ToString()),
                         new XElement("framerate", FrameRate.ToString()),
                         new XElement("landingpage", LandingPage),
-                        new XElement("agenda")
+                        new XElement("agenda", new XElement("items"))
                     )
             );
+
+            foreach(forms.TreeNode tn in agendaTree.Nodes)
+            {
+                XElement root = ProcessNodes(tn);
+                xdoc.Element("meeting").Element("agenda").Element("items").Add(root);
+            }
             xdoc.Save(location);
             FileInfo fInfo = new FileInfo(location);
             return fInfo.Length;
+        }
 
-           
+        private XElement ProcessNodes(forms.TreeNode tn)
+        {
+            XElement item = CreateAnItem(tn);
+            if(tn.Nodes.Count > 0)
+            {
+                foreach(forms.TreeNode subNode in tn.Nodes)
+                {
+                    XElement sub = ProcessNodes(subNode);
+                    item.Element("items").Add(sub);
+                    
+                }
+            }
+
+            return item;
+            
+        }
+
+        private XElement CreateAnItem(forms.TreeNode tn)
+        {
+
+            Item agendaItem = FindItem(tn.Text);
+            XElement item = new XElement("item",
+                                         new XElement("title", agendaItem.Title),
+                                         new XElement("desc", agendaItem.Description),
+                                         new XElement("timestamp", agendaItem.TimeStamp.ToString()),
+                                         new XElement("items"));
+
+            return item;
         }
     }
 }
