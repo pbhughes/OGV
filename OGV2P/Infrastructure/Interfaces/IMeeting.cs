@@ -30,9 +30,9 @@ namespace Infrastructure.Interfaces
         string PublishingPoint { get;  }
         string LocalFile { get; set; }
         void  AddNode(Item item);
-        long WriteAgendaFile(forms.TreeView agendaTree, string location);
+        long WriteAgendaFile(forms.TreeView agendaTree);
         long BytesWritten { get; set; }
-
+        string LocalAgendaFileName { get; set; }
         event MeetingSetEventHandler RaiseMeetingSetEvent;
     }
 }

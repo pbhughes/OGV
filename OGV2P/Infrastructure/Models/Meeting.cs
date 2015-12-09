@@ -264,6 +264,21 @@ namespace Infrastructure.Models
             }
         }
 
+        private string _localAgendaFileName;
+        public string LocalAgendaFileName
+        {
+            get
+            {
+                return _localAgendaFileName;
+            }
+
+            set
+            {
+                _localAgendaFileName = value;
+                OnPropertyChanged("LocalAgendaFileName");
+            }
+        }
+
         public event MeetingSetEventHandler RaiseMeetingSetEvent;
 
         private void OnRaiseMeetingSetEvent()
@@ -273,8 +288,6 @@ namespace Infrastructure.Models
                 RaiseMeetingSetEvent(this, new EventArgs());
             }
         }
-
-       
 
         private bool CanUpateSelectedItem()
         {
@@ -347,8 +360,19 @@ namespace Infrastructure.Models
         {
             try
             {
-                long bytes = WriteAgendaFile(obj, @"c:\agendaTest.xml");
+                long bytes = WriteAgendaFile(obj);
                 BytesWritten = bytes;
+
+                // Create OpenFileDialog 
+                FtpBrowseDialog dlg = new FtpBrowseDialog("ftp.coreyware.com", "test", 21, _user.UserID, _user.Password, true);
+
+                var result = dlg.ShowDialog();
+                // Get the selected file name and display in a TextBox 
+                if (result == forms.DialogResult.OK)
+                {
+                    
+
+                }
             }
             catch (Exception ex)
             {
@@ -405,7 +429,7 @@ namespace Infrastructure.Models
             try
             {
                 // Create OpenFileDialog 
-                FtpBrowseDialog dlg = new FtpBrowseDialog("ftp.coreyware.com", "test", 21, _user.UserID, _user.Password, true);
+                FtpBrowseDialog dlg = new FtpBrowseDialog(_user.SelectedBoard.FtpServer, _user.SelectedBoard.FtpPath, 21, _user.UserID, _user.Password, true);
 
                 var result = dlg.ShowDialog();
                 // Get the selected file name and display in a TextBox 
@@ -414,7 +438,14 @@ namespace Infrastructure.Models
                     // Open document 
                     fileName = dlg.SelectedFile;
 
-                    //parse the agenda file
+                   
+                    string dir = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments), "ClerkBase");
+                    if (!File.Exists(dir))
+                        Directory.CreateDirectory(dir);
+
+                    _localAgendaFileName = Path.Combine(dir, dlg.SelectedFileName);
+
+                    //parse the agenda file 
                     FtpWebRequest req = (FtpWebRequest)WebRequest.Create(fileName);
                     NetworkCredential creds = new NetworkCredential(_user.UserID, _user.Password);
                     req.Credentials = creds;
@@ -477,6 +508,7 @@ namespace Infrastructure.Models
 
 
         }
+
         private void ReevaluateCommands()
         {
             SaveAgendaFile.RaiseCanExecuteChanged();
@@ -527,7 +559,7 @@ namespace Infrastructure.Models
 
         #endregion
 
-        public long WriteAgendaFile(forms.TreeView agendaTree, string location)
+        public long WriteAgendaFile(forms.TreeView agendaTree)
         {
             XDocument xdoc = new XDocument(
                     new XElement("meeting",
@@ -547,8 +579,8 @@ namespace Infrastructure.Models
                 XElement root = ProcessNodes(tn);
                 xdoc.Element("meeting").Element("agenda").Element("items").Add(root);
             }
-            xdoc.Save(location);
-            FileInfo fInfo = new FileInfo(location);
+            xdoc.Save(_localAgendaFileName);
+            FileInfo fInfo = new FileInfo(_localAgendaFileName);
             return fInfo.Length;
         }
 

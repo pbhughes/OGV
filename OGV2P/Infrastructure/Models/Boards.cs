@@ -80,6 +80,8 @@ namespace Infrastructure.Models
             }
         }
 
+
+
         public bool RequireLogin
         {
             get
@@ -93,6 +95,38 @@ namespace Infrastructure.Models
                 OnPropertyChanged("RequireLogin");
             }
         }
+
+        private string _ftpServer;
+        public string FtpServer
+        {
+            get
+            {
+                return _ftpServer;
+            }
+
+            set
+            {
+                _ftpServer = value;
+                OnPropertyChanged("FtpServer");
+            }
+        }
+
+        private string _ftpPath;
+        public string FtpPath
+        {
+            get
+            {
+                return _ftpPath;
+            }
+
+            set
+            {
+                _ftpPath = value;
+                OnPropertyChanged("FtpPath");
+            }
+        }
+
+
 
         private bool _requireLogin;
 

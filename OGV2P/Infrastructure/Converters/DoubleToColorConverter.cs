@@ -14,10 +14,10 @@ namespace Infrastructure.Converters
         {
             System.Diagnostics.Debug.Write(string.Format("Vu Meter Reading: {0}", value.ToString()));
 
-            if ((double)value <= 10260)
+            if ((double)value < 8000)
                 return Colors.Green;
 
-            if ((double)value > 20521 && (double)value <= 28000)
+            if ((double)value >= 8000 && (double)value < 28000)
                 return Colors.Yellow;
 
             return Colors.Red;
