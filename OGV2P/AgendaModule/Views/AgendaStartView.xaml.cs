@@ -319,7 +319,10 @@ namespace OGV2P.AgendaModule.Views
             if (tn.Parent != null)
                 tn.Parent.Expand();
 
-            _currentMeeting.SelectedItem = item;           
+            _currentMeeting.SelectedItem = item;
+
+            txtTitle.Focus();
+            txtTitle.SelectAll();         
 
         }
 

@@ -12,6 +12,8 @@ using System.Collections.Specialized;
 using System.Configuration;
 using System.Runtime.InteropServices;
 using System.Collections.Generic;
+using System.Text;
+using System.Threading.Tasks;
 
 namespace Infrastructure.Models
 {
@@ -308,7 +310,7 @@ namespace Infrastructure.Models
                     Item x = new Item();
                     x.Title = (item.Element("title") != null) ? item.Element("title").Value : null;
                     x.Description = (item.Element("desc") != null) ? item.Element("desc").Value : null;
-                    x.TimeStamp = (item.Element("timestamp") != null) ? TimeSpan.Parse(item.Element("timespan").Value) : TimeSpan.Zero;
+                    x.TimeStamp = (item.Element("timestamp") != null) ? TimeSpan.Parse(item.Element("timestamp").Value) : TimeSpan.Zero;
                     _agenda.Items.Add(x);
                     string assingedText = (x.Title.Length < 150) ? x.Title : x.Title.Substring(0, 150);
                     forms.TreeNode xn = new forms.TreeNode() { Text = assingedText , ToolTipText = x.Title };
@@ -360,26 +362,65 @@ namespace Infrastructure.Models
         {
             try
             {
-                long bytes = WriteAgendaFile(obj);
-                BytesWritten = bytes;
+                long totalBytes = WriteAgendaFile(obj);
 
-                // Create OpenFileDialog 
-                FtpBrowseDialog dlg = new FtpBrowseDialog("ftp.coreyware.com", "test", 21, _user.UserID, _user.Password, true);
+                Task t = new Task( (  ) => {
+                    string msg = PushFile(LocalAgendaFileName);
+                });
 
-                var result = dlg.ShowDialog();
-                // Get the selected file name and display in a TextBox 
-                if (result == forms.DialogResult.OK)
-                {
-                    
+                t.Start();
 
-                }
             }
             catch (Exception ex)
             {
 
                 string msg = ex.Message;
             }
+            finally
+            {
+
+            }
         
+        }
+
+        private string PushFile( string fileName )
+        {
+            long totalBytesToSend;
+            int bytes;
+
+            byte[] buffer = new byte[4097];
+            FileInfo fi = new FileInfo(fileName);
+            totalBytesToSend = fi.Length;
+            bytes = 0;
+            //setup the ftp Request object
+            Uri uri = new Uri(string.Format("ftp://{0}/{1}/{2}", _user.SelectedBoard.FtpServer, _user.SelectedBoard.FtpPath, fi.Name));
+            FtpWebRequest req = (FtpWebRequest)WebRequest.Create(uri.ToString());
+            NetworkCredential creds = new NetworkCredential(_user.UserID, _user.Password);
+            req.Credentials = creds;
+            req.Method = WebRequestMethods.Ftp.UploadFile;
+            req.UseBinary = true;
+            req.KeepAlive = true;
+            req.ContentLength = fi.Length;
+
+            //read the file to send 4097 bytes at a time
+            FileStream fs = fi.OpenRead();
+            Stream ss = req.GetRequestStream();
+            while(totalBytesToSend > 0)
+            {
+                bytes = fs.Read(buffer, 0, buffer.Length);
+                ss.Write(buffer, 0, bytes);
+                totalBytesToSend = totalBytesToSend - bytes;
+                BytesWritten += bytes;
+            }
+
+            //get a write stream from the request and write the content
+            fs.Close();
+            ss.Close();
+            
+            FtpWebResponse response = (FtpWebResponse)req.GetResponse();
+            string status = response.StatusDescription;
+            response.Close();
+            return status;
         }
 
         private bool CanCreateNewAgenda(forms.TreeView arg)
@@ -415,7 +456,31 @@ namespace Infrastructure.Models
 
         private void OnLoadAgendaFromFile(forms.TreeView obj)
         {
-            throw new NotImplementedException();
+            try
+            {
+                forms.OpenFileDialog dg = new forms.OpenFileDialog();
+                dg.DefaultExt = ".xml";
+                dg.AddExtension = true;
+                dg.InitialDirectory = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments), "ClerkBase");
+                if (!Directory.Exists(dg.InitialDirectory))
+                    Directory.CreateDirectory(dg.InitialDirectory);
+
+           
+                if(dg.ShowDialog() == System.Windows.Forms.DialogResult.OK)
+                {
+                    _localAgendaFileName = dg.FileName;
+                    string allXml = File.ReadAllText(dg.FileName);
+                    ParseAngedaFile(obj, allXml);
+                }
+            }
+            catch (Exception ex)
+            {
+
+                throw;
+            }
+          
+
+
         }
 
         private bool CanLoadAgendaFromFTP(forms.TreeView agendaTree)
@@ -438,14 +503,14 @@ namespace Infrastructure.Models
                     // Open document 
                     fileName = dlg.SelectedFile;
 
-                   
+
                     string dir = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments), "ClerkBase");
                     if (!File.Exists(dir))
                         Directory.CreateDirectory(dir);
 
                     _localAgendaFileName = Path.Combine(dir, dlg.SelectedFileName);
 
-                    //parse the agenda file 
+                    //setup the ftp request then parse the agenda file 
                     FtpWebRequest req = (FtpWebRequest)WebRequest.Create(fileName);
                     NetworkCredential creds = new NetworkCredential(_user.UserID, _user.Password);
                     req.Credentials = creds;
@@ -457,40 +522,7 @@ namespace Infrastructure.Models
                     string allText = sr.ReadToEnd();
                     _orginalHash = allText.GetHashCode();
 
-
-                    XDocument xDoc = XDocument.Parse(allText);
-                    MeetingName = xDoc.Element("meeting").Element("meetingname").Value;
-
-                    ClientPathLive = xDoc.Element("meeting").Element("clientpathlive").Value;
-                    ClientPathLiveStream = xDoc.Element("meeting").Element("clientpathlivestream").Value;
-
-                    MeetingDate = (xDoc.Element("meeting").Element("meetingdate") != null) ?
-                        DateTime.Parse(xDoc.Element("meeting").Element("meetingdate").Value) :
-                        DateTime.Now;
-
-                    VideoHeight = int.Parse(xDoc.Element("meeting").Element("videoheight").Value);
-                    VideoWidth = int.Parse(xDoc.Element("meeting").Element("videowidth").Value);
-                    FrameRate = int.Parse(xDoc.Element("meeting").Element("framerate").Value);
-                    LandingPage = xDoc.Element("meeting").Element("landingpage").Value;
-
-                    this.LocalFile = string.Format("{0}-{1}-{2}_{3}.mp4", this.MeetingDate.Day, this.MeetingDate.Month, this.MeetingDate.Year, this.MeetingName);
-                    XElement items = xDoc.Element("meeting").Element("agenda").Element("items");
-                    if (items != null)
-                    {
-                        forms.TreeNode root = new forms.TreeNode();
-                        Agenda a = new Agenda();
-                        ParseItems(items, ref a, ref root);
-                        foreach (forms.TreeNode x in root.Nodes)
-                        {
-                            agendaTree.Nodes.Add(x);
-                        }
-                        agendaTree.ShowPlusMinus = true;
-                        agendaTree.ShowLines = true;
-                        agendaTree.ExpandAll();
-                    }
-
-                    OnRaiseMeetingSetEvent();
-                    ReevaluateCommands();
+                    ParseAngedaFile(agendaTree, allText);
 
                 }
             }
@@ -507,6 +539,43 @@ namespace Infrastructure.Models
             }
 
 
+        }
+
+        private void ParseAngedaFile(forms.TreeView agendaTree, string allText)
+        {
+            XDocument xDoc = XDocument.Parse(allText);
+            MeetingName = xDoc.Element("meeting").Element("meetingname").Value;
+
+            ClientPathLive = xDoc.Element("meeting").Element("clientpathlive").Value;
+            ClientPathLiveStream = xDoc.Element("meeting").Element("clientpathlivestream").Value;
+
+            MeetingDate = (xDoc.Element("meeting").Element("meetingdate") != null) ?
+                DateTime.Parse(xDoc.Element("meeting").Element("meetingdate").Value) :
+                DateTime.Now;
+
+            VideoHeight = int.Parse(xDoc.Element("meeting").Element("videoheight").Value);
+            VideoWidth = int.Parse(xDoc.Element("meeting").Element("videowidth").Value);
+            FrameRate = int.Parse(xDoc.Element("meeting").Element("framerate").Value);
+            LandingPage = xDoc.Element("meeting").Element("landingpage").Value;
+
+            this.LocalFile = string.Format("{0}-{1}-{2}_{3}.mp4", this.MeetingDate.Day, this.MeetingDate.Month, this.MeetingDate.Year, this.MeetingName);
+            XElement items = xDoc.Element("meeting").Element("agenda").Element("items");
+            if (items != null)
+            {
+                forms.TreeNode root = new forms.TreeNode();
+                Agenda a = new Agenda();
+                ParseItems(items, ref a, ref root);
+                foreach (forms.TreeNode x in root.Nodes)
+                {
+                    agendaTree.Nodes.Add(x);
+                }
+                agendaTree.ShowPlusMinus = true;
+                agendaTree.ShowLines = true;
+                agendaTree.ExpandAll();
+            }
+
+            OnRaiseMeetingSetEvent();
+            ReevaluateCommands();
         }
 
         private void ReevaluateCommands()
@@ -565,6 +634,7 @@ namespace Infrastructure.Models
                     new XElement("meeting",
                         new XElement("clientpathlive", ClientPathLive),
                         new XElement("clientpathlivestream", ClientPathLiveStream),
+                        new XElement("meetingname", MeetingName),
                         new XElement("meetingdate", MeetingDate.ToShortDateString()),
                         new XElement("videoheight", VideoHeight.ToString()),
                         new XElement("videowidth", VideoWidth.ToString()),
