@@ -221,9 +221,6 @@ namespace OGV2P.Admin.Views
             }
         }
 
-       
-
-
         private void UpdateVUMeter(int sampleVolume)
         {
             this.Dispatcher.InvokeAsync(() =>
@@ -231,8 +228,6 @@ namespace OGV2P.Admin.Views
                 VuMeterReading = (double)sampleVolume;
             });
         }
-
-
 
         public CameraView(IRegionManager regionManager, IDevices devices, ISession sessionService, IMeeting meeting, IUser user)
         {
@@ -345,6 +340,8 @@ namespace OGV2P.Admin.Views
 
             // Video/Audio Devices
             string[] lastUsedDevices = ReadDefaultDeviceCache();
+
+           
 
             AddVideoSources();
             if(lastUsedDevices != null)

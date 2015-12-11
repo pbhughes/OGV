@@ -29,7 +29,7 @@
 
 
         <Border Grid.Column="1" Grid.Row="1" 
-                Margin="10" CornerRadius="8" Background="LightBlue">
+                Margin="10" CornerRadius="8" >
             <ContentControl Panel.ZIndex="200" MaxHeight="300" 
                          Name="MiddleRegion" VerticalAlignment="Center"
                         HorizontalAlignment="Center"

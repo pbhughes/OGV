@@ -16,10 +16,27 @@ namespace OGV2P
     {
         protected override void OnStartup(StartupEventArgs e)
         {
-            base.OnStartup(e);
-            OGV2P.BootStrapper bootStrapper = new BootStrapper();
-            bootStrapper.Run();
+            try
+            {
+                AppDomain current = AppDomain.CurrentDomain;
+                current.UnhandledException += Current_UnhandledException;
+                base.OnStartup(e);
+                OGV2P.BootStrapper bootStrapper = new BootStrapper();
+                bootStrapper.Run();
+            }
+            catch (Exception ex)
+            {
+
+                MessageBox.Show(string.Format("A startup execption occured here is the error: {0}", ex.Message));
+            }
+         
              
+        }
+
+        private void Current_UnhandledException(object sender, UnhandledExceptionEventArgs e)
+        {
+            MessageBox.Show(string.Format("A startup execption occured here is the error: {0}", ((Exception) e.ExceptionObject).Message));
+
         }
     }
 }
