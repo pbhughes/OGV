@@ -5,6 +5,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using System.ComponentModel;
+using System.Deployment.Application;
 
 namespace Infrastructure.Models
 {
@@ -14,6 +15,7 @@ namespace Infrastructure.Models
 
     public class Session : ISession, INotifyPropertyChanged
     {
+
         string _localVideoFile;
 
         public string LocalVideoFile
@@ -68,7 +70,8 @@ namespace Infrastructure.Models
             set { _recoderID = value; }
         }
 
-     
+      
+
         public event MeetingNameSetEventHandler RaiseMeetingNameSet;
 
         public void OnRaiseMeetingSetEvent()

@@ -92,6 +92,7 @@ namespace OGV2P.Admin.Views
             txtPublishingPoint.Text = Meeting.PublishingPoint;
             txtUrl.Text = Meeting.LandingPage;
             txtLocalFile.Text = Meeting.LocalFile;
+            txtAppVersion.Text = _meeting.ApplicationVersion;
             
         }
 

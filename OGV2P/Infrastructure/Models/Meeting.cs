@@ -5,15 +5,12 @@ using Infrastructure.Interfaces;
 using System.IO;
 using System.Xml.Linq;
 using System.Net;
-using System.Windows.Controls;
 using BuckSoft.Controls.FtpBrowseDialog;
 using forms = System.Windows.Forms;
-using System.Collections.Specialized;
-using System.Configuration;
 using System.Runtime.InteropServices;
 using System.Collections.Generic;
-using System.Text;
 using System.Threading.Tasks;
+using System.Deployment.Application;
 
 namespace Infrastructure.Models
 {
@@ -34,6 +31,17 @@ namespace Infrastructure.Models
                 CreateNewAgenda.RaiseCanExecuteChanged();
                 LoadAgendaFromFile.RaiseCanExecuteChanged();
                 LoadAgendaFromFTP.RaiseCanExecuteChanged();
+            }
+        }
+
+        public string ApplicationVersion
+        {
+            get
+            {
+                if (ApplicationDeployment.IsNetworkDeployed)
+                    return ApplicationDeployment.CurrentDeployment.CurrentVersion.ToString();
+
+                return "Debug";
             }
         }
 

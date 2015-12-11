@@ -2,6 +2,7 @@
 using Infrastructure.Models;
 using System.Windows.Controls;
 using forms = System.Windows.Forms;
+using System.Deployment;
 
 namespace Infrastructure.Interfaces
 {
@@ -12,6 +13,7 @@ namespace Infrastructure.Interfaces
         Agenda MeetingAgenda { get; set; }
         string FileName { get; set; }
         bool IsBusy { get; set; }
+        string ApplicationVersion { get; }
         Microsoft.Practices.Prism.Commands.DelegateCommand<forms.TreeView> LoadAgendaFromFTP { get; set; }
         Microsoft.Practices.Prism.Commands.DelegateCommand<forms.TreeView> LoadAgendaFromFile { get; set; }
         Microsoft.Practices.Prism.Commands.DelegateCommand<forms.TreeView> CreateNewAgenda { get; set; }

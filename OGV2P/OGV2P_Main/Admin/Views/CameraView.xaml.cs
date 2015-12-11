@@ -771,8 +771,6 @@ namespace OGV2P.Admin.Views
 
         }
 
-     
-
         private void SettingsButton_Click(object sender, RoutedEventArgs e)
         {
 

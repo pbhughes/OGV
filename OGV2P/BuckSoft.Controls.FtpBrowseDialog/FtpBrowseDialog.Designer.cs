@@ -86,7 +86,7 @@ namespace BuckSoft.Controls.FtpBrowseDialog
             this.panel1.Controls.Add(this.okbutton);
             this.panel1.Dock = System.Windows.Forms.DockStyle.Bottom;
             this.panel1.Location = new System.Drawing.Point(0, 365);
-            this.panel1.Margin = new System.Windows.Forms.Padding(4, 4, 4, 4);
+            this.panel1.Margin = new System.Windows.Forms.Padding(4);
             this.panel1.Name = "panel1";
             this.panel1.Size = new System.Drawing.Size(1204, 36);
             this.panel1.TabIndex = 1;
@@ -96,7 +96,7 @@ namespace BuckSoft.Controls.FtpBrowseDialog
             this.cancelbutton.Anchor = System.Windows.Forms.AnchorStyles.Right;
             this.cancelbutton.DialogResult = System.Windows.Forms.DialogResult.Cancel;
             this.cancelbutton.Location = new System.Drawing.Point(980, 4);
-            this.cancelbutton.Margin = new System.Windows.Forms.Padding(4, 4, 4, 4);
+            this.cancelbutton.Margin = new System.Windows.Forms.Padding(4);
             this.cancelbutton.Name = "cancelbutton";
             this.cancelbutton.Size = new System.Drawing.Size(100, 28);
             this.cancelbutton.TabIndex = 1;
@@ -109,7 +109,7 @@ namespace BuckSoft.Controls.FtpBrowseDialog
             this.okbutton.DialogResult = System.Windows.Forms.DialogResult.OK;
             this.okbutton.Enabled = false;
             this.okbutton.Location = new System.Drawing.Point(1088, 4);
-            this.okbutton.Margin = new System.Windows.Forms.Padding(4, 4, 4, 4);
+            this.okbutton.Margin = new System.Windows.Forms.Padding(4);
             this.okbutton.Name = "okbutton";
             this.okbutton.Size = new System.Drawing.Size(100, 28);
             this.okbutton.TabIndex = 0;
@@ -120,7 +120,7 @@ namespace BuckSoft.Controls.FtpBrowseDialog
             // 
             this.splitContainer1.Dock = System.Windows.Forms.DockStyle.Fill;
             this.splitContainer1.Location = new System.Drawing.Point(0, 27);
-            this.splitContainer1.Margin = new System.Windows.Forms.Padding(4, 4, 4, 4);
+            this.splitContainer1.Margin = new System.Windows.Forms.Padding(4);
             this.splitContainer1.Name = "splitContainer1";
             // 
             // splitContainer1.Panel1
@@ -138,15 +138,14 @@ namespace BuckSoft.Controls.FtpBrowseDialog
             // 
             // directorytree
             // 
-            this.directorytree.Dock = System.Windows.Forms.DockStyle.Fill;
             this.directorytree.Font = new System.Drawing.Font("Microsoft Sans Serif", 12F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.directorytree.Location = new System.Drawing.Point(0, 0);
-            this.directorytree.Margin = new System.Windows.Forms.Padding(4, 4, 4, 4);
+            this.directorytree.Location = new System.Drawing.Point(55, 31);
+            this.directorytree.Margin = new System.Windows.Forms.Padding(4);
             this.directorytree.Name = "directorytree";
             this.directorytree.PathSeparator = "/";
             this.directorytree.ShowLines = false;
             this.directorytree.ShowRootLines = false;
-            this.directorytree.Size = new System.Drawing.Size(401, 338);
+            this.directorytree.Size = new System.Drawing.Size(259, 258);
             this.directorytree.TabIndex = 0;
             this.directorytree.BeforeCollapse += new System.Windows.Forms.TreeViewCancelEventHandler(this.directorytree_BeforeCollapse);
             this.directorytree.BeforeExpand += new System.Windows.Forms.TreeViewCancelEventHandler(this.directorytree_BeforeExpand);
@@ -158,7 +157,7 @@ namespace BuckSoft.Controls.FtpBrowseDialog
             this.filelist.Dock = System.Windows.Forms.DockStyle.Fill;
             this.filelist.Font = new System.Drawing.Font("Microsoft Sans Serif", 12F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.filelist.Location = new System.Drawing.Point(0, 0);
-            this.filelist.Margin = new System.Windows.Forms.Padding(4, 4, 4, 4);
+            this.filelist.Margin = new System.Windows.Forms.Padding(10);
             this.filelist.MultiSelect = false;
             this.filelist.Name = "filelist";
             this.filelist.Size = new System.Drawing.Size(798, 338);
@@ -180,12 +179,12 @@ namespace BuckSoft.Controls.FtpBrowseDialog
             this.Controls.Add(this.panel1);
             this.Controls.Add(this.toolStrip1);
             this.FormBorderStyle = System.Windows.Forms.FormBorderStyle.FixedDialog;
-            this.Margin = new System.Windows.Forms.Padding(4, 4, 4, 4);
+            this.Margin = new System.Windows.Forms.Padding(4);
             this.Name = "FtpBrowseDialog";
             this.ShowIcon = false;
             this.ShowInTaskbar = false;
             this.StartPosition = System.Windows.Forms.FormStartPosition.CenterParent;
-            this.Text = "FtpBrowseDialog";
+            this.Text = "Choose Agenda File";
             this.toolStrip1.ResumeLayout(false);
             this.toolStrip1.PerformLayout();
             this.panel1.ResumeLayout(false);

@@ -45,6 +45,8 @@ namespace BuckSoft.Controls.FtpBrowseDialog
             fileimages.Images.Add(global::BuckSoft.Controls.FtpBrowseDialog.Properties.Resources.DOC);
             filelist.SmallImageList = fileimages;
             promptforserver = false;
+         
+
         }
 
         public FtpBrowseDialog()
@@ -66,6 +68,7 @@ namespace BuckSoft.Controls.FtpBrowseDialog
             fileimages.Images.Add(global::BuckSoft.Controls.FtpBrowseDialog.Properties.Resources.DOC);
             filelist.SmallImageList = fileimages;
             promptforserver = true;
+            
         }
         #endregion
 
@@ -231,6 +234,7 @@ namespace BuckSoft.Controls.FtpBrowseDialog
             FtpTreeNode rootnode = new FtpTreeNode(host, startpath, ftpport);
             LoadSubNodes(rootnode);
             e.Result = rootnode;
+            
         }
 
         void fsloader_RunWorkerCompleted(object sender, RunWorkerCompletedEventArgs e)
@@ -242,6 +246,7 @@ namespace BuckSoft.Controls.FtpBrowseDialog
             rootnode.Expand();
             directorytree.SelectedNode = rootnode;
             progress.Close();
+            splitContainer1.Panel1Collapsed = true;
         }
 
         private void directorytree_NodeMouseClick(object sender, TreeNodeMouseClickEventArgs e)
@@ -307,8 +312,13 @@ namespace BuckSoft.Controls.FtpBrowseDialog
 
         private void directorytree_AfterSelect(object sender, TreeViewEventArgs e)
         {
+            LoadFileList( (FtpTreeNode) e.Node );
+        }
+
+        private void LoadFileList(FtpTreeNode node)
+        {
             filelist.Items.Clear();
-            FtpTreeNode clicknode = (FtpTreeNode)e.Node;
+            FtpTreeNode clicknode = node;
             path = clicknode.FullPath;
             file = String.Empty;
             okbutton.Enabled = false;
