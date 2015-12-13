@@ -7,8 +7,8 @@
              xmlns:infra="clr-namespace:Infrastructure.Converters;assembly=Infrastructure"
              xmlns:frms="clr-namespace:System.Windows.Forms;assembly=System.Windows.Forms"
              xmlns:ax="clr-namespace:AxRTMPActiveX;assembly=AxInterop.RTMPActiveX"
-             xmlns:interact="clr-namespace:Microsoft.Practices.Prism.Interactivity;assembly=Microsoft.Practices.Prism.Interactivity"
              xmlns:prism="http://www.codeplex.com/prism"
+             xmlns:inter="http://sche"
              xmlns:cc="clr-namespace:CustomControls;assembly=CustomControls"
              mc:Ignorable="d" 
              Loaded="UserControl_Loaded"
@@ -27,9 +27,6 @@
         </Style>
         
     </UserControl.Resources>
-
-
-
     <Grid >
         <Grid.RowDefinitions>
             <RowDefinition Height="auto"/>
@@ -124,15 +121,22 @@
             </StackPanel>
 
             <Label Grid.Column="0" Grid.Row="3" 
-                   Width="75" MinWidth="50">Timer</Label>
-            <TextBlock Grid.Column="1" x:Name="txtTimer"
+                   Width="75" MinWidth="50">Status:</Label>
+            <StackPanel Orientation="Horizontal" HorizontalAlignment="Center"
+                        Grid.Column="1" Grid.Row="3">
+                <cc:ToggleSwtich State="{Binding IsBusy}" 
+                             Loaded="ToggleSwtich_Loaded"/>
+
+                <TextBlock Margin="0 10 0 10" Grid.Column="1" x:Name="txtTimer"
                        VerticalAlignment="Center" HorizontalAlignment="Center"
                        FontSize="15" Grid.Row="3" Text="{Binding TimerStamp}"/>
 
+               
+            </StackPanel>
+           
+
             <Label Grid.Column="0" Grid.Row="4" >Status</Label>
-            <cc:ToggleSwtich State="{Binding IsBusy}" 
-                             Grid.Column="1" Grid.Row="4"
-                             Loaded="ToggleSwtich_Loaded"/>
+          
 
             <Label Grid.Column="0" Grid.Row="5" Width="75" 
                    MinWidth="50">CPU</Label>

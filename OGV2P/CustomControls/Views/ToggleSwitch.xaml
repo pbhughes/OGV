@@ -23,6 +23,7 @@
                      VerticalAlignment="Center"
                      Background="Transparent"
                      Foreground="Green"
+                     MaxWidth="50"
                      HorizontalAlignment="Center"></TextBox>
 
             <ContentControl Grid.Column="1" Name="ball"
@@ -43,7 +44,7 @@
                      Grid.Column="1"
                      Margin="3"
                      Foreground="Red"
-                     VerticalAlignment="Center"
+                     VerticalAlignment="Center" MaxWidth="50"
                      Background="Transparent"
                      HorizontalAlignment="Center"></TextBox>
         </Grid>

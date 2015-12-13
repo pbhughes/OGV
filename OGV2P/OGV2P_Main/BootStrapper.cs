@@ -45,11 +45,18 @@ namespace OGV2P
             moduleCatalog.AddModule(typeof(OGV2P.AgendaModule.AgendaModule));
 
         }
+        protected override void ConfigureServiceLocator()
+        {
+            base.ConfigureServiceLocator();
+            
 
+        }
         protected override void ConfigureContainer()
         {
             base.ConfigureContainer();
-            
+
+            ConfigureServiceLocator();
+
             this.Container.RegisterType<object, OGV2P.Admin.Views.CameraView>(typeof(OGV2P.Admin.Views.CameraView).FullName);
             this.Container.RegisterType<object, OGV2P.Admin.Views.LoginView>(typeof(OGV2P.Admin.Views.LoginView).FullName);
             this.Container.RegisterType<object, OGV2P.AgendaModule.Views.AgendaStartView>(typeof(OGV2P.AgendaModule.Views.AgendaStartView).FullName);
@@ -57,7 +64,7 @@ namespace OGV2P
             this.Container.RegisterType<Infrastructure.Interfaces.IDevices, Infrastructure.Models.Devices>();
 
             _boardList = LoadBoards();
-            _session = new Session();
+            _session = new Session( );
             _user = new User(_session, _boardList);
             _meeting = new Meeting(_session, _user);
            

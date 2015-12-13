@@ -24,5 +24,6 @@ namespace Infrastructure.Interfaces
 
         event StampedEventHandler RaiseStamped;
 
+
     }
 }

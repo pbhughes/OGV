@@ -6,6 +6,8 @@ using System.Text;
 using System.Threading.Tasks;
 using System.ComponentModel;
 using System.Deployment.Application;
+using Microsoft.Practices.Prism.Regions;
+using Microsoft.Practices.Unity;
 
 namespace Infrastructure.Models
 {
@@ -47,10 +49,7 @@ namespace Infrastructure.Models
             }
         }
 
-
-
         string _meetingName;
-
         public string MeetingName
         {
             get { return _meetingName; }
@@ -61,6 +60,7 @@ namespace Infrastructure.Models
 
             }
         }
+
 
 
         private Guid _recoderID;
@@ -97,7 +97,7 @@ namespace Infrastructure.Models
 
         public Session()
         {
-
+           
         }
 
         #region INotifyPropertyChanged

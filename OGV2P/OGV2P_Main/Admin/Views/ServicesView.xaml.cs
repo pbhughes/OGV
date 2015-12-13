@@ -70,7 +70,7 @@ namespace OGV2P.Admin.Views
             }
         }
 
-       
+
 
         public ServicesView(IRegionManager regionManager, IMeeting meeting, IUser user, ISession session, IUnityContainer container)
         {
@@ -86,14 +86,14 @@ namespace OGV2P.Admin.Views
 
         }
 
-        async void  ServicesView_Loaded(object sender, RoutedEventArgs e)
+        async void ServicesView_Loaded(object sender, RoutedEventArgs e)
         {
             Meeting = _container.Resolve<IMeeting>();
             txtPublishingPoint.Text = Meeting.PublishingPoint;
             txtUrl.Text = Meeting.LandingPage;
             txtLocalFile.Text = Meeting.LocalFile;
             txtAppVersion.Text = _meeting.ApplicationVersion;
-            
+
         }
 
         public void OnNavigatedTo(NavigationContext navigationContext)
@@ -135,12 +135,13 @@ namespace OGV2P.Admin.Views
 
         private void Button_Click_1(object sender, RoutedEventArgs e)
         {
-            if(! string.IsNullOrEmpty(txtLocalFile.Text))
+            if (!string.IsNullOrEmpty(txtLocalFile.Text))
             {
                 string fullPath = txtLocalFile.Text;
                 var dInfo = Directory.GetParent(fullPath);
                 System.Diagnostics.Process.Start(dInfo.FullName);
             }
         }
+
     }
 }

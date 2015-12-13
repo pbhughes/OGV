@@ -34,7 +34,6 @@ namespace OGV2P.Admin.Views
         private IRegionManager _regionManager;
         private IUser _user;
         private AxRTMPActiveX.AxRTMPActiveX axRControl;
-        public InteractionRequest<INotification> NotificationRequest { get; set; }
         private string PREFERED_DEVICE_FILE = "preferedDevices.xml";
 
         LinearGradientBrush _yellow =
@@ -42,6 +41,7 @@ namespace OGV2P.Admin.Views
             new Point(0, 1), new Point(1, 0));
 
         public DelegateCommand NotificationCommand { get; set; }
+        public InteractionRequest<INotification> NotificationRequest { get; set; }
 
         ISession _sessionService;
         public ISession SessionService
@@ -212,6 +212,8 @@ namespace OGV2P.Admin.Views
             }
         }
 
+        public string InteractionResultMessage { get; private set; }
+
         private void UpdateVUMeter(int sampleVolume)
         {
             this.Dispatcher.InvokeAsync(() =>
@@ -228,10 +230,7 @@ namespace OGV2P.Admin.Views
             {
                 this.DataContext = this;
                 NotificationRequest = new InteractionRequest<INotification>();
-                NotificationCommand = new DelegateCommand(() =>
-                {
-                    NotificationRequest.Raise(new Notification { Title = "Settings", Content = "Notfication Set" }, null);
-                });
+                NotificationCommand = new DelegateCommand(OnNofity, CanNotify);
 
                 _sessionService = sessionService;
                 _meeting = meeting;
@@ -280,6 +279,18 @@ namespace OGV2P.Admin.Views
             }
 
 
+        }
+
+        private bool CanNotify()
+        {
+            return true;
+        }
+
+        private void OnNofity()
+        {
+            this.NotificationRequest.Raise(
+                 new Notification { Content = "Notification Message", Title = "Hey Your Notified"},
+                 n => { InteractionResultMessage = "The user was notfied"; });
         }
 
         private void Meeting_SetEvent(object sender, EventArgs e)
