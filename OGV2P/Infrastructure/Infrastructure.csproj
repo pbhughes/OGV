@@ -119,6 +119,7 @@
     </Reference>
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Converters\BoolToColor.cs" />
     <Compile Include="Converters\DoubleToColorConverter.cs" />
     <Compile Include="Converters\InverseBoolConverter.cs" />
     <Compile Include="Converters\VisibilityConverter.cs" />

@@ -1,0 +1,52 @@
+﻿<UserControl x:Class="CustomControls.ToggleSwtich"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
+             mc:Ignorable="d" 
+             d:DesignHeight="35" d:DesignWidth="110"
+             Loaded="UserControl_Loaded">
+    <UserControl.Resources>
+    </UserControl.Resources>
+    <Border BorderBrush="AliceBlue" BorderThickness="1" CornerRadius="3">
+        
+        <Grid>
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition />
+                <ColumnDefinition />
+            </Grid.ColumnDefinitions>
+            <Grid.RowDefinitions>
+                <RowDefinition Height="Auto"/>
+            </Grid.RowDefinitions>
+            <TextBox Name="txtLeft" BorderThickness="0" Text="ON" 
+                     Grid.Column="0" Margin="3"
+                     VerticalAlignment="Center"
+                     Background="Transparent"
+                     Foreground="Green"
+                     HorizontalAlignment="Center"></TextBox>
+
+            <ContentControl Grid.Column="1" Name="ball"
+                            Panel.ZIndex="100" 
+                            VerticalAlignment="Center" 
+                            HorizontalAlignment="Center" >
+                <Ellipse 
+                      Canvas.Top="50"
+                      Canvas.Left="50"
+                      Fill="#428bca"  
+                      Height="30"
+                      Width="30"
+                      StrokeThickness="1"
+                      Stroke="AliceBlue"/>
+            </ContentControl>
+
+            <TextBox Name="txtRight" BorderThickness="0" Text="OFF"
+                     Grid.Column="1"
+                     Margin="3"
+                     Foreground="Red"
+                     VerticalAlignment="Center"
+                     Background="Transparent"
+                     HorizontalAlignment="Center"></TextBox>
+        </Grid>
+    </Border>
+    
+</UserControl>

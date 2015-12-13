@@ -5,34 +5,25 @@ using Infrastructure.Models;
 using System.Timers;
 using System;
 using System.Windows.Media;
-using AxRTMPActiveX;
-using RTMPActiveX;
 using System.Diagnostics;
 using Microsoft.Practices.Prism.Regions;
-using Microsoft.Practices.Unity;
 using System.IO;
 using System.Configuration;
-using System.Collections;
 using System.ComponentModel;
-using System.Collections.Generic;
-using System.Windows.Interop;
-using System.Management.Instrumentation;
 using System.Management;
 using System.Collections.Specialized;
 using System.Threading.Tasks;
 using Microsoft.Practices.Prism.Interactivity.InteractionRequest;
-using Microsoft.Practices.Prism.Interactivity;
 using Microsoft.Practices.Prism.Commands;
-using forms = System.Windows.Forms;
 using System.Xml.Linq;
-using Newtonsoft.Json;
 
 namespace OGV2P.Admin.Views
 {
     /// <summary>
     /// Interaction logic for CameraView.xaml
     /// </summary>
-    public partial class CameraView : UserControl, INavigationAware, IRegionMemberLifetime, INotifyPropertyChanged
+    public partial class CameraView : UserControl, INavigationAware, 
+                                        IRegionMemberLifetime, INotifyPropertyChanged
     {
         private const string RECORDING_IN_PROGRESS = "Recording in progress, please stop recording before changing devices";
         private System.Timers.Timer cpuReadingTimer;
@@ -249,6 +240,8 @@ namespace OGV2P.Admin.Views
                 _user = user;
                 //get the application settings
                 _settings = ConfigurationSettings.AppSettings;
+
+                IsBusy = false;
 
                 //initialize the window to listen for usb devices to be added
                 var query = new WqlEventQuery("SELECT * FROM Win32_DeviceChangeEvent WHERE EventType = 2 OR EventType = 3");
@@ -721,7 +714,6 @@ namespace OGV2P.Admin.Views
             axRControl.AudioSource = Convert.ToInt32(cboMicrophones.SelectedIndex);
         }
 
-
         #region INotifyPropertyChanged
 
         public event PropertyChangedEventHandler PropertyChanged;
@@ -802,6 +794,11 @@ namespace OGV2P.Admin.Views
                 System.Windows.MessageBox.Show(ex.Message);
             }
            
+        }
+
+        private void ToggleSwtich_Loaded(object sender, RoutedEventArgs e)
+        {
+
         }
     }
 }

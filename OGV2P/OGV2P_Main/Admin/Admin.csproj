@@ -191,6 +191,10 @@
     <Folder Include="Models\" />
   </ItemGroup>
   <ItemGroup>
+    <ProjectReference Include="..\..\CustomControls\CustomControls.csproj">
+      <Project>{676e39da-65e5-4c6f-826e-a589bc4fd80a}</Project>
+      <Name>CustomControls</Name>
+    </ProjectReference>
     <ProjectReference Include="..\..\Infrastructure\Infrastructure.csproj">
       <Project>{c7dba26a-38dc-4e6e-b386-99008004a915}</Project>
       <Name>Infrastructure</Name>

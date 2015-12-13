@@ -9,6 +9,7 @@
              xmlns:ax="clr-namespace:AxRTMPActiveX;assembly=AxInterop.RTMPActiveX"
              xmlns:interact="clr-namespace:Microsoft.Practices.Prism.Interactivity;assembly=Microsoft.Practices.Prism.Interactivity"
              xmlns:prism="http://www.codeplex.com/prism"
+             xmlns:cc="clr-namespace:CustomControls;assembly=CustomControls"
              mc:Ignorable="d" 
              Loaded="UserControl_Loaded"
              d:DesignHeight="1024" d:DesignWidth="900">
@@ -83,8 +84,8 @@
                 <RowDefinition Height="auto" />
                 <RowDefinition  Height="auto"/>
                 <RowDefinition Height="auto" />
-                <RowDefinition />
-                <RowDefinition />
+                <RowDefinition Height="Auto"/>
+                <RowDefinition Height="auto" />
                 <RowDefinition Height="Auto" />
             </Grid.RowDefinitions>
 
@@ -128,14 +129,13 @@
                        VerticalAlignment="Center" HorizontalAlignment="Center"
                        FontSize="15" Grid.Row="3" Text="{Binding TimerStamp}"/>
 
-            <Label Grid.Column="0" Grid.Row="4" Width="75" MinWidth="50">Status</Label>
-            <TextBlock Grid.Column="1" Grid.Row="4"
-                       TextAlignment="Center" 
-                       VerticalAlignment="Center" 
-                       TextTrimming="CharacterEllipsis"
-                       Text="{Binding Message}"></TextBlock>
+            <Label Grid.Column="0" Grid.Row="4" >Status</Label>
+            <cc:ToggleSwtich State="{Binding IsBusy}" 
+                             Grid.Column="1" Grid.Row="4"
+                             Loaded="ToggleSwtich_Loaded"/>
 
-            <Label Grid.Column="0" Grid.Row="5" Width="75" MinWidth="50">CPU</Label>
+            <Label Grid.Column="0" Grid.Row="5" Width="75" 
+                   MinWidth="50">CPU</Label>
             <TextBlock Grid.Column="1" Grid.Row="5" x:Name="txtCpuUsage" TextAlignment="Center" VerticalAlignment="Center" TextTrimming="CharacterEllipsis" Text="{Binding SessionService.CurrentSession.StatusMessage}"></TextBlock>
 
 
