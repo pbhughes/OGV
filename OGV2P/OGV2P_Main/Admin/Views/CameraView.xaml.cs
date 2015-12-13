@@ -571,6 +571,7 @@ namespace OGV2P.Admin.Views
                     ;
                 if (result == 11)
                 {
+                   
                     RTMPStatus status = Newtonsoft.Json.JsonConvert.DeserializeObject<RTMPStatus>(e.result);
                     Message = status.ConnectionStatus;
                 }

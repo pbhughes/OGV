@@ -40,7 +40,9 @@
             <TextBox  x:Name="txtMeetingName" 
                           Margin="0 0 5 0" Text="{Binding MeetingName}"/>
         </ScrollViewer>
-        <tk:SplitButton Name="agendaCommandDropDown" Click="agendaCommandDropDown_Click" Grid.Column="2" Content="Agenda">
+        <tk:SplitButton Name="agendaCommandDropDown" 
+                        Click="agendaCommandDropDown_Click" Background="#428bca"
+                        Grid.Column="2" Content="Agenda" Margin="5">
             <tk:SplitButton.DropDownContent>
                 <ItemsControl>
                     <Button  Command="{Binding LoadAgendaFromFTP}" Margin="5"

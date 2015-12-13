@@ -21,19 +21,25 @@
 
             <Label Width="120" MinWidth="50">Local File:</Label>
             <ScrollViewer Grid.Column="1" VerticalScrollBarVisibility="Hidden">
-                <TextBlock x:Name="txtLocalFile" Margin="0 0 5 0" FontSize="12"
+                <TextBox x:Name="txtLocalFile" Margin="0 0 5 0" FontSize="12"
                            TextAlignment="left" MinWidth="100"
-                           VerticalAlignment="Center"></TextBlock>
+                           IsReadOnly="True"
+                         Background="Transparent"
+                         BorderThickness="0"
+                           VerticalAlignment="Center"></TextBox>
             </ScrollViewer>
             <Button Grid.Column="2" FontSize="15"
                 Style="{StaticResource btn-primary}"
                 Click="Button_Click_1">Open Folder</Button>
             <Label Grid.Row="1" Width="120" MinWidth="50">URL:</Label>
             <ScrollViewer Grid.Row="1" Grid.Column="1" VerticalScrollBarVisibility="Hidden">
-                <TextBlock x:Name="txtUrl" Margin="0 0 5 0" FontSize="12"
+                <TextBox x:Name="txtUrl" Margin="0 0 5 0" FontSize="12"
                            TextAlignment="left" MinWidth="100"
                            VerticalAlignment="Center"
-                           Text="{Binding LandingPage}"></TextBlock>
+                           IsReadOnly="True"
+                         Background="Transparent"
+                         BorderThickness="0"
+                           Text="{Binding LandingPage}"></TextBox>
             </ScrollViewer>
             <Button Grid.Row="1" Grid.Column="2"
                 Style="{StaticResource btn-primary}"
@@ -41,12 +47,15 @@
                 Click="Button_Click" FontSize="15">Preview Url</Button>
             <Label Grid.Row="2" Width="120" MinWidth="50">Publishing Point:</Label>
             <ScrollViewer Grid.Row="2" Grid.Column="1" Grid.ColumnSpan="2" VerticalScrollBarVisibility="Hidden">
-                <TextBlock x:Name="txtPublishingPoint" Margin="0 0 5 0" FontSize="12"
+                <TextBox x:Name="txtPublishingPoint" Margin="0 0 5 0" FontSize="12"
                            TextAlignment="left" MinWidth="100"
                            VerticalAlignment="Center"
-                           Text="{Binding PublishingPoint}"></TextBlock>
+                          IsReadOnly="True"
+                         Background="Transparent"
+                         BorderThickness="0"
+                           Text="{Binding PublishingPoint}"></TextBox>
             </ScrollViewer>
-            <Label Grid.Row="4">Application Verion:</Label>
+            <Label Grid.Row="4">Version:</Label>
             <TextBlock Name="txtAppVersion" VerticalAlignment="Center" HorizontalAlignment="Left"  Grid.Row="4" Grid.Column="3"
                    Text="{Binding ApplicationVersion, Mode=OneTime}" />
         </Grid>
