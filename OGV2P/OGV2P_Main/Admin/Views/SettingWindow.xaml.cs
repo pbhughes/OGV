@@ -29,6 +29,9 @@ namespace OGV2P.Admin.Views
             txtLocalFile.Text = (localVideoFile == null || localVideoFile == string.Empty)?"The folder where the local video is stored....":localVideoFile;
             txtAppVersion.Text = SoftwareVersion();
             txtPublishingPoint.Text = (publishingPoint == null || publishingPoint == string.Empty)?"The url on the internet where the video is sent....":publishingPoint;
+
+           
+                
         }
 
         private string SoftwareVersion()
@@ -45,9 +48,18 @@ namespace OGV2P.Admin.Views
         {
             if (!string.IsNullOrEmpty(txtLocalFile.Text))
             {
-                string fullPath = txtLocalFile.Text;
+                string myDocuments = Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments);
+                string fullPath = System.IO.Path.Combine(myDocuments,"ClerkBase", txtLocalFile.Text);
                 var dInfo = Directory.GetParent(fullPath);
-                System.Diagnostics.Process.Start(dInfo.FullName);
+                if (Directory.Exists(dInfo.FullName))
+                {
+                    
+                    System.Diagnostics.Process.Start(dInfo.FullName);
+                }
+                else
+                {
+                    MessageBox.Show("Invalid directory, this value is loaded from the agenda file.");
+                }
             }
         }
 
@@ -56,7 +68,14 @@ namespace OGV2P.Admin.Views
             if (txtUrl.Text == null || txtUrl.Text == string.Empty)
                 ;//do nothing
             else
-                System.Diagnostics.Process.Start(txtUrl.Text);
+            {
+                Uri result;
+                if(Uri.TryCreate(txtUrl.Text, UriKind.Absolute, out result ))
+                    System.Diagnostics.Process.Start(txtUrl.Text);
+                else
+                    MessageBox.Show("Invalid URL, this value is loaded from the agenda file.");
+            }
+               
         }
     }
 }
