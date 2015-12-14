@@ -16,6 +16,7 @@ using System.Threading.Tasks;
 using Microsoft.Practices.Prism.Interactivity.InteractionRequest;
 using Microsoft.Practices.Prism.Commands;
 using System.Xml.Linq;
+using OGV2P.Admin.Views;
 
 namespace OGV2P.Admin.Views
 {
@@ -780,24 +781,8 @@ namespace OGV2P.Admin.Views
 
             try
             {
-                if (winFrmHost.Visibility == Visibility.Visible)
-                {
-                   
-
-                    winFrmHost.Visibility = Visibility.Hidden;
-                    var settingsView = _regionManager.Regions[Infrastructure.Models.Regions.Middle].GetView("SettingsView");
-                    _regionManager.Regions[Infrastructure.Models.Regions.Middle].Activate(settingsView);
-
-                }
-                else
-                {
-                    winFrmHost.Visibility = Visibility.Visible;
-                    var settingsView = _regionManager.Regions[Infrastructure.Models.Regions.Middle].GetView("SettingsView");
-                    _regionManager.Regions[Infrastructure.Models.Regions.Middle].Deactivate(settingsView);
-
-             
-                }
-                    
+                SettingWindowDialog diag = new SettingWindowDialog(_meeting.LandingPage, _meeting.LocalFile, _meeting.PublishingPoint);
+                diag.ShowDialog();
             }
             catch (Exception ex)
             {
