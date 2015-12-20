@@ -46,7 +46,7 @@
             <WindowsFormsHost Grid.Row="0" Grid.Column="0" Grid.ColumnSpan="2"
                           x:Name="winFrmHost" 
                           Width="640" Height="480">
-                <!--<ax:AxRTMPActiveX x:Name="axRControl"></ax:AxRTMPActiveX>-->
+                <ax:AxRTMPActiveX x:Name="axRControl"></ax:AxRTMPActiveX>
             </WindowsFormsHost>
         </DockPanel>
 

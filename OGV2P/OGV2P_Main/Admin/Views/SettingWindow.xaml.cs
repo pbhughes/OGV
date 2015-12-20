@@ -48,9 +48,8 @@ namespace OGV2P.Admin.Views
         {
             if (!string.IsNullOrEmpty(txtLocalFile.Text))
             {
-                string myDocuments = Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments);
-                string fullPath = System.IO.Path.Combine(myDocuments,"ClerkBase", txtLocalFile.Text);
-                var dInfo = Directory.GetParent(fullPath);
+                
+                var dInfo = Directory.GetParent(txtLocalFile.Text);
                 if (Directory.Exists(dInfo.FullName))
                 {
                     

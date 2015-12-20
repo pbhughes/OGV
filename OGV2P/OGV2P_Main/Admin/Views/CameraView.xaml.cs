@@ -17,6 +17,8 @@ using Microsoft.Practices.Prism.Interactivity.InteractionRequest;
 using Microsoft.Practices.Prism.Commands;
 using System.Xml.Linq;
 using OGV2P.Admin.Views;
+using forms = System.Windows.Forms;
+using Infrastructure.Extensions;
 
 namespace OGV2P.Admin.Views
 {
@@ -26,6 +28,7 @@ namespace OGV2P.Admin.Views
     public partial class CameraView : UserControl, INavigationAware, 
                                         IRegionMemberLifetime, INotifyPropertyChanged
     {
+        private const int FILE_SOURCE = 101;
         private const string RECORDING_IN_PROGRESS = "Recording in progress, please stop recording before changing devices";
         private System.Timers.Timer cpuReadingTimer;
         private PerformanceCounter cpuCounter;
@@ -34,7 +37,7 @@ namespace OGV2P.Admin.Views
         NameValueCollection _settings;
         private IRegionManager _regionManager;
         private IUser _user;
-        private AxRTMPActiveX.AxRTMPActiveX axRControl;
+        //private AxRTMPActiveX.AxRTMPActiveX axRControl;
         private string PREFERED_DEVICE_FILE = "preferedDevices.xml";
 
         LinearGradientBrush _yellow =
@@ -229,6 +232,7 @@ namespace OGV2P.Admin.Views
 
             try
             {
+
                 this.DataContext = this;
                 NotificationRequest = new InteractionRequest<INotification>();
                 NotificationCommand = new DelegateCommand(OnNofity, CanNotify);
@@ -268,10 +272,14 @@ namespace OGV2P.Admin.Views
                 _vuMeterTimer.Start();
 
 
-                axRControl = new AxRTMPActiveX.AxRTMPActiveX();
-                winFrmHost.Child = axRControl;
+                //axRControl = new AxRTMPActiveX.AxRTMPActiveX();
+                //winFrmHost.Child = axRControl;
 
-                
+                axRControl.License = "nlic:1.2:LiveEnc:3.0:LvApp=1,LivePlg=1,MSDK=4,MPEG2DEC=1,MPEG2ENC=1,PS=1,TS=1,H264DEC=1,H264ENC=1,H264ENCQS=1,MP4=4,RTMPsrc=1,RtmpMsg=1,RTMPs=1,RTSP=1,RTSPsrc=1,UDP=1,UDPsrc=1,HLS=1,WMS=1,WMV=1,RTMPm=4,RTMPx=3,Resz=1,RSrv=1,VMix2=1,3DRemix=1,ScCap=1,AuCap=1,AEC=1,Demo=1,Ic=1,NoMsg=1,Tm=1800,T1=600,NoIc=1:win,win64,osx:20151030,20160111::0:0:nanocosmosdemo-292490-3:ncpt:f6044ea043c479af5911e60502f1a334";
+                axRControl.InitEncoder();
+
+
+
             }
             catch (Exception ex)
             {
@@ -318,13 +326,8 @@ namespace OGV2P.Admin.Views
         private void InitRTMPControl()
         {
 
-            axRControl.License = "nlic:1.2:LiveEnc:3.0:LvApp=1,LivePlg=1,MSDK=4,MPEG2DEC=1,MPEG2ENC=1,PS=1,TS=1,H264DEC=1,H264ENC=1,H264ENCQS=1,MP4=4,RTMPsrc=1,RtmpMsg=1,RTMPs=1,RTSP=1,RTSPsrc=1,UDP=1,UDPsrc=1,HLS=1,WMS=1,WMV=1,RTMPm=4,RTMPx=3,Resz=1,RSrv=1,VMix2=1,3DRemix=1,ScCap=1,AuCap=1,AEC=1,Demo=1,Ic=1,NoMsg=1,Tm=1800,T1=600,NoIc=1:win,win64,osx:20151030,20160111::0:0:nanocosmosdemo-292490-3:ncpt:f6044ea043c479af5911e60502f1a334";
-            axRControl.InitEncoder();
-
             //set the user id / password
             axRControl.SetConfig("Auth", string.Format("{0}:{1}",_user.SelectedBoard.UserID, _user.SelectedBoard.Password));
-
-          
 
             // Device/Camera Resolution
             axRControl.VideoWidth = 640;
@@ -463,6 +466,8 @@ namespace OGV2P.Admin.Views
                 }
             }
 
+            cboCameras.Items.Add("Choose a File Source....");
+
         }
 
         private int FindVideoSource(string deviceName)
@@ -590,7 +595,9 @@ namespace OGV2P.Admin.Views
         {
             try
             {
-                WriteDefaultDeviceCache();
+                //dont cache a file source only hardward
+                if(axRControl.VideoSource != FILE_SOURCE)
+                    WriteDefaultDeviceCache();
 
                 //set local video folder
                 string path = Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments);
@@ -598,6 +605,18 @@ namespace OGV2P.Admin.Views
                 if (!Directory.Exists(path))
                     Directory.CreateDirectory(path);
 
+               if(string.IsNullOrEmpty(_meeting.MeetingName))
+                {
+                    MessageBoxResult result = Xceed.Wpf.Toolkit.MessageBox.Show("Do you want to include an agenda?", "No Agenda Selectged", MessageBoxButton.YesNo);
+                    if (result == MessageBoxResult.Yes)
+                        return;
+
+                }
+
+                if(string.IsNullOrEmpty(_meeting.LocalFile))
+                {
+                    _meeting.LocalFile = string.Format("{0}_{1}_{2}.mp4", _user.SelectedBoard.Name, _meeting.MeetingDate.ToFileNameComponent(), _meeting.MeetingName);
+                }
                 path = Path.Combine(path, _meeting.LocalFile);
                 axRControl.DestinationURL2 = path;
                 _meeting.LocalFile = path;
@@ -705,12 +724,39 @@ namespace OGV2P.Admin.Views
         {
             if (IsBusy)
             {
-                MessageBox.Show(RECORDING_IN_PROGRESS);
+                Xceed.Wpf.Toolkit.MessageBox.Show(RECORDING_IN_PROGRESS);
                 return;
             }
 
-            axRControl.VideoSource = Convert.ToInt32(cboCameras.SelectedIndex);
-            axRControl.StartPreview();
+            if(cboCameras.SelectedItem.ToString().Contains("Choose a File Source...."))
+            {
+                System.Windows.Forms.OpenFileDialog dg = new System.Windows.Forms.OpenFileDialog();
+                dg.DefaultExt = ".mp4";
+                dg.Filter = "Video Files (*.mp4)|*.mp4|WMV Files (*.wmv)|*.wmv|MOV Files (*.mov)|*.mov|MPG Files (*.mpg)|*.mpg|All (*.*)|*.*";
+                forms.DialogResult result = dg.ShowDialog();
+                cmdStartRecording.Content = "PLAY";
+                if(result == forms.DialogResult.OK)
+                {
+                    axRControl.VideoSource = FILE_SOURCE;
+                    axRControl.DestinationURL2 = string.Empty;
+                    if(File.Exists(dg.FileName))
+                    {
+                        axRControl.FileSourceFilename = dg.FileName;
+                    }
+                    else
+                    {
+                        Xceed.Wpf.Toolkit.MessageBox.Show(string.Format("Unable to load file {0}", dg.FileName));
+                    }
+                    
+                }
+            }
+            else
+            {
+                cmdStartRecording.Content = "REC";
+                axRControl.VideoSource = Convert.ToInt32(cboCameras.SelectedIndex);
+                axRControl.StartPreview();
+            }
+           
 
 
         }
@@ -719,7 +765,7 @@ namespace OGV2P.Admin.Views
         {
             if (IsBusy)
             {
-                MessageBox.Show(RECORDING_IN_PROGRESS);
+                Xceed.Wpf.Toolkit.MessageBox.Show(RECORDING_IN_PROGRESS);
                 return;
             }
 

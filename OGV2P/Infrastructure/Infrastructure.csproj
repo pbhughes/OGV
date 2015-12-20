@@ -123,6 +123,7 @@
     <Compile Include="Converters\DoubleToColorConverter.cs" />
     <Compile Include="Converters\InverseBoolConverter.cs" />
     <Compile Include="Converters\VisibilityConverter.cs" />
+    <Compile Include="Extensions\DateTimeExtensions.cs" />
     <Compile Include="Interfaces\IBoard.cs" />
     <Compile Include="Interfaces\IBoardList.cs" />
     <Compile Include="Interfaces\IMeeting.cs" />

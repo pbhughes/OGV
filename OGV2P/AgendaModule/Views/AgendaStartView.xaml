@@ -67,7 +67,7 @@
 
             <Label Grid.Row="1" Grid.Column="0" Content="Meeting Date:"/>
             <DatePicker Grid.Column="1" Grid.Row="1" SelectedDateFormat="Long"
-                                SelectedDate="{Binding MeetingDate}" 
+                                SelectedDate="{Binding MeetingDate, StringFormat='{}{0:dd-mm-yyyy'}}" 
                                 VerticalContentAlignment="Center"
                                 VerticalAlignment="Center"
                   FirstDayOfWeek="Monday"  />

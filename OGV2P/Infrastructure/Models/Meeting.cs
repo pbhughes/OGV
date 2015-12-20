@@ -350,6 +350,11 @@ namespace Infrastructure.Models
 
         public Meeting(ISession sessionService, IUser user)
         {
+            if (user.SelectedBoard != null)
+            {
+                _meetingDate = DateTime.Now;
+                _meetingName = string.Format("{0}_{1}", (user.SelectedBoard == null) ? "select_a_board" : user.SelectedBoard.Name, _meetingDate.ToString("mm-dd-yyyy"));
+            }
             _sessionService = sessionService;
             _user = user;
             _sessionService.RaiseStamped += _sessionService_RaiseStamped;
