@@ -13,7 +13,7 @@
         <Grid.ColumnDefinitions>
             <ColumnDefinition MinWidth="500" Width="*"  /> 
             <ColumnDefinition Width="auto" />
-            <ColumnDefinition Width="*"  />
+            <ColumnDefinition MinWidth="500" Width="*"  />
         </Grid.ColumnDefinitions>
         
         <Grid.RowDefinitions>
@@ -26,10 +26,12 @@
               Grid.Row="0" Grid.Column="0" Grid.ColumnSpan="3"
               VerticalAlignment="Center" Background="Transparent">
             <MenuItem Header="_File" >
-                <MenuItem Header="_Exit"/>
+                <MenuItem Header="_Exit" Click="ExitMenuItem_Click" />
             </MenuItem>
             <MenuItem Header="_About" Click="AboutMenuItem_Click" ></MenuItem>
         </Menu>
+        
+        
         <ScrollViewer Grid.Column="0" Grid.Row="1" Grid.RowSpan="3" 
                       VerticalScrollBarVisibility="Auto">
             <ContentControl  VerticalAlignment="Center"
