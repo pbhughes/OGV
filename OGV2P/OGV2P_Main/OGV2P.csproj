@@ -26,6 +26,7 @@
     <UpdateRequired>false</UpdateRequired>
     <MapFileExtensions>true</MapFileExtensions>
     <InstallUrl>http://mwfogvdb01.opengovideo.com/Test/</InstallUrl>
+    <TargetCulture>en-US</TargetCulture>
     <ProductName>OpenGov2</ProductName>
     <PublisherName>ClerkBase</PublisherName>
     <SuiteName>OGV-2</SuiteName>
@@ -34,6 +35,7 @@
     <ApplicationRevision>23</ApplicationRevision>
     <ApplicationVersion>1.0.0.%2a</ApplicationVersion>
     <UseApplicationTrust>false</UseApplicationTrust>
+    <CreateDesktopShortcut>true</CreateDesktopShortcut>
     <PublishWizardCompleted>true</PublishWizardCompleted>
     <BootstrapperEnabled>true</BootstrapperEnabled>
   </PropertyGroup>
@@ -94,6 +96,9 @@
   </PropertyGroup>
   <PropertyGroup>
     <TargetZone>Internet</TargetZone>
+  </PropertyGroup>
+  <PropertyGroup>
+    <ApplicationIcon>OpenGOV.ico</ApplicationIcon>
   </PropertyGroup>
   <ItemGroup>
     <Reference Include="AxInterop.RTMPActiveX, Version=1.0.0.0, Culture=neutral, processorArchitecture=MSIL">
@@ -228,6 +233,10 @@
       <Project>{3072c61c-ab0b-43e0-a00e-d7f1cd6e3573}</Project>
       <Name>AgendaModule</Name>
     </ProjectReference>
+    <ProjectReference Include="..\CustomControls\CustomControls.csproj">
+      <Project>{676e39da-65e5-4c6f-826e-a589bc4fd80a}</Project>
+      <Name>CustomControls</Name>
+    </ProjectReference>
     <ProjectReference Include="..\Infrastructure\Infrastructure.csproj">
       <Project>{c7dba26a-38dc-4e6e-b386-99008004a915}</Project>
       <Name>Infrastructure</Name>
@@ -262,6 +271,9 @@
     <Content Include="Images\loggingin.gif">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
+    <Content Include="Images\openGOVideo.png">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
     <Content Include="Images\right_arrow.png">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
@@ -277,6 +289,7 @@
     <Content Include="Images\up_arrow.png">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
+    <Resource Include="OpenGOV.ico" />
   </ItemGroup>
   <ItemGroup>
     <BootstrapperPackage Include=".NETFramework,Version=v4.5">

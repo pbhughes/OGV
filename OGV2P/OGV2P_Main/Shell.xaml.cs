@@ -12,7 +12,7 @@ using System.Windows.Media;
 using System.Windows.Media.Imaging;
 using System.Windows.Navigation;
 using System.Windows.Shapes;
-
+using CustomControls;
 
 namespace OGV2P
 {
@@ -34,6 +34,10 @@ namespace OGV2P
             InitializeComponent();
         }
 
-       
+        private void AboutMenuItem_Click(object sender, RoutedEventArgs e)
+        {
+            var window = new CustomControls.Views.AboutWindow("1.0.0.23", "support@clerkbase.com");
+            window.ShowDialog();
+        }
     }
 }

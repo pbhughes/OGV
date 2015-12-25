@@ -22,17 +22,20 @@
                   SelectedItem="{Binding SelectedBoard}"
                   SelectionChanged="lstBoards_SelectionChanged"></ComboBox>
 
-        <StackPanel Grid.Row="1" Orientation="Vertical" HorizontalAlignment="Center">
-            <StackPanel x:Name="pnlUserID"  Orientation="Horizontal">
+        <StackPanel Grid.Row="1" Orientation="Vertical" HorizontalAlignment="Stretch">
+            <DockPanel x:Name="pnlUserID"  LastChildFill="True">
                 <Label>User ID:</Label>
                 <TextBox x:Name="txtUserID" Text="{Binding UserID}"></TextBox>
-            </StackPanel>
+            </DockPanel>
 
-            <StackPanel x:Name="pnlPassword" Orientation="Horizontal">
+            <DockPanel x:Name="pnlPassword" LastChildFill="True">
                 <Label>Password:</Label>
-                <TextBox  x:Name="txtPassword" Text="{Binding Password}" GotFocus="TextBox_GotFocus" KeyDown="TextBox_KeyDown">
+                <TextBox  x:Name="txtPassword" Text="{Binding Password}"
+                          GotFocus="TextBox_GotFocus" 
+                          KeyDown="TextBox_KeyDown"
+                          HorizontalAlignment="Stretch">
                 </TextBox>
-            </StackPanel>
+            </DockPanel>
 
             <StackPanel Orientation="Horizontal" 
                         HorizontalAlignment="Right" Margin="0 10 5 0">
@@ -46,6 +49,23 @@
             
             <StackPanel Orientation="Vertical" 
                         Visibility="{Binding IsReady,Converter={StaticResource BoolToVisibility}}"/>
+            <ItemsControl Margin="10" FontSize="15">
+                <BulletDecorator VerticalAlignment="Center" HorizontalAlignment="Center">
+                    <TextBlock>Select a board and click Start</TextBlock>
+                </BulletDecorator>
+                <BulletDecorator VerticalAlignment="Center" HorizontalAlignment="Center">
+                    <TextBlock>Or</TextBlock>
+                </BulletDecorator>
+                <BulletDecorator VerticalAlignment="Center" HorizontalAlignment="Center">
+                    <TextBlock>If needed provide User Name and Password and Login</TextBlock>
+                </BulletDecorator>
+                <BulletDecorator VerticalAlignment="Center" HorizontalAlignment="Left">
+                    <TextBlock></TextBlock>
+                </BulletDecorator>
+            </ItemsControl>
+            
+            
+            <Image Source="/Images/openGOVideo.png" />
         </StackPanel>        
     </Grid>
 </UserControl>
