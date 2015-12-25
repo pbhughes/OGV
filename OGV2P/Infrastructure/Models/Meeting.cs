@@ -25,14 +25,14 @@ namespace Infrastructure.Models
         public bool IsBusy
         {
             get { return _isBusy; }
-            set {
+            set
+            {
                 _isBusy = value;
                 OnPropertyChanged("IsBusy");
-                CreateNewAgenda.RaiseCanExecuteChanged();
-                LoadAgendaFromFile.RaiseCanExecuteChanged();
-                LoadAgendaFromFTP.RaiseCanExecuteChanged();
             }
         }
+
+        
 
         public string ApplicationVersion
         {
@@ -438,11 +438,20 @@ namespace Infrastructure.Models
 
         private bool CanCreateNewAgenda(forms.TreeView arg)
         {
-            return !IsBusy;
+            return ! IsBusy;
         }
 
         private void OnCreateNewAgenda(forms.TreeView obj)
         {
+           if(MeetingAgenda != null && MeetingAgenda.Items.Count > 0)
+            {
+                if (Xceed.Wpf.Toolkit.MessageBox.Show("Save current Agenda?", "Save Current Agenda", System.Windows.MessageBoxButton.YesNo) ==
+                    System.Windows.MessageBoxResult.Yes)
+                {
+
+                }
+
+            }
             this.MeetingAgenda = new Agenda();
             if(MeetingAgenda.Items == null)
             {
@@ -696,5 +705,7 @@ namespace Infrastructure.Models
 
             return item;
         }
+
+       
     }
 }

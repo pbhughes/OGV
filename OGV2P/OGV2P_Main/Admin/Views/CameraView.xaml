@@ -90,7 +90,7 @@
             <ComboBox Grid.Column="1" Grid.Row="0" x:Name="cboCameras" 
                       Width="500" 
                           VerticalContentAlignment="Center"
-                          SelectionChanged="cboCameras_SelectionChanged"></ComboBox>
+                          SelectionChanged="cboSource_SelectedChanged"></ComboBox>
 
             <Label Grid.Column="0" Grid.Row="1">Microphones</Label>
             <ComboBox Grid.Column="1" Grid.Row="1" x:Name="cboMicrophones" 
@@ -124,7 +124,7 @@
                    Width="75" MinWidth="50">Status:</Label>
             <StackPanel Orientation="Horizontal" HorizontalAlignment="Center"
                         Grid.Column="1" Grid.Row="3">
-                <cc:ToggleSwtich State="{Binding IsBusy}" 
+                <cc:ToggleSwtich State="{Binding Meeting.IsBusy}" 
                              Loaded="ToggleSwtich_Loaded"/>
 
                 <TextBlock Margin="0 10 0 10" Grid.Column="1" x:Name="txtTimer"

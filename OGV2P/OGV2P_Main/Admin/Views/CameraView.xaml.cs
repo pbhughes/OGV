@@ -106,20 +106,7 @@ namespace OGV2P.Admin.Views
             }
         }
 
-        private bool _isBusy;
-        public bool IsBusy
-        {
-            get
-            {
-                return _isBusy;
-            }
-
-            set
-            {
-                _isBusy = value;
-                OnPropertyChanged("IsBusy");
-            }
-        }
+      
 
         public bool KeepAlive
         {
@@ -228,10 +215,11 @@ namespace OGV2P.Admin.Views
 
         public CameraView(IRegionManager regionManager, IDevices devices, ISession sessionService, IMeeting meeting, IUser user)
         {
-            InitializeComponent();
+            
 
             try
             {
+                InitializeComponent();
 
                 this.DataContext = this;
                 NotificationRequest = new InteractionRequest<INotification>();
@@ -245,7 +233,7 @@ namespace OGV2P.Admin.Views
                 //get the application settings
                 _settings = ConfigurationSettings.AppSettings;
 
-                IsBusy = false;
+                _meeting.IsBusy = false;
 
                 //initialize the window to listen for usb devices to be added
                 var query = new WqlEventQuery("SELECT * FROM Win32_DeviceChangeEvent WHERE EventType = 2 OR EventType = 3");
@@ -274,7 +262,7 @@ namespace OGV2P.Admin.Views
 
                 //axRControl = new AxRTMPActiveX.AxRTMPActiveX();
                 //winFrmHost.Child = axRControl;
-
+                axRControl.SetConfig("UseSampleGrabber", "2");
                 axRControl.License = "nlic:1.2:LiveEnc:3.0:LvApp=1,LivePlg=1,MSDK=4,MPEG2DEC=1,MPEG2ENC=1,PS=1,TS=1,H264DEC=1,H264ENC=1,H264ENCQS=1,MP4=4,RTMPsrc=1,RtmpMsg=1,RTMPs=1,RTSP=1,RTSPsrc=1,UDP=1,UDPsrc=1,HLS=1,WMS=1,WMV=1,RTMPm=4,RTMPx=3,Resz=1,RSrv=1,VMix2=1,3DRemix=1,ScCap=1,AuCap=1,AEC=1,Demo=1,Ic=1,NoMsg=1,Tm=1800,T1=600,NoIc=1:win,win64,osx:20151030,20160111::0:0:nanocosmosdemo-292490-3:ncpt:f6044ea043c479af5911e60502f1a334";
                 axRControl.InitEncoder();
 
@@ -404,7 +392,7 @@ namespace OGV2P.Admin.Views
         {
             Dispatcher.Invoke(() =>
             {
-                if (!IsBusy)
+                if (! _meeting.IsBusy)
                 {
                     System.Threading.Thread.Sleep(2000);
                     InitRTMPControl();
@@ -495,7 +483,7 @@ namespace OGV2P.Admin.Views
 
         private void _vuMeterTimer_Elapsed(object sender, ElapsedEventArgs e)
         {
-            if (IsBusy)
+            if (_meeting.IsBusy)
             {
                 Dispatcher.Invoke(() =>
                 {
@@ -615,7 +603,7 @@ namespace OGV2P.Admin.Views
 
                 if(string.IsNullOrEmpty(_meeting.LocalFile))
                 {
-                    _meeting.LocalFile = string.Format("{0}_{1}_{2}.mp4", _user.SelectedBoard.Name, _meeting.MeetingDate.ToFileNameComponent(), _meeting.MeetingName);
+                    _meeting.LocalFile = string.Format("{0}_{1}_{2}.mp4", _user.SelectedBoard.Name, DateTime.Now.ToFileNameComponent(), _meeting.MeetingName);
                 }
                 path = Path.Combine(path, _meeting.LocalFile);
                 axRControl.DestinationURL2 = path;
@@ -623,7 +611,7 @@ namespace OGV2P.Admin.Views
                 _meeting.IsBusy = true;
                 axRControl.StartBroadcast();
                 _vuMeterTimer.Start();
-                IsBusy = true;
+                _meeting.IsBusy = true;
             }
             catch (Exception ex)
             {
@@ -689,14 +677,24 @@ namespace OGV2P.Admin.Views
 
         private void cmdStopRecording_Click(object sender, RoutedEventArgs e)
         {
-            axRControl.StopBroadcast();
-            IsBusy = false;
-            VuMeterReading = 0;
-            _vuMeterTimer.Stop();
-            Hours = 0;
-            Minutes = 0;
-            Seconds = 0;
-            axRControl.StartPreview();
+          
+            try
+            {
+                axRControl.StopBroadcast();
+                _meeting.IsBusy = false;
+                VuMeterReading = 0;
+                _vuMeterTimer.Stop();
+                Hours = 0;
+                Minutes = 0;
+                Seconds = 0;
+              
+            }
+            catch (Exception ex)
+            {
+
+                Xceed.Wpf.Toolkit.MessageBox.Show(ex.Message, "Error stoping the preview", MessageBoxButton.OK);
+            }
+            
             txtTimer.Text = string.Empty;
         }
 
@@ -720,41 +718,54 @@ namespace OGV2P.Admin.Views
         {
         }
 
-        private void cboCameras_SelectionChanged(object sender, SelectionChangedEventArgs e)
+        private void cboSource_SelectedChanged(object sender, SelectionChangedEventArgs e)
         {
-            if (IsBusy)
+            try
             {
-                Xceed.Wpf.Toolkit.MessageBox.Show(RECORDING_IN_PROGRESS);
-                return;
-            }
-
-            if(cboCameras.SelectedItem.ToString().Contains("Choose a File Source...."))
-            {
-                System.Windows.Forms.OpenFileDialog dg = new System.Windows.Forms.OpenFileDialog();
-                dg.DefaultExt = ".mp4";
-                dg.Filter = "Video Files (*.mp4)|*.mp4|WMV Files (*.wmv)|*.wmv|MOV Files (*.mov)|*.mov|MPG Files (*.mpg)|*.mpg|All (*.*)|*.*";
-                forms.DialogResult result = dg.ShowDialog();
-                cmdStartRecording.Content = "PLAY";
-                if(result == forms.DialogResult.OK)
+                if (_meeting.IsBusy)
                 {
-                    axRControl.VideoSource = FILE_SOURCE;
-                    axRControl.DestinationURL2 = string.Empty;
-                    if(File.Exists(dg.FileName))
-                    {
-                        axRControl.FileSourceFilename = dg.FileName;
-                    }
-                    else
-                    {
-                        Xceed.Wpf.Toolkit.MessageBox.Show(string.Format("Unable to load file {0}", dg.FileName));
-                    }
-                    
+                    Xceed.Wpf.Toolkit.MessageBox.Show(RECORDING_IN_PROGRESS);
+                    return;
                 }
+
+                if (cboCameras.SelectedItem.ToString().Contains("Choose a File Source...."))
+                {
+                    System.Windows.Forms.OpenFileDialog dg = new System.Windows.Forms.OpenFileDialog();
+                    dg.DefaultExt = ".mp4";
+                    dg.Filter = "Video Files (*.mp4)|*.mp4|WMV Files (*.wmv)|*.wmv|MOV Files (*.mov)|*.mov|MPG Files (*.mpg)|*.mpg|All (*.*)|*.*";
+                    forms.DialogResult result = dg.ShowDialog();
+                    cmdStartRecording.Content = "PLAY";
+                    if (result == forms.DialogResult.OK)
+                    {
+                        axRControl.VideoSource = FILE_SOURCE;
+                        axRControl.DestinationURL2 = string.Empty;
+                        if (File.Exists(dg.FileName))
+                        {
+                            axRControl.FileSourceFilename = dg.FileName;
+                            axRControl.TextOverlayText = "";
+                            axRControl.StartPreview();
+
+                        }
+                        else
+                        {
+                            Xceed.Wpf.Toolkit.MessageBox.Show(string.Format("Unable to load file {0}", dg.FileName));
+                        }
+
+                    }
+                }
+                else
+                {
+                    cmdStartRecording.Content = "REC";
+                    axRControl.DestinationURL2 = _meeting.LocalFile;
+                    axRControl.VideoSource = Convert.ToInt32(cboCameras.SelectedIndex);
+                    axRControl.StartPreview();
+                }
+
             }
-            else
+            catch (Exception ex)
             {
-                cmdStartRecording.Content = "REC";
-                axRControl.VideoSource = Convert.ToInt32(cboCameras.SelectedIndex);
-                axRControl.StartPreview();
+                string msg = string.Format("Level 1 occured: {0} sub error {1}", ex.Message, axRControl.LastErrorMessage);
+                Xceed.Wpf.Toolkit.MessageBox.Show(msg, "Preview Error", MessageBoxButton.OK, MessageBoxImage.Error);
             }
            
 
@@ -763,7 +774,7 @@ namespace OGV2P.Admin.Views
 
         private void cboMicrophones_SelectionChanged(object sender, SelectionChangedEventArgs e)
         {
-            if (IsBusy)
+            if (_meeting.IsBusy)
             {
                 Xceed.Wpf.Toolkit.MessageBox.Show(RECORDING_IN_PROGRESS);
                 return;

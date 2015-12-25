@@ -21,11 +21,13 @@
             <RowDefinition />
         </Grid.RowDefinitions>
 
-
-        <ContentControl Grid.Column="0" Grid.RowSpan="3" VerticalAlignment="Center"
+        <ScrollViewer Grid.Column="0" Grid.RowSpan="3" VerticalScrollBarVisibility="Auto">
+            <ContentControl  VerticalAlignment="Center"
                         Name="SideBarRegion" 
                         cal:RegionManager.RegionName="SideBarRegion"
                         Background="AliceBlue" />
+        </ScrollViewer>
+        
 
 
         <Border Grid.Column="1" Grid.Row="1" 
@@ -35,11 +37,14 @@
                         HorizontalAlignment="Center"
                         cal:RegionManager.RegionName="MiddleRegion" />
         </Border>
-        
 
-        <ContentControl Grid.Column="2" Grid.RowSpan="3"
+        <ScrollViewer Grid.Column="2" Grid.RowSpan="3" VerticalScrollBarVisibility="Auto">
+            <ContentControl 
                          Name="MainRegion" 
                         cal:RegionManager.RegionName="MainRegion" />
+           
+        </ScrollViewer>
+        
 
 
 

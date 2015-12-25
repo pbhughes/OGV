@@ -49,11 +49,18 @@
     <Reference Include="PresentationFramework" />
   </ItemGroup>
   <ItemGroup>
+    <Page Include="Views\GetAgendaFileDialog.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
     <Page Include="Views\ToggleSwitch.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </Page>
     <Compile Include="Models\ToggleSwitchModel.cs" />
+    <Compile Include="Views\GetAgendaFileDialog.xaml.cs">
+      <DependentUpon>GetAgendaFileDialog.xaml</DependentUpon>
+    </Compile>
     <Compile Include="Views\ToggleSwitch.xaml.cs">
       <DependentUpon>ToggleSwitch.xaml</DependentUpon>
       <SubType>Code</SubType>
