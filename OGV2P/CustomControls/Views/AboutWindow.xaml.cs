@@ -12,7 +12,7 @@ using System.Windows.Media;
 using System.Windows.Media.Imaging;
 using System.Windows.Shapes;
 using System.Diagnostics;
-
+using System.Deployment.Application;
 
 namespace CustomControls.Views
 {
@@ -25,11 +25,11 @@ namespace CustomControls.Views
 
         public string EmailAddress { get; set; }
 
-        public AboutWindow(string version, string emailAddress)
+        public AboutWindow(string emailAddress)
         {
             InitializeComponent();
             DataContext = this;
-            Version = version;
+            Version = SoftwareVersion();
             EmailAddress = emailAddress;
         }
 
@@ -37,6 +37,16 @@ namespace CustomControls.Views
         {
             Process.Start(e.Uri.AbsoluteUri);
             e.Handled = true;
+        }
+
+        private string SoftwareVersion()
+        {
+            if (ApplicationDeployment.IsNetworkDeployed)
+            {
+                return ApplicationDeployment.CurrentDeployment.CurrentVersion.ToString();
+            }
+            else
+                return "Debug";
         }
     }
 }

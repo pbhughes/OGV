@@ -36,7 +36,7 @@ namespace OGV2P
 
         private void AboutMenuItem_Click(object sender, RoutedEventArgs e)
         {
-            var window = new CustomControls.Views.AboutWindow("1.0.0.23", "support@clerkbase.com");
+            var window = new CustomControls.Views.AboutWindow("support@clerkbase.com");
             window.ShowDialog();
         }
     }
