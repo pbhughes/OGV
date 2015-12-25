@@ -494,9 +494,9 @@ namespace OGV2P.Admin.Views
                     string s = axRControl.GetConfig("StreamTime");
                     int milliSeconds = int.Parse(s);
                     TimeSpan current = new TimeSpan(0, 0, 0, 0, milliSeconds);
-                    Hours = (int)current.TotalHours;
-                    Minutes = (int)current.TotalMinutes;
-                    Seconds = (int)current.TotalSeconds;
+                    Hours = (int)current.Hours;
+                    Minutes = (int)current.Minutes;
+                    Seconds = (int)current.Seconds;
                     _sessionService.CurrentVideoTime = current;
                     UpdateVUMeter(volumeLevel);
                 });

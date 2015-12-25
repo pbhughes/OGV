@@ -46,7 +46,6 @@ namespace OGV2P.AgendaModule.Views
             agendaTree.AllowDrop = true;
             agendaTree.ShowNodeToolTips = true;
             agendaTree.ShowPlusMinus = true;
-            agendaTree.ItemHeight = agendaTree.ItemHeight * 2;
             agendaTree.HotTracking = true;
             
 
@@ -328,6 +327,7 @@ namespace OGV2P.AgendaModule.Views
 
         private void _sessionService_RaiseStamped(System.TimeSpan sessionTime)
         {
+           
             MarkItemStamped();
 
         }
@@ -356,7 +356,8 @@ namespace OGV2P.AgendaModule.Views
                             agendaTree.SelectedNode.SelectedImageKey = "stamped";
                         }
                     }
-                    
+                    string newTitle = txtTitle.Text;
+                    agendaTree.SelectedNode.Text = newTitle;
 
                 }
             }

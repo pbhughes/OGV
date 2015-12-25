@@ -4,6 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using System.ComponentModel;
+using System.Text.RegularExpressions;
 
 namespace Infrastructure.Models
 {
@@ -48,6 +49,12 @@ namespace Infrastructure.Models
             get { return _timeStamp; }
             set {
                 _timeStamp = value;
+                string formatted = string.Format("{0}:{1}:{2}", 
+                    value.Hours.ToString().PadLeft(2,'0'), 
+                    value.Minutes.ToString().PadLeft(2, '0'),
+                    value.Seconds.ToString().PadLeft(2, '0'));
+                Title = StampTitle(formatted);
+                
                 OnPropertyChanged("TimeStamp");
             }
         }
@@ -74,5 +81,22 @@ namespace Infrastructure.Models
 
         #endregion
 
+        private string StampTitle(string stamp)
+        {
+            //see if there is a stamp heading
+            string pattern = @"\[\d\d:\d\d:\d\d\]";
+            string source = _title;
+            Regex regx = new Regex(pattern, RegexOptions.IgnoreCase);
+            MatchCollection matches = regx.Matches(source);
+            if(matches.Count > 0)
+            {
+                //there is a match so this item has been stamped
+                int start = source.IndexOf('[');
+                int offset = source.IndexOf(']');
+                source = source.Substring(offset + 1);
+            }
+
+            return string.Format("[{0}]{1}", stamp, source);
+        }
     }
 }

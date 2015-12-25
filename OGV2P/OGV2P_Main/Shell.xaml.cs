@@ -51,7 +51,8 @@ namespace OGV2P
             if (meeting.IsBusy)
             {
                 if (Xceed.Wpf.Toolkit.MessageBox.Show(
-                    "A recording is in progress, you will lose changes if changes have been made.  Continue to close?", "OpenGoVideo", MessageBoxButton.YesNo, MessageBoxImage.Warning) == MessageBoxResult.No)
+                    "A recording is in progress, you will lose changes if changes have been made.  Continue to close?",
+                    "OpenGoVideo", MessageBoxButton.YesNo, MessageBoxImage.Warning) == MessageBoxResult.No)
                 {
                     return;
                 }
