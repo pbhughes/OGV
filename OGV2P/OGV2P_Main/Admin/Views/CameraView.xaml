@@ -98,7 +98,8 @@
                           VerticalContentAlignment="Center"
                           SelectionChanged="cboMicrophones_SelectionChanged"></ComboBox>
 
-            <StackPanel Grid.Row="2" Grid.ColumnSpan="1" Grid.Column="2" Width="500"
+            <StackPanel Grid.Row="2" Grid.ColumnSpan="1" Grid.Column="2"
+                        Width="400"
                         Orientation="Horizontal">
                 <Button Style="{StaticResource btn-primary}" FontSize="15"
                         Margin="10" Width="100"
@@ -113,10 +114,7 @@
                         IsEnabled="{Binding IsBusy}"
                         Click="cmdStopRecording_Click"  Style="{StaticResource btn-danger}" Margin="10" Width="100"
                         FontSize="15">STOP</Button>
-                <Button x:Name="cmdStamp" 
-                        IsEnabled="{Binding IsBusy}"
-                        Style="{StaticResource btn-info}" Margin="10" Width="100"
-                        FontSize="15" Click="cmdStamp_Click">Stamp</Button>
+               
 
             </StackPanel>
 

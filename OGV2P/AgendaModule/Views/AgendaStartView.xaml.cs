@@ -328,7 +328,7 @@ namespace OGV2P.AgendaModule.Views
         private void _sessionService_RaiseStamped(System.TimeSpan sessionTime)
         {
            
-            MarkItemStamped();
+           
 
         }
 
@@ -358,6 +358,41 @@ namespace OGV2P.AgendaModule.Views
                     }
                     string newTitle = txtTitle.Text;
                     agendaTree.SelectedNode.Text = newTitle;
+
+
+                    //Check for children if they exist go to them
+                    if (agendaTree.SelectedNode.Nodes.Count > 0)
+                    {
+                        //current node has children move to the first
+                        agendaTree.SelectedNode = agendaTree.SelectedNode.Nodes[0];
+                        return;
+                    }
+                    else
+                    {
+                        //Check for siblings if they exist go to them
+
+                        //Current node doesn't have children
+                        //is there a sibling node next
+                        if (agendaTree.SelectedNode.NextNode != null)
+                        {
+                            agendaTree.SelectedNode = agendaTree.SelectedNode.NextNode;
+                            return;
+                        }
+                        else
+                        {
+
+                            forms.TreeNode parent = agendaTree.SelectedNode.Parent;
+                            if(parent != null)
+                            {
+                                while (parent.NextNode == null)
+                                {
+                                    parent = parent.Parent;
+                                }
+                                agendaTree.SelectedNode = parent.NextNode;
+                            }
+                           
+                        }
+                    }
 
                 }
             }
@@ -574,11 +609,19 @@ namespace OGV2P.AgendaModule.Views
 
         private void agendaTree_KeyDown(object sender, forms.KeyEventArgs e)
         {
-            if(e.KeyCode == System.Windows.Forms.Keys.Enter || e.KeyCode == forms.Keys.Space)
+            switch (e.KeyCode)
             {
-                _sessionService.Stamp();
-                MarkItemStamped();
+                case forms.Keys.Enter:
+                    _sessionService.Stamp();
+                    MarkItemStamped();
+                    break;
+                case forms.Keys.Space:
+                    _sessionService.Stamp();
+                    MarkItemStamped();
+                    break;
+
             }
+
         }
 
         private void agendaCommandDropDown_Click(object sender, RoutedEventArgs e)

@@ -57,14 +57,22 @@ namespace OGV2P
         {
             try
             {
-                string fileName = "Exception_Log";
+                string fileName = "Exception_Log.txt";
                 string excepitonText = ex.ToString();
                 string stackTrace = ex.StackTrace;
                 string textToWrite = string.Format("\n {0} \n {1} \n", excepitonText, stackTrace);
-                FileInfo fInfo = new FileInfo(fileName);
-                if (fInfo.Length > 10485760)
-                    File.Delete(fileName);
-
+                if (File.Exists(fileName))
+                {
+                    FileInfo fInfo = new FileInfo(fileName);
+                    if (fInfo.Length > 10485760)
+                    {
+                        //TODO: Push it to Clerkbase
+                        File.Delete(fileName);
+                        File.WriteAllText(fileName, textToWrite);
+                        return;
+                    }
+                    
+                }
                 File.AppendAllText(fileName, textToWrite);
             }
             catch (Exception exLocal)

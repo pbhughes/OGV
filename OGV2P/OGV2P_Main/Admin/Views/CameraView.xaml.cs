@@ -698,12 +698,7 @@ namespace OGV2P.Admin.Views
             txtTimer.Text = string.Empty;
         }
 
-        private void cmdStamp_Click(object sender, RoutedEventArgs e)
-        {
-
-            _sessionService.Stamp();
-
-        }
+      
 
         public void OnNavigatedTo(NavigationContext navigationContext)
         {
