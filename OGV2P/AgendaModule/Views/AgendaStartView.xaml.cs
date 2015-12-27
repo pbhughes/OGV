@@ -322,7 +322,7 @@ namespace OGV2P.AgendaModule.Views
             if (tn.Parent != null)
                 tn.Parent.Expand();
 
-            _currentMeeting.SelectedItem = item;
+            agendaTree.SelectedNode = tn;
 
             txtTitle.Focus();
             txtTitle.SelectAll();         
