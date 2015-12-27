@@ -11,5 +11,6 @@ namespace Infrastructure.Interfaces
         string TargetFile { get; set; }
         Microsoft.Practices.Prism.Commands.DelegateCommand GetAgendaFilesCommand { get; set; }
         List<AgendaService.AgendaFile> AvailableFiles { get; set; }
+        string GetXml(string fileName);
     }
 }

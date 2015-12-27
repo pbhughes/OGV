@@ -19,10 +19,11 @@ namespace OGV2P.AgendaModule.Views
     {
         private IMeeting _currentMeeting;
         private ISession _sessionService;
+        private IUser _user;
         private forms.ImageList _treeImages = new forms.ImageList();
         private forms.ContextMenuStrip _docMenu;
 
-        public AgendaStartView(IMeeting meeting, ISession sessionService)
+        public AgendaStartView(IMeeting meeting, ISession sessionService, IUser user)
         {
             InitializeComponent();
 
@@ -117,6 +118,7 @@ namespace OGV2P.AgendaModule.Views
             agendaTree.AfterSelect += agendaTree_AfterSelect;
             _currentMeeting = meeting;
             _sessionService = sessionService;
+            _user = user;
             _sessionService.RaiseStamped += _sessionService_RaiseStamped;
             _currentMeeting.RaiseMeetingSetEvent += _currentMeeting_RaiseMeetingSetEvent;
 
@@ -635,6 +637,16 @@ namespace OGV2P.AgendaModule.Views
         private void Button_Click(object sender, RoutedEventArgs e)
         {
             agendaCommandDropDown.IsOpen = false;
+            AgendaSelector ags = new AgendaSelector(_user);
+            GetAgendaFileDialog dg = new GetAgendaFileDialog(ags);
+            dg.ShowDialog();
+            if(dg.DialogResult.Value)
+            {
+                string xml = dg.AgendaXml;
+                _currentMeeting.ParseAgendaFile(agendaTree, xml);
+            }
+          
+            
         }
     }
 }

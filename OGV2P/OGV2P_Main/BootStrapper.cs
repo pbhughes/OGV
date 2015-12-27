@@ -21,6 +21,7 @@ namespace OGV2P
         private IRegionManager _regionManager;
         private Window _shell;
         private IMeeting _meeting;
+        
 
         protected override System.Windows.DependencyObject CreateShell()
         {
@@ -61,12 +62,16 @@ namespace OGV2P
             this.Container.RegisterType<object, OGV2P.Admin.Views.LoginView>(typeof(OGV2P.Admin.Views.LoginView).FullName);
             this.Container.RegisterType<object, OGV2P.AgendaModule.Views.AgendaStartView>(typeof(OGV2P.AgendaModule.Views.AgendaStartView).FullName);
             this.Container.RegisterType<object, OGV2P.Admin.Views.ServicesView>(typeof(OGV2P.Admin.Views.ServicesView).FullName);
+            this.Container.RegisterType<IAgendaSelector, Infrastructure.Models.AgendaSelector>();
             this.Container.RegisterType<Infrastructure.Interfaces.IDevices, Infrastructure.Models.Devices>();
+            
 
             _boardList = LoadBoards();
             _session = new Session( );
             _user = new User(_session, _boardList);
             _meeting = new Meeting(_session, _user);
+            
+            
            
 
             _user.RaiseLoginEvent += _user_RaiseLoginEvent;
@@ -74,7 +79,7 @@ namespace OGV2P
             this.Container.RegisterInstance<IUser>(_user);
             this.Container.RegisterInstance<IMeeting>(_meeting);
             this.Container.RegisterInstance<IBoardList>(_boardList);
-
+            
 
         }
 

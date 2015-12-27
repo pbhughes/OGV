@@ -45,10 +45,9 @@
                         Grid.Column="2" Content="Agenda" Margin="5">
             <tk:SplitButton.DropDownContent>
                 <ItemsControl>
-                    <Button  Command="{Binding LoadAgendaFromFTP}" Margin="5"
+                    <Button Margin="5"
                         Style="{DynamicResource btn-default}"
-                             Click="Button_Click"
-                        CommandParameter="{Binding Source={x:Reference Name=agendaTree}}">Choose Agenda From FTP Site</Button>
+                             Click="Button_Click">Choose Agenda From FTP Site</Button>
 
                     <Button  Command="{Binding LoadAgendaFromFile}" Margin="5"
                         Style="{DynamicResource btn-default}"

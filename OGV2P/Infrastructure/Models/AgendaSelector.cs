@@ -7,6 +7,7 @@ using Infrastructure.Interfaces;
 using Microsoft.Practices.Prism.Commands;
 using System.ComponentModel;
 using Infrastructure.AgendaService;
+using System.Threading.Tasks;
 
 namespace Infrastructure.Models
 {
@@ -73,17 +74,33 @@ namespace Infrastructure.Models
 
         private AgendaFile[] GetAgendaFiles()
         {
-            var client = new AgendaService.StorageService();
-            client.Timeout = 10;
+            StorageService client = GetStorageClient();
             var availableFiles = client.GetAvailableAgendaFiles(_board.City, _board.State, _board.Name);
             return availableFiles;
         }
 
-        public AgendaSelector(IBoard board, IUser user)
+        public string GetXml(string fileName)
         {
-            _board = board;
+            StorageService client = GetStorageClient();
+            string xml = client.GetAgendaFileFromWebServer(_user.SelectedBoard.City, _user.SelectedBoard.State, _user.SelectedBoard.Name, fileName);
+            return xml;
+        }
+
+        private static StorageService GetStorageClient()
+        {
+            var client = new AgendaService.StorageService();
+            client.Timeout = 10000;
+            return client;
+        }
+
+      
+
+        public AgendaSelector( IUser user)
+        {
             _user = user;
+            _board = _user.SelectedBoard;
             GetAgendaFilesCommand = new DelegateCommand(OnGetAgendaFiles, CanGetAgendaFiles);
+
             AvailableFiles = GetAgendaFiles().ToList();
 
         }

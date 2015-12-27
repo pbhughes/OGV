@@ -12,6 +12,7 @@ using System.Collections.Generic;
 using System.Threading.Tasks;
 using System.Deployment.Application;
 
+
 namespace Infrastructure.Models
 {
 
@@ -492,7 +493,7 @@ namespace Infrastructure.Models
                 {
                     _localAgendaFileName = dg.FileName;
                     string allXml = File.ReadAllText(dg.FileName);
-                    ParseAngedaFile(obj, allXml);
+                    ParseAgendaFile(obj, allXml);
                 }
             }
             catch (Exception ex)
@@ -515,6 +516,8 @@ namespace Infrastructure.Models
             string fileName = string.Empty;
             try
             {
+
+
                 // Create OpenFileDialog 
                 FtpBrowseDialog dlg = new FtpBrowseDialog(_user.SelectedBoard.FtpServer, _user.SelectedBoard.FtpPath, 21, _user.UserID, _user.Password, true);
 
@@ -544,7 +547,7 @@ namespace Infrastructure.Models
                     string allText = sr.ReadToEnd();
                     _orginalHash = allText.GetHashCode();
 
-                    ParseAngedaFile(agendaTree, allText);
+                    ParseAgendaFile(agendaTree, allText);
 
                 }
             }
@@ -563,7 +566,7 @@ namespace Infrastructure.Models
 
         }
 
-        private void ParseAngedaFile(forms.TreeView agendaTree, string allText)
+        public void ParseAgendaFile(forms.TreeView agendaTree, string allText)
         {
             XDocument xDoc = XDocument.Parse(allText);
             MeetingName = xDoc.Element("meeting").Element("meetingname").Value;
@@ -706,6 +709,6 @@ namespace Infrastructure.Models
             return item;
         }
 
-       
+    
     }
 }

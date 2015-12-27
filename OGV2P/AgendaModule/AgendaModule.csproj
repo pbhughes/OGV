@@ -126,12 +126,19 @@
     <Compile Include="Views\AgendaStartView.xaml.cs">
       <DependentUpon>AgendaStartView.xaml</DependentUpon>
     </Compile>
+    <Compile Include="Views\GetAgendaFileDialog.xaml.cs">
+      <DependentUpon>GetAgendaFileDialog.xaml</DependentUpon>
+    </Compile>
     <Compile Include="Views\PlaceHolder.xaml.cs">
       <DependentUpon>PlaceHolder.xaml</DependentUpon>
     </Compile>
     <Page Include="Views\AgendaStartView.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Views\GetAgendaFileDialog.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
     </Page>
     <Page Include="Views\PlaceHolder.xaml">
       <SubType>Designer</SubType>

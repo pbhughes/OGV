@@ -36,5 +36,6 @@ namespace Infrastructure.Interfaces
         long BytesWritten { get; set; }
         string LocalAgendaFileName { get; set; }
         event MeetingSetEventHandler RaiseMeetingSetEvent;
+        void ParseAgendaFile(forms.TreeView tree, string allText);
     }
 }

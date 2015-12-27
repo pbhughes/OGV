@@ -1,9 +1,9 @@
 <organizations>
   <org>
-    <name>Barkley</name>
+    <name>Town Council</name>
     <state>RI</state>
-    <city>Saunderstown</city>
-    <board>City Council</board>
+    <city>Test City</city>
+    <board>Town Council</board>
     <filelocation>c:\OpenGovideo</filelocation>
     <offset>2</offset>
     <livestream>
