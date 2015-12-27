@@ -33,7 +33,19 @@ namespace Infrastructure.Models
             }
         }
 
-        
+        private int _lastID;
+        public int LastID
+        {
+            get
+            {
+                return _lastID;
+            }
+
+            set
+            {
+                _lastID = value;
+            }
+        }
 
         public string ApplicationVersion
         {
@@ -290,6 +302,7 @@ namespace Infrastructure.Models
             }
         }
 
+
         public event MeetingSetEventHandler RaiseMeetingSetEvent;
 
         private void OnRaiseMeetingSetEvent()
@@ -324,6 +337,9 @@ namespace Infrastructure.Models
                     string assingedText = (x.Title.Length < 150) ? x.Title : x.Title.Substring(0, 150);
                     forms.TreeNode xn = new forms.TreeNode() { Text = assingedText , ToolTipText = x.Title };
 
+                    //tag treenode item with the ID
+                    x.ID = NextID();
+                    xn.Tag = x.ID;
                     if (item.Element("items") == null || item.Element("items").Elements("item") != null)
                     {
                         ParseItems(item.Element("items"), ref a, ref xn);
@@ -334,12 +350,12 @@ namespace Infrastructure.Models
             }
         }
 
-        public Item FindItem(string title )
+        public Item FindItem(int id )
         {
-            int hashCode = title.GetHashCode();
+            
             foreach (Item i in this.MeetingAgenda.Items)
             {
-                if (i.Title.GetHashCode() == hashCode)
+                if (i.ID == id)
                 {
                     return i;
                 }
@@ -589,7 +605,9 @@ namespace Infrastructure.Models
             {
                 forms.TreeNode root = new forms.TreeNode();
                 Agenda a = new Agenda();
+
                 ParseItems(items, ref a, ref root);
+
                 foreach (forms.TreeNode x in root.Nodes)
                 {
                     agendaTree.Nodes.Add(x);
@@ -699,7 +717,7 @@ namespace Infrastructure.Models
         private XElement CreateAnItem(forms.TreeNode tn)
         {
 
-            Item agendaItem = FindItem(tn.Text);
+            Item agendaItem = FindItem((int)tn.Tag);
             XElement item = new XElement("item",
                                          new XElement("title", agendaItem.Title),
                                          new XElement("desc", agendaItem.Description),
@@ -709,6 +727,9 @@ namespace Infrastructure.Models
             return item;
         }
 
-    
+        public int NextID()
+        {
+            return _lastID++;
+        }
     }
 }

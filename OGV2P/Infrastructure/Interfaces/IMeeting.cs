@@ -22,7 +22,7 @@ namespace Infrastructure.Interfaces
         string MeetingName { get; set; }
         event System.ComponentModel.PropertyChangedEventHandler PropertyChanged;
         Item SelectedItem { get; set; }
-        Item FindItem(string title);
+        Item FindItem(int id);
         string ClientPathLive { get; set; }
         string ClientPathLiveStream { get; set; }
         int VideoWidth { get; set; }
@@ -37,5 +37,6 @@ namespace Infrastructure.Interfaces
         string LocalAgendaFileName { get; set; }
         event MeetingSetEventHandler RaiseMeetingSetEvent;
         void ParseAgendaFile(forms.TreeView tree, string allText);
+        int NextID();
     }
 }

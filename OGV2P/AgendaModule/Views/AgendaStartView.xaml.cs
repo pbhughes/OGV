@@ -308,7 +308,9 @@ namespace OGV2P.AgendaModule.Views
             
             //build up the item and the visual node
             Item item = new Infrastructure.Models.Item() { Title = "Please add a title..." };
+            item.ID = _currentMeeting.NextID();
             forms.TreeNode tn = new forms.TreeNode() { Text = item.Title, ToolTipText = item.Title };
+            tn.Tag = item.ID;
 
             //add the context menu
             tn.ContextMenuStrip = _docMenu;
@@ -427,7 +429,7 @@ namespace OGV2P.AgendaModule.Views
         void agendaTree_AfterSelect(object sender, forms.TreeViewEventArgs e)
         {
             forms.TreeNode selectedNode = ((forms.TreeView)sender).SelectedNode;
-            _currentMeeting.SelectedItem = _currentMeeting.FindItem(selectedNode.Text);
+            _currentMeeting.SelectedItem = _currentMeeting.FindItem((int)selectedNode.Tag);
             if(!floater.IsOpen)
             {
                 floater.IsOpen = true;
