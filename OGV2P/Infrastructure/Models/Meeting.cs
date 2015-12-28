@@ -302,6 +302,35 @@ namespace Infrastructure.Models
             }
         }
 
+        private string _leftStatus;
+        public string LeftStatus
+        {
+            get
+            {
+                return _leftStatus;
+            }
+
+            set
+            {
+                _leftStatus = value;
+                OnPropertyChanged("LeftStatus");
+            }
+        }
+
+        private string _rightStatus;
+        public string RightStatus
+        {
+            get
+            {
+                return _rightStatus;
+            }
+
+            set
+            {
+                _rightStatus = value;
+                OnPropertyChanged("RightStatus");
+            }
+        }
 
         public event MeetingSetEventHandler RaiseMeetingSetEvent;
 

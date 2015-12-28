@@ -114,7 +114,7 @@
                         IsEnabled="{Binding IsBusy}"
                         Click="cmdStopRecording_Click"  Style="{StaticResource btn-danger}" Margin="10" Width="100"
                         FontSize="15">STOP</Button>
-               
+
 
             </StackPanel>
 
@@ -129,19 +129,8 @@
                        VerticalAlignment="Center" HorizontalAlignment="Center"
                        FontSize="15" Grid.Row="3" Text="{Binding TimerStamp}"/>
 
-               
+
             </StackPanel>
-           
-
-            <Label Grid.Column="0" Grid.Row="4" >Status</Label>
-          
-
-            <Label Grid.Column="0" Grid.Row="5" Width="75" 
-                   MinWidth="50">CPU</Label>
-            <TextBlock Grid.Column="1" Grid.Row="5" x:Name="txtCpuUsage" TextAlignment="Center" VerticalAlignment="Center" TextTrimming="CharacterEllipsis" Text="{Binding SessionService.CurrentSession.StatusMessage}"></TextBlock>
-
-
         </Grid>
-
     </Grid>
 </UserControl>

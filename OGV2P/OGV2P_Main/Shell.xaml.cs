@@ -15,6 +15,8 @@ using System.Windows.Shapes;
 using CustomControls;
 using Microsoft.Practices.Unity;
 using Infrastructure.Interfaces;
+using System.Diagnostics;
+using System.Timers;
 
 namespace OGV2P
 {
@@ -25,17 +27,35 @@ namespace OGV2P
     public partial class Shell : Window
     {
         IUnityContainer _container;
-       
+        IMeeting _meeting;
+        private PerformanceCounter cpuCounter;
+        private System.Timers.Timer cpuReadingTimer;
+
+
+
         public void SetSideBarAllignmentTop( )
         {
             SideBarRegion.VerticalContentAlignment = VerticalAlignment.Top;
             SideBarRegion.VerticalAlignment = VerticalAlignment.Top;
         }
 
-        public Shell(IUnityContainer container)
+        public Shell(IUnityContainer container, IMeeting meeting)
         {
             InitializeComponent();
             _container = container;
+            _meeting = meeting;
+            DataContext = _meeting;
+            _meeting.LeftStatus = "Stream Idle";
+
+            // initialize performance counter
+            cpuReadingTimer = new Timer();
+            cpuReadingTimer.Interval = 1000;
+            cpuReadingTimer.Elapsed += cpuReadingTimer_Elapsed;
+            cpuCounter = new PerformanceCounter();
+            cpuCounter.CategoryName = "Processor";
+            cpuCounter.CounterName = "% Processor Time";
+            cpuCounter.InstanceName = "_Total";
+            cpuReadingTimer.Start();
         }
 
         private void AboutMenuItem_Click(object sender, RoutedEventArgs e)
@@ -59,6 +79,23 @@ namespace OGV2P
             }
 
             Application.Current.Shutdown(0);
+        }
+
+        private void Hyperlink_RequestNavigate(object sender, System.Windows.Navigation.RequestNavigateEventArgs e)
+        {
+            Process.Start(e.Uri.AbsoluteUri);
+            e.Handled = true;
+        }
+
+        private void cpuReadingTimer_Elapsed(object p1, object p2)
+        {
+            // get the CPU reading
+            Dispatcher.Invoke(() =>
+            {
+                float cpuUtilization = cpuCounter.NextValue();
+                txtCPUReading.Text = cpuUtilization.ToString("n2") + "%";
+            });
+
         }
     }
 }

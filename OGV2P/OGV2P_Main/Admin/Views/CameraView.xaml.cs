@@ -30,8 +30,6 @@ namespace OGV2P.Admin.Views
     {
         private const int FILE_SOURCE = 101;
         private const string RECORDING_IN_PROGRESS = "Recording in progress, please stop recording before changing devices";
-        private System.Timers.Timer cpuReadingTimer;
-        private PerformanceCounter cpuCounter;
         private Timer _vuMeterTimer;
         private ManagementEventWatcher usbWatcher = new ManagementEventWatcher();
         NameValueCollection _settings;
@@ -241,15 +239,7 @@ namespace OGV2P.Admin.Views
                 usbWatcher.Query = query;
                 usbWatcher.Start();
 
-                // initialize performance counter
-                cpuReadingTimer = new Timer();
-                cpuReadingTimer.Interval = 1000;
-                cpuReadingTimer.Elapsed += cpuReadingTimer_Elapsed;
-                cpuCounter = new PerformanceCounter();
-                cpuCounter.CategoryName = "Processor";
-                cpuCounter.CounterName = "% Processor Time";
-                cpuCounter.InstanceName = "_Total";
-                cpuReadingTimer.Start();
+               
 
                 //setup the vu meter
                 vuMeter.Minimum = double.Parse(_settings["VuMeterMinimum"]);
@@ -504,16 +494,7 @@ namespace OGV2P.Admin.Views
 
         }
 
-        private void cpuReadingTimer_Elapsed(object p1, object p2)
-        {
-            // get the CPU reading
-            Dispatcher.Invoke(() =>
-            {
-                float cpuUtilization = cpuCounter.NextValue();
-                txtCpuUsage.Text = cpuUtilization + "%";
-            });
-
-        }
+      
 
         void axRControl_OnStop(object sender, AxRTMPActiveX.IRTMPActiveXEvents_OnStopEvent e)
         {
@@ -595,7 +576,7 @@ namespace OGV2P.Admin.Views
 
                if(string.IsNullOrEmpty(_meeting.MeetingName))
                 {
-                    MessageBoxResult result = Xceed.Wpf.Toolkit.MessageBox.Show("Do you want to include an agenda?", "No Agenda Selectged", MessageBoxButton.YesNo);
+                    MessageBoxResult result = Xceed.Wpf.Toolkit.MessageBox.Show("Do you want to include an agenda?", "No Agenda Selected", MessageBoxButton.YesNo);
                     if (result == MessageBoxResult.Yes)
                         return;
 
@@ -612,6 +593,8 @@ namespace OGV2P.Admin.Views
                 axRControl.StartBroadcast();
                 _vuMeterTimer.Start();
                 _meeting.IsBusy = true;
+                _meeting.LeftStatus = string.Format("Streaming to: {0}", _meeting.PublishingPoint);
+                _meeting.RightStatus = _meeting.LandingPage;
             }
             catch (Exception ex)
             {
@@ -687,7 +670,8 @@ namespace OGV2P.Admin.Views
                 Hours = 0;
                 Minutes = 0;
                 Seconds = 0;
-              
+                _meeting.LeftStatus = "Idle";
+                _meeting.RightStatus = "";
             }
             catch (Exception ex)
             {

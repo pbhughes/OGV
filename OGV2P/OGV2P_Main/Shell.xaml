@@ -21,6 +21,7 @@
             <RowDefinition />
             <RowDefinition Height="auto"  />
             <RowDefinition />
+            <RowDefinition Height="45" />
         </Grid.RowDefinitions>
         <Menu IsMainMenu="True" 
               Grid.Row="0" Grid.Column="0" Grid.ColumnSpan="3"
@@ -56,9 +57,27 @@
                         cal:RegionManager.RegionName="MainRegion" />
            
         </ScrollViewer>
-        
 
-
+        <StatusBar x:Name="statusBar" Grid.Row="4" Grid.ColumnSpan="3">
+            <StatusBarItem x:Name="leftLabel2">
+                <StackPanel Orientation="Horizontal">
+                    <Label>CPU:</Label>
+                    <TextBlock x:Name="txtCPUReading" VerticalAlignment="Center" />
+                </StackPanel>
+            </StatusBarItem>
+            <Separator />
+            <StatusBarItem HorizontalAlignment="Left" VerticalAlignment="Center">
+                <TextBlock x:Name="leftStatus" Text="{Binding LeftStatus}"/>
+            </StatusBarItem>
+            <StatusBarItem HorizontalAlignment="Right" VerticalAlignment="Center">
+                <TextBlock VerticalAlignment="Center">
+                <Hyperlink NavigateUri="{Binding RightStatus}"
+                           RequestNavigate="Hyperlink_RequestNavigate"> 
+                    <TextBlock Text="{Binding RightStatus}" VerticalAlignment="Center" />
+                </Hyperlink>
+                </TextBlock>
+            </StatusBarItem>
+        </StatusBar>
 
     </Grid>
 </Window>

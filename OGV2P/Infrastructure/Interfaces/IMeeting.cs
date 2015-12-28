@@ -38,5 +38,7 @@ namespace Infrastructure.Interfaces
         event MeetingSetEventHandler RaiseMeetingSetEvent;
         void ParseAgendaFile(forms.TreeView tree, string allText);
         int NextID();
+        string LeftStatus { get; set; }
+        string RightStatus { get; set; }
     }
 }
