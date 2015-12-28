@@ -147,7 +147,7 @@ namespace Infrastructure.Models
             }
         }
 
-        private DateTime _meetingDate;
+        private DateTime _meetingDate = DateTime.Now;
 
         public DateTime MeetingDate
         {

@@ -362,6 +362,7 @@ namespace OGV2P.AgendaModule.Views
                     }
                     string newTitle = txtTitle.Text;
                     agendaTree.SelectedNode.Text = newTitle;
+                    agendaTree.SelectedNode.BackColor = Color.LightBlue;
 
 
                     //Check for children if they exist go to them
@@ -650,5 +651,14 @@ namespace OGV2P.AgendaModule.Views
           
             
         }
+
+        private void agendaTree_NodeMouseDoubleClick(object sender, forms.TreeNodeMouseClickEventArgs e)
+        {
+            _sessionService.Stamp();
+            MarkItemStamped();
+            e.Node.Expand();
+        }
+
+       
     }
 }

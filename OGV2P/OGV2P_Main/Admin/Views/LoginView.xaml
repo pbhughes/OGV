@@ -59,8 +59,16 @@
                 <BulletDecorator VerticalAlignment="Center" HorizontalAlignment="Center">
                     <TextBlock>If needed provide User Name and Password and Login</TextBlock>
                 </BulletDecorator>
-                <BulletDecorator VerticalAlignment="Center" HorizontalAlignment="Left">
-                    <TextBlock></TextBlock>
+                <BulletDecorator VerticalAlignment="Center" HorizontalAlignment="Center">
+                    <StackPanel Orientation="Horizontal">
+                        <Label>Questions? Send Email To:</Label>
+                        <TextBlock VerticalAlignment="Center">
+                <Hyperlink NavigateUri="mailto:support@clerkbase.com?subject=Support Question" RequestNavigate="Hyperlink_RequestNavigate">
+                    support@clerkbase.com
+                </Hyperlink>
+                        </TextBlock>
+                    </StackPanel>
+                    
                 </BulletDecorator>
             </ItemsControl>
             

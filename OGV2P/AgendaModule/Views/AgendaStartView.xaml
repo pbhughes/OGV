@@ -37,25 +37,25 @@
             <Label Grid.Column="0" Content="Meeting Name:"/>
         <ScrollViewer Grid.Column="1" HorizontalScrollBarVisibility="Auto"
                           VerticalScrollBarVisibility="Disabled">
-            <TextBox  x:Name="txtMeetingName" 
+            <TextBox  x:Name="txtMeetingName" IsReadOnly="True"
                           Margin="0 0 5 0" Text="{Binding MeetingName}"/>
         </ScrollViewer>
         <tk:SplitButton Name="agendaCommandDropDown" 
                         Click="agendaCommandDropDown_Click" Background="#428bca"
-                        Grid.Column="2" Content="Agenda" Margin="5">
+                        Grid.Column="2" Content="Get Agenda File" Margin="5">
             <tk:SplitButton.DropDownContent>
                 <ItemsControl>
                     <Button Margin="5"
                         Style="{DynamicResource btn-default}"
-                             Click="Button_Click">Choose Agenda From FTP Site</Button>
+                             Click="Button_Click">Get Agenda From Server</Button>
 
                     <Button  Command="{Binding LoadAgendaFromFile}" Margin="5"
                         Style="{DynamicResource btn-default}"
-                        CommandParameter="{Binding Source={x:Reference Name=agendaTree}}">Choose Agenda From Computer</Button>
+                        CommandParameter="{Binding Source={x:Reference Name=agendaTree}}">Open Agenda File</Button>
 
-                    <Button  Command="{Binding CreateNewAgenda}" Margin="5"
+                    <!--<Button  Command="{Binding CreateNewAgenda}" Margin="5"
                         Style="{DynamicResource btn-default}"
-                        CommandParameter="{Binding Source={x:Reference Name=agendaTree}}">Start A New Agenda</Button>
+                        CommandParameter="{Binding Source={x:Reference Name=agendaTree}}">Start A New Agenda</Button>-->
 
                     <Button  Command="{Binding SaveAgendaFile}" Margin="5"
                         Style="{DynamicResource btn-default}"
@@ -65,7 +65,8 @@
         </tk:SplitButton>
 
             <Label Grid.Row="1" Grid.Column="0" Content="Meeting Date:"/>
-            <DatePicker Grid.Column="1" Grid.Row="1" SelectedDateFormat="Long"
+            <DatePicker Grid.Column="1"  Grid.Row="1" Focusable="False" IsHitTestVisible="False"
+                        SelectedDateFormat="Long"
                                 SelectedDate="{Binding MeetingDate}" 
                                 VerticalContentAlignment="Center"
                                 VerticalAlignment="Center"
@@ -80,7 +81,9 @@
                                FontSize="16">
                 <wf:TreeView  x:Name="agendaTree" 
                               KeyDown="agendaTree_KeyDown"
-                              MouseUp="agendaTree_MouseUp" />
+                              MouseUp="agendaTree_MouseUp"
+                              NodeMouseDoubleClick="agendaTree_NodeMouseDoubleClick"
+                              HotTracking="True"/>
 
             </WindowsFormsHost>
         </DockPanel>

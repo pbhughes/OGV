@@ -17,6 +17,7 @@ using System.Windows.Shapes;
 using Infrastructure.Interfaces;
 using Infrastructure.Models;
 using Infrastructure.Converters;
+using System.Diagnostics;
 
 namespace OGV2P.Admin.Views
 {
@@ -128,6 +129,11 @@ namespace OGV2P.Admin.Views
             txtUserID.SelectAll();
         }
 
-      
+        private void Hyperlink_RequestNavigate(object sender, System.Windows.Navigation.RequestNavigateEventArgs e)
+        {
+            Process.Start(e.Uri.AbsoluteUri);
+            e.Handled = true;
+        }
+
     }
 }
