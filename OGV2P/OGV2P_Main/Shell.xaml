@@ -27,6 +27,7 @@
               Grid.Row="0" Grid.Column="0" Grid.ColumnSpan="3"
               VerticalAlignment="Center" Background="Transparent">
             <MenuItem Header="_File" >
+                <MenuItem Header="_Settings" Click="File_SettingsMenu_CLick" />
                 <MenuItem Header="_Exit" Click="ExitMenuItem_Click" />
             </MenuItem>
             <MenuItem Header="_About" Click="AboutMenuItem_Click" ></MenuItem>
@@ -60,9 +61,9 @@
 
         <StatusBar x:Name="statusBar" Grid.Row="4" Grid.ColumnSpan="3">
             <StatusBarItem x:Name="leftLabel2">
-                <StackPanel Orientation="Horizontal">
-                    <Label>CPU:</Label>
+                <StackPanel Orientation="Vertical">
                     <TextBlock x:Name="txtCPUReading" VerticalAlignment="Center" />
+                    <ProgressBar Height="10" Name="shellPBar" Minimum="0" Maximum="100"></ProgressBar>
                 </StackPanel>
             </StatusBarItem>
             <Separator />

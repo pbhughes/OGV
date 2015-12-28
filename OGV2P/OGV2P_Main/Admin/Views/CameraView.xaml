@@ -4,12 +4,11 @@
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
              xmlns:tk="http://schemas.xceed.com/wpf/xaml/toolkit"
+             xmlns:cc="clr-namespace:CustomControls.Views;assembly=CustomControls"
              xmlns:infra="clr-namespace:Infrastructure.Converters;assembly=Infrastructure"
              xmlns:frms="clr-namespace:System.Windows.Forms;assembly=System.Windows.Forms"
              xmlns:ax="clr-namespace:AxRTMPActiveX;assembly=AxInterop.RTMPActiveX"
              xmlns:prism="http://www.codeplex.com/prism"
-             xmlns:inter="http://sche"
-             xmlns:cc="clr-namespace:CustomControls;assembly=CustomControls"
              mc:Ignorable="d" 
              Loaded="UserControl_Loaded"
              d:DesignHeight="1024" d:DesignWidth="900">
@@ -99,17 +98,15 @@
                           SelectionChanged="cboMicrophones_SelectionChanged"></ComboBox>
 
             <StackPanel Grid.Row="2" Grid.ColumnSpan="1" Grid.Column="2"
-                        Width="400"
+                        Width="Auto" HorizontalAlignment="Center"
                         Orientation="Horizontal">
-                <Button Style="{StaticResource btn-primary}" FontSize="15"
-                        Margin="10" Width="100"
-                        Click="SettingsButton_Click">
-                    Settings
-                </Button>
                 <Button x:Name="cmdStartRecording"
                         IsEnabled="{Binding Path=IsBusy, Converter={StaticResource InverseBoolConverter}}"
                         Click="cmdStartRecording_Click"  Style="{StaticResource btn-primary}" Margin="10" Width="100"
                         FontSize="15">REC</Button>
+                <cc:TimerDisplay Name="timerDisplay" 
+                                 TimerValue="{Binding TimerStamp}" 
+                                 Recording="{Binding Meeting.IsBusy}"/>
                 <Button x:Name="cmdStopRecording"
                         IsEnabled="{Binding IsBusy}"
                         Click="cmdStopRecording_Click"  Style="{StaticResource btn-danger}" Margin="10" Width="100"
@@ -118,19 +115,7 @@
 
             </StackPanel>
 
-            <Label Grid.Column="0" Grid.Row="3" 
-                   Width="75" MinWidth="50">Status:</Label>
-            <StackPanel Orientation="Horizontal" HorizontalAlignment="Center"
-                        Grid.Column="1" Grid.Row="3">
-                <cc:ToggleSwtich State="{Binding Meeting.IsBusy}" 
-                             Loaded="ToggleSwtich_Loaded"/>
-
-                <TextBlock Margin="0 10 0 10" Grid.Column="1" x:Name="txtTimer"
-                       VerticalAlignment="Center" HorizontalAlignment="Center"
-                       FontSize="15" Grid.Row="3" Text="{Binding TimerStamp}"/>
-
-
-            </StackPanel>
+         
         </Grid>
     </Grid>
 </UserControl>

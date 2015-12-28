@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Deployment.Application;
+using System.Diagnostics;
 using System.IO;
 using System.Linq;
 using System.Text;
@@ -25,7 +26,8 @@ namespace OGV2P.Admin.Views
         public SettingWindowDialog(string previewUrl, string localVideoFile, string publishingPoint)
         {
             InitializeComponent();
-            txtUrl.Text = (previewUrl == null || previewUrl == string.Empty) ? "The website used to view the stream...." : previewUrl;
+            navUrl.NavigateUri = new Uri((string.IsNullOrEmpty(previewUrl) ? "http://www.clerkbase.com" : previewUrl));
+            txtNavUrlContainer.Text = (string.IsNullOrEmpty(previewUrl) ? "Not set, choose and agenda" : previewUrl);
             txtLocalFile.Text = (localVideoFile == null || localVideoFile == string.Empty)?"The folder where the local video is stored....":localVideoFile;
             txtAppVersion.Text = SoftwareVersion();
             txtPublishingPoint.Text = (publishingPoint == null || publishingPoint == string.Empty)?"The url on the internet where the video is sent....":publishingPoint;
@@ -33,6 +35,13 @@ namespace OGV2P.Admin.Views
            
                 
         }
+
+        private void Hyperlink_RequestNavigate(object sender, System.Windows.Navigation.RequestNavigateEventArgs e)
+        {
+            Process.Start(e.Uri.AbsoluteUri);
+            e.Handled = true;
+        }
+
 
         private string SoftwareVersion()
         {
@@ -62,19 +71,6 @@ namespace OGV2P.Admin.Views
             }
         }
 
-        private void PreviewCommand_Click(object sender, RoutedEventArgs e)
-        {
-            if (txtUrl.Text == null || txtUrl.Text == string.Empty)
-                ;//do nothing
-            else
-            {
-                Uri result;
-                if(Uri.TryCreate(txtUrl.Text, UriKind.Absolute, out result ))
-                    System.Diagnostics.Process.Start(txtUrl.Text);
-                else
-                    MessageBox.Show("Invalid URL, this value is loaded from the agenda file.");
-            }
-               
-        }
+      
     }
 }

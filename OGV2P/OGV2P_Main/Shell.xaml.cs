@@ -17,6 +17,7 @@ using Microsoft.Practices.Unity;
 using Infrastructure.Interfaces;
 using System.Diagnostics;
 using System.Timers;
+using OGV2P.Admin.Views;
 
 namespace OGV2P
 {
@@ -93,8 +94,24 @@ namespace OGV2P
             Dispatcher.Invoke(() =>
             {
                 float cpuUtilization = cpuCounter.NextValue();
-                txtCPUReading.Text = cpuUtilization.ToString("n2") + "%";
+                shellPBar.Value = cpuUtilization;
+                txtCPUReading.Text = string.Format("CPU: {0}", cpuUtilization.ToString("n2") + "%");
             });
+
+        }
+
+        private void File_SettingsMenu_CLick(object sender, RoutedEventArgs e)
+        {
+            try
+            {
+                SettingWindowDialog diag = new SettingWindowDialog(_meeting.LandingPage, _meeting.LocalFile, _meeting.PublishingPoint);
+                diag.ShowDialog();
+            }
+            catch (Exception ex)
+            {
+
+                System.Windows.MessageBox.Show(ex.Message);
+            }
 
         }
     }

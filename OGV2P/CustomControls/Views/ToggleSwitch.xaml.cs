@@ -14,7 +14,7 @@ using System.Windows.Media.Imaging;
 using System.Windows.Navigation;
 using System.Windows.Shapes;
 
-namespace CustomControls
+namespace CustomControls.Views
 {
     /// <summary>
     /// Interaction logic for UserControl1.xaml
