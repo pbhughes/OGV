@@ -637,18 +637,28 @@ namespace OGV2P.AgendaModule.Views
                 agendaCommandDropDown.IsOpen = true;
         }
 
-        private void Button_Click(object sender, RoutedEventArgs e)
+        private void GetAgendaFromServer_Click(object sender, RoutedEventArgs e)
         {
-            agendaCommandDropDown.IsOpen = false;
-            AgendaSelector ags = new AgendaSelector(_user);
-            GetAgendaFileDialog dg = new GetAgendaFileDialog(ags);
-            dg.ShowDialog();
-            if(dg.DialogResult.Value)
+            try
             {
-                string xml = dg.AgendaXml;
-                _currentMeeting.ParseAgendaFile(agendaTree, xml);
+                agendaCommandDropDown.IsOpen = false;
+                AgendaSelector ags = new AgendaSelector(_user);
+                GetAgendaFileDialog dg = new GetAgendaFileDialog(ags);
+                dg.ShowDialog();
+                if (dg.DialogResult.Value)
+                {
+                    string xml = dg.AgendaXml;
+                    _currentMeeting.ParseAgendaFile(agendaTree, xml);
+                }
+
             }
-          
+            catch (Exception ex)
+            {
+
+                Xceed.Wpf.Toolkit.MessageBox.Show("Unable to get the agenda file, ensure the board is setup correctly on the server.", "OpenGoVideo - Error", MessageBoxButton.OK, MessageBoxImage.Error);
+                
+            }
+            
             
         }
 

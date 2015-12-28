@@ -47,7 +47,7 @@
                 <ItemsControl>
                     <Button Margin="5"
                         Style="{DynamicResource btn-default}"
-                             Click="Button_Click">Get Agenda From Server</Button>
+                             Click="GetAgendaFromServer_Click">Get Agenda From Server</Button>
 
                     <Button  Command="{Binding LoadAgendaFromFile}" Margin="5"
                         Style="{DynamicResource btn-default}"
