@@ -8,6 +8,7 @@ using System.Windows;
 using OGV2P;
 using System.IO;
 using System.Runtime.InteropServices;
+using System.Text;
 
 namespace OGV2P
 {
@@ -60,7 +61,16 @@ namespace OGV2P
                 string fileName = "Exception_Log.txt";
                 string excepitonText = ex.ToString();
                 string stackTrace = ex.StackTrace;
-                string textToWrite = string.Format("\n {0} \n {1} \n", excepitonText, stackTrace);
+                StringBuilder sb = new StringBuilder();
+                sb.AppendLine("*****************************************************");
+                sb.AppendLine(DateTime.Now.ToString());
+                sb.AppendLine("                       ");
+                sb.AppendLine(excepitonText);
+                sb.AppendLine("                       ");
+                sb.AppendLine(stackTrace);
+                sb.AppendLine("                       ");
+                sb.AppendLine("*****************************************************");
+
                 if (File.Exists(fileName))
                 {
                     FileInfo fInfo = new FileInfo(fileName);
@@ -68,12 +78,12 @@ namespace OGV2P
                     {
                         //TODO: Push it to Clerkbase
                         File.Delete(fileName);
-                        File.WriteAllText(fileName, textToWrite);
+                        File.WriteAllText(fileName, sb.ToString());
                         return;
                     }
                     
                 }
-                File.AppendAllText(fileName, textToWrite);
+                File.AppendAllText(fileName, sb.ToString());
             }
             catch (Exception exLocal)
             {

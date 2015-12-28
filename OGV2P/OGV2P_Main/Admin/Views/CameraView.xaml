@@ -28,10 +28,10 @@
     </UserControl.Resources>
     <Grid >
         <Grid.RowDefinitions>
-            <RowDefinition Height="auto"/>
-            <RowDefinition Height="500"/>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="500*"/>
             <RowDefinition Height="20" />
-            <RowDefinition Height="300" />
+            <RowDefinition Height="200" />
         </Grid.RowDefinitions>
         <Grid.ColumnDefinitions>
             <ColumnDefinition Width="400" />
@@ -43,8 +43,7 @@
         <DockPanel  Grid.Row="1" Grid.Column="0" Grid.ColumnSpan="2"
                    LastChildFill="True" Panel.ZIndex="1">
             <WindowsFormsHost Grid.Row="0" Grid.Column="0" Grid.ColumnSpan="2"
-                          x:Name="winFrmHost" 
-                          Width="640" Height="480">
+                          x:Name="winFrmHost">
                 <ax:AxRTMPActiveX x:Name="axRControl"></ax:AxRTMPActiveX>
             </WindowsFormsHost>
         </DockPanel>
@@ -104,9 +103,11 @@
                         IsEnabled="{Binding Path=IsBusy, Converter={StaticResource InverseBoolConverter}}"
                         Click="cmdStartRecording_Click"  Style="{StaticResource btn-primary}" Margin="10" Width="100"
                         FontSize="15">REC</Button>
-                <cc:TimerDisplay Name="timerDisplay" 
+                
+                    <cc:TimerDisplay Name="timerDisplay" 
                                  TimerValue="{Binding TimerStamp}" 
                                  Recording="{Binding Meeting.IsBusy}"/>
+                
                 <Button x:Name="cmdStopRecording"
                         IsEnabled="{Binding IsBusy}"
                         Click="cmdStopRecording_Click"  Style="{StaticResource btn-danger}" Margin="10" Width="100"

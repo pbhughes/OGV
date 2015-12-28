@@ -309,9 +309,9 @@ namespace OGV2P.Admin.Views
             axRControl.SetConfig("Auth", string.Format("{0}:{1}",_user.SelectedBoard.UserID, _user.SelectedBoard.Password));
 
             // Device/Camera Resolution
-            axRControl.VideoWidth = 640;
-            axRControl.VideoHeight = 480;
-            axRControl.VideoFrameRate = 25;
+            axRControl.VideoWidth = 800;
+            axRControl.VideoHeight = 600;
+            axRControl.VideoFrameRate = 30;
 
             // Video Encoder Bitrate (Bits/s)
             axRControl.VideoBitrate = 500000;

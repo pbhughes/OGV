@@ -38,9 +38,18 @@ namespace CustomControls.Views
         {
             TimerDisplay display = (TimerDisplay)d;
             if ((bool)e.NewValue == true)
-                display.Background = new SolidColorBrush(Colors.Green);
+            {
+                display.border.Background = new SolidColorBrush(Colors.Green);
+                display.border.BorderBrush = new SolidColorBrush(Colors.Green);
+            }
+                
             else
-                display.Background = new SolidColorBrush(Colors.Gray);
+            {
+                display.border.Background = new SolidColorBrush(Colors.Transparent);
+                display.Foreground = new SolidColorBrush(Colors.Black);
+                display.border.BorderBrush = new SolidColorBrush(Colors.Black);
+            }
+               
 
 
         }

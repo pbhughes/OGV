@@ -4,6 +4,7 @@
         xmlns:cal="http://www.codeplex.com/prism"
         Title="OpenGoVideo" 
         WindowState="Maximized"
+        Icon="OpenGOV.ico"
         WindowStartupLocation="CenterScreen">
     <Window.Resources>
 
