@@ -1,24 +1,15 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using System.Windows;
-using System.Windows.Controls;
-using System.Windows.Data;
-using System.Windows.Documents;
+﻿using System.Windows;
 using System.Windows.Input;
-using System.Windows.Media;
-using System.Windows.Media.Imaging;
-using System.Windows.Shapes;
-using Infrastructure.Models;
 using Infrastructure.Interfaces;
 using Infrastructure.AgendaService;
 using System.ComponentModel;
+using Infrastructure.Converters;
+using Infrastructure.Models;
+using System.Threading.Tasks;
 
 namespace OGV2P.AgendaModule.Views
 {
-    
+
     /// <summary>
     /// Interaction logic for GetAgendaFileDialog.xaml
     /// </summary>
@@ -27,11 +18,12 @@ namespace OGV2P.AgendaModule.Views
         public string AgendaXml { get; set; }
         
         private IAgendaSelector _selector;
-        public GetAgendaFileDialog( IAgendaSelector selector)
+        public GetAgendaFileDialog(IUser user)
         {
             InitializeComponent();
-            _selector = selector;
+            _selector = AgendaSelector.Create(user).Result;
             DataContext = _selector;
+            _selector.LoadAgendaFiles();
           
         }
 

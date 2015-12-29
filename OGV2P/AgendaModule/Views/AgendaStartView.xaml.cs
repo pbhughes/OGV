@@ -642,8 +642,8 @@ namespace OGV2P.AgendaModule.Views
             try
             {
                 agendaCommandDropDown.IsOpen = false;
-                AgendaSelector ags = new AgendaSelector(_user);
-                GetAgendaFileDialog dg = new GetAgendaFileDialog(ags);
+               
+                GetAgendaFileDialog dg = new GetAgendaFileDialog(_user);
                 dg.ShowDialog();
                 if (dg.DialogResult.Value)
                 {

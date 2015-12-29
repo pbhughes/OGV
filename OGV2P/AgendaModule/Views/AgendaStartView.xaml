@@ -87,7 +87,6 @@
 
             </WindowsFormsHost>
         </DockPanel>
-      
         <Popup Name="floater" IsOpen="false" AllowsTransparency="True"
                    Placement="Relative"  IsHitTestVisible="False"
                PlacementTarget="{Binding ElementName=agendaTree}">
