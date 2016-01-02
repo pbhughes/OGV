@@ -14,5 +14,6 @@ namespace Infrastructure.Interfaces
         List<AgendaService.AgendaFile> AvailableFiles { get; set; }
         string GetXml(string fileName);
         Task LoadAgendaFiles();
+        Exception LastError { get; set; }
     }
 }

@@ -1,0 +1,73 @@
+﻿<Window x:Class="OGV2P.AgendaModule.Views.SaveAgendaFileDialog"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:local="clr-namespace:OGV2P.AgendaModule.Views"
+        xmlns:tk="http://schemas.xceed.com/wpf/xaml/toolkit"
+        xmlns:gif="http://wpfanimatedgif.codeplex.com"
+        mc:Ignorable="d" FontSize="15"
+        Title="OpenGoVideo - Save Agenda File" Height="Auto" Width="Auto">
+    <Grid Width="Auto">
+        <Grid.RowDefinitions>
+            <RowDefinition Height="auto"/>
+            <RowDefinition Height="*" />
+            <RowDefinition Height="65" />
+        </Grid.RowDefinitions>
+        <tk:BusyIndicator Name="busyIndicator" IsBusy="{Binding IsBusy}" 
+                          Visibility="{Binding IsBusy, Converter={StaticResource BoolToVisibility}}" Grid.Row="0" Width="150" Height="125" >
+            <tk:BusyIndicator.BusyContentTemplate>
+                <DataTemplate>
+                    <StackPanel Margin="5">
+                        <Image gif:ImageBehavior.AnimatedSource="/Images/loading.gif" Width="100" Height="100" />
+                    </StackPanel>
+                </DataTemplate>
+            </tk:BusyIndicator.BusyContentTemplate>
+            <tk:BusyIndicator.OverlayStyle>
+                <Style TargetType="Rectangle">
+                    <Setter Property="Fill" Value="#ffffeeee"/>
+                </Style>
+            </tk:BusyIndicator.OverlayStyle>
+            <tk:BusyIndicator.ProgressBarStyle>
+                <Style TargetType="ProgressBar">
+                    <Setter Property="Visibility" Value="Collapsed"/>
+                </Style>
+            </tk:BusyIndicator.ProgressBarStyle>
+            <ContentControl />
+        </tk:BusyIndicator>
+        <Grid Grid.Row="1" Margin="10">
+            <Grid.RowDefinitions>
+                <RowDefinition Height="Auto" />
+                <RowDefinition Height="Auto" />
+                <RowDefinition Height="Auto" />
+                <RowDefinition Height="Auto" />
+                <RowDefinition Height="Auto" />
+                <RowDefinition Height="Auto" />
+            </Grid.RowDefinitions>
+
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="150"/>
+                <ColumnDefinition Width="Auto"/>
+            </Grid.ColumnDefinitions>
+            <Label Margin="5">Meeting Name:</Label>
+            <TextBlock  VerticalAlignment="Center" Grid.Column="1" Text="{Binding Meeting.MeetingName}"/>
+            <Label Margin="5" Grid.Row="1">Meeting Date:</Label>
+            <TextBlock Grid.Row="1" VerticalAlignment="Center" Grid.Column="1" Text="{Binding Meeting.MeetingDate, StringFormat=d}"/>
+            <Label Grid.Row="2">Local File:</Label>
+            <TextBlock Grid.Row="2" VerticalAlignment="Center" Grid.Column="1" Text="{Binding Meeting.LocalAgendaFileName}"/>
+            <Label Grid.Row="3">Board Name:</Label>
+            <TextBlock Grid.Row="3" VerticalAlignment="Center" Grid.Column="1" Text="{Binding User.SelectedBoard.Name}"/>
+            <Label Grid.Row="4">City:</Label>
+            <TextBlock Grid.Row="4" VerticalAlignment="Center" Grid.Column="1" Text="{Binding User.SelectedBoard.City}"/>
+            <Label Grid.Row="5">State:</Label>
+            <TextBlock Grid.Row="5" VerticalAlignment="Center" Grid.Column="1" Text="{Binding User.SelectedBoard.State}"/>
+        </Grid>
+        <StackPanel Grid.Row="2" Orientation="Horizontal" HorizontalAlignment="Right">
+            <Button Style="{StaticResource btn-info}" IsDefault="True"
+                    Margin="10" Width="70" Click="OKButton_Click">OK</Button>
+            <Button Style="{StaticResource btn-info}"
+                    IsCancel="True" Margin="10" Width="70" 
+                    Click="CancelButton_Click">Cancel</Button>
+        </StackPanel>
+    </Grid>
+</Window>

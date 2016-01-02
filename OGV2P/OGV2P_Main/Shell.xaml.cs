@@ -18,6 +18,7 @@ using Infrastructure.Interfaces;
 using System.Diagnostics;
 using System.Timers;
 using OGV2P.Admin.Views;
+using Microsoft.Practices.Prism.Regions;
 
 namespace OGV2P
 {
@@ -31,7 +32,7 @@ namespace OGV2P
         IMeeting _meeting;
         private PerformanceCounter cpuCounter;
         private System.Timers.Timer cpuReadingTimer;
-
+        private IRegionManager _regionManager;
 
 
         public void SetSideBarAllignmentTop( )
@@ -112,6 +113,35 @@ namespace OGV2P
 
                 System.Windows.MessageBox.Show(ex.Message);
             }
+
+        }
+
+        private void File_LogOutMenu_Click(object sender, RoutedEventArgs e)
+        {
+            _regionManager = Microsoft.Practices.ServiceLocation.ServiceLocator.Current.GetInstance<Microsoft.Practices.Prism.Regions.IRegionManager>();
+
+            var loginView = _regionManager.Regions[Infrastructure.Models.Regions.Middle].GetView("LoginView");
+
+            if(loginView == null)
+            {
+                loginView = new OGV2P.Admin.Views.LoginView(_container,
+                    _container.Resolve<ISession>(), _container.Resolve<IUser>());
+                _regionManager.Regions[Infrastructure.Models.Regions.Middle].Add(loginView, "LoginView");
+            }
+
+            _regionManager.Regions[Infrastructure.Models.Regions.Middle].Activate(loginView);
+
+            foreach (var view in _regionManager.Regions[Infrastructure.Models.Regions.Main].Views)
+            {
+                _regionManager.Regions[Infrastructure.Models.Regions.Main].Remove(view);
+            }
+
+            foreach (var view in _regionManager.Regions[Infrastructure.Models.Regions.SideBar].Views)
+            {
+                _regionManager.Regions[Infrastructure.Models.Regions.SideBar].Remove(view);
+            }
+         
+            
 
         }
     }

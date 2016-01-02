@@ -9,6 +9,8 @@ using System.IO;
 using System.Windows.Input;
 using System.Windows;
 using Infrastructure.Models;
+using Microsoft.Practices.Unity;
+using System.Xml.Linq;
 
 namespace OGV2P.AgendaModule.Views
 {
@@ -17,13 +19,14 @@ namespace OGV2P.AgendaModule.Views
     /// </summary>
     public partial class AgendaStartView : UserControl
     {
+        private IUnityContainer _container;
         private IMeeting _currentMeeting;
         private ISession _sessionService;
         private IUser _user;
         private forms.ImageList _treeImages = new forms.ImageList();
         private forms.ContextMenuStrip _docMenu;
 
-        public AgendaStartView(IMeeting meeting, ISession sessionService, IUser user)
+        public AgendaStartView(IMeeting meeting, ISession sessionService, IUser user, IUnityContainer container)
         {
             InitializeComponent();
 
@@ -113,7 +116,7 @@ namespace OGV2P.AgendaModule.Views
             }
 
 
-
+            _container = container;
             agendaTree.ImageList = _treeImages;
             agendaTree.AfterSelect += agendaTree_AfterSelect;
             _currentMeeting = meeting;
@@ -642,14 +645,19 @@ namespace OGV2P.AgendaModule.Views
             try
             {
                 agendaCommandDropDown.IsOpen = false;
-               
-                GetAgendaFileDialog dg = new GetAgendaFileDialog(_user);
+
+                GetAgendaFileDialog dg = GetAgendaFileDialog.Create(_user).Result;
                 dg.ShowDialog();
                 if (dg.DialogResult.Value)
                 {
                     string xml = dg.AgendaXml;
+                    _currentMeeting.LocalAgendaFileName = dg.FilePath;
+                    XDocument xDoc = XDocument.Parse(xml);
+                    xDoc.Save(_currentMeeting.LocalAgendaFileName);
                     _currentMeeting.ParseAgendaFile(agendaTree, xml);
                 }
+
+               
 
             }
             catch (Exception ex)
@@ -669,6 +677,19 @@ namespace OGV2P.AgendaModule.Views
             e.Node.Expand();
         }
 
-       
+        private void SaveAgenda_Click(object sender, RoutedEventArgs e)
+        {
+            try
+            {
+                SaveAgendaFileDialog dg = new SaveAgendaFileDialog(_container);
+                dg.ShowDialog();
+            }
+            catch (Exception ex)
+            {
+
+                Xceed.Wpf.Toolkit.MessageBox.Show(string.Format("An error occured while trying to save the agenda file to server.  Error: {0}", ex.Message));
+            }
+          
+        }
     }
 }

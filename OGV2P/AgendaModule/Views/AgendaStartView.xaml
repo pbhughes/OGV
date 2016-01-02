@@ -57,9 +57,9 @@
                         Style="{DynamicResource btn-default}"
                         CommandParameter="{Binding Source={x:Reference Name=agendaTree}}">Start A New Agenda</Button>-->
 
-                    <Button  Command="{Binding SaveAgendaFile}" Margin="5"
+                    <Button  Margin="5"
                         Style="{DynamicResource btn-default}"
-                        CommandParameter="{Binding Source={x:Reference Name=agendaTree}}">Save the Agenda</Button>
+                            Click="SaveAgenda_Click" >Save the Agenda</Button>
                 </ItemsControl>
             </tk:SplitButton.DropDownContent>
         </tk:SplitButton>
@@ -142,14 +142,7 @@
                      KeyDown="DescriptionBox_KeyDown" />
         </ScrollViewer>
 
-        <Label Grid.Row="5" Grid.Column="0">Time Stamp:</Label>
-        <StackPanel Orientation="Horizontal" Grid.Row="5" Grid.Column="1" Grid.ColumnSpan="2">
-            <TextBlock VerticalAlignment="Center" Margin="7 0 0 0" Width="150"
-                       Text="{Binding SelectedItem.TimeStamp}" >
-               
-            </TextBlock>
-            
-        </StackPanel>
+
     </Grid>
    
 </UserControl>

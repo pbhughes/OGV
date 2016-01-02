@@ -21,6 +21,7 @@ namespace OGV2P
         private IRegionManager _regionManager;
         private Window _shell;
         private IMeeting _meeting;
+        private ISaveAgendaViewModel _saveAgendaViewModel;
         
 
         protected override System.Windows.DependencyObject CreateShell()
@@ -64,12 +65,14 @@ namespace OGV2P
             this.Container.RegisterType<object, OGV2P.Admin.Views.ServicesView>(typeof(OGV2P.Admin.Views.ServicesView).FullName);
             this.Container.RegisterType<IAgendaSelector, Infrastructure.Models.AgendaSelector>();
             this.Container.RegisterType<Infrastructure.Interfaces.IDevices, Infrastructure.Models.Devices>();
-            
+           
 
             _boardList = LoadBoards();
             _session = new Session( );
             _user = new User(_session, _boardList);
             _meeting = new Meeting(_session, _user);
+            _saveAgendaViewModel = new SaveAgendaViewModel(_user, _meeting);
+
             
             
            
@@ -79,7 +82,9 @@ namespace OGV2P
             this.Container.RegisterInstance<IUser>(_user);
             this.Container.RegisterInstance<IMeeting>(_meeting);
             this.Container.RegisterInstance<IBoardList>(_boardList);
-            
+            this.Container.RegisterInstance<ISaveAgendaViewModel>(_saveAgendaViewModel);
+
+
 
         }
 
@@ -92,11 +97,10 @@ namespace OGV2P
 
             ((Shell)_shell).SetSideBarAllignmentTop();
             
-            Uri vv = new Uri(typeof(OGV2P.AgendaModule.Views.AgendaStartView).FullName, UriKind.RelativeOrAbsolute);
-            _regionManager.RequestNavigate(Infrastructure.Models.Regions.Main, vv);
+            _regionManager.RegisterViewWithRegion(Infrastructure.Models.Regions.Main, typeof(OGV2P.AgendaModule.Views.AgendaStartView));
 
-            Uri uu = new Uri(typeof(OGV2P.Admin.Views.CameraView).FullName, UriKind.RelativeOrAbsolute);
-            _regionManager.RequestNavigate(Infrastructure.Models.Regions.SideBar, uu);
+            _regionManager.RegisterViewWithRegion(Infrastructure.Models.Regions.SideBar, typeof(OGV2P.Admin.Views.CameraView));
+        
         }
 
         private IBoardList LoadBoards()

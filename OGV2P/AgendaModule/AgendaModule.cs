@@ -21,7 +21,6 @@ namespace OGV2P.AgendaModule
 
         public void Initialize()
         {
-            _regionViewRegistry.RegisterViewWithRegion("MainRegion", typeof(Views.PlaceHolder));
         }
     }
 }

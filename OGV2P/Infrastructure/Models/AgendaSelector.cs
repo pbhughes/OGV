@@ -7,6 +7,7 @@ using System.ComponentModel;
 using Infrastructure.AgendaService;
 using Xceed.Wpf.Toolkit;
 using System.Windows.Threading;
+using System;
 
 namespace Infrastructure.Models
 {
@@ -63,6 +64,21 @@ namespace Infrastructure.Models
             }
         }
 
+        private Exception _lastError;
+        public Exception LastError
+        {
+            get
+            {
+                return _lastError;
+            }
+
+            set
+            {
+                _lastError = value;
+                OnPropertyChanged("LastError");
+            }
+        }
+
         #region INotifyPropertyChanged
 
         public event PropertyChangedEventHandler PropertyChanged;
@@ -98,7 +114,16 @@ namespace Infrastructure.Models
                  return availableFiles;
              });
 
-            await t;
+            try
+            {
+                t.Wait(new TimeSpan(0, 0, 2));
+            }
+            catch (Exception ex)
+            {
+
+                throw;
+            }
+            
          
             AvailableFiles = t.Result.ToList<AgendaFile>();
             IsBusy = false;
@@ -130,7 +155,17 @@ namespace Infrastructure.Models
 
         public  async Task LoadAgendaFiles()
         {
-            await GetAgendaFiles();
+            try
+            {
+                await GetAgendaFiles();
+            }
+            catch (System.Exception ex)
+            {
+
+                IsBusy = false;
+                throw;
+            }
+           
         }
 
         public AgendaSelector( IUser user)

@@ -25,8 +25,7 @@ namespace OGV2P.Admin.Views
     /// <summary>
     /// Interaction logic for CameraView.xaml
     /// </summary>
-    public partial class CameraView : UserControl, INavigationAware, 
-                                        IRegionMemberLifetime, INotifyPropertyChanged
+    public partial class CameraView : UserControl,  INotifyPropertyChanged
     {
         private const int FILE_SOURCE = 101;
         private const string RECORDING_IN_PROGRESS = "Recording in progress, please stop recording before changing devices";
@@ -110,7 +109,7 @@ namespace OGV2P.Admin.Views
         {
             get
             {
-                throw new NotImplementedException();
+                return false;
             }
         }
 
@@ -254,7 +253,7 @@ namespace OGV2P.Admin.Views
                 //winFrmHost.Child = axRControl;
                 axRControl.SetConfig("UseSampleGrabber", "2");
                 axRControl.AudioBitrate = 64000; 
-                axRControl.License = "nlic:1.2:LiveEnc:3.0:LvApp=1,LivePlg=1,MSDK=4,MPEG2DEC=1,MPEG2ENC=1,PS=1,TS=1,H264DEC=1,H264ENC=1,H264ENCQS=1,MP4=4,RTMPsrc=1,RtmpMsg=1,RTMPs=1,RTSP=1,RTSPsrc=1,UDP=1,UDPsrc=1,HLS=1,WMS=1,WMV=1,RTMPm=4,RTMPx=3,Resz=1,RSrv=1,VMix2=1,3DRemix=1,ScCap=1,AuCap=1,AEC=1,Demo=1,Ic=1,NoMsg=1,Tm=1800,T1=600,NoIc=1:win,win64,osx:20151030,20160111::0:0:nanocosmosdemo-292490-3:ncpt:f6044ea043c479af5911e60502f1a334";
+                axRControl.License = @"nlic:1.2:LiveEnc: 3.0:LvApp = 1,LivePlg = 1,H264DEC = 1,H264ENC = 1,MP4 = 1,RtmpMsg = 1,RTMPx = 3,Resz = 1,RSrv = 1,ScCap = 1,NoMsg = 1,Ap1 = GOV2P.Main.exe,max = 10,Ic = 0:win: 20151230,20161214::0:0:clerkbase - 555215 - 1:ncpt: ce608864c444270ff79e5d65e5c92682";
                 axRControl.InitEncoder();
 
 
@@ -684,18 +683,7 @@ namespace OGV2P.Admin.Views
 
       
 
-        public void OnNavigatedTo(NavigationContext navigationContext)
-        {
-        }
-
-        public bool IsNavigationTarget(NavigationContext navigationContext)
-        {
-            return true;
-        }
-
-        public void OnNavigatedFrom(NavigationContext navigationContext)
-        {
-        }
+     
 
         private void cboSource_SelectedChanged(object sender, SelectionChangedEventArgs e)
         {

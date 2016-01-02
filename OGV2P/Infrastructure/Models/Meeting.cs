@@ -529,7 +529,7 @@ namespace Infrastructure.Models
                 forms.OpenFileDialog dg = new forms.OpenFileDialog();
                 dg.DefaultExt = ".xml";
                 dg.AddExtension = true;
-                dg.InitialDirectory = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments), "ClerkBase");
+                dg.InitialDirectory = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments), "ClerkBase", "Agendas");
                 if (!Directory.Exists(dg.InitialDirectory))
                     Directory.CreateDirectory(dg.InitialDirectory);
 
@@ -700,21 +700,32 @@ namespace Infrastructure.Models
 
         #endregion
 
-        public long WriteAgendaFile(forms.TreeView agendaTree)
+        public XDocument GetAgendaXmlDoc()
         {
             XDocument xdoc = new XDocument(
-                    new XElement("meeting",
-                        new XElement("clientpathlive", ClientPathLive),
-                        new XElement("clientpathlivestream", ClientPathLiveStream),
-                        new XElement("meetingname", MeetingName),
-                        new XElement("meetingdate", MeetingDate.ToShortDateString()),
-                        new XElement("videoheight", VideoHeight.ToString()),
-                        new XElement("videowidth", VideoWidth.ToString()),
-                        new XElement("framerate", FrameRate.ToString()),
-                        new XElement("landingpage", LandingPage),
-                        new XElement("agenda", new XElement("items"))
-                    )
-            );
+                   new XElement("meeting",
+                       new XElement("clientpathlive", ClientPathLive),
+                       new XElement("clientpathlivestream", ClientPathLiveStream),
+                       new XElement("meetingname", MeetingName),
+                       new XElement("meetingdate", MeetingDate.ToShortDateString()),
+                       new XElement("videoheight", VideoHeight.ToString()),
+                       new XElement("videowidth", VideoWidth.ToString()),
+                       new XElement("framerate", FrameRate.ToString()),
+                       new XElement("landingpage", LandingPage),
+                       new XElement("agenda", new XElement("items"))
+                   )
+           );
+
+            return xdoc;
+        }
+        public string GetAgendaXML()
+        {
+            XDocument xdoc = GetAgendaXmlDoc();
+            return xdoc.ToString();
+        }
+        public long WriteAgendaFile(forms.TreeView agendaTree)
+        {
+            XDocument xdoc = GetAgendaXmlDoc();
 
             foreach(forms.TreeNode tn in agendaTree.Nodes)
             {

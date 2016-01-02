@@ -5,7 +5,8 @@
         Title="OpenGoVideo" 
         WindowState="Maximized"
         Icon="OpenGOV.ico"
-        WindowStartupLocation="CenterScreen">
+        WindowStartupLocation="CenterScreen"
+        ResizeMode="NoResize">
     <Window.Resources>
 
     </Window.Resources>
@@ -29,6 +30,7 @@
               VerticalAlignment="Center" Background="Transparent">
             <MenuItem Header="_File" >
                 <MenuItem Header="_Settings" Click="File_SettingsMenu_CLick" />
+                <MenuItem Header="_Log Out" Click="File_LogOutMenu_Click" />
                 <MenuItem Header="_Exit" Click="ExitMenuItem_Click" />
             </MenuItem>
             <MenuItem Header="_About" Click="AboutMenuItem_Click" ></MenuItem>

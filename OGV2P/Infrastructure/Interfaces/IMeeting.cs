@@ -40,5 +40,6 @@ namespace Infrastructure.Interfaces
         int NextID();
         string LeftStatus { get; set; }
         string RightStatus { get; set; }
+        string GetAgendaXML();
     }
 }
