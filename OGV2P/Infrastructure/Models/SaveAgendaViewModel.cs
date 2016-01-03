@@ -82,7 +82,6 @@ namespace Infrastructure.Models
                 client.SaveAgendaFile(_user.UserID, _user.Password,
                                                       _user.SelectedBoard.City,_user.SelectedBoard.State, _user.SelectedBoard.Name,
                                                       _meeting.MeetingName + ".oga", xml, DateTime.Now);
-                
             });
 
             try
