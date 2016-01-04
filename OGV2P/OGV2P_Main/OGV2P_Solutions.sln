@@ -1,7 +1,7 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio 14
-VisualStudioVersion = 14.0.23107.0
+VisualStudioVersion = 14.0.24720.0
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "OGV2P", "OGV2P.csproj", "{706265BA-EAD0-4E64-A23A-1F9DE77874C9}"
 EndProject
@@ -14,6 +14,8 @@ EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "BuckSoft.Controls.FtpBrowseDialog", "..\BuckSoft.Controls.FtpBrowseDialog\BuckSoft.Controls.FtpBrowseDialog.csproj", "{C6122999-CB33-464B-9D10-86FFAB7B09F9}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "CustomControls", "..\CustomControls\CustomControls.csproj", "{676E39DA-65E5-4C6F-826E-A589BC4FD80A}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "NanoHost", "..\NanoHost\NanoHost.csproj", "{3BECEC7B-7573-43BB-9C2A-4AA1228A0645}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -71,6 +73,14 @@ Global
 		{676E39DA-65E5-4C6F-826E-A589BC4FD80A}.Release|Any CPU.Build.0 = Release|Any CPU
 		{676E39DA-65E5-4C6F-826E-A589BC4FD80A}.Release|x86.ActiveCfg = Release|Any CPU
 		{676E39DA-65E5-4C6F-826E-A589BC4FD80A}.Release|x86.Build.0 = Release|Any CPU
+		{3BECEC7B-7573-43BB-9C2A-4AA1228A0645}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{3BECEC7B-7573-43BB-9C2A-4AA1228A0645}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{3BECEC7B-7573-43BB-9C2A-4AA1228A0645}.Debug|x86.ActiveCfg = Debug|Any CPU
+		{3BECEC7B-7573-43BB-9C2A-4AA1228A0645}.Debug|x86.Build.0 = Debug|Any CPU
+		{3BECEC7B-7573-43BB-9C2A-4AA1228A0645}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{3BECEC7B-7573-43BB-9C2A-4AA1228A0645}.Release|Any CPU.Build.0 = Release|Any CPU
+		{3BECEC7B-7573-43BB-9C2A-4AA1228A0645}.Release|x86.ActiveCfg = Release|Any CPU
+		{3BECEC7B-7573-43BB-9C2A-4AA1228A0645}.Release|x86.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

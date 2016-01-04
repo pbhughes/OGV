@@ -11,6 +11,7 @@ using Microsoft.Practices.Prism.Regions;
 using System.Threading;
 using System.Windows;
 using System.ServiceProcess;
+using Infrastructure.Extensions;
 
 
 namespace Infrastructure.Models
@@ -125,6 +126,8 @@ namespace Infrastructure.Models
             catch (Exception ex)
             {
                 Message = ex.Message;
+                ex.WriteToLogFile();
+                Xceed.Wpf.Toolkit.MessageBox.Show(string.Format("An error occured loading the user, see error text: {0}", ex.Message));
             }
             finally
             {

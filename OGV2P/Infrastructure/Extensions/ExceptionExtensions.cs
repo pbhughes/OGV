@@ -1,61 +1,18 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Configuration;
-using System.Data;
-using System.Linq;
-using System.Threading.Tasks;
-using System.Windows;
-using OGV2P;
+using System.Deployment.Application;
 using System.IO;
-using System.Runtime.InteropServices;
+using System.Linq;
 using System.Text;
+using System.Threading.Tasks;
+using Xceed.Wpf.Toolkit;
 using forms = System.Windows.Forms;
 
-namespace OGV2P
+namespace Infrastructure.Extensions
 {
-    /// <summary>
-    /// Interaction logic for App.xaml
-    /// </summary>
-    public partial class App : Application
+    public static class ExceptionExtensions
     {
-        protected override void OnStartup(StartupEventArgs e)
-        {
-            try
-            {
-                AppDomain current = AppDomain.CurrentDomain;
-                current.UnhandledException += Current_UnhandledException;
-                base.OnStartup(e);
-                OGV2P.BootStrapper bootStrapper = new BootStrapper();
-                bootStrapper.Run();
-            }
-            catch (Exception ex)
-            {
-
-                MessageBox.Show(string.Format("A startup execption occured here is the error: {0}", ex.Message));
-                WriteExceptionToFile(ex);
-            }
-         
-             
-        }
-
-        private void Current_UnhandledException(object sender, UnhandledExceptionEventArgs e)
-        {
-            
-            WriteExceptionToFile((Exception)e.ExceptionObject);
-            if(e.ExceptionObject is InvalidComObjectException)
-            {
-                //skip the screen show
-            }
-            else
-            {
-                MessageBox.Show(string.Format("A startup execption occured here is the error: {0}", ((Exception)e.ExceptionObject).Message));
-            }
-           
-            
-
-        }
-
-        public void WriteExceptionToFile(Exception ex)
+        public static void WriteToLogFile(this Exception ex)
         {
             try
             {
@@ -84,7 +41,7 @@ namespace OGV2P
                         File.WriteAllText(fileName, sb.ToString());
                         return;
                     }
-                    
+
                 }
                 File.AppendAllText(fileName, sb.ToString());
             }
@@ -93,10 +50,6 @@ namespace OGV2P
                 MessageBox.Show("Could not write the exception log");
 
             }
-
-
         }
-            
-            
     }
 }

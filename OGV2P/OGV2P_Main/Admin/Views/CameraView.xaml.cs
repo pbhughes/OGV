@@ -34,7 +34,7 @@ namespace OGV2P.Admin.Views
         NameValueCollection _settings;
         private IRegionManager _regionManager;
         private IUser _user;
-        //private AxRTMPActiveX.AxRTMPActiveX axRControl;
+        private AxRTMPActiveX.AxRTMPActiveX axRControl;
         private string PREFERED_DEVICE_FILE = "preferedDevices.xml";
 
         LinearGradientBrush _yellow =
@@ -218,6 +218,9 @@ namespace OGV2P.Admin.Views
             {
                 InitializeComponent();
 
+                axRControl = new AxRTMPActiveX.AxRTMPActiveX();
+             
+
                 this.DataContext = this;
                 NotificationRequest = new InteractionRequest<INotification>();
                 NotificationCommand = new DelegateCommand(OnNofity, CanNotify);
@@ -249,19 +252,15 @@ namespace OGV2P.Admin.Views
                 _vuMeterTimer.Start();
 
 
-                //axRControl = new AxRTMPActiveX.AxRTMPActiveX();
-                //winFrmHost.Child = axRControl;
-                axRControl.SetConfig("UseSampleGrabber", "2");
-                axRControl.AudioBitrate = 64000; 
-                axRControl.License = @"nlic:1.2:LiveEnc: 3.0:LvApp = 1,LivePlg = 1,H264DEC = 1,H264ENC = 1,MP4 = 1,RtmpMsg = 1,RTMPx = 3,Resz = 1,RSrv = 1,ScCap = 1,NoMsg = 1,Ap1 = GOV2P.Main.exe,max = 10,Ic = 0:win: 20151230,20161214::0:0:clerkbase - 555215 - 1:ncpt: ce608864c444270ff79e5d65e5c92682";
-                axRControl.InitEncoder();
-
-
-
+                winFormHost.Child = axRControl;
             }
             catch (Exception ex)
             {
+                if (ex.GetBaseException() != null)
+                    ex.GetBaseException().WriteToLogFile();
 
+
+                ex.WriteToLogFile();
                 throw;
             }
 
@@ -303,6 +302,12 @@ namespace OGV2P.Admin.Views
 
         private void InitRTMPControl()
         {
+
+            axRControl.InitEncoder();
+            axRControl.License = @"nlic:1.2:LiveEnc: 3.0:LvApp = 1,LivePlg = 1,H264DEC = 1,H264ENC = 1,MP4 = 1,RtmpMsg = 1,RTMPx = 3,Resz = 1,RSrv = 1,ScCap = 1,NoMsg = 1,Ap1 = GOV2P.Main.exe,max = 10,Ic = 0:win: 20151230,20161214::0:0:clerkbase - 555215 - 1:ncpt: ce608864c444270ff79e5d65e5c92682";
+            axRControl.SetConfig("UseSampleGrabber", "2");
+            axRControl.AudioBitrate = 64000;
+           
 
             //set the user id / password
             axRControl.SetConfig("Auth", string.Format("{0}:{1}",_user.SelectedBoard.UserID, _user.SelectedBoard.Password));
@@ -359,8 +364,8 @@ namespace OGV2P.Admin.Views
             long num = axRControl.GetNumberOfResolutions(0);
             axRControl.VideoWidth = int.Parse(_settings["PreviewVideoWidth"]);
             axRControl.VideoHeight = int.Parse(_settings["PreviewVideoHeight"]);
-            winFrmHost.Width = axRControl.VideoWidth;
-            winFrmHost.Height = axRControl.VideoHeight;
+            winFormHost.Width = axRControl.VideoWidth;
+            winFormHost.Height = axRControl.VideoHeight;
 
             
 

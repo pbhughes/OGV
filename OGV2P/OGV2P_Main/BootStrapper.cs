@@ -10,6 +10,7 @@ using System.Collections;
 using System.Collections.Generic;
 using System.IO;
 using System.Xml.Linq;
+using forms = System.Windows.Forms;
 
 namespace OGV2P
 {
@@ -108,7 +109,15 @@ namespace OGV2P
             try
             {
                 BoardList boards = new BoardList();
-                string boardsxml = File.ReadAllText("boards.xml");
+                //copy the boards file to the local user directory
+                if(File.Exists("boards.xml"))
+                {
+                    File.Copy("boards.xml", Path.Combine( forms.Application.LocalUserAppDataPath, "boards.xml"),true);
+                    File.Delete("boards.xml");
+                }
+
+                string pathToBoards = Path.Combine(forms.Application.LocalUserAppDataPath, "boards.xml");
+                string boardsxml = File.ReadAllText(pathToBoards);
               
                 XDocument xdoc = XDocument.Parse(boardsxml, LoadOptions.PreserveWhitespace );
                 foreach (XElement org in xdoc.Element("organizations").Elements("org"))

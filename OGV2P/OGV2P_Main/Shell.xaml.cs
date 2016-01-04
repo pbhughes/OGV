@@ -19,6 +19,8 @@ using System.Diagnostics;
 using System.Timers;
 using OGV2P.Admin.Views;
 using Microsoft.Practices.Prism.Regions;
+using Infrastructure.Models;
+using forms = System.Windows.Forms;
 
 namespace OGV2P
 {
@@ -143,6 +145,17 @@ namespace OGV2P
          
             
 
+        }
+
+        private void BoardsFile_MenuItem_Click(object sender, RoutedEventArgs e)
+        {
+
+            Process.Start(forms.Application.LocalUserAppDataPath);
+        }
+
+        private void ExceptionLog_MenuItem_Click(object sender, RoutedEventArgs e)
+        {
+            Process.Start(forms.Application.LocalUserAppDataPath);
         }
     }
 }

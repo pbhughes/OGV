@@ -31,6 +31,8 @@
             <MenuItem Header="_File" >
                 <MenuItem Header="_Settings" Click="File_SettingsMenu_CLick" />
                 <MenuItem Header="_Log Out" Click="File_LogOutMenu_Click" />
+                <MenuItem Header="_Board File" Click="BoardsFile_MenuItem_Click" ></MenuItem>
+                <MenuItem Header="_Exception Log" Click="ExceptionLog_MenuItem_Click"></MenuItem>
                 <MenuItem Header="_Exit" Click="ExitMenuItem_Click" />
             </MenuItem>
             <MenuItem Header="_About" Click="AboutMenuItem_Click" ></MenuItem>

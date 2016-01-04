@@ -50,13 +50,17 @@
     <ErrorReport>prompt</ErrorReport>
     <CodeAnalysisRuleSet>MinimumRecommendedRules.ruleset</CodeAnalysisRuleSet>
   </PropertyGroup>
+  <PropertyGroup>
+    <SignAssembly>false</SignAssembly>
+  </PropertyGroup>
+  <PropertyGroup>
+    <AssemblyOriginatorKeyFile>
+    </AssemblyOriginatorKeyFile>
+  </PropertyGroup>
   <ItemGroup>
-    <Reference Include="AxInterop.RTMPActiveX">
-      <HintPath>..\..\..\..\..\..\Documents\OGV\samples\nanoStream\nanoStream-WinForms-CSharp\obj\x86\Release\AxInterop.RTMPActiveX.dll</HintPath>
-    </Reference>
-    <Reference Include="Interop.RTMPActiveX">
-      <HintPath>..\..\..\..\..\..\Documents\OGV\samples\nanoStream\nanoStream-WinForms-CSharp\obj\x86\Release\Interop.RTMPActiveX.dll</HintPath>
-      <EmbedInteropTypes>True</EmbedInteropTypes>
+    <Reference Include="AxInterop.RTMPActiveX, Version=1.0.0.0, Culture=neutral, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\..\NanoHost\bin\Release\AxInterop.RTMPActiveX.dll</HintPath>
     </Reference>
     <Reference Include="Microsoft.Practices.Prism.Composition">
       <HintPath>..\packages\Prism.Composition.5.0.0\lib\NET45\Microsoft.Practices.Prism.Composition.dll</HintPath>

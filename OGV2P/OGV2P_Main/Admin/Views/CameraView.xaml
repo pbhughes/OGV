@@ -43,8 +43,8 @@
         <DockPanel  Grid.Row="1" Grid.Column="0" Grid.ColumnSpan="2"
                    LastChildFill="True" Panel.ZIndex="1">
             <WindowsFormsHost Grid.Row="0" Grid.Column="0" Grid.ColumnSpan="2"
-                          x:Name="winFrmHost">
-                <ax:AxRTMPActiveX x:Name="axRControl"></ax:AxRTMPActiveX>
+                          x:Name="winFormHost">
+                
             </WindowsFormsHost>
         </DockPanel>
 
