@@ -8,7 +8,8 @@
              xmlns:wf="clr-namespace:System.Windows.Forms;assembly=System.Windows.Forms"
              xmlns:input="clr-namespace:System.Windows.Input;assembly=System"
              mc:Ignorable="d" 
-             d:DesignHeight="900" d:DesignWidth="800" Name="host"  >
+             d:DesignHeight="900" d:DesignWidth="800" Name="host"
+             Loaded="host_Loaded">
     <UserControl.Resources>
         <Style TargetType="UserControl">
             <Setter Property="Margin" Value="10"/>
@@ -49,9 +50,8 @@
                         Style="{DynamicResource btn-default}"
                              Click="GetAgendaFromServer_Click">Get Agenda From Server</Button>
 
-                    <Button  Command="{Binding LoadAgendaFromFile}" Margin="5"
-                        Style="{DynamicResource btn-default}"
-                        CommandParameter="{Binding Source={x:Reference Name=agendaTree}}">Open Agenda File</Button>
+                    <Button  Click="GetAgendaFromFile_Click" Margin="5"
+                        Style="{DynamicResource btn-default}">Open Agenda File</Button>
 
                     <!--<Button  Command="{Binding CreateNewAgenda}" Margin="5"
                         Style="{DynamicResource btn-default}"
@@ -71,22 +71,32 @@
                                 VerticalContentAlignment="Center"
                                 VerticalAlignment="Center"
                   FirstDayOfWeek="Monday"  />
-        <DockPanel Name="treePanel"  Grid.Row="2" Grid.Column="0" 
-                    Grid.ColumnSpan="3" MinHeight="525"
-                   LastChildFill="True" >
-            <WindowsFormsHost 
-                              HorizontalAlignment="Stretch"
-                                  VerticalAlignment="Stretch" 
-                              Margin="20" x:Name="frmHost" 
-                               FontSize="16">
-                <wf:TreeView  x:Name="agendaTree" 
+        <!--<DockPanel Name="treePanel"  Grid.Row="2" Grid.Column="0" 
+                    Grid.ColumnSpan="3" Background="Yellow"
+                   LastChildFill="false" HorizontalAlignment="Stretch"
+                   VerticalAlignment="Stretch">
+            
+        </DockPanel>-->
+        <WindowsFormsHost Name="winFormHost" 
+                          Grid.Row="2" Grid.Column="0" 
+                    Grid.ColumnSpan="3" Padding="10" Margin="10"
+                              FontSize="16" HorizontalAlignment="Stretch"
+                              VerticalAlignment="Stretch">
+            <WindowsFormsHost.RenderTransform>
+                <ScaleTransform CenterX="0"
+                                CenterY="0" ScaleX="1" ScaleY="1"/>
+            </WindowsFormsHost.RenderTransform>
+            <wf:Panel Name="winFormHostPanel" Dock="Fill">
+                
+                <!--<wf:TreeView  x:Name="agendaTree" 
                               KeyDown="agendaTree_KeyDown"
                               MouseUp="agendaTree_MouseUp"
                               NodeMouseDoubleClick="agendaTree_NodeMouseDoubleClick"
-                              HotTracking="True"/>
+                              HotTracking="True"/>-->
+            </wf:Panel>
 
-            </WindowsFormsHost>
-        </DockPanel>
+
+        </WindowsFormsHost>
         <Popup Name="floater" IsOpen="false" AllowsTransparency="True"
                    Placement="Relative"  IsHitTestVisible="False"
                PlacementTarget="{Binding ElementName=agendaTree}">

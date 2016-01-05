@@ -251,8 +251,8 @@ namespace OGV2P.Admin.Views
                 _vuMeterTimer.Elapsed += _vuMeterTimer_Elapsed;
                 _vuMeterTimer.Start();
 
-
-                winFormHost.Child = axRControl;
+                winFormHost.Child.Controls.Add(axRControl);
+               
             }
             catch (Exception ex)
             {
@@ -364,8 +364,7 @@ namespace OGV2P.Admin.Views
             long num = axRControl.GetNumberOfResolutions(0);
             axRControl.VideoWidth = int.Parse(_settings["PreviewVideoWidth"]);
             axRControl.VideoHeight = int.Parse(_settings["PreviewVideoHeight"]);
-            winFormHost.Width = axRControl.VideoWidth;
-            winFormHost.Height = axRControl.VideoHeight;
+           
 
             
 

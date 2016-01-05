@@ -6,7 +6,7 @@
         WindowState="Maximized"
         Icon="OpenGOV.ico"
         WindowStartupLocation="CenterScreen"
-        ResizeMode="NoResize">
+        ResizeMode="CanResizeWithGrip">
     <Window.Resources>
 
     </Window.Resources>

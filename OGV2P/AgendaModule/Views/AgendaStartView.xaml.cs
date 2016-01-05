@@ -25,6 +25,7 @@ namespace OGV2P.AgendaModule.Views
         private IUser _user;
         private forms.ImageList _treeImages = new forms.ImageList();
         private forms.ContextMenuStrip _docMenu;
+        private forms.TreeView agendaTree;
 
         public AgendaStartView(IMeeting meeting, ISession sessionService, IUser user, IUnityContainer container)
         {
@@ -45,7 +46,9 @@ namespace OGV2P.AgendaModule.Views
             agendaTree.DragEnter += AgendaTree_DragEnter;
             agendaTree.DragOver += AgendaTree_DragOver;
             agendaTree.DragDrop += AgendaTree_DragDrop;
-           
+            agendaTree.KeyDown += agendaTree_KeyDown;
+            agendaTree.MouseUp += agendaTree_MouseUp;
+            agendaTree.NodeMouseDoubleClick += agendaTree_NodeMouseDoubleClick;
 
             agendaTree.AllowDrop = true;
             agendaTree.ShowNodeToolTips = true;
@@ -126,6 +129,13 @@ namespace OGV2P.AgendaModule.Views
             _currentMeeting.RaiseMeetingSetEvent += _currentMeeting_RaiseMeetingSetEvent;
 
             DataContext = _currentMeeting;
+
+            winFormHost.Child.Controls.Add(agendaTree);
+           
+           
+           
+           
+
         }
 
         private void MainWindow_StateChanged(object sender, EventArgs e)
@@ -511,14 +521,14 @@ namespace OGV2P.AgendaModule.Views
                 floater.IsOpen = true;
             }
 
-            System.Windows.Point currentPos = e.GetPosition(treePanel);
+            System.Windows.Point currentPos = e.GetPosition(winFormHost);
             System.Diagnostics.Debug.WriteLine(string.Format("Window Mouse Move x:{0} y:{1}", currentPos.X, currentPos.Y));
         }
 
         private void frmHost_MouseLeave(object sender, MouseEventArgs e)
         {
           
-            System.Windows.Point currentPos = e.GetPosition(treePanel);
+            System.Windows.Point currentPos = e.GetPosition(winFormHost);
             System.Diagnostics.Debug.WriteLine(string.Format("Window Mouse Move x:{0} y:{1}", currentPos.X, currentPos.Y));
         }
 
@@ -640,6 +650,38 @@ namespace OGV2P.AgendaModule.Views
                 agendaCommandDropDown.IsOpen = true;
         }
 
+
+        private void GetAgendaFromFile_Click(object sender, RoutedEventArgs e)
+        {
+            try
+            {
+                agendaCommandDropDown.IsOpen = false;
+
+                forms.OpenFileDialog dg = new forms.OpenFileDialog();
+                dg.DefaultExt = ".xml";
+                dg.AddExtension = true;
+                dg.InitialDirectory = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments), "ClerkBase", "Agendas");
+                if (!Directory.Exists(dg.InitialDirectory))
+                    Directory.CreateDirectory(dg.InitialDirectory);
+
+
+                if (dg.ShowDialog() == System.Windows.Forms.DialogResult.OK)
+                {
+                    _currentMeeting.LocalAgendaFileName = dg.FileName;
+                    string allXml = File.ReadAllText(dg.FileName);
+                    _currentMeeting.ParseAgendaFile(agendaTree, allXml);
+                }
+
+            }
+            catch (Exception ex)
+            {
+
+                Xceed.Wpf.Toolkit.MessageBox.Show("Unable to get the agenda file, ensure the board is setup correctly on the server.", "OpenGoVideo - Error", MessageBoxButton.OK, MessageBoxImage.Error);
+
+            }
+
+        }
+
         private void GetAgendaFromServer_Click(object sender, RoutedEventArgs e)
         {
             try
@@ -690,6 +732,14 @@ namespace OGV2P.AgendaModule.Views
                 Xceed.Wpf.Toolkit.MessageBox.Show(string.Format("An error occured while trying to save the agenda file to server.  Error: {0}", ex.Message));
             }
           
+        }
+
+        private void host_Loaded(object sender, RoutedEventArgs e)
+        {
+            int scaleWidth = 180;
+            int scaleHeight = 145;
+            agendaTree.Size = new System.Drawing.Size((int)winFormHost.RenderSize.Width + scaleWidth, (int)winFormHost.RenderSize.Height + scaleHeight);
+            
         }
     }
 }

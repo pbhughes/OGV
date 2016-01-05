@@ -35,7 +35,7 @@
         </Grid.RowDefinitions>
         <Grid.ColumnDefinitions>
             <ColumnDefinition Width="400" />
-            <ColumnDefinition Width="450" />
+            <ColumnDefinition Width="400*" />
         </Grid.ColumnDefinitions>
 
 
@@ -43,8 +43,9 @@
         <DockPanel  Grid.Row="1" Grid.Column="0" Grid.ColumnSpan="2"
                    LastChildFill="True" Panel.ZIndex="1">
             <WindowsFormsHost Grid.Row="0" Grid.Column="0" Grid.ColumnSpan="2"
-                          x:Name="winFormHost">
-                
+                          x:Name="winFormHost" HorizontalAlignment="Stretch"
+                              VerticalAlignment="Stretch">
+                <frms:Panel  Dock="Fill" Name="winFormHostPanel" />
             </WindowsFormsHost>
         </DockPanel>
 
