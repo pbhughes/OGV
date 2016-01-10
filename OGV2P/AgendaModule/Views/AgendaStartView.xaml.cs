@@ -7,7 +7,6 @@ using System;
 using System.Drawing;
 using System.IO;
 using System.Windows.Input;
-using System.Windows;
 using Infrastructure.Models;
 using Microsoft.Practices.Unity;
 using System.Xml.Linq;
@@ -25,7 +24,7 @@ namespace OGV2P.AgendaModule.Views
         private IUser _user;
         private forms.ImageList _treeImages = new forms.ImageList();
         private forms.ContextMenuStrip _docMenu;
-        private forms.TreeView agendaTree;
+        private forms.TreeView agendaTree = new forms.TreeView();
 
         public AgendaStartView(IMeeting meeting, ISession sessionService, IUser user, IUnityContainer container)
         {
@@ -36,12 +35,6 @@ namespace OGV2P.AgendaModule.Views
             Application.Current.MainWindow.StateChanged += MainWindow_StateChanged;
 
            
-            
-            if (agendaTree == null)
-            {
-                agendaTree = new forms.TreeView();
-            }
-
             agendaTree.ItemDrag += AgendaTree_ItemDrag;
             agendaTree.DragEnter += AgendaTree_DragEnter;
             agendaTree.DragOver += AgendaTree_DragOver;
@@ -54,7 +47,8 @@ namespace OGV2P.AgendaModule.Views
             agendaTree.ShowNodeToolTips = true;
             agendaTree.ShowPlusMinus = true;
             agendaTree.HotTracking = true;
-            
+            agendaTree.BorderStyle = System.Windows.Forms.BorderStyle.None;
+            agendaTree.Dock = System.Windows.Forms.DockStyle.Fill;
 
 
             if (File.Exists(@"Images\unselected.png"))
@@ -252,6 +246,7 @@ namespace OGV2P.AgendaModule.Views
             // Move the dragged node when the left mouse button is used.
             if (e.Button == forms.MouseButtons.Left)
             {
+                
                 agendaTree.DoDragDrop(e.Item, forms.DragDropEffects.Move);
             }
 
@@ -377,7 +372,7 @@ namespace OGV2P.AgendaModule.Views
                     agendaTree.SelectedNode.Text = newTitle;
                     agendaTree.SelectedNode.BackColor = Color.LightBlue;
 
-
+                 
                     //Check for children if they exist go to them
                     if (agendaTree.SelectedNode.Nodes.Count > 0)
                     {
@@ -688,7 +683,7 @@ namespace OGV2P.AgendaModule.Views
             {
                 agendaCommandDropDown.IsOpen = false;
 
-                GetAgendaFileDialog dg = GetAgendaFileDialog.Create(_user).Result;
+                GetAgendaFileDialog dg = new GetAgendaFileDialog(_user);
                 dg.ShowDialog();
                 if (dg.DialogResult.Value)
                 {
@@ -734,12 +729,6 @@ namespace OGV2P.AgendaModule.Views
           
         }
 
-        private void host_Loaded(object sender, RoutedEventArgs e)
-        {
-            int scaleWidth = 180;
-            int scaleHeight = 145;
-            agendaTree.Size = new System.Drawing.Size((int)winFormHost.RenderSize.Width + scaleWidth, (int)winFormHost.RenderSize.Height + scaleHeight);
-            
-        }
+      
     }
 }

@@ -1,25 +1,26 @@
-﻿using System.Collections.Generic;
+﻿using Infrastructure.Interfaces;
+using Microsoft.Practices.Prism.Commands;
+using OGV2P.FTP.Utilities;
+using System;
+using System.Collections.Generic;
+using System.ComponentModel;
 using System.Linq;
 using System.Threading.Tasks;
-using Infrastructure.Interfaces;
-using Microsoft.Practices.Prism.Commands;
-using System.ComponentModel;
-using Infrastructure.AgendaService;
 using Xceed.Wpf.Toolkit;
-using System.Windows.Threading;
-using System;
+using System.IO;
 
 namespace Infrastructure.Models
 {
     public class AgendaSelector : IAgendaSelector, INotifyPropertyChanged
     {
-        IBoard _board;
-        IUser _user;
-        static BusyIndicator _indicator;
+        private static IBoard _board;
+        private static IUser _user;
+        private static BusyIndicator _indicator;
 
         public DelegateCommand GetAgendaFilesCommand { get; set; }
 
         private string _targetFile;
+
         public string TargetFile
         {
             get
@@ -34,8 +35,9 @@ namespace Infrastructure.Models
             }
         }
 
-        private List<AgendaFile> _availableFiles;
-        public List<AgendaFile> AvailableFiles
+        private List<FTPfileInfo> _availableFiles = new List<FTPfileInfo>();
+
+        public List<FTPfileInfo> AvailableFiles
         {
             get
             {
@@ -50,6 +52,7 @@ namespace Infrastructure.Models
         }
 
         private bool _isBusy;
+
         public bool IsBusy
         {
             get
@@ -65,6 +68,7 @@ namespace Infrastructure.Models
         }
 
         private Exception _lastError;
+
         public Exception LastError
         {
             get
@@ -89,8 +93,7 @@ namespace Infrastructure.Models
                 PropertyChanged(this, new PropertyChangedEventArgs(name));
         }
 
-        #endregion
-
+        #endregion INotifyPropertyChanged
 
         private bool CanGetAgendaFiles()
         {
@@ -100,81 +103,82 @@ namespace Infrastructure.Models
         private async void OnGetAgendaFiles()
         {
             await GetAgendaFiles();
-
         }
 
         private async Task GetAgendaFiles()
         {
             IsBusy = true;
-            Task<AgendaFile[]> t =   Task.Factory.StartNew(() => 
-             {
-                 System.Threading.Thread.Sleep(1000);
-                 StorageService client = GetStorageClient();
-                 var availableFiles = client.GetAvailableAgendaFiles(_board.City, _board.State, _board.Name);
-                 return availableFiles;
-             });
+            Task t = Task.Factory.StartNew(() =>
+           {
+               System.Threading.Thread.Sleep(1000);
+               FTPclient client = GetStorageClient();
+
+               FTPdirectory dir  = client.ListDirectoryDetail();
+               foreach(FTPfileInfo fi in dir )
+               {
+
+                   if (fi.FileType == FTPfileInfo.DirectoryEntryTypes.File)
+                       _availableFiles.Add(fi);
+               }
+           });
 
             try
             {
-                t.Wait(new TimeSpan(0, 0, 2));
+                t.Wait(new TimeSpan(0, 0, 10));
+               
             }
             catch (Exception ex)
             {
-
                 throw;
             }
-            
-         
-            AvailableFiles = t.Result.ToList<AgendaFile>();
+
+          
             IsBusy = false;
-            
         }
 
         public string GetXml(string fileName)
         {
-            StorageService client = GetStorageClient();
-            string xml = client.GetAgendaFileFromWebServer(_user.SelectedBoard.City, _user.SelectedBoard.State, _user.SelectedBoard.Name, fileName);
+            FTPclient client = GetStorageClient();
+            string path = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments), "ClerkBase", "Agendas", fileName);
+            bool  downloaded = client.Download(fileName, path, true);
+            string xml =  File.ReadAllText(path);
             return xml;
         }
 
-        private static StorageService GetStorageClient()
+        private static FTPclient GetStorageClient()
         {
-            var client = new AgendaService.StorageService();
-            client.Timeout = 10000;
+            Uri ftpUrl = new Uri(string.Format("ftp://{0}/{1}", _user.SelectedBoard.FtpServer, _user.SelectedBoard.FtpPath));
+            var client = new FTPclient(ftpUrl.ToString(), _user.UserID, _user.Password);
+            
             return client;
         }
 
-      
         public static async Task<AgendaSelector> Create(IUser user)
         {
             AgendaSelector ags = new AgendaSelector(user);
-    
-            return ags;
 
+            return ags;
         }
 
-        public  async Task LoadAgendaFiles()
+        public async Task LoadAgendaFiles()
         {
             try
             {
                 await GetAgendaFiles();
+                OnPropertyChanged("AvailableFiles");
             }
             catch (System.Exception ex)
             {
-
                 IsBusy = false;
                 throw;
             }
-           
         }
 
-        public AgendaSelector( IUser user)
+        public AgendaSelector(IUser user)
         {
             _user = user;
             _board = _user.SelectedBoard;
             GetAgendaFilesCommand = new DelegateCommand(OnGetAgendaFiles, CanGetAgendaFiles);
         }
-
-        
     }
 }

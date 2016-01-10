@@ -1,13 +1,15 @@
 ﻿using System.Windows;
 using System.Windows.Input;
 using Infrastructure.Interfaces;
-using Infrastructure.AgendaService;
 using System.ComponentModel;
 using Infrastructure.Converters;
 using Infrastructure.Models;
 using System.Threading.Tasks;
 using System;
 using System.IO;
+using Infrastructure.Extensions;
+using OGV2P.FTP.Utilities;
+
 
 namespace OGV2P.AgendaModule.Views
 {
@@ -19,44 +21,40 @@ namespace OGV2P.AgendaModule.Views
     {
         public string AgendaXml { get; set; }
         public string FilePath { get; set; }
-        
-        private static IAgendaSelector _selector;
+
+        private IAgendaSelector _selector;
+
         public GetAgendaFileDialog(IUser user)
         {
             InitializeComponent();
+            _selector = new AgendaSelector(user);
             this.DataContext = _selector;
         }
 
-        public static async Task< GetAgendaFileDialog > Create(IUser user)
+       
+        private void agendaList_MouseDoubleClick(object sender, MouseButtonEventArgs e)
         {
-            _selector = AgendaSelector.Create(user).Result;
-           
-           
             try
             {
-                await _selector.LoadAgendaFiles();
-                if (_selector.LastError != null)
-                    Xceed.Wpf.Toolkit.MessageBox.Show(_selector.LastError.Message);
-
-                return new GetAgendaFileDialog(user);
+                if (agendaList.SelectedItem != null)
+                    SetFileAndClose();
             }
             catch (Exception ex)
             {
+                ex.WriteToLogFile();
+                var msgBox = new Xceed.Wpf.Toolkit.MessageBox();
 
+                msgBox.Text = ex.Message;
+                msgBox.Caption = "Error getting the agenda";
                 throw;
             }
            
-        }
-
-        private void agendaList_MouseDoubleClick(object sender, MouseButtonEventArgs e)
-        {
-            SetFileAndClose();
 
         }
 
         private void SetFileAndClose()
         {
-            string fileName = ((AgendaFile)agendaList.SelectedItem).FileName;
+            string fileName = ((FTPfileInfo) agendaList.SelectedItem).Filename;
 
             string dir = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments), "ClerkBase", "Agendas");
             if (!File.Exists(dir))
@@ -84,14 +82,50 @@ namespace OGV2P.AgendaModule.Views
 
         private void OkButton_Click(object sender, RoutedEventArgs e)
         {
-            if (agendaList.SelectedItem != null)
-                SetFileAndClose();
+            try
+            {
+                if (agendaList.SelectedItem != null)
+                    SetFileAndClose();
+            }
+            catch (Exception ex)
+            {
+                ex.WriteToLogFile();
+                var msgBox = new Xceed.Wpf.Toolkit.MessageBox();
+
+                msgBox.Text = ex.Message;
+                msgBox.Caption = "Error getting the agenda";
+                throw;
+            }
+          
          
         }
 
         private void Button_Click(object sender, RoutedEventArgs e)
         {
             Close();
+        }
+
+        private async void Window_Loaded(object sender, RoutedEventArgs e)
+        {
+            try
+            {
+                _selector.IsBusy = true;
+                await _selector.LoadAgendaFiles();
+                if (_selector.LastError != null)
+                    Xceed.Wpf.Toolkit.MessageBox.Show(_selector.LastError.Message);
+            }
+            catch (Exception ex)
+            {
+                var msgBox = new Xceed.Wpf.Toolkit.MessageBox();
+                msgBox.Content = ex.Message;
+                msgBox.ShowDialog();
+                
+                ex.WriteToLogFile();
+            }
+            finally
+            {
+                _selector.IsBusy = false;
+            }
         }
     }
 }

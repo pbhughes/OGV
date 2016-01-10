@@ -58,9 +58,12 @@
     </AssemblyOriginatorKeyFile>
   </PropertyGroup>
   <ItemGroup>
-    <Reference Include="AxInterop.RTMPActiveX, Version=1.0.0.0, Culture=neutral, processorArchitecture=MSIL">
-      <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\..\NanoHost\bin\Release\AxInterop.RTMPActiveX.dll</HintPath>
+    <Reference Include="AxInterop.RTMPActiveX">
+      <HintPath>..\..\..\..\..\..\Documents\ClerkBase\Nano Cosmos Interop\AxInterop.RTMPActiveX.dll</HintPath>
+    </Reference>
+    <Reference Include="Interop.RTMPActiveX">
+      <HintPath>..\..\..\..\..\..\Documents\ClerkBase\Nano Cosmos Interop\Interop.RTMPActiveX.dll</HintPath>
+      <EmbedInteropTypes>True</EmbedInteropTypes>
     </Reference>
     <Reference Include="Microsoft.Practices.Prism.Composition">
       <HintPath>..\packages\Prism.Composition.5.0.0\lib\NET45\Microsoft.Practices.Prism.Composition.dll</HintPath>
@@ -216,6 +219,17 @@
     <Content Include="Images\openGOVideo.png">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
+  </ItemGroup>
+  <ItemGroup>
+    <COMReference Include="RTMPActiveX">
+      <Guid>{F68187A1-7AEF-4D17-918F-95A8B8A60113}</Guid>
+      <VersionMajor>1</VersionMajor>
+      <VersionMinor>1</VersionMinor>
+      <Lcid>0</Lcid>
+      <WrapperTool>tlbimp</WrapperTool>
+      <Isolated>True</Isolated>
+      <EmbedInteropTypes>True</EmbedInteropTypes>
+    </COMReference>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 

@@ -19,6 +19,7 @@ using System.Xml.Linq;
 using OGV2P.Admin.Views;
 using forms = System.Windows.Forms;
 using Infrastructure.Extensions;
+using RTMPActiveX;
 
 namespace OGV2P.Admin.Views
 {
@@ -34,7 +35,7 @@ namespace OGV2P.Admin.Views
         NameValueCollection _settings;
         private IRegionManager _regionManager;
         private IUser _user;
-        private AxRTMPActiveX.AxRTMPActiveX axRControl;
+        private  AxRTMPActiveX.AxRTMPActiveX axRControl;
         private string PREFERED_DEVICE_FILE = "preferedDevices.xml";
 
         LinearGradientBrush _yellow =
@@ -218,8 +219,17 @@ namespace OGV2P.Admin.Views
             {
                 InitializeComponent();
 
+
+                //get the application settings
+                _settings = ConfigurationSettings.AppSettings;
+
                 axRControl = new AxRTMPActiveX.AxRTMPActiveX();
-             
+
+
+                axRControl.Width = int.Parse(_settings["PreviewVideoWidth"]);
+                axRControl.Height = int.Parse(_settings["PreviewVideoHeight"]);
+                
+                
 
                 this.DataContext = this;
                 NotificationRequest = new InteractionRequest<INotification>();
@@ -230,8 +240,7 @@ namespace OGV2P.Admin.Views
                 _meeting.RaiseMeetingSetEvent += Meeting_SetEvent;
                 _regionManager = regionManager;
                 _user = user;
-                //get the application settings
-                _settings = ConfigurationSettings.AppSettings;
+             
 
                 _meeting.IsBusy = false;
 
@@ -251,8 +260,11 @@ namespace OGV2P.Admin.Views
                 _vuMeterTimer.Elapsed += _vuMeterTimer_Elapsed;
                 _vuMeterTimer.Start();
 
+                axRControl.Dock = System.Windows.Forms.DockStyle.Fill;
                 winFormHost.Child.Controls.Add(axRControl);
-               
+
+
+
             }
             catch (Exception ex)
             {
@@ -304,7 +316,6 @@ namespace OGV2P.Admin.Views
         {
 
             axRControl.InitEncoder();
-            axRControl.License = @"nlic:1.2:LiveEnc: 3.0:LvApp = 1,LivePlg = 1,H264DEC = 1,H264ENC = 1,MP4 = 1,RtmpMsg = 1,RTMPx = 3,Resz = 1,RSrv = 1,ScCap = 1,NoMsg = 1,Ap1 = GOV2P.Main.exe,max = 10,Ic = 0:win: 20151230,20161214::0:0:clerkbase - 555215 - 1:ncpt: ce608864c444270ff79e5d65e5c92682";
             axRControl.SetConfig("UseSampleGrabber", "2");
             axRControl.AudioBitrate = 64000;
            
@@ -337,8 +348,10 @@ namespace OGV2P.Admin.Views
             AddVideoSources();
             if(lastUsedDevices != null)
             {
+                cboCameras.BeginInit();
                 cboCameras.SelectedItem = lastUsedDevices[0];
-                axRControl.VideoSource = FindVideoSource(lastUsedDevices[0]); ;
+                axRControl.VideoSource = FindVideoSource(lastUsedDevices[0]);
+                cboCameras.EndInit();
             }
             else
             {
@@ -364,8 +377,9 @@ namespace OGV2P.Admin.Views
             long num = axRControl.GetNumberOfResolutions(0);
             axRControl.VideoWidth = int.Parse(_settings["PreviewVideoWidth"]);
             axRControl.VideoHeight = int.Parse(_settings["PreviewVideoHeight"]);
-           
 
+            winFormHost.Width = axRControl.VideoWidth;
+            winFormHost.Height = axRControl.VideoHeight;
             
 
 
@@ -389,7 +403,7 @@ namespace OGV2P.Admin.Views
                 if (! _meeting.IsBusy)
                 {
                     System.Threading.Thread.Sleep(2000);
-                    InitRTMPControl();
+                    //InitRTMPControl();
 
                 }
             });
@@ -498,7 +512,7 @@ namespace OGV2P.Admin.Views
 
         }
 
-      
+
 
         void axRControl_OnStop(object sender, AxRTMPActiveX.IRTMPActiveXEvents_OnStopEvent e)
         {
@@ -526,7 +540,7 @@ namespace OGV2P.Admin.Views
                         default:
                             Message = "Stopped";
                             break;
-                            
+
                     }
                     return;
                 }
@@ -542,6 +556,7 @@ namespace OGV2P.Admin.Views
             System.Diagnostics.Debug.WriteLine(e.result);
         }
 
+
         void axRControl_OnEvent(object sender, AxRTMPActiveX.IRTMPActiveXEvents_OnEventEvent e)
         {
 
@@ -554,7 +569,7 @@ namespace OGV2P.Admin.Views
                     ;
                 if (result == 11)
                 {
-                   
+
                     RTMPStatus status = Newtonsoft.Json.JsonConvert.DeserializeObject<RTMPStatus>(e.result);
                     Message = status.ConnectionStatus;
                 }
@@ -774,6 +789,8 @@ namespace OGV2P.Admin.Views
         {
 
             //INIT AXRTMP Control
+            axRControl.License = @"nlic:1.2:LiveEnc:3.0:LvApp=1,LivePlg=1,H264DEC=1,H264ENC=1,MP4=1,RtmpMsg=1,RTMPx=3,Resz=1,RSrv=1,ScCap=1,NoMsg=1,Ap1=GOV2P.Main.exe,max=10,Ic=0:win:20151230,20161214::0:0:clerkbase-555215-1:ncpt:ce608864c444270ff79e5d65e5c92682";
+
             InitRTMPControl();
         }
 
@@ -809,5 +826,7 @@ namespace OGV2P.Admin.Views
         {
 
         }
+
+       
     }
 }

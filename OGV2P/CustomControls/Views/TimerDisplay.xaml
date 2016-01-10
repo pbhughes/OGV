@@ -10,7 +10,7 @@
              Foreground="Black" Background="Transparent" >
     <Border Name="border" CornerRadius="9" BorderThickness="4"
             BorderBrush="Transparent" Background="Transparent" Margin="10" >
-        <Grid Margin="10">
+        <Grid Margin="2" HorizontalAlignment="Center" VerticalAlignment="Center">
     
             <Grid.RowDefinitions>
                 <RowDefinition Height="Auto"/>
@@ -23,9 +23,9 @@
                 <ColumnDefinition Width="auto" />
             </Grid.ColumnDefinitions>
             <TextBlock x:Name="txtHours" VerticalAlignment="Center" HorizontalAlignment="Center" Grid.Column="0" Text="00"></TextBlock>
-            <TextBlock Margin="10"  Text=":" Width="15" Grid.Column="1" HorizontalAlignment="Center" VerticalAlignment="Center" Foreground="White"></TextBlock>
+            <TextBlock Margin="2"  Text=":" Width="auto" Grid.Column="1" HorizontalAlignment="Center" VerticalAlignment="Center" Foreground="White"></TextBlock>
             <TextBlock x:Name="txtMinutes" VerticalAlignment="Center" HorizontalAlignment="Center" Grid.Column="2" Text="00"></TextBlock>
-            <TextBlock Margin="10" Text=":" Width="15" Grid.Column="3" HorizontalAlignment="Center" VerticalAlignment="Center" Foreground="White"></TextBlock>
+            <TextBlock Margin="2" Text=":" Width="auto" Grid.Column="3" HorizontalAlignment="Center" VerticalAlignment="Center" Foreground="White"></TextBlock>
             <TextBlock x:Name="txtSeconds" VerticalAlignment="Center" HorizontalAlignment="Center" Grid.Column="4" Text="00"></TextBlock>
     
     </Grid>

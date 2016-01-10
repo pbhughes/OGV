@@ -8,8 +8,7 @@
              xmlns:wf="clr-namespace:System.Windows.Forms;assembly=System.Windows.Forms"
              xmlns:input="clr-namespace:System.Windows.Input;assembly=System"
              mc:Ignorable="d" 
-             d:DesignHeight="900" d:DesignWidth="800" Name="host"
-             Loaded="host_Loaded">
+             d:DesignHeight="900" d:DesignWidth="800" Name="host">
     <UserControl.Resources>
         <Style TargetType="UserControl">
             <Setter Property="Margin" Value="10"/>
@@ -20,7 +19,7 @@
     <UserControl.InputBindings>
         <KeyBinding Key="Space" Modifiers="Shift" Command="{Binding StampItem}" CommandParameter="{Binding SelectedItem}" />
     </UserControl.InputBindings>
-  
+    <ScrollViewer HorizontalScrollBarVisibility="Auto" VerticalScrollBarVisibility="Auto" >
         <Grid>
             <Grid.RowDefinitions>
                 <RowDefinition Height="auto"/>
@@ -71,32 +70,25 @@
                                 VerticalContentAlignment="Center"
                                 VerticalAlignment="Center"
                   FirstDayOfWeek="Monday"  />
-        <!--<DockPanel Name="treePanel"  Grid.Row="2" Grid.Column="0" 
-                    Grid.ColumnSpan="3" Background="Yellow"
-                   LastChildFill="false" HorizontalAlignment="Stretch"
-                   VerticalAlignment="Stretch">
-            
-        </DockPanel>-->
-        <WindowsFormsHost Name="winFormHost" 
-                          Grid.Row="2" Grid.Column="0" 
-                    Grid.ColumnSpan="3" Padding="10" Margin="10"
+
+            <DockPanel Name="hostCanvas" Grid.Row="2" Grid.Column="0" 
+                    Grid.ColumnSpan="3" LastChildFill="True"
+                       Background="LightBlue" Margin="10" >
+                <WindowsFormsHost Name="winFormHost" 
+                          Background="Blue"
                               FontSize="16" HorizontalAlignment="Stretch"
                               VerticalAlignment="Stretch">
-            <WindowsFormsHost.RenderTransform>
-                <ScaleTransform CenterX="0"
-                                CenterY="0" ScaleX="1" ScaleY="1"/>
-            </WindowsFormsHost.RenderTransform>
-            <wf:Panel Name="winFormHostPanel" Dock="Fill">
-                
-                <!--<wf:TreeView  x:Name="agendaTree" 
-                              KeyDown="agendaTree_KeyDown"
-                              MouseUp="agendaTree_MouseUp"
-                              NodeMouseDoubleClick="agendaTree_NodeMouseDoubleClick"
-                              HotTracking="True"/>-->
-            </wf:Panel>
 
 
-        </WindowsFormsHost>
+                    <wf:Panel Name="winFormHostPanel" Dock="Fill">
+
+                    </wf:Panel>
+
+
+                </WindowsFormsHost>
+
+            </DockPanel>
+        
         <Popup Name="floater" IsOpen="false" AllowsTransparency="True"
                    Placement="Relative"  IsHitTestVisible="False"
                PlacementTarget="{Binding ElementName=agendaTree}">
@@ -154,5 +146,5 @@
 
 
     </Grid>
-   
+    </ScrollViewer>
 </UserControl>

@@ -154,6 +154,7 @@ namespace BuckSoft.Controls.FtpBrowseDialog
             req = (FtpWebRequest)FtpWebRequest.Create(ub.Uri);
             req.Credentials = ftpcred;
             req.UsePassive = pasv;
+
             req.Method = WebRequestMethods.Ftp.ListDirectoryDetails;            
             try
             {

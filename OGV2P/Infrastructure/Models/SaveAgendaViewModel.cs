@@ -1,5 +1,4 @@
-﻿using Infrastructure.AgendaService;
-using Infrastructure.Interfaces;
+﻿using Infrastructure.Interfaces;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;
@@ -7,6 +6,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using System.Net;
+using OGV2P.FTP.Utilities;
 
 namespace Infrastructure.Models
 {
@@ -58,10 +58,11 @@ namespace Infrastructure.Models
             }
         }
 
-        private StorageService GetStorageClient()
+        private FTPclient GetStorageClient()
         {
-            var client = new AgendaService.StorageService();
-            client.Timeout = 10000;
+            Uri ftpUrl = new Uri(string.Format("ftp://{0}/{1}", _user.SelectedBoard.FtpServer, _user.SelectedBoard.FtpPath));
+            var client = new FTPclient(_user.SelectedBoard.FtpServer, _user.UserID, _user.Password);
+
             return client;
         }
 
@@ -73,15 +74,9 @@ namespace Infrastructure.Models
             Task t = Task.Factory.StartNew(() =>
             {
                 
-                StorageService client = GetStorageClient();
-                client.PreAuthenticate = true;
-                client.Timeout = 5000;
-                string auth = "Basic " + Convert.ToBase64String(System.Text.Encoding.Default.GetBytes(_user.UserID + ":" + _user.Password));
-                NetworkCredential netCred = new NetworkCredential(_user.UserID, _user.Password);
+                FTPclient client = GetStorageClient();
                 string xml = _meeting.GetAgendaXML();
-                client.SaveAgendaFile(_user.UserID, _user.Password,
-                                                      _user.SelectedBoard.City,_user.SelectedBoard.State, _user.SelectedBoard.Name,
-                                                      _meeting.MeetingName + ".oga", xml, DateTime.Now);
+                client.Upload(_meeting.LocalAgendaFileName);
             });
 
             try

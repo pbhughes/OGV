@@ -6,7 +6,7 @@
         WindowState="Maximized"
         Icon="OpenGOV.ico"
         WindowStartupLocation="CenterScreen"
-        ResizeMode="CanResizeWithGrip">
+        ResizeMode="CanResizeWithGrip" MinHeight="768" MinWidth="1024">
     <Window.Resources>
 
     </Window.Resources>
@@ -37,14 +37,14 @@
             </MenuItem>
             <MenuItem Header="_About" Click="AboutMenuItem_Click" ></MenuItem>
         </Menu>
-        
-        
+
+
         <ScrollViewer Grid.Column="0" Grid.Row="1" Grid.RowSpan="3" 
-                      VerticalScrollBarVisibility="Auto">
+                      VerticalScrollBarVisibility="Auto" Width="Auto">
             <ContentControl  VerticalAlignment="Center"
                         Name="SideBarRegion" 
                         cal:RegionManager.RegionName="SideBarRegion"
-                        Background="AliceBlue" />
+                        Background="AliceBlue"  />
         </ScrollViewer>
         
 
@@ -57,7 +57,8 @@
                         cal:RegionManager.RegionName="MiddleRegion" />
         </Border>
 
-        <ScrollViewer Grid.Column="2" Grid.Row="1" Grid.RowSpan="3" VerticalScrollBarVisibility="Auto">
+        <ScrollViewer Grid.Column="2" Grid.Row="1"
+                      Grid.RowSpan="3" VerticalScrollBarVisibility="Auto">
             <ContentControl 
                          Name="MainRegion" 
                         cal:RegionManager.RegionName="MainRegion" />

@@ -7,7 +7,6 @@
              xmlns:cc="clr-namespace:CustomControls.Views;assembly=CustomControls"
              xmlns:infra="clr-namespace:Infrastructure.Converters;assembly=Infrastructure"
              xmlns:frms="clr-namespace:System.Windows.Forms;assembly=System.Windows.Forms"
-             xmlns:ax="clr-namespace:AxRTMPActiveX;assembly=AxInterop.RTMPActiveX"
              xmlns:prism="http://www.codeplex.com/prism"
              mc:Ignorable="d" 
              Loaded="UserControl_Loaded"
@@ -40,12 +39,16 @@
 
 
 
-        <DockPanel  Grid.Row="1" Grid.Column="0" Grid.ColumnSpan="2"
-                   LastChildFill="True" Panel.ZIndex="1">
-            <WindowsFormsHost Grid.Row="0" Grid.Column="0" Grid.ColumnSpan="2"
-                          x:Name="winFormHost" HorizontalAlignment="Stretch"
-                              VerticalAlignment="Stretch">
-                <frms:Panel  Dock="Fill" Name="winFormHostPanel" />
+        <DockPanel Name="pnlDock"   Grid.Row="1" Grid.Column="0" Grid.ColumnSpan="2"
+                   LastChildFill="True" Panel.ZIndex="-1" >
+            <WindowsFormsHost Grid.Row="0" Grid.Column="0" 
+                              Panel.ZIndex="-100"
+                              Grid.ColumnSpan="2"
+                              x:Name="winFormHost" 
+                              Height="Auto"
+                              Width="Auto">
+
+                <frms:Panel   Dock="Fill" Name="winFormHostPanel" BackColor="Red" />
             </WindowsFormsHost>
         </DockPanel>
 
@@ -87,36 +90,48 @@
 
             <Label Grid.Column="0" Grid.Row="0">Cameras:</Label>
             <ComboBox Grid.Column="1" Grid.Row="0" x:Name="cboCameras" 
-                      Width="500" 
+                      Width="Auto" 
                           VerticalContentAlignment="Center"
                           SelectionChanged="cboSource_SelectedChanged"></ComboBox>
 
             <Label Grid.Column="0" Grid.Row="1">Microphones</Label>
             <ComboBox Grid.Column="1" Grid.Row="1" x:Name="cboMicrophones" 
-                          Width="500" 
+                          Width="Auto" 
                           VerticalContentAlignment="Center"
                           SelectionChanged="cboMicrophones_SelectionChanged"></ComboBox>
 
-            <StackPanel Grid.Row="2" Grid.ColumnSpan="1" Grid.Column="2"
-                        Width="Auto" HorizontalAlignment="Center"
-                        Orientation="Horizontal">
-                <Button x:Name="cmdStartRecording"
+            <Grid Grid.Row="2" Grid.ColumnSpan="2" Grid.Column="2">
+                <Grid.RowDefinitions>
+                    <RowDefinition />
+                </Grid.RowDefinitions>
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition />
+                    <ColumnDefinition />
+                    <ColumnDefinition />
+                </Grid.ColumnDefinitions>
+
+                <Button x:Name="cmdStartRecording" HorizontalAlignment="Right"
                         IsEnabled="{Binding Path=IsBusy, Converter={StaticResource InverseBoolConverter}}"
-                        Click="cmdStartRecording_Click"  Style="{StaticResource btn-primary}" Margin="10" Width="100"
+                        Click="cmdStartRecording_Click"  Style="{StaticResource btn-primary}"
+                        Margin="10" Width="100"
                         FontSize="15">REC</Button>
-                
-                    <cc:TimerDisplay Name="timerDisplay" 
+
+                <cc:TimerDisplay Name="timerDisplay" 
+                                 Grid.Column="1" HorizontalAlignment="Center"
                                  TimerValue="{Binding TimerStamp}" 
+                                 MinWidth="175"
                                  Recording="{Binding Meeting.IsBusy}"/>
-                
+
                 <Button x:Name="cmdStopRecording"
+                        Grid.Column="2"
+                        HorizontalAlignment="Left"
                         IsEnabled="{Binding IsBusy}"
-                        Click="cmdStopRecording_Click"  Style="{StaticResource btn-danger}" Margin="10" Width="100"
+                        Click="cmdStopRecording_Click"
+                        Style="{StaticResource btn-danger}" 
+                        Margin="10" Width="100"
                         FontSize="15">STOP</Button>
-
-
-            </StackPanel>
-
+            </Grid>
+                
          
         </Grid>
     </Grid>

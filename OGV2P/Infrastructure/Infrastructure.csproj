@@ -161,11 +161,6 @@
       <DesignTimeSharedInput>True</DesignTimeSharedInput>
       <DependentUpon>Settings.settings</DependentUpon>
     </Compile>
-    <Compile Include="Web References\AgendaService\Reference.cs">
-      <AutoGen>True</AutoGen>
-      <DesignTime>True</DesignTime>
-      <DependentUpon>Reference.map</DependentUpon>
-    </Compile>
   </ItemGroup>
   <ItemGroup>
     <WCFMetadata Include="Service References\" />
@@ -177,16 +172,12 @@
       <Generator>SettingsSingleFileGenerator</Generator>
       <LastGenOutput>Settings.Designer.cs</LastGenOutput>
     </None>
-    <None Include="Web References\AgendaService\AgendaFile.datasource">
-      <DependentUpon>Reference.map</DependentUpon>
-    </None>
-    <None Include="Web References\AgendaService\AgendaServices.wsdl" />
-    <None Include="Web References\AgendaService\Reference.map">
-      <Generator>MSDiscoCodeGenerator</Generator>
-      <LastGenOutput>Reference.cs</LastGenOutput>
-    </None>
   </ItemGroup>
   <ItemGroup>
+    <ProjectReference Include="..\..\..\OGV1\FTPClient\FTPclient.vbproj">
+      <Project>{8c7fef6c-2484-46f3-aeb1-1613e313e22c}</Project>
+      <Name>FTPclient</Name>
+    </ProjectReference>
     <ProjectReference Include="..\BuckSoft.Controls.FtpBrowseDialog\BuckSoft.Controls.FtpBrowseDialog.csproj">
       <Project>{c6122999-cb33-464b-9d10-86ffab7b09f9}</Project>
       <Name>BuckSoft.Controls.FtpBrowseDialog</Name>
@@ -194,22 +185,6 @@
   </ItemGroup>
   <ItemGroup>
     <WebReferences Include="Web References\" />
-  </ItemGroup>
-  <ItemGroup>
-    <WebReferenceUrl Include="http://agenda.mytestserver.com/AgendaServices.asmx">
-      <UrlBehavior>Dynamic</UrlBehavior>
-      <RelPath>Web References\AgendaService\</RelPath>
-      <UpdateFromURL>http://agenda.mytestserver.com/AgendaServices.asmx</UpdateFromURL>
-      <ServiceLocationURL>
-      </ServiceLocationURL>
-      <CachedDynamicPropName>
-      </CachedDynamicPropName>
-      <CachedAppSettingsObjectName>Settings</CachedAppSettingsObjectName>
-      <CachedSettingsPropName>Infrastructure_AgendaService_StorageService</CachedSettingsPropName>
-    </WebReferenceUrl>
-  </ItemGroup>
-  <ItemGroup>
-    <None Include="Web References\AgendaService\AgendaServices.disco" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
