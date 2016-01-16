@@ -11,6 +11,6 @@ namespace Infrastructure.Interfaces
         IMeeting Meeting { get; set; }
         IUser User { get; set; }
         bool IsBusy { get; set; }
-        Task<bool> SaveAgenda();
+        void SaveAgenda();
     }
 }

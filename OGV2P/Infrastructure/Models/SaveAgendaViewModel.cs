@@ -60,49 +60,23 @@ namespace Infrastructure.Models
 
         private FTPclient GetStorageClient()
         {
-            Uri ftpUrl = new Uri(string.Format("ftp://{0}/{1}", _user.SelectedBoard.FtpServer, _user.SelectedBoard.FtpPath));
-            var client = new FTPclient(_user.SelectedBoard.FtpServer, _user.UserID, _user.Password);
+            Uri ftpUrl = new Uri(string.Format("ftp://{0}", _user.SelectedBoard.FtpServer));
 
+            var client = new FTPclient(ftpUrl.ToString(), _user.UserID, _user.Password);
+            client.CurrentDirectory = string.Format("/{0}", _user.SelectedBoard.FtpPath);
             return client;
         }
 
-#pragma warning disable CS1998 // Async method lacks 'await' operators and will run synchronously
-        public async Task<bool> SaveAgenda()
-#pragma warning restore CS1998 // Async method lacks 'await' operators and will run synchronously
+        public void SaveAgenda()
         {
-            IsBusy = true;
-            Task t = Task.Factory.StartNew(() =>
+            FTPclient client = GetStorageClient();
+            bool saved = client.Upload(_meeting.LocalAgendaFileName);
+            if (!saved)
             {
-                
-                FTPclient client = GetStorageClient();
-                bool saved = client.Upload(_meeting.LocalAgendaFileName);
-                if(!saved)
-                {
-                    var mxgBox = new Xceed.Wpf.Toolkit.MessageBox();
-                    mxgBox.Text = string.Format("Agenda {0} saved.", _meeting.LoadAgendaFromFile);
-                    mxgBox.ShowDialog();
-                }
-            });
-
-            try
-            {
-                t.Wait();
-                return true;
+                var mxgBox = new Xceed.Wpf.Toolkit.MessageBox();
+                mxgBox.Text = string.Format("Agenda {0} saved.", _meeting.MeetingName);
+                mxgBox.ShowDialog();
             }
-            catch (Exception ex)
-            {
-
-                if (t.Exception.InnerException != null)
-                    throw t.Exception.InnerException;
-                else
-                    throw t.Exception;
-            }
-            finally
-            {
-                IsBusy = false;
-            }
-
-           
         }
 
 

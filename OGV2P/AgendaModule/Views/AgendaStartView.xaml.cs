@@ -10,6 +10,7 @@ using System.Windows.Input;
 using Infrastructure.Models;
 using Microsoft.Practices.Unity;
 using System.Xml.Linq;
+using Infrastructure.Extensions;
 
 namespace OGV2P.AgendaModule.Views
 {
@@ -670,7 +671,7 @@ namespace OGV2P.AgendaModule.Views
             }
             catch (Exception ex)
             {
-
+                ex.WriteToLogFile();
                 Xceed.Wpf.Toolkit.MessageBox.Show("Unable to get the agenda file, ensure the board is setup correctly on the server.", "OpenGoVideo - Error", MessageBoxButton.OK, MessageBoxImage.Error);
 
             }
@@ -732,7 +733,7 @@ namespace OGV2P.AgendaModule.Views
             }
             catch (Exception ex)
             {
-
+                ex.WriteToLogFile();
                 Xceed.Wpf.Toolkit.MessageBox.Show("Unable to get the agenda file, ensure the board is setup correctly on the server.", "OpenGoVideo - Error", MessageBoxButton.OK, MessageBoxImage.Error);
                 
             }
@@ -751,10 +752,24 @@ namespace OGV2P.AgendaModule.Views
         {
             try
             {
-                long bytesWritten = _currentMeeting.WriteAgendaFile(agendaTree);
-                SaveAgendaFileDialog dg = new SaveAgendaFileDialog(_container);
-                
-                dg.ShowDialog();
+
+                string message = string.Format("Do you want to publish agenda file {0}", _currentMeeting.MeetingName);
+                string caption = string.Format("Publish to board  {0}", _user.SelectedBoard.Name);
+                var result = Xceed.Wpf.Toolkit.MessageBox.Show(message, caption, MessageBoxButton.YesNo, MessageBoxImage.Question);
+                if(result == MessageBoxResult.Yes)
+                {
+                    long bytesWritten = _currentMeeting.WriteAgendaFile(agendaTree);
+
+                    SaveAgendaFileDialog dg = new SaveAgendaFileDialog(_container);
+
+                    dg.ShowDialog();
+                }
+                else
+                {
+                    long bytesWritten = _currentMeeting.WriteAgendaFile(agendaTree);
+
+                }
+
             }
             catch (Exception ex)
             {

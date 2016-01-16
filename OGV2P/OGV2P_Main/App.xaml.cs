@@ -10,6 +10,7 @@ using System.IO;
 using System.Runtime.InteropServices;
 using System.Text;
 using forms = System.Windows.Forms;
+using Infrastructure.Extensions;
 
 namespace OGV2P
 {
@@ -30,9 +31,9 @@ namespace OGV2P
             }
             catch (Exception ex)
             {
-
-                MessageBox.Show(string.Format("A startup execption occured here is the error: {0}", ex.Message));
-                WriteExceptionToFile(ex);
+                ex.WriteToLogFile();
+                MessageBox.Show(string.Format("A startup exception occurred here is the error: {0}", ex.Message));
+                
             }
          
              

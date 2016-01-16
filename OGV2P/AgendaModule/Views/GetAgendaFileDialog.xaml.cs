@@ -61,19 +61,28 @@ namespace OGV2P.AgendaModule.Views
 
         private  void SetFileAndClose()
         {
-            System.Threading.Thread.Sleep(1000);
-            Dispatcher.Invoke(() =>
+            try
             {
-                string fileName = ((FTPfileInfo)agendaList.SelectedItem).Filename;
+                System.Threading.Thread.Sleep(1000);
+                Dispatcher.Invoke(() =>
+                {
+                    string fileName = ((FTPfileInfo)agendaList.SelectedItem).Filename;
 
-                string dir = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments), "ClerkBase", "Agendas");
-                if (!Directory.Exists(dir))
-                    Directory.CreateDirectory(dir);
+                    string dir = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments), "ClerkBase", "Agendas");
+                    if (!Directory.Exists(dir))
+                        Directory.CreateDirectory(dir);
 
-                AgendaXml = _selector.GetXml(fileName);
-                FilePath = _selector.TargetFile;
-            });
-            System.Threading.Thread.Sleep(1000);
+                    AgendaXml = _selector.GetSelectedAgendaXML(fileName);
+                    FilePath = _selector.TargetFile;
+                });
+                System.Threading.Thread.Sleep(1000);
+            }
+            catch (Exception ex)
+            {
+
+                throw;
+            }
+            
         }
 
         #region INotifyPropertyChanged
@@ -132,7 +141,7 @@ namespace OGV2P.AgendaModule.Views
                 await Task.Run(() =>
                 {
                     System.Threading.Thread.Sleep(100);
-                    List<FTPfileInfo> files = _selector.GetAgendaFiles();
+                    List<FTPfileInfo> files = _selector.ListAgendaFilesOnServer();
                     Dispatcher.Invoke(() =>
                    {
                        foreach (FTPfileInfo fi in files)

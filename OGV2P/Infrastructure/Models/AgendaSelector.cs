@@ -127,15 +127,36 @@ namespace Infrastructure.Models
 
         #endregion INotifyPropertyChanged
 
-        public string  GetXml(string fileName)
+        public string GetSelectedAgendaXML(string fileName)
         {
-            _path = fileName;
-            string path = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments), "ClerkBase", "Agendas", fileName);
-            bool downloaded = _client.Download(fileName, path, true);
-            System.Threading.Thread.Sleep(250);
-            Text = File.ReadAllText(path);
-            _targetFile = path;
-            return Text;
+            try
+            {
+                _path = fileName;
+                string path = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments), "ClerkBase", "Agendas", fileName);
+                if (File.Exists(path))
+                    File.Delete(path);
+
+                bool downloaded = _client.Download(fileName, path, true);
+                _targetFile = path;
+                FileStream fs = new FileStream(_targetFile, FileMode.Open);
+                while (!fs.CanRead)
+                {
+                    System.Diagnostics.Debug.WriteLine("Waiting on file {0}", _targetFile);
+                    System.Threading.Thread.Sleep(100);
+                }
+
+                fs.Close();
+                Text = File.ReadAllText(_targetFile);
+
+
+                return Text;
+            }
+            catch (Exception ex)
+            {
+
+                throw;
+            }
+           
         }
 
         private void Client_ReportProgress(int PercentDone)
@@ -149,9 +170,10 @@ namespace Infrastructure.Models
 
         private static FTPclient GetStorageClient()
         {
-            Uri ftpUrl = new Uri(string.Format("ftp://{0}/{1}", _user.SelectedBoard.FtpServer, _user.SelectedBoard.FtpPath));
-            var client = new FTPclient(ftpUrl.ToString(), _user.UserID, _user.Password);
+            Uri ftpUrl = new Uri(string.Format("ftp://{0}",_user.SelectedBoard.FtpServer));
 
+            var client = new FTPclient(ftpUrl.ToString(), _user.UserID, _user.Password);
+            client.CurrentDirectory = string.Format("/{0}",_user.SelectedBoard.FtpPath);
             return client;
         }
 
@@ -162,7 +184,7 @@ namespace Infrastructure.Models
             return ags;
         }
 
-        public List<FTPfileInfo> GetAgendaFiles()
+        public List<FTPfileInfo> ListAgendaFilesOnServer()
         {
             List<FTPfileInfo> files = new List<FTPfileInfo>();
             FTPclient client = GetStorageClient();

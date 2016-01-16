@@ -12,8 +12,8 @@ namespace Infrastructure.Interfaces
         string TargetFile { get; set; }
         bool IsBusy { get; set; }
         List<FTPfileInfo> AvailableFiles { get; set; }
-        string GetXml(string fileName);
-        List<FTPfileInfo> GetAgendaFiles();
+        string GetSelectedAgendaXML(string fileName);
+        List<FTPfileInfo> ListAgendaFilesOnServer();
         Exception LastError { get; set; }
         string Text { get; set; }
     }
