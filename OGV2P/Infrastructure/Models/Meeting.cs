@@ -578,7 +578,7 @@ namespace Infrastructure.Models
                     if (!File.Exists(dir))
                         Directory.CreateDirectory(dir);
 
-                    _localAgendaFileName = Path.Combine(dir, dlg.SelectedFileName);
+                    _localAgendaFileName = Path.Combine(dir, "Agendas", dlg.SelectedFileName);
 
                     //setup the ftp request then parse the agenda file 
                     FtpWebRequest req = (FtpWebRequest)WebRequest.Create(fileName);

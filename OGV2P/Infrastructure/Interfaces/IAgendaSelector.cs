@@ -11,10 +11,10 @@ namespace Infrastructure.Interfaces
     {
         string TargetFile { get; set; }
         bool IsBusy { get; set; }
-        Microsoft.Practices.Prism.Commands.DelegateCommand GetAgendaFilesCommand { get; set; }
         List<FTPfileInfo> AvailableFiles { get; set; }
         string GetXml(string fileName);
-        Task LoadAgendaFiles();
+        List<FTPfileInfo> GetAgendaFiles();
         Exception LastError { get; set; }
+        string Text { get; set; }
     }
 }

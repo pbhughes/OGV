@@ -402,7 +402,7 @@ namespace OGV2P.Admin.Views
             {
                 if (! _meeting.IsBusy)
                 {
-                    System.Threading.Thread.Sleep(2000);
+                    
                     //InitRTMPControl();
 
                 }

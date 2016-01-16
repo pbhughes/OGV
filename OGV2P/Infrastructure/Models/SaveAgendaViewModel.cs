@@ -75,8 +75,13 @@ namespace Infrastructure.Models
             {
                 
                 FTPclient client = GetStorageClient();
-                string xml = _meeting.GetAgendaXML();
-                client.Upload(_meeting.LocalAgendaFileName);
+                bool saved = client.Upload(_meeting.LocalAgendaFileName);
+                if(!saved)
+                {
+                    var mxgBox = new Xceed.Wpf.Toolkit.MessageBox();
+                    mxgBox.Text = string.Format("Agenda {0} saved.", _meeting.LoadAgendaFromFile);
+                    mxgBox.ShowDialog();
+                }
             });
 
             try

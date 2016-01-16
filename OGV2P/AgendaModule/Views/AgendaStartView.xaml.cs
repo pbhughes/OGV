@@ -677,24 +677,57 @@ namespace OGV2P.AgendaModule.Views
 
         }
 
+        private bool QuestionUserAboutAgenda()
+        {
+            if (_currentMeeting != null)
+            {
+                if (_currentMeeting.MeetingAgenda != null)
+                {
+                    if (_currentMeeting.MeetingAgenda.Items.Count > 0)
+                    {
+
+                        MessageBoxResult result = Xceed.Wpf.Toolkit.MessageBox.Show(
+                            "You have an agenda loaded proceeding will clear all changes that have not been saved, Continue?",
+                            "Warning possible data loss",
+                            MessageBoxButton.YesNo,
+                            MessageBoxImage.Stop);
+
+                        if (result == MessageBoxResult.No)
+                        {
+                            return false;
+                        }
+
+                    }
+                }
+            }
+            _currentMeeting.MeetingAgenda.Items.Clear();
+            agendaTree.Nodes.Clear();
+            return true;
+        }
+
         private void GetAgendaFromServer_Click(object sender, RoutedEventArgs e)
         {
             try
             {
-                agendaCommandDropDown.IsOpen = false;
 
-                GetAgendaFileDialog dg = new GetAgendaFileDialog(_user);
-                dg.ShowDialog();
-                if (dg.DialogResult.Value)
+                if (QuestionUserAboutAgenda() == true)
                 {
-                    string xml = dg.AgendaXml;
-                    _currentMeeting.LocalAgendaFileName = dg.FilePath;
-                    XDocument xDoc = XDocument.Parse(xml);
-                    xDoc.Save(_currentMeeting.LocalAgendaFileName);
-                    _currentMeeting.ParseAgendaFile(agendaTree, xml);
+
+                    agendaCommandDropDown.IsOpen = false;
+
+                    GetAgendaFileDialog dg = new GetAgendaFileDialog(_user);
+                    dg.ShowDialog();
+                    if (dg.DialogResult.Value)
+                    {
+                        string xml = dg.AgendaXml;
+                        _currentMeeting.LocalAgendaFileName = dg.FilePath;
+                        XDocument xDoc = XDocument.Parse(xml);
+                        xDoc.Save(_currentMeeting.LocalAgendaFileName);
+                        _currentMeeting.ParseAgendaFile(agendaTree, xml);
+                    }
+
                 }
 
-               
 
             }
             catch (Exception ex)
@@ -718,7 +751,9 @@ namespace OGV2P.AgendaModule.Views
         {
             try
             {
+                long bytesWritten = _currentMeeting.WriteAgendaFile(agendaTree);
                 SaveAgendaFileDialog dg = new SaveAgendaFileDialog(_container);
+                
                 dg.ShowDialog();
             }
             catch (Exception ex)

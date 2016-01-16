@@ -4,10 +4,10 @@ using OGV2P.FTP.Utilities;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;
-using System.Linq;
+using System.IO;
+using System.Text;
 using System.Threading.Tasks;
 using Xceed.Wpf.Toolkit;
-using System.IO;
 
 namespace Infrastructure.Models
 {
@@ -16,6 +16,8 @@ namespace Infrastructure.Models
         private static IBoard _board;
         private static IUser _user;
         private static BusyIndicator _indicator;
+        private string _path;
+        FTPclient _client;
 
         public DelegateCommand GetAgendaFilesCommand { get; set; }
 
@@ -32,6 +34,21 @@ namespace Infrastructure.Models
             {
                 _targetFile = value;
                 OnPropertyChanged("TargetFile");
+            }
+        }
+
+        private string _text;
+        public string Text
+        {
+            get
+            {
+                return _text;
+            }
+
+            set
+            {
+                _text = value;
+                OnPropertyChanged("Text");
             }
         }
 
@@ -83,6 +100,21 @@ namespace Infrastructure.Models
             }
         }
 
+        private int _percentDone;
+        public int PercentDone
+        {
+            get
+            {
+                return _percentDone;
+            }
+
+            set
+            {
+                _percentDone = value;
+                OnPropertyChanged("PercentDone");
+            }
+        }
+
         #region INotifyPropertyChanged
 
         public event PropertyChangedEventHandler PropertyChanged;
@@ -95,61 +127,30 @@ namespace Infrastructure.Models
 
         #endregion INotifyPropertyChanged
 
-        private bool CanGetAgendaFiles()
+        public string  GetXml(string fileName)
         {
-            return true;
+            _path = fileName;
+            string path = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments), "ClerkBase", "Agendas", fileName);
+            bool downloaded = _client.Download(fileName, path, true);
+            Text = File.ReadAllText(path);
+            _targetFile = path;
+            return Text;
         }
 
-        private async void OnGetAgendaFiles()
+        private void Client_ReportProgress(int PercentDone)
         {
-            await GetAgendaFiles();
-        }
-
-        private async Task GetAgendaFiles()
-        {
-            IsBusy = true;
-            Task t = Task.Factory.StartNew(() =>
-           {
-               System.Threading.Thread.Sleep(1000);
-               FTPclient client = GetStorageClient();
-
-               FTPdirectory dir  = client.ListDirectoryDetail();
-               foreach(FTPfileInfo fi in dir )
-               {
-
-                   if (fi.FileType == FTPfileInfo.DirectoryEntryTypes.File)
-                       _availableFiles.Add(fi);
-               }
-           });
-
-            try
+            if(PercentDone >= 100)
             {
-                t.Wait(new TimeSpan(0, 0, 10));
+                Text = File.ReadAllText(_path);
                
             }
-            catch (Exception ex)
-            {
-                throw;
-            }
-
-          
-            IsBusy = false;
-        }
-
-        public string GetXml(string fileName)
-        {
-            FTPclient client = GetStorageClient();
-            string path = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments), "ClerkBase", "Agendas", fileName);
-            bool  downloaded = client.Download(fileName, path, true);
-            string xml =  File.ReadAllText(path);
-            return xml;
         }
 
         private static FTPclient GetStorageClient()
         {
             Uri ftpUrl = new Uri(string.Format("ftp://{0}/{1}", _user.SelectedBoard.FtpServer, _user.SelectedBoard.FtpPath));
             var client = new FTPclient(ftpUrl.ToString(), _user.UserID, _user.Password);
-            
+
             return client;
         }
 
@@ -160,25 +161,26 @@ namespace Infrastructure.Models
             return ags;
         }
 
-        public async Task LoadAgendaFiles()
+        public List<FTPfileInfo> GetAgendaFiles()
         {
-            try
+            List<FTPfileInfo> files = new List<FTPfileInfo>();
+            FTPclient client = GetStorageClient();
+
+            FTPdirectory dir = client.ListDirectoryDetail();
+            foreach (FTPfileInfo fi in dir)
             {
-                await GetAgendaFiles();
-                OnPropertyChanged("AvailableFiles");
+                if (fi.FileType == FTPfileInfo.DirectoryEntryTypes.File)
+                    files.Add(fi);
             }
-            catch (System.Exception ex)
-            {
-                IsBusy = false;
-                throw;
-            }
+            return files;
         }
 
         public AgendaSelector(IUser user)
         {
             _user = user;
             _board = _user.SelectedBoard;
-            GetAgendaFilesCommand = new DelegateCommand(OnGetAgendaFiles, CanGetAgendaFiles);
+            
+            _client = GetStorageClient();
         }
     }
 }

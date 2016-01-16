@@ -9,6 +9,7 @@ using System;
 using System.IO;
 using Infrastructure.Extensions;
 using OGV2P.FTP.Utilities;
+using System.Collections.Generic;
 
 
 namespace OGV2P.AgendaModule.Views
@@ -28,16 +29,18 @@ namespace OGV2P.AgendaModule.Views
         {
             InitializeComponent();
             _selector = new AgendaSelector(user);
-            this.DataContext = _selector;
+            DataContext = _selector;
         }
 
-       
-        private void agendaList_MouseDoubleClick(object sender, MouseButtonEventArgs e)
+
+        private  void agendaList_MouseDoubleClick(object sender, MouseButtonEventArgs e)
         {
             try
             {
                 if (agendaList.SelectedItem != null)
+                {
                     SetFileAndClose();
+                }
             }
             catch (Exception ex)
             {
@@ -45,27 +48,54 @@ namespace OGV2P.AgendaModule.Views
                 var msgBox = new Xceed.Wpf.Toolkit.MessageBox();
 
                 msgBox.Text = ex.Message;
-                msgBox.Caption = "Error getting the agenda";
+                msgBox.Caption = "Error getting the agenda xml";
                 throw;
             }
-           
+
 
         }
 
-        private void SetFileAndClose()
+        private async void SetFileAndClose()
         {
-            string fileName = ((FTPfileInfo) agendaList.SelectedItem).Filename;
+           
+            try
+            {
+                await Task.Run(() =>
+               {
+                   Dispatcher.Invoke(() =>
+                  {
+                     
+                      _selector.IsBusy = true;
+                      string fileName = ((FTPfileInfo)agendaList.SelectedItem).Filename;
 
-            string dir = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments), "ClerkBase", "Agendas");
-            if (!File.Exists(dir))
-                Directory.CreateDirectory(dir);
+                      string dir = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments), "ClerkBase", "Agendas");
+                      if (!Directory.Exists(dir))
+                          Directory.CreateDirectory(dir);
 
-            AgendaXml = _selector.GetXml(fileName);
 
-            FilePath = Path.Combine(dir, fileName);
-                        
-            this.DialogResult = true;
-            this.Close();
+                      AgendaXml = _selector.GetXml(fileName);
+                      FilePath = _selector.TargetFile;
+                  });
+
+               });
+            }
+            catch (Exception ex)
+            {
+                var msgBox = new Xceed.Wpf.Toolkit.MessageBox();
+                msgBox.Content = ex.Message;
+                msgBox.Caption = "Error getting the agenda xml";
+                msgBox.ShowDialog();
+
+                ex.WriteToLogFile();
+            }
+            finally
+            {
+                _selector.IsBusy = false;
+                this.DialogResult = true;
+                this.Close();
+            }
+           
+          
         }
 
         #region INotifyPropertyChanged
@@ -107,25 +137,47 @@ namespace OGV2P.AgendaModule.Views
 
         private async void Window_Loaded(object sender, RoutedEventArgs e)
         {
+            _selector.IsBusy = true;
+
             try
             {
-                _selector.IsBusy = true;
-                await _selector.LoadAgendaFiles();
-                if (_selector.LastError != null)
-                    Xceed.Wpf.Toolkit.MessageBox.Show(_selector.LastError.Message);
+                await Task.Run(() =>
+                {
+                    System.Threading.Thread.Sleep(100);
+                    List<FTPfileInfo> files =  _selector.GetAgendaFiles();
+                    Dispatcher.Invoke(() =>
+                   {
+                       foreach (FTPfileInfo fi in files)
+                       {
+                           agendaList.Items.Add(fi);
+                       }
+                       if (_selector.LastError != null)
+                           Xceed.Wpf.Toolkit.MessageBox.Show(_selector.LastError.Message);
+                   });
+                    
+                    System.Threading.Thread.Sleep(50);
+                });
             }
             catch (Exception ex)
             {
+
                 var msgBox = new Xceed.Wpf.Toolkit.MessageBox();
                 msgBox.Content = ex.Message;
                 msgBox.ShowDialog();
-                
+                msgBox.Caption = "Error getting the file list";
                 ex.WriteToLogFile();
             }
             finally
             {
                 _selector.IsBusy = false;
             }
+            
+
+
+      
+
+    
+            
         }
     }
 }
