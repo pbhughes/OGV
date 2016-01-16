@@ -132,6 +132,7 @@ namespace Infrastructure.Models
             _path = fileName;
             string path = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments), "ClerkBase", "Agendas", fileName);
             bool downloaded = _client.Download(fileName, path, true);
+            System.Threading.Thread.Sleep(250);
             Text = File.ReadAllText(path);
             _targetFile = path;
             return Text;
