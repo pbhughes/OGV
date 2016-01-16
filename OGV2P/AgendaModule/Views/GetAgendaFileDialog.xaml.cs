@@ -1,20 +1,17 @@
-﻿using System.Windows;
-using System.Windows.Input;
+﻿using Infrastructure.Extensions;
 using Infrastructure.Interfaces;
-using System.ComponentModel;
-using Infrastructure.Converters;
 using Infrastructure.Models;
-using System.Threading.Tasks;
-using System;
-using System.IO;
-using Infrastructure.Extensions;
 using OGV2P.FTP.Utilities;
+using System;
 using System.Collections.Generic;
-
+using System.ComponentModel;
+using System.IO;
+using System.Threading.Tasks;
+using System.Windows;
+using System.Windows.Input;
 
 namespace OGV2P.AgendaModule.Views
 {
-
     /// <summary>
     /// Interaction logic for GetAgendaFileDialog.xaml
     /// </summary>
@@ -32,14 +29,17 @@ namespace OGV2P.AgendaModule.Views
             DataContext = _selector;
         }
 
-
-        private  void agendaList_MouseDoubleClick(object sender, MouseButtonEventArgs e)
+        private async void agendaList_MouseDoubleClick(object sender, MouseButtonEventArgs e)
         {
+            _selector.IsBusy = true;
             try
             {
                 if (agendaList.SelectedItem != null)
                 {
-                    SetFileAndClose();
+                    await Task.Run(() =>
+                    {
+                        SetFileAndClose();
+                    });
                 }
             }
             catch (Exception ex)
@@ -48,45 +48,8 @@ namespace OGV2P.AgendaModule.Views
                 var msgBox = new Xceed.Wpf.Toolkit.MessageBox();
 
                 msgBox.Text = ex.Message;
-                msgBox.Caption = "Error getting the agenda xml";
+                msgBox.Caption = "Error getting the agenda XML";
                 throw;
-            }
-
-
-        }
-
-        private async void SetFileAndClose()
-        {
-           
-            try
-            {
-                await Task.Run(() =>
-               {
-                   Dispatcher.Invoke(() =>
-                  {
-                     
-                      _selector.IsBusy = true;
-                      string fileName = ((FTPfileInfo)agendaList.SelectedItem).Filename;
-
-                      string dir = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments), "ClerkBase", "Agendas");
-                      if (!Directory.Exists(dir))
-                          Directory.CreateDirectory(dir);
-
-
-                      AgendaXml = _selector.GetXml(fileName);
-                      FilePath = _selector.TargetFile;
-                  });
-
-               });
-            }
-            catch (Exception ex)
-            {
-                var msgBox = new Xceed.Wpf.Toolkit.MessageBox();
-                msgBox.Content = ex.Message;
-                msgBox.Caption = "Error getting the agenda xml";
-                msgBox.ShowDialog();
-
-                ex.WriteToLogFile();
             }
             finally
             {
@@ -94,8 +57,23 @@ namespace OGV2P.AgendaModule.Views
                 this.DialogResult = true;
                 this.Close();
             }
-           
-          
+        }
+
+        private  void SetFileAndClose()
+        {
+            System.Threading.Thread.Sleep(1000);
+            Dispatcher.Invoke(() =>
+            {
+                string fileName = ((FTPfileInfo)agendaList.SelectedItem).Filename;
+
+                string dir = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments), "ClerkBase", "Agendas");
+                if (!Directory.Exists(dir))
+                    Directory.CreateDirectory(dir);
+
+                AgendaXml = _selector.GetXml(fileName);
+                FilePath = _selector.TargetFile;
+            });
+            System.Threading.Thread.Sleep(1000);
         }
 
         #region INotifyPropertyChanged
@@ -108,14 +86,20 @@ namespace OGV2P.AgendaModule.Views
                 PropertyChanged(this, new PropertyChangedEventArgs(name));
         }
 
-        #endregion
+        #endregion INotifyPropertyChanged
 
-        private void OkButton_Click(object sender, RoutedEventArgs e)
+        private async void OkButton_Click(object sender, RoutedEventArgs e)
         {
+            _selector.IsBusy = true;
             try
             {
                 if (agendaList.SelectedItem != null)
-                    SetFileAndClose();
+                {
+                    await Task.Run(() =>
+                    {
+                        SetFileAndClose();
+                    });
+                }
             }
             catch (Exception ex)
             {
@@ -123,14 +107,18 @@ namespace OGV2P.AgendaModule.Views
                 var msgBox = new Xceed.Wpf.Toolkit.MessageBox();
 
                 msgBox.Text = ex.Message;
-                msgBox.Caption = "Error getting the agenda";
+                msgBox.Caption = "Error getting the agenda XML";
                 throw;
             }
-          
-         
+            finally
+            {
+                _selector.IsBusy = false;
+                this.DialogResult = true;
+                this.Close();
+            }
         }
 
-        private void Button_Click(object sender, RoutedEventArgs e)
+        private void CancelButton_Click(object sender, RoutedEventArgs e)
         {
             Close();
         }
@@ -144,7 +132,7 @@ namespace OGV2P.AgendaModule.Views
                 await Task.Run(() =>
                 {
                     System.Threading.Thread.Sleep(100);
-                    List<FTPfileInfo> files =  _selector.GetAgendaFiles();
+                    List<FTPfileInfo> files = _selector.GetAgendaFiles();
                     Dispatcher.Invoke(() =>
                    {
                        foreach (FTPfileInfo fi in files)
@@ -154,13 +142,12 @@ namespace OGV2P.AgendaModule.Views
                        if (_selector.LastError != null)
                            Xceed.Wpf.Toolkit.MessageBox.Show(_selector.LastError.Message);
                    });
-                    
+
                     System.Threading.Thread.Sleep(50);
                 });
             }
             catch (Exception ex)
             {
-
                 var msgBox = new Xceed.Wpf.Toolkit.MessageBox();
                 msgBox.Content = ex.Message;
                 msgBox.ShowDialog();
@@ -171,13 +158,6 @@ namespace OGV2P.AgendaModule.Views
             {
                 _selector.IsBusy = false;
             }
-            
-
-
-      
-
-    
-            
         }
     }
 }
