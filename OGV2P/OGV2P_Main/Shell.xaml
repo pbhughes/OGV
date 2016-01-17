@@ -51,13 +51,13 @@
 
         <Border Grid.Column="1" Grid.Row="2" 
                 Margin="10" CornerRadius="8" >
-            <ContentControl Panel.ZIndex="200" Height="auto"
+            <ContentControl Height="auto"
                           Name="MiddleRegion" VerticalAlignment="Center"
                         HorizontalAlignment="Center"
                         cal:RegionManager.RegionName="MiddleRegion" />
         </Border>
 
-        <ScrollViewer Grid.Column="2" Grid.Row="1"
+        <ScrollViewer Grid.Column="2" Grid.Row="1" 
                       Grid.RowSpan="3" VerticalScrollBarVisibility="Auto">
             <ContentControl 
                          Name="MainRegion" 

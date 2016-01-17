@@ -691,18 +691,15 @@ namespace OGV2P.Admin.Views
                 Seconds = 0;
                 _meeting.LeftStatus = "Idle";
                 _meeting.RightStatus = "";
+                axRControl.StartPreview();
             }
             catch (Exception ex)
             {
 
-                Xceed.Wpf.Toolkit.MessageBox.Show(ex.Message, "Error stoping the preview", MessageBoxButton.OK);
+                Xceed.Wpf.Toolkit.MessageBox.Show(ex.Message, "Error stopping the preview", MessageBoxButton.OK);
             }
             timerDisplay.TimerValue = new TimeSpan(0, 0, 0);
         }
-
-      
-
-     
 
         private void cboSource_SelectedChanged(object sender, SelectionChangedEventArgs e)
         {

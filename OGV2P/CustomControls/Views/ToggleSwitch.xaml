@@ -27,7 +27,6 @@
                      HorizontalAlignment="Center"></TextBox>
 
             <ContentControl Grid.Column="1" Name="ball"
-                            Panel.ZIndex="100" 
                             VerticalAlignment="Center" 
                             HorizontalAlignment="Center" >
                 <Ellipse 
