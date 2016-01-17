@@ -13,9 +13,9 @@
     <Grid Margin="2">
        
         <Grid.ColumnDefinitions>
-            <ColumnDefinition MinWidth="500" Width="*"  /> 
+            <ColumnDefinition /> 
             <ColumnDefinition Width="auto" />
-            <ColumnDefinition MinWidth="500" Width="*"  />
+            <ColumnDefinition />
         </Grid.ColumnDefinitions>
         
         <Grid.RowDefinitions>
