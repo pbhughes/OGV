@@ -173,6 +173,7 @@ namespace OGV2P.Admin.Views
             {
                 _seconds = value;
                 OnPropertyChanged("Seconds");
+                OnPropertyChanged("TimerStamp");
             }
         }
 
@@ -378,8 +379,8 @@ namespace OGV2P.Admin.Views
             axRControl.VideoWidth = int.Parse(_settings["PreviewVideoWidth"]);
             axRControl.VideoHeight = int.Parse(_settings["PreviewVideoHeight"]);
 
-            winFormHost.Width = axRControl.VideoWidth;
-            winFormHost.Height = axRControl.VideoHeight;
+            //winFormHost.Width = axRControl.VideoWidth;
+            //winFormHost.Height = axRControl.VideoHeight;
             
 
 
@@ -506,6 +507,7 @@ namespace OGV2P.Admin.Views
                     Minutes = (int)current.Minutes;
                     Seconds = (int)current.Seconds;
                     _sessionService.CurrentVideoTime = current;
+                    OnPropertyChanged("TimerStamp");
                     UpdateVUMeter(volumeLevel);
                 });
             }
@@ -583,7 +585,7 @@ namespace OGV2P.Admin.Views
         {
             try
             {
-                //dont cache a file source only hardward
+                //font cache a file source only hardware
                 if(axRControl.VideoSource != FILE_SOURCE)
                     WriteDefaultDeviceCache();
 
@@ -605,6 +607,7 @@ namespace OGV2P.Admin.Views
                 {
                     _meeting.LocalFile = string.Format("{0}_{1}_{2}.mp4", _user.SelectedBoard.Name, DateTime.Now.ToFileNameComponent(), _meeting.MeetingName);
                 }
+
                 path = Path.Combine(path, _meeting.LocalFile);
                 axRControl.DestinationURL2 = path;
                 _meeting.LocalFile = path;
@@ -747,7 +750,7 @@ namespace OGV2P.Admin.Views
             }
             catch (Exception ex)
             {
-                string msg = string.Format("Level 1 occured: {0} sub error {1}", ex.Message, axRControl.LastErrorMessage);
+                string msg = string.Format("Level 1 occurred: {0} sub error {1}", ex.Message, axRControl.LastErrorMessage);
                 Xceed.Wpf.Toolkit.MessageBox.Show(msg, "Preview Error", MessageBoxButton.OK, MessageBoxImage.Error);
             }
            

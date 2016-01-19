@@ -9,8 +9,7 @@
              xmlns:frms="clr-namespace:System.Windows.Forms;assembly=System.Windows.Forms"
              xmlns:prism="http://www.codeplex.com/prism"
              mc:Ignorable="d" 
-             Loaded="UserControl_Loaded"
-             d:DesignHeight="1024" d:DesignWidth="900">
+             Loaded="UserControl_Loaded" MinWidth="650">
     <UserControl.Resources>
         <infra:DoubleToColorConverter  x:Key="progBarConverter"></infra:DoubleToColorConverter>
         <Style TargetType="ProgressBar">
@@ -27,30 +26,29 @@
     </UserControl.Resources>
     <Grid >
         <Grid.RowDefinitions>
-            <RowDefinition Height="500*"/>
+            <RowDefinition Height="Auto"/>
             <RowDefinition Height="20" />
-            <RowDefinition Height="200" />
+            <RowDefinition Height="Auto" />
         </Grid.RowDefinitions>
         <Grid.ColumnDefinitions>
-            <ColumnDefinition />
-            <ColumnDefinition />
+            <ColumnDefinition Width="Auto" />
+            <ColumnDefinition  Width="Auto"/>
         </Grid.ColumnDefinitions>
 
-        <DockPanel Name="pnlDock" 
+        <StackPanel Name="pnlDock" 
                    Grid.Row="0" 
-                   Grid.Column="0" Grid.ColumnSpan="2"
-                   LastChildFill="True"
-                   Height="Auto" Width="Auto">
+                   Grid.Column="0" Grid.ColumnSpan="2">
+            
             <WindowsFormsHost Grid.Row="0" Grid.Column="0" 
                               Grid.ColumnSpan="2"
-                              x:Name="winFormHost" 
-                              Height="Auto"
-                              Width="Auto">
+                               Height="480"
+                               Width="640"
+                              x:Name="winFormHost">
 
                 <frms:Panel   Dock="Fill" 
                               Name="winFormHostPanel" BackColor="Red" />
             </WindowsFormsHost>
-        </DockPanel>
+        </StackPanel>
 
 
 
@@ -74,35 +72,34 @@
 
         </Grid>
 
-        <Grid Grid.Row="2" Grid.Column="0" Grid.ColumnSpan="2" Margin="0,20.4,0.2,0.2" Grid.RowSpan="2">
+        <Grid Grid.Row="2" Grid.Column="0" Grid.ColumnSpan="2"  
+              Margin="0,20.4,0.2,0.2" Grid.RowSpan="2">
             <Grid.ColumnDefinitions>
                 <ColumnDefinition Width="100" />
                 <ColumnDefinition Width="*" />
             </Grid.ColumnDefinitions>
             <Grid.RowDefinitions>
-                <RowDefinition Height="auto" />
-                <RowDefinition  Height="auto"/>
-                <RowDefinition Height="auto" />
+                <RowDefinition Height="Auto" />
+                <RowDefinition  Height="Auto"/>
+                <RowDefinition Height="Auto" />
                 <RowDefinition Height="Auto"/>
-                <RowDefinition Height="auto" />
+                <RowDefinition Height="Auto" />
                 <RowDefinition Height="Auto" />
             </Grid.RowDefinitions>
 
             <Label Grid.Column="0" Grid.Row="0">Cameras:</Label>
             <ComboBox Grid.Column="1" Grid.Row="0" x:Name="cboCameras" 
-                      Width="Auto" 
                           VerticalContentAlignment="Center"
                           SelectionChanged="cboSource_SelectedChanged"></ComboBox>
 
             <Label Grid.Column="0" Grid.Row="1">Microphones</Label>
             <ComboBox Grid.Column="1" Grid.Row="1" x:Name="cboMicrophones" 
-                          Width="Auto" 
                           VerticalContentAlignment="Center"
                           SelectionChanged="cboMicrophones_SelectionChanged"></ComboBox>
 
-            <Grid Grid.Row="2" Grid.ColumnSpan="2" Grid.Column="2">
+            <Grid Grid.Row="2" Grid.ColumnSpan="2" Grid.Column="0">
                 <Grid.RowDefinitions>
-                    <RowDefinition />
+                    <RowDefinition Height="Auto" />
                 </Grid.RowDefinitions>
                 <Grid.ColumnDefinitions>
                     <ColumnDefinition />
