@@ -6,6 +6,7 @@ using System.Windows.Media.Imaging;
 using System;
 using System.Drawing;
 using System.IO;
+using System.Linq;
 using System.Windows.Input;
 using Infrastructure.Models;
 using Microsoft.Practices.Unity;
@@ -51,6 +52,7 @@ namespace OGV2P.AgendaModule.Views
             agendaTree.BorderStyle = System.Windows.Forms.BorderStyle.None;
             agendaTree.Dock = System.Windows.Forms.DockStyle.Fill;
 
+            meeting.RaiseMeetingItemChanged += Meeting_RaiseMeetingItemChanged;
 
             if (File.Exists(@"Images\unselected.png"))
             {
@@ -131,6 +133,22 @@ namespace OGV2P.AgendaModule.Views
            
            
 
+        }
+
+        private void Meeting_RaiseMeetingItemChanged(IItem item)
+        {
+
+            if(agendaTree != null)
+                if(agendaTree.Nodes.Count > 0)
+                {
+                    forms.TreeNode[] selection = agendaTree.Nodes.Find(item.ID, true);                  
+                    if(selection.Length > 0)
+                        selection[0].Text = item.Title;
+                }
+
+        
+
+           
         }
 
         private void MainWindow_StateChanged(object sender, EventArgs e)
@@ -317,9 +335,10 @@ namespace OGV2P.AgendaModule.Views
             
             //build up the item and the visual node
             Item item = new Infrastructure.Models.Item() { Title = "Please add a title..." };
-            item.ID = _currentMeeting.NextID();
+            item.ID = _currentMeeting.NextID().ToString();
             forms.TreeNode tn = new forms.TreeNode() { Text = item.Title, ToolTipText = item.Title };
-            tn.Tag = item.ID;
+            tn.Name = item.ID.ToString(); ;
+           
 
             //add the context menu
             tn.ContextMenuStrip = _docMenu;
@@ -414,32 +433,30 @@ namespace OGV2P.AgendaModule.Views
 
         private void UnstampItem()
         {
-            if (_currentMeeting.IsBusy)
+            if (agendaTree.SelectedNode != null)
             {
-                if (agendaTree.SelectedNode != null)
+                if (agendaTree.ImageList.Images.Count >= 2)
                 {
-                    if (agendaTree.ImageList.Images.Count >= 2)
+                    if (agendaTree.SelectedNode.ImageKey.ToLower().Contains("edited"))
                     {
-                        if (agendaTree.SelectedNode.ImageKey.ToLower().Contains("edited"))
-                        {
-                            agendaTree.SelectedNode.ImageKey = "unstamped_edited";
-                            agendaTree.SelectedNode.SelectedImageKey = "unstamped_edited";
-                        }
-                        else
-                        {
-                            agendaTree.SelectedNode.ImageKey = "unselected";
-                            agendaTree.SelectedNode.SelectedImageKey = "unselected";
-                        }
+                        agendaTree.SelectedNode.ImageKey = "unstamped_edited";
+                        agendaTree.SelectedNode.SelectedImageKey = "unstamped_edited";
                     }
-                    _currentMeeting.SelectedItem.TimeStamp = TimeSpan.Zero;
+                    else
+                    {
+                        agendaTree.SelectedNode.ImageKey = "unselected";
+                        agendaTree.SelectedNode.SelectedImageKey = "unselected";
+                    }
                 }
+                _currentMeeting.SelectedItem.TimeStamp = TimeSpan.Zero;
+
             }
         }
 
         void agendaTree_AfterSelect(object sender, forms.TreeViewEventArgs e)
         {
             forms.TreeNode selectedNode = ((forms.TreeView)sender).SelectedNode;
-            _currentMeeting.SelectedItem = _currentMeeting.FindItem((int)selectedNode.Tag);
+            _currentMeeting.SelectedItem = _currentMeeting.FindItem(selectedNode.Name);
             if(!floater.IsOpen)
             {
                 floater.IsOpen = true;
@@ -667,6 +684,8 @@ namespace OGV2P.AgendaModule.Views
                     string allXml = File.ReadAllText(dg.FileName);
                     _currentMeeting.ParseAgendaFile(agendaTree, allXml);
                 }
+
+                
 
             }
             catch (Exception ex)

@@ -12,7 +12,7 @@ namespace Infrastructure.Converters
     {
         public object Convert(object value, Type targetType, object parameter, System.Globalization.CultureInfo culture)
         {
-            System.Diagnostics.Debug.Write(string.Format("Vu Meter Reading: {0}", value.ToString()));
+            System.Diagnostics.Debug.WriteLine(string.Format("VU Meter Reading: {0}", value.ToString()));
 
             var state = (bool)value;
 

@@ -5,14 +5,15 @@ using System.Text;
 using System.Threading.Tasks;
 using System.ComponentModel;
 using System.Text.RegularExpressions;
+using Infrastructure.Interfaces;
 
 namespace Infrastructure.Models
 {
-    public class Item : INotifyPropertyChanged
+    public class Item : INotifyPropertyChanged, IItem
     {
-        private int _id;
+        private string _id;
 
-        public int ID
+        public string ID
         {
             get { return _id; }
             set { _id = value; OnPropertyChanged("ID"); }
@@ -54,7 +55,7 @@ namespace Infrastructure.Models
                     value.Minutes.ToString().PadLeft(2, '0'),
                     value.Seconds.ToString().PadLeft(2, '0'));
                 Title = StampTitle(formatted);
-                
+                OnItemChanged();
                 OnPropertyChanged("TimeStamp");
             }
         }
@@ -71,14 +72,29 @@ namespace Infrastructure.Models
 
         public event PropertyChangedEventHandler PropertyChanged;
 
+
+       
         private void OnPropertyChanged(string name)
         {
-            
 
+            OnItemChanged();
             if (PropertyChanged != null)
                 PropertyChanged(this, new PropertyChangedEventArgs(name));
         }
 
+       
+
+        #endregion
+
+        #region Item Changed Event Support
+
+        public event ItemChangedEventHandler ItemChangedEvent;
+
+        private void OnItemChanged()
+        {
+            if (ItemChangedEvent != null)
+                ItemChangedEvent(this);
+        }
         #endregion
 
         private string StampTitle(string stamp)
@@ -98,5 +114,7 @@ namespace Infrastructure.Models
 
             return string.Format("[{0}]{1}", stamp, source);
         }
+
+       
     }
 }

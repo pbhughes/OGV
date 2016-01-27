@@ -5,7 +5,6 @@ using Infrastructure.Models;
 using System.Timers;
 using System;
 using System.Windows.Media;
-using System.Diagnostics;
 using Microsoft.Practices.Prism.Regions;
 using System.IO;
 using System.Configuration;
@@ -16,10 +15,9 @@ using System.Threading.Tasks;
 using Microsoft.Practices.Prism.Interactivity.InteractionRequest;
 using Microsoft.Practices.Prism.Commands;
 using System.Xml.Linq;
-using OGV2P.Admin.Views;
 using forms = System.Windows.Forms;
 using Infrastructure.Extensions;
-using RTMPActiveX;
+
 
 namespace OGV2P.Admin.Views
 {
@@ -130,58 +128,17 @@ namespace OGV2P.Admin.Views
             }
         }
 
-        private int _hours;
-        public int Hours
+        private TimeSpan _timerStamp;
+        public TimeSpan TimerStamp
         {
             get
             {
-                return _hours;
+                return _timerStamp;
             }
-
             set
             {
-                _hours = value;
-                OnPropertyChanged("Hours");
+                _timerStamp = value;
                 OnPropertyChanged("TimerStamp");
-            }
-        }
-
-        private int _minutes;
-        public int Minutes
-        {
-            get
-            {
-                return _minutes;
-            }
-
-            set
-            {
-                _minutes = value;
-                OnPropertyChanged("Minutes");
-            }
-        }
-
-        private int _seconds;
-        public int Seconds
-        {
-            get
-            {
-                return _seconds;
-            }
-
-            set
-            {
-                _seconds = value;
-                OnPropertyChanged("Seconds");
-                OnPropertyChanged("TimerStamp");
-            }
-        }
-
-        public string TimerStamp
-        {
-            get
-            {
-                return string.Format("{0}:{1}:{2}", _hours, _minutes, _seconds);
             }
 
            
@@ -206,10 +163,7 @@ namespace OGV2P.Admin.Views
 
         private void UpdateVUMeter(int sampleVolume)
         {
-            this.Dispatcher.InvokeAsync(() =>
-            {
-                VuMeterReading = (double)sampleVolume;
-            });
+            VuMeterReading = sampleVolume;
         }
 
         public CameraView(IRegionManager regionManager, IDevices devices, ISession sessionService, IMeeting meeting, IUser user)
@@ -245,7 +199,7 @@ namespace OGV2P.Admin.Views
 
                 _meeting.IsBusy = false;
 
-                //initialize the window to listen for usb devices to be added
+                //initialize the window to listen for USB devices to be added
                 var query = new WqlEventQuery("SELECT * FROM Win32_DeviceChangeEvent WHERE EventType = 2 OR EventType = 3");
                 usbWatcher.EventArrived += UsbWatcher_EventArrived;
                 usbWatcher.Query = query;
@@ -289,7 +243,7 @@ namespace OGV2P.Admin.Views
         {
             this.NotificationRequest.Raise(
                  new Notification { Content = "Notification Message", Title = "Hey Your Notified"},
-                 n => { InteractionResultMessage = "The user was notfied"; });
+                 n => { InteractionResultMessage = "The user was notified"; });
         }
 
         private void Meeting_SetEvent(object sender, EventArgs e)
@@ -503,11 +457,9 @@ namespace OGV2P.Admin.Views
                     string s = axRControl.GetConfig("StreamTime");
                     int milliSeconds = int.Parse(s);
                     TimeSpan current = new TimeSpan(0, 0, 0, 0, milliSeconds);
-                    Hours = (int)current.Hours;
-                    Minutes = (int)current.Minutes;
-                    Seconds = (int)current.Seconds;
+                 
                     _sessionService.CurrentVideoTime = current;
-                    OnPropertyChanged("TimerStamp");
+                    TimerStamp = current;
                     UpdateVUMeter(volumeLevel);
                 });
             }
@@ -553,7 +505,7 @@ namespace OGV2P.Admin.Views
                 }
             }
 
-            Message = "Streaming stopped for an unkown reason";
+            Message = "Streaming stopped for an unknown reason";
 
             System.Diagnostics.Debug.WriteLine(e.result);
         }
@@ -585,6 +537,7 @@ namespace OGV2P.Admin.Views
         {
             try
             {
+                
                 //font cache a file source only hardware
                 if(axRControl.VideoSource != FILE_SOURCE)
                     WriteDefaultDeviceCache();
@@ -597,7 +550,10 @@ namespace OGV2P.Admin.Views
 
                if(string.IsNullOrEmpty(_meeting.MeetingName))
                 {
-                    MessageBoxResult result = Xceed.Wpf.Toolkit.MessageBox.Show("Do you want to include an agenda?", "No Agenda Selected", MessageBoxButton.YesNo);
+                    MessageBoxResult result = Xceed.Wpf.Toolkit.MessageBox.Show(
+                        $"No agenda file has been chosen this will record locally only and the recording can be found at {_meeting.DefaultVideoDirectory()}",
+                        "Do you want to include an agenda so you can stream live?", 
+                        MessageBoxButton.YesNo);
                     if (result == MessageBoxResult.Yes)
                         return;
 
@@ -615,11 +571,15 @@ namespace OGV2P.Admin.Views
                 axRControl.StartBroadcast();
                 _vuMeterTimer.Start();
                 _meeting.IsBusy = true;
-                _meeting.LeftStatus = string.Format("Streaming to: {0}", _meeting.PublishingPoint);
+                _meeting.LeftStatus = string.Format("Streaming to: {0}", _meeting?.PublishingPoint ?? "No stream selected");
                 _meeting.RightStatus = _meeting.LandingPage;
+                cmdStartRecording.IsEnabled = false;
+                cmdStopRecording.IsEnabled = true;
             }
             catch (Exception ex)
             {
+                cmdStartRecording.IsEnabled = true;
+                cmdStopRecording.IsEnabled = false;
                 MessageBox.Show("Error trying to record be sure to choose a valid agenda file" + "-" + axRControl.LastErrorMessage);
             }
         }
@@ -648,7 +608,7 @@ namespace OGV2P.Admin.Views
             {
 
                 MessageBox.Show(string.Format("Tried to read the default device cache file and failed. " +
-                    "Please verify the selected camera and micrphone before recording.  {0}", ex.Message));
+                    "Please verify the selected camera and microphone before recording.  {0}", ex.Message));
             }
 
             return null;
@@ -675,33 +635,47 @@ namespace OGV2P.Admin.Views
             {
 
                 MessageBox.Show(string.Format("Tried to write the default device cache file and failed. " +
-                    "Please verify the selected camera and micrphone before recording.  {0}", ex.Message));
+                    "Please verify the selected camera and microphone before recording.  {0}", ex.Message));
             }
             
         }
 
         private void cmdStopRecording_Click(object sender, RoutedEventArgs e)
         {
-          
+
+           
+            MessageBoxResult result = Xceed.Wpf.Toolkit.MessageBox.Show(
+                       "If you are streaming live the stream will stop and the counter will be reset",
+                       "Do you want to stop streaming?",
+                       MessageBoxButton.YesNo);
+
+            if (result == MessageBoxResult.No)
+            {
+                return;
+            }
+
             try
             {
-                axRControl.StopBroadcast();
-                _meeting.IsBusy = false;
-                VuMeterReading = 0;
                 _vuMeterTimer.Stop();
-                Hours = 0;
-                Minutes = 0;
-                Seconds = 0;
-                _meeting.LeftStatus = "Idle";
-                _meeting.RightStatus = "";
+                cmdStartRecording.IsEnabled = true;
+                cmdStopRecording.IsEnabled = false;
+                axRControl.StopBroadcast();
+                Meeting.IsBusy = false;
+                VuMeterReading = 0;
+               
+                TimerStamp = TimeSpan.Zero;
+                Meeting.LeftStatus = "Idle";
+                Meeting.RightStatus = "";
                 axRControl.StartPreview();
             }
             catch (Exception ex)
             {
+                cmdStartRecording.IsEnabled = false;
+                cmdStopRecording.IsEnabled = true;
 
                 Xceed.Wpf.Toolkit.MessageBox.Show(ex.Message, "Error stopping the preview", MessageBoxButton.OK);
             }
-            timerDisplay.TimerValue = new TimeSpan(0, 0, 0);
+           
         }
 
         private void cboSource_SelectedChanged(object sender, SelectionChangedEventArgs e)

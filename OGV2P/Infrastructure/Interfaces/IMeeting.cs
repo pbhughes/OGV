@@ -7,6 +7,7 @@ using System.Deployment;
 namespace Infrastructure.Interfaces
 {
     public delegate void MeetingSetEventHandler(object sender, EventArgs e);
+    public delegate void MeeingItemChangedEventHandler(IItem item);
 
     public interface IMeeting
     {
@@ -14,15 +15,12 @@ namespace Infrastructure.Interfaces
         string FileName { get; set; }
         bool IsBusy { get; set; }
         string ApplicationVersion { get; }
-        Microsoft.Practices.Prism.Commands.DelegateCommand<forms.TreeView> LoadAgendaFromFTP { get; set; }
-        Microsoft.Practices.Prism.Commands.DelegateCommand<forms.TreeView> LoadAgendaFromFile { get; set; }
-        Microsoft.Practices.Prism.Commands.DelegateCommand<forms.TreeView> CreateNewAgenda { get; set; }
-        Microsoft.Practices.Prism.Commands.DelegateCommand<forms.TreeView> SaveAgendaFile { get; set; }
+        Microsoft.Practices.Prism.Commands.DelegateCommand<forms.TreeView> ClearStampsCommand { get; set; }
         DateTime MeetingDate { get; set; }
         string MeetingName { get; set; }
         event System.ComponentModel.PropertyChangedEventHandler PropertyChanged;
         Item SelectedItem { get; set; }
-        Item FindItem(int id);
+        Item FindItem(string id);
         string ClientPathLive { get; set; }
         string ClientPathLiveStream { get; set; }
         int VideoWidth { get; set; }
@@ -36,6 +34,7 @@ namespace Infrastructure.Interfaces
         long BytesWritten { get; set; }
         string LocalAgendaFileName { get; set; }
         event MeetingSetEventHandler RaiseMeetingSetEvent;
+        event MeeingItemChangedEventHandler RaiseMeetingItemChanged;
         void ParseAgendaFile(forms.TreeView tree, string allText);
         int NextID();
         string LeftStatus { get; set; }

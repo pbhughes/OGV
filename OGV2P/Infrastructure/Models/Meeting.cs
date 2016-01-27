@@ -11,6 +11,7 @@ using System.Runtime.InteropServices;
 using System.Collections.Generic;
 using System.Threading.Tasks;
 using System.Deployment.Application;
+using Xceed.Wpf.Toolkit;
 
 
 namespace Infrastructure.Models
@@ -65,55 +66,16 @@ namespace Infrastructure.Models
             set { _selectedItem = value; OnPropertyChanged("SelectedItem"); }
         }
 
-        private DelegateCommand<forms.TreeView> _createNewAgenda;
-        public DelegateCommand<forms.TreeView> CreateNewAgenda
-        {
-            get
-            {
-                return _createNewAgenda;
-            }
+     
 
-            set
-            {
-                _createNewAgenda = value;
-            }
+        private DelegateCommand<forms.TreeView> _clearStampsCommand;
+        public DelegateCommand<forms.TreeView> ClearStampsCommand
+        {
+            get { return _clearStampsCommand; }
+            set { _clearStampsCommand = value; }
         }
 
-        private DelegateCommand<forms.TreeView> _loadAgendaFromFile;
-        public DelegateCommand<forms.TreeView> LoadAgendaFromFile
-        {
-            get
-            {
-                return _loadAgendaFromFile;
-            }
-
-            set
-            {
-                _loadAgendaFromFile = value;
-            }
-        }
-
-        private DelegateCommand<forms.TreeView> _loadAgendaFromFTP;
-        public DelegateCommand<forms.TreeView> LoadAgendaFromFTP
-        {
-            get { return _loadAgendaFromFTP; }
-            set { _loadAgendaFromFTP = value; }
-        }
-
-        private DelegateCommand<forms.TreeView> _saveAgendaFile;
-        public DelegateCommand<forms.TreeView> SaveAgendaFile
-        {
-            get
-            {
-                return _saveAgendaFile;
-            }
-
-            set
-            {
-                _saveAgendaFile = value;
-            }
-        }
-
+      
         private string _fileName;
 
         public string FileName
@@ -260,7 +222,7 @@ namespace Infrastructure.Models
             get
             {
                 if (_clientPathLive == null || _clientPathLiveStream == null)
-                    return string.Empty;
+                    return null;
 
                 UriBuilder urib = new UriBuilder(_clientPathLive);
                 urib.Path += "/" + _clientPathLiveStream;
@@ -359,6 +321,7 @@ namespace Infrastructure.Models
                 foreach (XElement item in items.Elements("item"))
                 {
                     Item x = new Item();
+                    x.ItemChangedEvent += Item_ItemChangedEvent;
                     x.Title = (item.Element("title") != null) ? item.Element("title").Value : null;
                     x.Description = (item.Element("desc") != null) ? item.Element("desc").Value : null;
                     x.TimeStamp = (item.Element("timestamp") != null) ? TimeSpan.Parse(item.Element("timestamp").Value) : TimeSpan.Zero;
@@ -366,9 +329,10 @@ namespace Infrastructure.Models
                     string assingedText = (x.Title.Length < 150) ? x.Title : x.Title.Substring(0, 150);
                     forms.TreeNode xn = new forms.TreeNode() { Text = assingedText , ToolTipText = x.Title };
 
-                    //tag treenode item with the ID
-                    x.ID = NextID();
+                    //tag tree node item with the IDa
+                    x.ID = NextID().ToString();
                     xn.Tag = x.ID;
+                    xn.Name = x.ID;
                     if (item.Element("items") == null || item.Element("items").Elements("item") != null)
                     {
                         ParseItems(item.Element("items"), ref a, ref xn);
@@ -379,7 +343,13 @@ namespace Infrastructure.Models
             }
         }
 
-        public Item FindItem(int id )
+        private void Item_ItemChangedEvent(Item item)
+        {
+            string title = item.Title;
+            RaiseMeetingItemChanged(item);
+        }
+
+        public Item FindItem(string id )
         {
             
             foreach (Item i in this.MeetingAgenda.Items)
@@ -404,42 +374,35 @@ namespace Infrastructure.Models
             _sessionService = sessionService;
             _user = user;
             _sessionService.RaiseStamped += _sessionService_RaiseStamped;
-            _loadAgendaFromFTP = new DelegateCommand<forms.TreeView>(OnLoadAgendaFromFTP, CanLoadAgendaFromFTP);
-            _loadAgendaFromFile = new DelegateCommand<System.Windows.Forms.TreeView>(OnLoadAgendaFromFile, CanLoadAgendaFromFile);
-            _createNewAgenda = new DelegateCommand<System.Windows.Forms.TreeView>(OnCreateNewAgenda, CanCreateNewAgenda);
-            _saveAgendaFile = new DelegateCommand<System.Windows.Forms.TreeView>(OnSaveAgendaFile, CanSaveAgendaFile);
+            _clearStampsCommand = new DelegateCommand<forms.TreeView>(OnClearStamps, CanClearStamps);
+            
             _agenda = new Agenda();
           
         }
 
-        private bool CanSaveAgendaFile(forms.TreeView arg)
+        private bool CanClearStamps(forms.TreeView arg)
         {
-            return MeetingAgenda != null && MeetingAgenda.Items.Count > 0;
+            if (MeetingAgenda != null)
+                if (MeetingAgenda.Items.Count > 0)
+                    return true;
+
+            return false;
         }
 
-        private void OnSaveAgendaFile(forms.TreeView obj)
+        private void OnClearStamps(forms.TreeView obj)
         {
-            try
+            string caption = "Do you want to clear all stamps?";
+            string content = "If you continue all stamps will be removed and set to zero.  Continue?";
+            if(Xceed.Wpf.Toolkit.MessageBox.Show(content, caption, System.Windows.MessageBoxButton.YesNo, System.Windows.MessageBoxImage.Exclamation) == System.Windows.MessageBoxResult.Yes)
+                ClearItemStamps(MeetingAgenda?.Items);
+        }
+
+        private void ClearItemStamps( List<Item> collection)
+        {
+            foreach(Item i in collection)
             {
-                long totalBytes = WriteAgendaFile(obj);
-
-                Task t = new Task( (  ) => {
-                    string msg = PushFile(LocalAgendaFileName);
-                });
-
-                t.Start();
-
+               i.TimeStamp = TimeSpan.Zero;
             }
-            catch (Exception ex)
-            {
-
-                string msg = ex.Message;
-            }
-            finally
-            {
-
-            }
-        
         }
 
         private string PushFile( string fileName )
@@ -451,7 +414,7 @@ namespace Infrastructure.Models
             FileInfo fi = new FileInfo(fileName);
             totalBytesToSend = fi.Length;
             bytes = 0;
-            //setup the ftp Request object
+            //setup the FTP Request object
             Uri uri = new Uri(string.Format("ftp://{0}/{1}/{2}", _user.SelectedBoard.FtpServer, _user.SelectedBoard.FtpPath, fi.Name));
             FtpWebRequest req = (FtpWebRequest)WebRequest.Create(uri.ToString());
             NetworkCredential creds = new NetworkCredential(_user.UserID, _user.Password);
@@ -482,134 +445,7 @@ namespace Infrastructure.Models
             return status;
         }
 
-        private bool CanCreateNewAgenda(forms.TreeView arg)
-        {
-            return ! IsBusy;
-        }
-
-        private void OnCreateNewAgenda(forms.TreeView obj)
-        {
-           if(MeetingAgenda != null && MeetingAgenda.Items.Count > 0)
-            {
-                if (Xceed.Wpf.Toolkit.MessageBox.Show("Save current Agenda?", "Save Current Agenda", System.Windows.MessageBoxButton.YesNo) ==
-                    System.Windows.MessageBoxResult.Yes)
-                {
-
-                }
-
-            }
-            this.MeetingAgenda = new Agenda();
-            if(MeetingAgenda.Items == null)
-            {
-                MeetingAgenda.Items = new List<Item>();
-            }
-
-            MeetingName = "Please enter a meeting name...";
-            MeetingDate = DateTime.Now;
-
-            Item newItem = new Item() { Title = "Please add a new title..." };
-            MeetingAgenda.Items.Add(newItem);
-
-            forms.TreeNode x = new forms.TreeNode() { Text = newItem.Title, ToolTipText = newItem.Title };
-            obj.Nodes.Add(x);
-
-            OnRaiseMeetingSetEvent();
-            ReevaluateCommands();
-        }
-
-        private bool CanLoadAgendaFromFile(forms.TreeView arg)
-        {
-            return !IsBusy;
-        }
-
-        private void OnLoadAgendaFromFile(forms.TreeView obj)
-        {
-            try
-            {
-                forms.OpenFileDialog dg = new forms.OpenFileDialog();
-                dg.DefaultExt = ".xml";
-                dg.AddExtension = true;
-                dg.InitialDirectory = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments), "ClerkBase", "Agendas");
-                if (!Directory.Exists(dg.InitialDirectory))
-                    Directory.CreateDirectory(dg.InitialDirectory);
-
-           
-                if(dg.ShowDialog() == System.Windows.Forms.DialogResult.OK)
-                {
-                    _localAgendaFileName = dg.FileName;
-                    string allXml = File.ReadAllText(dg.FileName);
-                    ParseAgendaFile(obj, allXml);
-                }
-            }
-            catch (Exception ex)
-            {
-
-                throw;
-            }
-          
-
-
-        }
-
-        private bool CanLoadAgendaFromFTP(forms.TreeView agendaTree)
-        {
-            return ! IsBusy;
-        }
-
-        private void OnLoadAgendaFromFTP(forms.TreeView agendaTree)
-        {
-            string fileName = string.Empty;
-            try
-            {
-
-
-                // Create OpenFileDialog 
-                FtpBrowseDialog dlg = new FtpBrowseDialog(_user.SelectedBoard.FtpServer, _user.SelectedBoard.FtpPath, 21, _user.UserID, _user.Password, true);
-
-                var result = dlg.ShowDialog();
-                // Get the selected file name and display in a TextBox 
-                if (result == forms.DialogResult.OK)
-                {
-                    // Open document 
-                    fileName = dlg.SelectedFile;
-
-
-                    string dir = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments), "ClerkBase");
-                    if (!File.Exists(dir))
-                        Directory.CreateDirectory(dir);
-
-                    _localAgendaFileName = Path.Combine(dir, "Agendas", dlg.SelectedFileName);
-
-                    //setup the ftp request then parse the agenda file 
-                    FtpWebRequest req = (FtpWebRequest)WebRequest.Create(fileName);
-                    NetworkCredential creds = new NetworkCredential(_user.UserID, _user.Password);
-                    req.Credentials = creds;
-                    req.Method = WebRequestMethods.Ftp.DownloadFile;
-
-                    FtpWebResponse response = (FtpWebResponse)req.GetResponse();
-                    StreamReader sr = new StreamReader(response.GetResponseStream());
-
-                    string allText = sr.ReadToEnd();
-                    _orginalHash = allText.GetHashCode();
-
-                    ParseAgendaFile(agendaTree, allText);
-
-                }
-            }
-            catch (COMException cex)
-            {
-                ; //ignore it
-
-            }
-            catch (Exception ex)
-            {
-
-                System.Windows.MessageBox.Show(string.Format("Unable to download file :{0} verify the filename is correct.", fileName));
-
-            }
-
-
-        }
+     
 
         public void ParseAgendaFile(forms.TreeView agendaTree, string allText)
         {
@@ -646,14 +482,12 @@ namespace Infrastructure.Models
                 agendaTree.ExpandAll();
             }
 
+            ClearStampsCommand.RaiseCanExecuteChanged();
             OnRaiseMeetingSetEvent();
-            ReevaluateCommands();
+            
         }
 
-        private void ReevaluateCommands()
-        {
-            SaveAgendaFile.RaiseCanExecuteChanged();
-        }
+      
 
         private void _sessionService_RaiseStamped(TimeSpan sessionTime)
         {
@@ -694,10 +528,17 @@ namespace Infrastructure.Models
             SelectedItem = item;
         }
 
+        #endregion
 
+        #region Meeting Item Changed Support
 
+        public event MeeingItemChangedEventHandler RaiseMeetingItemChanged;
 
-
+        private void OnMeetingItemChanged(Item item)
+        {
+            if (RaiseMeetingItemChanged != null)
+                RaiseMeetingItemChanged(item);
+        }
         #endregion
 
         public XDocument GetAgendaXmlDoc()
@@ -757,7 +598,7 @@ namespace Infrastructure.Models
         private XElement CreateAnItem(forms.TreeNode tn)
         {
 
-            Item agendaItem = FindItem((int)tn.Tag);
+            Item agendaItem = FindItem(tn.Name);
             XElement item = new XElement("item",
                                          new XElement("title", agendaItem.Title),
                                          new XElement("desc", agendaItem.Description),

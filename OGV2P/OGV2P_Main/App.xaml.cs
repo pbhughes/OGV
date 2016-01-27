@@ -33,17 +33,17 @@ namespace OGV2P
             {
                 ex.WriteToLogFile();
                 MessageBox.Show(string.Format("A startup exception occurred here is the error: {0}", ex.Message));
-                
+
             }
-         
-             
+
+
         }
 
         private void Current_UnhandledException(object sender, UnhandledExceptionEventArgs e)
         {
-            
+
             WriteExceptionToFile((Exception)e.ExceptionObject);
-            if(e.ExceptionObject is InvalidComObjectException)
+            if (e.ExceptionObject is InvalidComObjectException)
             {
                 //skip the screen show
             }
@@ -51,8 +51,8 @@ namespace OGV2P
             {
                 MessageBox.Show(string.Format("A startup execption occured here is the error: {0}", ((Exception)e.ExceptionObject).Message));
             }
-           
-            
+
+
 
         }
 
@@ -80,12 +80,12 @@ namespace OGV2P
                     FileInfo fInfo = new FileInfo(fileName);
                     if (fInfo.Length > 10485760)
                     {
-                        //TODO: Push it to Clerkbase
+                        //TODO: Push it to ClerkBase
                         File.Delete(fileName);
                         File.WriteAllText(fileName, sb.ToString());
                         return;
                     }
-                    
+
                 }
                 File.AppendAllText(fileName, sb.ToString());
             }
@@ -97,7 +97,8 @@ namespace OGV2P
 
 
         }
-            
-            
+
+       
+
     }
 }

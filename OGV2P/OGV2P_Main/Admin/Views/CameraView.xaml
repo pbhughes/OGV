@@ -8,8 +8,9 @@
              xmlns:infra="clr-namespace:Infrastructure.Converters;assembly=Infrastructure"
              xmlns:frms="clr-namespace:System.Windows.Forms;assembly=System.Windows.Forms"
              xmlns:prism="http://www.codeplex.com/prism"
+             xmlns:diag="clr-namespace:System.Diagnostics;assembly=WindowsBase"
              mc:Ignorable="d" 
-             Loaded="UserControl_Loaded" MinWidth="650">
+             Loaded="UserControl_Loaded" MinWidth="650" >
     <UserControl.Resources>
         <infra:DoubleToColorConverter  x:Key="progBarConverter"></infra:DoubleToColorConverter>
         <Style TargetType="ProgressBar">
@@ -115,7 +116,7 @@
 
                 <cc:TimerDisplay Name="timerDisplay" 
                                  Grid.Column="1" HorizontalAlignment="Center"
-                                 TimerValue="{Binding TimerStamp}" 
+                                 TimerValue="{Binding TimerStamp, Mode=OneWay, diag:PresentationTraceSources.TraceLevel=High}" 
                                  MinWidth="175"
                                  Recording="{Binding Meeting.IsBusy}"/>
 

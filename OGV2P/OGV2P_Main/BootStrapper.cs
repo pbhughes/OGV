@@ -100,7 +100,7 @@ namespace OGV2P
             
             _regionManager.RegisterViewWithRegion(Infrastructure.Models.Regions.Main, typeof(OGV2P.AgendaModule.Views.AgendaStartView));
 
-            _regionManager.RegisterViewWithRegion(Infrastructure.Models.Regions.SideBar, typeof(OGV2P.Admin.Views.CameraView));
+           
         
         }
 

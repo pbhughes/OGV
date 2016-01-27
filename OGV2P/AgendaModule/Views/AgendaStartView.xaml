@@ -61,6 +61,10 @@
                         <Button  Margin="5"
                         Style="{DynamicResource btn-default}"
                             Click="SaveAgenda_Click" >Save the Agenda</Button>
+
+                        <Button Margin="5"
+                        Style="{DynamicResource btn-default}"
+                             Command="{Binding ClearStampsCommand}">Clear All Timestamps</Button>
                     </ItemsControl>
                 </tk:SplitButton.DropDownContent>
             </tk:SplitButton>

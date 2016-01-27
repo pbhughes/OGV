@@ -49,7 +49,9 @@ namespace CustomControls.Views
                 display.Foreground = new SolidColorBrush(Colors.Black);
                 display.border.BorderBrush = new SolidColorBrush(Colors.Black);
             }
-               
+
+            System.Diagnostics.Debug.WriteLine(string.Format("Timer State Changed {0}", e.NewValue.ToString()));
+          
 
 
         }
@@ -72,9 +74,14 @@ namespace CustomControls.Views
         {
             TimerDisplay display = (TimerDisplay)d;
             TimeSpan newVal = (TimeSpan)e.NewValue;
-            display.txtHours.Text = newVal.Hours.ToString().PadLeft(2, '0');
-            display.txtMinutes.Text = newVal.Minutes.ToString().PadLeft(2, '0');
-            display.txtSeconds.Text = newVal.Seconds.ToString().PadLeft(2, '0');
+            if(newVal.Days == 0)
+            {
+                display.txtHours.Text = newVal.Hours.ToString().PadLeft(2, '0');
+                display.txtMinutes.Text = newVal.Minutes.ToString().PadLeft(2, '0');
+                display.txtSeconds.Text = newVal.Seconds.ToString().PadLeft(2, '0');
+            }
+           
+            System.Diagnostics.Debug.WriteLine(string.Format("Timer value changed {0}", newVal.ToString()));
 
         }
 

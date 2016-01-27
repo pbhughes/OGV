@@ -16,11 +16,15 @@
             <RowDefinition Height="65"/>
             <RowDefinition Height="Auto"/>
         </Grid.RowDefinitions>
-        <ComboBox ItemsSource="{Binding Boards.Boards}" 
+        <DockPanel LastChildFill="True" VerticalAlignment="Center" >
+            <Label FontSize="16" FontWeight="Bold">Boards:</Label>
+            <ComboBox ItemsSource="{Binding Boards.Boards}" 
                   DisplayMemberPath="Name" x:Name="lstBoards"
                   VerticalContentAlignment="Center"
                   SelectedItem="{Binding SelectedBoard}"
                   SelectionChanged="lstBoards_SelectionChanged"></ComboBox>
+        </DockPanel>
+       
 
         <StackPanel Grid.Row="1" Orientation="Vertical" HorizontalAlignment="Stretch">
             <DockPanel x:Name="pnlUserID"  LastChildFill="True">
@@ -42,6 +46,7 @@
                 <Button x:Name="cmdLogin" IsDefault="True" 
                         Command="{Binding LoginCommand}" 
                         Style="{DynamicResource btn-primary}" 
+                        FontWeight="Bold"
                         Click="cmdLogin_Click">Login</Button>
             </StackPanel>
             <TextBlock Text="{Binding Message}" Foreground="Red" 
@@ -51,7 +56,7 @@
                         Visibility="{Binding IsReady,Converter={StaticResource BoolToVisibility}}"/>
             <ItemsControl Margin="10" FontSize="15">
                 <BulletDecorator VerticalAlignment="Center" HorizontalAlignment="Center">
-                    <TextBlock>Select a board and click Start</TextBlock>
+                    <TextBlock>Select a Board and click Start</TextBlock>
                 </BulletDecorator>
                 <BulletDecorator VerticalAlignment="Center" HorizontalAlignment="Center">
                     <TextBlock>Or</TextBlock>
