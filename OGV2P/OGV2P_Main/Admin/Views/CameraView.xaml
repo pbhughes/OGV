@@ -55,19 +55,19 @@
 
         <Grid Grid.Row="1" Grid.Column="0" Grid.ColumnSpan="2">
             <Grid.ColumnDefinitions>
-                <ColumnDefinition Width="*" />
                 <ColumnDefinition Width="45" />
+                <ColumnDefinition Width="*" />
             </Grid.ColumnDefinitions>
 
+            <Image Grid.Column="0" Source="/OGV2P.Admin;component/Images/VolumePressedBlue.png" ></Image>
             <ProgressBar BorderThickness="0" 
                          x:Name="vuMeter" 
                          Value="{Binding VuMeterReading}"
                          Height="10px"
                          HorizontalAlignment="Stretch"
                          Width="auto"
-                         Grid.ColumnSpan="2" Grid.Column="0"
-                         Background="Transparent"
-                         Margin="50 5 50 5">
+                         Grid.ColumnSpan="1" Grid.Column="1"
+                         Background="Transparent">
 
             </ProgressBar>
 
@@ -108,11 +108,20 @@
                     <ColumnDefinition />
                 </Grid.ColumnDefinitions>
 
-                <Button x:Name="cmdStartRecording" HorizontalAlignment="Right"
-                        IsEnabled="{Binding Path=IsBusy, Converter={StaticResource InverseBoolConverter}}"
-                        Click="cmdStartRecording_Click"  Style="{StaticResource btn-primary}"
+                <Button x:Name="cmdStartRecording" 
+                        HorizontalAlignment="Right"
+                        IsEnabled="{Binding Path=IsBusy}"
+                        Click="cmdStartRecording_Click"
+                        Style="{StaticResource RoundedButton}"
                         Margin="10" Width="100"
-                        FontSize="15">REC</Button>
+                        FontSize="15">
+                    <Button.Content>
+                        <StackPanel Orientation="Horizontal" HorizontalAlignment="Stretch" Margin="2">
+                            <Image Source="/OGV2P.Admin;component/Images/RecordPressed.png" Width="25"/>
+                            <Label Name="cmdRecordLabel">REC</Label>
+                        </StackPanel>
+                    </Button.Content>
+                </Button>
 
                 <cc:TimerDisplay Name="timerDisplay" 
                                  Grid.Column="1" HorizontalAlignment="Center"
@@ -125,9 +134,17 @@
                         HorizontalAlignment="Left"
                         IsEnabled="{Binding IsBusy}"
                         Click="cmdStopRecording_Click"
-                        Style="{StaticResource btn-danger}" 
+                        Style="{StaticResource RoundedButton}"
                         Margin="10" Width="100"
-                        FontSize="15">STOP</Button>
+                        FontSize="15">
+                    <Button.Content>
+                        <StackPanel Orientation="Horizontal" HorizontalAlignment="Stretch" Margin="2">
+                            <Image Source="Stop1NormalBlue.png" Width="25"/>
+                            <Label Name="cmdStopRecordingLabel">STOP</Label>
+                        </StackPanel>
+                    </Button.Content>
+                    
+                </Button>
             </Grid>
                 
          

@@ -43,39 +43,56 @@
                           Margin="0 0 5 0" Text="{Binding MeetingName}" />
             </ScrollViewer>
             <tk:SplitButton Name="agendaCommandDropDown"
-                        Click="agendaCommandDropDown_Click" Background="#428bca"
+                        Click="agendaCommandDropDown_Click"
+                            Background="#428bca"
                         Grid.Column="2" Content="Get Agenda File" Margin="5">
                 <tk:SplitButton.DropDownContent>
                     <ItemsControl>
                         <Button Margin="5"
-                        Style="{DynamicResource btn-default}"
+                       Style="{StaticResource RoundedButton}"
                              Click="GetAgendaFromServer_Click">Get Agenda From Server</Button>
 
                         <Button  Click="GetAgendaFromFile_Click" Margin="5"
-                        Style="{DynamicResource btn-default}">Open Agenda File</Button>
-
-                        <!--<Button  Command="{Binding CreateNewAgenda}" Margin="5"
-                        Style="{DynamicResource btn-default}"
-                        CommandParameter="{Binding Source={x:Reference Name=agendaTree}}">Start A New Agenda</Button>-->
+                        Style="{StaticResource RoundedButton}">Open Agenda File</Button>
 
                         <Button  Margin="5"
-                        Style="{DynamicResource btn-default}"
+                        Style="{StaticResource RoundedButton}"
                             Click="SaveAgenda_Click" >Save the Agenda</Button>
 
                         <Button Margin="5"
-                        Style="{DynamicResource btn-default}"
+                        Style="{StaticResource RoundedButton}"
                              Command="{Binding ClearStampsCommand}">Clear All Timestamps</Button>
                     </ItemsControl>
                 </tk:SplitButton.DropDownContent>
             </tk:SplitButton>
 
             <Label Grid.Row="1" Grid.Column="0" Content="Meeting Date:" />
-            <DatePicker Grid.Column="1"  Grid.Row="1" Grid.ColumnSpan="3" Focusable="False" IsHitTestVisible="False"
+            <DatePicker Grid.Column="1"  Grid.Row="1" Grid.ColumnSpan="1" Focusable="False" IsHitTestVisible="False"
                         SelectedDateFormat="Long"
                                 SelectedDate="{Binding MeetingDate}"
                                 VerticalContentAlignment="Center"
                                 VerticalAlignment="Center"
                   FirstDayOfWeek="Monday" />
+            <StackPanel Orientation="Horizontal" Grid.Column="2"
+                        Grid.Row="1" HorizontalAlignment="Center">
+                <Button Name="cmdUp" Click="floaterMoveUp_Click"
+                        Margin="5"
+                        Width="35" Height="35"
+                        Background="Transparent"
+                        Grid.Row="0" Grid.Column="1">
+                    <Button.Content>
+                        <Image Source="/OGV2P.Agenda;component/Play1Hot11.png"></Image>
+                    </Button.Content>
+                </Button>
+            <Button Name="cmdDown" Margin="5"
+                        Click="floaterMoveDown_Click"
+                        Width="35" Height="35"
+                        Grid.Row="2" Grid.Column="1" Background="Transparent">
+                    <Button.Content>
+                        <Image Source="/OGV2P.Agenda;component/Play1Hot1.png"></Image>
+                    </Button.Content>
+            </Button>
+            </StackPanel>
         </Grid>
 
         <!-- Windows forms tree Grid -->
@@ -104,44 +121,7 @@
                     </wf:Panel>
                 </WindowsFormsHost>
             </DockPanel>
-
-            <Popup Name="floater" IsOpen="false" AllowsTransparency="True"
-                   Placement="Relative"  IsHitTestVisible="False"
-               PlacementTarget="{Binding ElementName=agendaTree}">
-                <Grid>
-                    <Grid.RowDefinitions>
-                        <RowDefinition />
-                        <RowDefinition />
-                        <RowDefinition />
-                    </Grid.RowDefinitions>
-                    <Grid.ColumnDefinitions>
-                        <ColumnDefinition />
-                        <ColumnDefinition />
-                        <ColumnDefinition />
-                    </Grid.ColumnDefinitions>
-                    <Button Name="cmdClose" Click="floaterClose_Click"
-                        Background="Red"
-                        Foreground="White"
-                        FontSize="7"
-                        Margin="5"
-                        FontWeight="Heavy"
-                        Grid.Row="1" Grid.Column="2" Grid.ColumnSpan="1"
-                        Width="35" Height="35"
-                         VerticalAlignment="Center">X</Button>
-                    <Button x:Name="cmdLeft" Margin="5"
-                    Click="floaterMoveLeft_Click"
-                        Width="35" Height="35"
-                    Grid.Row="1" Grid.Column="0"></Button>
-                    <Button Name="cmdUp" Click="floaterMoveUp_Click"
-                        Margin="5"
-                        Width="35" Height="35"
-                        Grid.Row="0" Grid.Column="1"></Button>
-                    <Button Name="cmdDown" Margin="5"
-                        Click="floaterMoveDown_Click"
-                        Width="35" Height="35"
-                        Grid.Row="2" Grid.Column="1"></Button>
-                </Grid>
-            </Popup>
+            
         </Grid>
 
         <!-- Current node editable field grid-->

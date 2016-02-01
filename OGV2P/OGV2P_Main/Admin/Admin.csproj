@@ -220,6 +220,13 @@
     <Content Include="Images\openGOVideo.png">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
+    <Resource Include="Images\VolumePressedBlue.png" />
+    <Resource Include="Views\Stop1NormalBlue.png" />
+    <Resource Include="Images\RecordPressed.png" />
+    <Resource Include="Images\RecordDisabled1.png" />
+    <Resource Include="Images\RecordHot1.png" />
+    <Resource Include="Images\Stop1Disabled1.png" />
+    <Resource Include="Images\Stop1NormalRed1.png" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 

@@ -205,6 +205,10 @@
   <ItemGroup>
     <None Include="Resources\circle-loading-animation.gif" />
   </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Play1Hot1.png" />
+    <Resource Include="Play1Hot11.png" />
+  </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
        Other similar extension points exist, see Microsoft.Common.targets.

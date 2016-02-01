@@ -286,8 +286,7 @@ namespace OGV2P.Admin.Views
             // Video Encoder Bitrate (Bits/s)
             axRControl.VideoBitrate = 500000;
 
-            axRControl.TextOverlayText = "Hello World!";
-            //axRTMPActiveX1.TextOverlayText = "c:\\temp\\icon.png";
+
             axRControl.VideoEffect = 3;
 
             // nanoStream Event Handlers
@@ -537,9 +536,11 @@ namespace OGV2P.Admin.Views
         {
             try
             {
-                
+                //set the meeting title in the view
+                axRControl.TextOverlayText = (_meeting.MeetingName == null)? "" : _meeting.MeetingName;
+
                 //font cache a file source only hardware
-                if(axRControl.VideoSource != FILE_SOURCE)
+                if (axRControl.VideoSource != FILE_SOURCE)
                     WriteDefaultDeviceCache();
 
                 //set local video folder
@@ -694,7 +695,7 @@ namespace OGV2P.Admin.Views
                     dg.DefaultExt = ".mp4";
                     dg.Filter = "Video Files (*.mp4)|*.mp4|WMV Files (*.wmv)|*.wmv|MOV Files (*.mov)|*.mov|MPG Files (*.mpg)|*.mpg|All (*.*)|*.*";
                     forms.DialogResult result = dg.ShowDialog();
-                    cmdStartRecording.Content = "PLAY";
+                    cmdRecordLabel.Content = "PLAY";
                     if (result == forms.DialogResult.OK)
                     {
                         axRControl.VideoSource = FILE_SOURCE;
@@ -715,7 +716,7 @@ namespace OGV2P.Admin.Views
                 }
                 else
                 {
-                    cmdStartRecording.Content = "REC";
+                    cmdRecordLabel.Content = "REC";
                     axRControl.DestinationURL2 = _meeting.LocalFile;
                     axRControl.VideoSource = Convert.ToInt32(cboCameras.SelectedIndex);
                     axRControl.StartPreview();

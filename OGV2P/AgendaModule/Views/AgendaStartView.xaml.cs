@@ -36,7 +36,6 @@ namespace OGV2P.AgendaModule.Views
             Application.Current.MainWindow.Deactivated += MainWindow_Deactivated;
             Application.Current.MainWindow.StateChanged += MainWindow_StateChanged;
 
-           
             agendaTree.ItemDrag += AgendaTree_ItemDrag;
             agendaTree.DragEnter += AgendaTree_DragEnter;
             agendaTree.DragOver += AgendaTree_DragOver;
@@ -44,6 +43,8 @@ namespace OGV2P.AgendaModule.Views
             agendaTree.KeyDown += agendaTree_KeyDown;
             agendaTree.MouseUp += agendaTree_MouseUp;
             agendaTree.NodeMouseDoubleClick += agendaTree_NodeMouseDoubleClick;
+            agendaTree.BeforeSelect += AgendaTree_BeforeSelect;
+            
 
             agendaTree.AllowDrop = true;
             agendaTree.ShowNodeToolTips = true;
@@ -81,28 +82,6 @@ namespace OGV2P.AgendaModule.Views
 
             }
 
-            if (File.Exists(@"Images\left_arrow.png"))
-            {
-                var brush = new System.Windows.Media.ImageBrush();
-                brush.ImageSource = new BitmapImage(new Uri("Images/left_arrow.png", UriKind.Relative));
-                cmdLeft.Background = brush;
-
-            }
-            else
-            {
-                cmdLeft.Content = "Left";
-            }
-
-            if (File.Exists(@"Images\up_arrow.png"))
-            {
-                var brush = new System.Windows.Media.ImageBrush();
-                brush.ImageSource = new BitmapImage(new Uri("Images/up_arrow.png", UriKind.Relative));
-                cmdUp.Background = brush;
-            }
-            else
-            {
-                cmdLeft.Content = "Up";
-            }
 
             if (File.Exists(@"Images\down_arrow.png"))
             {
@@ -129,10 +108,11 @@ namespace OGV2P.AgendaModule.Views
 
             winFormHost.Child.Controls.Add(agendaTree);
            
-           
-           
-           
+        }
 
+        private void AgendaTree_BeforeSelect(object sender, forms.TreeViewCancelEventArgs e)
+        {
+           
         }
 
         private void Meeting_RaiseMeetingItemChanged(IItem item)
@@ -143,7 +123,14 @@ namespace OGV2P.AgendaModule.Views
                 {
                     forms.TreeNode[] selection = agendaTree.Nodes.Find(item.ID, true);                  
                     if(selection.Length > 0)
+                    {
                         selection[0].Text = item.Title;
+                        if (item.TimeStamp == TimeSpan.Zero)
+                            UnstampItem(agendaTree.SelectedNode);
+                        else
+                            MarkItemStamped(agendaTree.SelectedNode, false);
+                    }
+                        
                 }
 
         
@@ -153,40 +140,15 @@ namespace OGV2P.AgendaModule.Views
 
         private void MainWindow_StateChanged(object sender, EventArgs e)
         {
-            if(Application.Current.MainWindow.WindowState == WindowState.Maximized)
-            {
-                if (agendaTree != null && agendaTree.Nodes.Count > 0)
-                    if (floater != null)
-                        floater.IsOpen = true;
-
-                return;
-            }
-
-            if (Application.Current.MainWindow.WindowState == WindowState.Minimized)
-            {
-                if (floater != null)
-                    floater.IsOpen = false;
-                return;
-            }
-
-            if (Application.Current.MainWindow.WindowState == WindowState.Normal)
-            {
-                if (agendaTree != null && agendaTree.Nodes.Count > 0)
-                    if (floater != null)
-                        floater.IsOpen = true;
-
-                return;
-            }
+           
         }
 
         private void MainWindow_Deactivated(object sender, EventArgs e)
         {
-            floater.IsOpen = false;
         }
 
         private void MainWindow_LocationChanged(object sender, EventArgs e)
         {
-            floater.IsOpen = false;
         }
 
         private void AgendaTree_DragDrop(object sender, forms.DragEventArgs e)
@@ -366,104 +328,95 @@ namespace OGV2P.AgendaModule.Views
 
         private void _sessionService_ClearStamp()
         {
-            UnstampItem();
+            UnstampItem(agendaTree.SelectedNode);
         }
 
-        private void MarkItemStamped()
+        private void MarkItemStamped(forms.TreeNode targetNode, bool advance = true)
         {
-            if (_currentMeeting.IsBusy)
+            if (agendaTree.ImageList.Images.Count >= 2)
             {
-                if (agendaTree.SelectedNode != null)
+                if (targetNode.ImageKey.ToLower().Contains("edited"))
                 {
-                    if (agendaTree.ImageList.Images.Count >= 2)
-                    {
-                        if (agendaTree.SelectedNode.ImageKey.ToLower().Contains("edited"))
-                        {
-                            agendaTree.SelectedNode.ImageKey = "stamped_edited";
-                            agendaTree.SelectedNode.SelectedImageKey = "stamped_edited";
-                        }
-                        else
-                        {
-                            agendaTree.SelectedNode.ImageKey = "stamped";
-                            agendaTree.SelectedNode.SelectedImageKey = "stamped";
-                        }
-                    }
-                    string newTitle = txtTitle.Text;
-                    agendaTree.SelectedNode.Text = newTitle;
-                    agendaTree.SelectedNode.BackColor = Color.LightBlue;
+                    targetNode.ImageKey = "stamped_edited";
+                    targetNode.SelectedImageKey = "stamped_edited";
+                }
+                else
+                {
+                    targetNode.ImageKey = "stamped";
+                    targetNode.SelectedImageKey = "stamped";
+                }
+            }
+            string newTitle = txtTitle.Text;
+            targetNode.Text = newTitle;
+            targetNode.BackColor = Color.LightBlue;
 
-                 
-                    //Check for children if they exist go to them
-                    if (agendaTree.SelectedNode.Nodes.Count > 0)
+            if (advance)
+            {
+
+
+                //Check for children if they exist go to them
+                if (targetNode.Nodes.Count > 0)
+                {
+                    //current node has children move to the first
+                    agendaTree.SelectedNode = agendaTree.SelectedNode.Nodes[0];
+                    return;
+                }
+                else
+                {
+                    //Check for siblings if they exist go to them
+
+                    //Current node doesn't have children
+                    //is there a sibling node next
+                    if (targetNode.NextNode != null)
                     {
-                        //current node has children move to the first
-                        agendaTree.SelectedNode = agendaTree.SelectedNode.Nodes[0];
+                        agendaTree.SelectedNode = targetNode.NextNode;
                         return;
                     }
                     else
                     {
-                        //Check for siblings if they exist go to them
 
-                        //Current node doesn't have children
-                        //is there a sibling node next
-                        if (agendaTree.SelectedNode.NextNode != null)
+                        forms.TreeNode parent = targetNode.Parent;
+                        if (parent != null)
                         {
-                            agendaTree.SelectedNode = agendaTree.SelectedNode.NextNode;
-                            return;
-                        }
-                        else
-                        {
-
-                            forms.TreeNode parent = agendaTree.SelectedNode.Parent;
-                            if(parent != null)
+                            while (parent.NextNode == null)
                             {
-                                while (parent.NextNode == null)
-                                {
-                                    parent = parent.Parent;
-                                }
-                                agendaTree.SelectedNode = parent.NextNode;
+                                parent = parent.Parent;
                             }
-                           
+                            agendaTree.SelectedNode = parent.NextNode;
                         }
-                    }
 
+                    }
                 }
             }
         }
 
-        private void UnstampItem()
+        private void UnstampItem(forms.TreeNode targetNode)
         {
-            if (agendaTree.SelectedNode != null)
+            if (agendaTree.ImageList.Images.Count >= 2)
             {
-                if (agendaTree.ImageList.Images.Count >= 2)
+                if (targetNode.ImageKey.ToLower().Contains("edited"))
                 {
-                    if (agendaTree.SelectedNode.ImageKey.ToLower().Contains("edited"))
-                    {
-                        agendaTree.SelectedNode.ImageKey = "unstamped_edited";
-                        agendaTree.SelectedNode.SelectedImageKey = "unstamped_edited";
-                    }
-                    else
-                    {
-                        agendaTree.SelectedNode.ImageKey = "unselected";
-                        agendaTree.SelectedNode.SelectedImageKey = "unselected";
-                    }
+                    targetNode.ImageKey = "unstamped_edited";
+                    targetNode.SelectedImageKey = "unstamped_edited";
                 }
-                _currentMeeting.SelectedItem.TimeStamp = TimeSpan.Zero;
-
+                else
+                {
+                    targetNode.ImageKey = "unselected";
+                    targetNode.SelectedImageKey = "unselected";
+                    
+                }
             }
+
+            targetNode.BackColor = Color.Transparent;
+
         }
 
         void agendaTree_AfterSelect(object sender, forms.TreeViewEventArgs e)
         {
             forms.TreeNode selectedNode = ((forms.TreeView)sender).SelectedNode;
             _currentMeeting.SelectedItem = _currentMeeting.FindItem(selectedNode.Name);
-            if(!floater.IsOpen)
-            {
-                floater.IsOpen = true;
-            }
-            //position the floater
-            floater.HorizontalOffset = agendaTree.Size.Width / 2  + (agendaTree.Width / 4);
-            floater.VerticalOffset = agendaTree.Location.Y + 120;
+          
+          
         }
 
       
@@ -511,13 +464,13 @@ namespace OGV2P.AgendaModule.Views
 
         private void Stamp_Click(object sender, EventArgs e)
         {
-            MarkItemStamped();
+            MarkItemStamped(agendaTree.SelectedNode);
             _currentMeeting.SelectedItem.TimeStamp = _sessionService.CurrentVideoTime;
         }
 
         private void Unstamp_Click(object sender, EventArgs e)
         {
-            UnstampItem();
+            _currentMeeting.FindItem(agendaTree.SelectedNode.Name).TimeStamp = TimeSpan.Zero;
         }
 
         private void agendaTree_MouseUp(object sender, forms.MouseEventArgs e)
@@ -529,10 +482,7 @@ namespace OGV2P.AgendaModule.Views
         private void frmHost_MouseMove(object sender, MouseEventArgs e)
         {
 
-            if (!floater.IsOpen)
-            {
-                floater.IsOpen = true;
-            }
+            
 
             System.Windows.Point currentPos = e.GetPosition(winFormHost);
             System.Diagnostics.Debug.WriteLine(string.Format("Window Mouse Move x:{0} y:{1}", currentPos.X, currentPos.Y));
@@ -545,64 +495,90 @@ namespace OGV2P.AgendaModule.Views
             System.Diagnostics.Debug.WriteLine(string.Format("Window Mouse Move x:{0} y:{1}", currentPos.X, currentPos.Y));
         }
 
-        private void floaterClose_Click(object sender, RoutedEventArgs e)
-        {
-            floater.IsOpen = false;
-        }
+      
 
-        private void floaterMoveLeft_Click(object sender, RoutedEventArgs e)
-        {
-            if(agendaTree.SelectedNode != null && agendaTree.SelectedNode.Parent != null)
-            {
-                forms.TreeNodeCollection collection = null;
-                if (agendaTree.SelectedNode.Parent.Parent == null)
-                {
-                    collection = agendaTree.Nodes;
-                }
-                else
-                {
-                    collection = agendaTree.SelectedNode.Parent.Parent.Nodes;
-                }
-                MoveLeft(agendaTree.SelectedNode,collection);
-            }
-        }
 
         private void floaterMoveUp_Click(object sender, RoutedEventArgs e)
         {
-           
-            if(agendaTree.SelectedNode != null &&  agendaTree.SelectedNode.Index > 0)
+
+            forms.TreeNodeCollection col;
+            forms.TreeNode pivot;
+
+            if (agendaTree.SelectedNode.Index > 0)
+                pivot = agendaTree.SelectedNode.PrevNode;
+            else
             {
-                forms.TreeNodeCollection collection = null;
-                if (agendaTree.SelectedNode.Parent == null)
+                pivot = agendaTree.SelectedNode.Parent;
+            }
+
+            if (agendaTree.SelectedNode.Parent == null)
+            {
+                //its a root node the collection is the tree nodes
+                col = agendaTree.Nodes;
+            }
+            else if (agendaTree.SelectedNode.Parent == pivot)
+            {
+                if (pivot.Parent != null)
                 {
-                    collection = agendaTree.Nodes;
+                    col = pivot.Parent.Nodes;
                 }
                 else
-                {
-                    collection = agendaTree.SelectedNode.Parent.Nodes;
-                }
-
-                MoveUp(agendaTree.SelectedNode, agendaTree.SelectedNode.PrevNode, collection);
+                    col = agendaTree.Nodes;
 
             }
+            else
+            {
+                col = agendaTree.SelectedNode.Parent.Nodes;
+            }
+
+
+
+
+            MoveUp(agendaTree.SelectedNode, pivot, col);
         }
 
         private void floaterMoveDown_Click(object sender, RoutedEventArgs e)
         {
-            if(agendaTree.SelectedNode != null)
+
+            forms.TreeNodeCollection col;
+            forms.TreeNode pivot;
+
+            if(agendaTree.SelectedNode.NextNode != null)
             {
-                forms.TreeNodeCollection collection = null;
+                pivot = agendaTree.SelectedNode.NextNode;
                 if(agendaTree.SelectedNode.Parent == null)
                 {
-                    collection = agendaTree.Nodes;
+                    col = agendaTree.Nodes;
                 }
                 else
                 {
-                    collection = agendaTree.SelectedNode.Parent.Nodes;
+                    col = agendaTree.SelectedNode.Parent.Nodes;
                 }
-
-                MoveDown(agendaTree.SelectedNode, agendaTree.SelectedNode.NextNode, collection);
+                
             }
+            else
+            {
+                if (agendaTree.SelectedNode.Parent == null)
+                {
+                    col = agendaTree.Nodes;
+                    if(agendaTree.SelectedNode.Parent == null && agendaTree.SelectedNode.NextNode == null)
+                    {
+                        return; //you are at the bottom
+                    }
+                    else
+                    {
+                        pivot = agendaTree.SelectedNode.Parent.NextNode;
+
+                    }
+                }
+                else
+                {
+                    col = agendaTree.SelectedNode.Parent.Nodes;
+                    pivot = agendaTree.SelectedNode.Parent.NextNode;
+                }
+            }
+            
+            MoveDown(agendaTree.SelectedNode, pivot, col);
         }
 
         private void MoveUp(forms.TreeNode moving, forms.TreeNode pivot, forms.TreeNodeCollection collection)
@@ -613,30 +589,38 @@ namespace OGV2P.AgendaModule.Views
                 pivot.Remove();
                 collection.Insert(moving.Index + 1, pivot);
             }
+
+            else
+            {
+                if(moving.Parent == pivot)
+                {
+                    moving.Remove();
+                    collection.Add(moving);
+                }
+            }
+            moving.EnsureVisible();
         }
+
 
         private void MoveDown(forms.TreeNode moving, forms.TreeNode pivot, forms.TreeNodeCollection collection)
         {
-            if (moving.Index < collection.Count - 1)
+
+            if (moving.Parent == pivot)
             {
                 moving.Remove();
-                collection.Insert(pivot.Index + 1, moving);
-                agendaTree.SelectedNode = moving;
+                collection.Add(moving);
             }
+            else
+            {
+                var temp = moving;
+                pivot.Remove();
+                collection.Insert(moving.Index - 1, pivot);
+            }
+
+            moving.EnsureVisible();
         }
 
-        private void MoveLeft(forms.TreeNode moving, forms.TreeNodeCollection colleciton)
-        {
-
-            int index = moving.Parent.Index;
-            moving.Remove();
-            colleciton.Insert(index + 1, moving);
-        }
-
-        private void MoveRight(forms.TreeNode moving, forms.TreeNodeCollection collection)
-        {
-
-        }
+    
 
         private void agendaTree_KeyDown(object sender, forms.KeyEventArgs e)
         {
@@ -644,11 +628,11 @@ namespace OGV2P.AgendaModule.Views
             {
                 case forms.Keys.Enter:
                     _sessionService.Stamp();
-                    MarkItemStamped();
+                    MarkItemStamped(agendaTree.SelectedNode);
                     break;
                 case forms.Keys.Space:
                     _sessionService.Stamp();
-                    MarkItemStamped();
+                    MarkItemStamped(agendaTree.SelectedNode);
                     break;
 
             }
@@ -763,7 +747,7 @@ namespace OGV2P.AgendaModule.Views
         private void agendaTree_NodeMouseDoubleClick(object sender, forms.TreeNodeMouseClickEventArgs e)
         {
             _sessionService.Stamp();
-            MarkItemStamped();
+            MarkItemStamped(agendaTree.SelectedNode);
             e.Node.Expand();
         }
 
