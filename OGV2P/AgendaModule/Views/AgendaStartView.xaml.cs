@@ -282,6 +282,13 @@ namespace OGV2P.AgendaModule.Views
 
         private void Insert_Click(object sender, EventArgs e)
         {
+            InsertAnItem(agendaTree.SelectedNode.Nodes);
+
+        }
+
+        private void InsertAnItem(forms.TreeNodeCollection collection)
+        {
+            
             //build the context menu
             _docMenu = new System.Windows.Forms.ContextMenuStrip();
             forms.ToolStripMenuItem stamp = new forms.ToolStripMenuItem("Stamp");
@@ -290,34 +297,49 @@ namespace OGV2P.AgendaModule.Views
             unstamp.Click += Unstamp_Click;
             forms.ToolStripMenuItem insert = new forms.ToolStripMenuItem("Insert Item");
             insert.Click += Insert_Click;
+            forms.ToolStripMenuItem delete = new forms.ToolStripMenuItem("Delete Item");
+            delete.Click += Delete_Click;
 
             _docMenu.Items.Add(insert);
             _docMenu.Items.Add(stamp);
             _docMenu.Items.Add(unstamp);
-            
+            _docMenu.Items.Add(delete);
+
             //build up the item and the visual node
             Item item = new Infrastructure.Models.Item() { Title = "Please add a title..." };
             item.ID = _currentMeeting.NextID().ToString();
             forms.TreeNode tn = new forms.TreeNode() { Text = item.Title, ToolTipText = item.Title };
-            tn.Name = item.ID.ToString(); ;
-           
+            tn.Name = item.ID.ToString(); 
+
 
             //add the context menu
             tn.ContextMenuStrip = _docMenu;
-            
+
             //add the node to the data source
-            _currentMeeting.AddNode(item);
-            agendaTree.SelectedNode.Nodes.Add(tn);
+            _currentMeeting.AddNode(item, _currentMeeting.MeetingAgenda.Items);
+            collection.Add(tn);
+           
 
             if (tn.Parent != null)
                 tn.Parent.Expand();
 
-            agendaTree.SelectedNode = tn;
-
             txtTitle.Focus();
-            txtTitle.SelectAll();         
+            txtTitle.SelectAll();
+
+            agendaTree.SelectedNode = tn;
+            _currentMeeting.SelectedItem = item;
 
         }
+
+        private void Delete_Click(object sender, EventArgs e)
+        {
+            var node = agendaTree.SelectedNode;
+            Item i = _currentMeeting.FindItem(node.Name);
+            node.Remove();
+            
+        }
+
+       
 
         private void _sessionService_RaiseStamped(System.TimeSpan sessionTime)
         {
@@ -415,6 +437,8 @@ namespace OGV2P.AgendaModule.Views
         {
             forms.TreeNode selectedNode = ((forms.TreeView)sender).SelectedNode;
             _currentMeeting.SelectedItem = _currentMeeting.FindItem(selectedNode.Name);
+            txtTitle.Focus();
+            FocusManager.SetFocusedElement(host, txtTitle);
           
           
         }
@@ -446,6 +470,7 @@ namespace OGV2P.AgendaModule.Views
             {
                 string newTitle = txtTitle.Text;
                 agendaTree.SelectedNode.Text = newTitle;
+                agendaTree.SelectedNode.ToolTipText = txtDescription.Text;
                 _currentMeeting.SelectedItem.Title = newTitle;
                 _currentMeeting.SelectedItem.Description = txtDescription.Text;
                 if(agendaTree.SelectedNode.ImageKey == "stamped")
@@ -639,20 +664,12 @@ namespace OGV2P.AgendaModule.Views
 
         }
 
-        private void agendaCommandDropDown_Click(object sender, RoutedEventArgs e)
-        {
-             if (agendaCommandDropDown.IsOpen)
-                agendaCommandDropDown.IsOpen = false;
-            else
-                agendaCommandDropDown.IsOpen = true;
-        }
-
+     
 
         private void GetAgendaFromFile_Click(object sender, RoutedEventArgs e)
         {
             try
             {
-                agendaCommandDropDown.IsOpen = false;
 
                 forms.OpenFileDialog dg = new forms.OpenFileDialog();
                 dg.DefaultExt = ".xml";
@@ -717,7 +734,6 @@ namespace OGV2P.AgendaModule.Views
                 if (QuestionUserAboutAgenda() == true)
                 {
 
-                    agendaCommandDropDown.IsOpen = false;
 
                     GetAgendaFileDialog dg = new GetAgendaFileDialog(_user);
                     dg.ShowDialog();
@@ -777,11 +793,24 @@ namespace OGV2P.AgendaModule.Views
             catch (Exception ex)
             {
 
-                Xceed.Wpf.Toolkit.MessageBox.Show(string.Format("An error occured while trying to save the agenda file to server.  Error: {0}", ex.Message));
+                Xceed.Wpf.Toolkit.MessageBox.Show(string.Format("An error occurred while trying to save the agenda file to server.  Error: {0}", ex.Message));
             }
           
         }
 
-      
+        private void AddAgenadaItem_click(object sender, RoutedEventArgs e)
+        {
+            InsertAnItem(agendaTree.Nodes);
+        }
+
+        private void txtTitle_GotFocus(object sender, RoutedEventArgs e)
+        {
+            txtTitle.SelectAll();
+        }
+
+        private void txtTitle_MouseDown(object sender, MouseButtonEventArgs e)
+        {
+            txtTitle.SelectAll();
+        }
     }
 }

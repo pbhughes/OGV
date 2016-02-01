@@ -3,6 +3,7 @@ using Infrastructure.Models;
 using System.Windows.Controls;
 using forms = System.Windows.Forms;
 using System.Deployment;
+using System.Collections.Generic;
 
 namespace Infrastructure.Interfaces
 {
@@ -21,6 +22,7 @@ namespace Infrastructure.Interfaces
         event System.ComponentModel.PropertyChangedEventHandler PropertyChanged;
         Item SelectedItem { get; set; }
         Item FindItem(string id);
+        void RemoveItem(string id);
         string ClientPathLive { get; set; }
         string ClientPathLiveStream { get; set; }
         int VideoWidth { get; set; }
@@ -29,7 +31,7 @@ namespace Infrastructure.Interfaces
         string LandingPage { get; set; }
         string PublishingPoint { get;  }
         string LocalFile { get; set; }
-        void  AddNode(Item item);
+        void  AddNode(Item item, List<Item> collection);
         long WriteAgendaFile(forms.TreeView agendaTree);
         long BytesWritten { get; set; }
         string LocalAgendaFileName { get; set; }

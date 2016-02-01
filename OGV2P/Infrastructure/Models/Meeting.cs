@@ -509,18 +509,9 @@ namespace Infrastructure.Models
                 PropertyChanged(this, new PropertyChangedEventArgs(name));
         }
 
-        public void AddNode(Item item)
+        public void AddNode(Item item, List<Item> collection)
         {
-            List<Item> collection;
-            if(SelectedItem == null)
-            {
-                collection = SelectedItem.Items;
-            }
-            else
-            {
-                collection = MeetingAgenda.Items;
-            }
-
+           
             if (collection == null)
                 collection = new List<Item>();
 
@@ -611,6 +602,15 @@ namespace Infrastructure.Models
         public int NextID()
         {
             return _lastID++;
+        }
+
+        public void RemoveItem(string id)
+        {
+            var item = FindItem(id);
+            if (item.Parent == null)
+                MeetingAgenda.Items.Remove(item);
+            else
+                item.Parent.Items.Remove(item);
         }
     }
 }
