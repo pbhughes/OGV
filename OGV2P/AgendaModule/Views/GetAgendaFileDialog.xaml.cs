@@ -158,9 +158,10 @@ namespace OGV2P.AgendaModule.Views
             catch (Exception ex)
             {
                 var msgBox = new Xceed.Wpf.Toolkit.MessageBox();
-                msgBox.Content = ex.Message;
-                msgBox.ShowDialog();
+                msgBox.Text = ex.Message;
                 msgBox.Caption = "Error getting the file list";
+                msgBox.ShowDialog();
+                
                 ex.WriteToLogFile();
             }
             finally

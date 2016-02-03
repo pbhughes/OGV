@@ -44,6 +44,9 @@ namespace OGV2P.AgendaModule.Views
             agendaTree.MouseUp += agendaTree_MouseUp;
             agendaTree.NodeMouseDoubleClick += agendaTree_NodeMouseDoubleClick;
             agendaTree.BeforeSelect += AgendaTree_BeforeSelect;
+            agendaTree.HideSelection = false;
+            agendaTree.DrawMode = System.Windows.Forms.TreeViewDrawMode.OwnerDrawAll;
+            agendaTree.DrawNode += AgendaTree_DrawNode;
             
 
             agendaTree.AllowDrop = true;
@@ -101,13 +104,43 @@ namespace OGV2P.AgendaModule.Views
             _currentMeeting = meeting;
             _sessionService = sessionService;
             _user = user;
-            _sessionService.RaiseStamped += _sessionService_RaiseStamped;
             _currentMeeting.RaiseMeetingSetEvent += _currentMeeting_RaiseMeetingSetEvent;
 
             DataContext = _currentMeeting;
 
             winFormHost.Child.Controls.Add(agendaTree);
            
+        }
+
+        private void AgendaTree_DrawNode(object sender, forms.DrawTreeNodeEventArgs e)
+        {
+            Brush redBrush = Brushes.Red;
+            Brush greenBrush = Brushes.Green;
+
+            if (e.Node.IsSelected)
+            {
+                if (agendaTree.Focused)
+                    e.Graphics.FillRectangle(greenBrush, e.Bounds);
+                else
+                    e.Graphics.FillRectangle(redBrush, e.Bounds);
+            }
+            else
+            {
+                Item i = _currentMeeting.FindItem(e.Node.Name);
+                if (i.TimeStamp == TimeSpan.Zero)
+                    e.Graphics.FillRectangle(Brushes.White, e.Bounds);
+                else
+                    e.Graphics.FillRectangle(Brushes.CadetBlue, e.Bounds);
+            }
+                
+
+            e.Graphics.DrawRectangle(SystemPens.Control, e.Bounds);
+
+            forms.TextRenderer.DrawText(e.Graphics,
+                                   e.Node.Text,
+                                   e.Node.TreeView.Font,
+                                   e.Node.Bounds,
+                                   e.Node.ForeColor);
         }
 
         private void AgendaTree_BeforeSelect(object sender, forms.TreeViewCancelEventArgs e)
@@ -341,13 +374,7 @@ namespace OGV2P.AgendaModule.Views
 
        
 
-        private void _sessionService_RaiseStamped(System.TimeSpan sessionTime)
-        {
-           
-           
-
-        }
-
+      
         private void _sessionService_ClearStamp()
         {
             UnstampItem(agendaTree.SelectedNode);
@@ -371,7 +398,7 @@ namespace OGV2P.AgendaModule.Views
             string newTitle = txtTitle.Text;
             targetNode.Text = newTitle;
             targetNode.BackColor = Color.LightBlue;
-
+            
             if (advance)
             {
 
@@ -437,10 +464,7 @@ namespace OGV2P.AgendaModule.Views
         {
             forms.TreeNode selectedNode = ((forms.TreeView)sender).SelectedNode;
             _currentMeeting.SelectedItem = _currentMeeting.FindItem(selectedNode.Name);
-            txtTitle.Focus();
-            FocusManager.SetFocusedElement(host, txtTitle);
-          
-          
+         
         }
 
       
@@ -556,9 +580,6 @@ namespace OGV2P.AgendaModule.Views
                 col = agendaTree.SelectedNode.Parent.Nodes;
             }
 
-
-
-
             MoveUp(agendaTree.SelectedNode, pivot, col);
         }
 
@@ -604,6 +625,8 @@ namespace OGV2P.AgendaModule.Views
             }
             
             MoveDown(agendaTree.SelectedNode, pivot, col);
+
+            
         }
 
         private void MoveUp(forms.TreeNode moving, forms.TreeNode pivot, forms.TreeNodeCollection collection)
@@ -624,6 +647,7 @@ namespace OGV2P.AgendaModule.Views
                 }
             }
             moving.EnsureVisible();
+            
         }
 
 
