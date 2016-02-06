@@ -42,5 +42,8 @@ namespace Infrastructure.Interfaces
         string LeftStatus { get; set; }
         string RightStatus { get; set; }
         string GetAgendaXML();
+        long StartingHash { get; set; }
+        long EndingHash { get; }
+        bool HasChanged { get; }
     }
 }

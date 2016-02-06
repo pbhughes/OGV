@@ -7,7 +7,9 @@
         Icon="OpenGOV.ico"
         WindowStartupLocation="Manual"
         Left="10" Top="10"
-        ResizeMode="CanResizeWithGrip" MinHeight="800" MinWidth="1024">
+        ResizeMode="CanResizeWithGrip"
+       Closing="Window_Closing"
+        MinHeight="800" MinWidth="1024">
     <Window.Resources>
 
     </Window.Resources>

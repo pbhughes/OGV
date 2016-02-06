@@ -12,16 +12,19 @@ using System.Collections.Generic;
 using System.Threading.Tasks;
 using System.Deployment.Application;
 using Xceed.Wpf.Toolkit;
-
+using System.Windows;
+using Infrastructure.Extensions;
+using System.Text;
 
 namespace Infrastructure.Models
 {
 
     public class Meeting : INotifyPropertyChanged, IMeeting
     {
-        private int _orginalHash;
         private ISession _sessionService;
         private IUser _user;
+        private forms.TreeView _agendaTree;
+
 
         private bool _isBusy;
         public bool IsBusy
@@ -294,6 +297,40 @@ namespace Infrastructure.Models
             }
         }
 
+        private long _startingHash;
+        public long StartingHash
+        {
+            get
+            {
+                return _startingHash;
+            }
+
+            set
+            {
+                _startingHash = value;
+                OnPropertyChanged("StartingHash");
+            }
+        }
+
+        public long EndingHash
+        {
+            get
+            {
+                return this.ToString().GetHashCode();
+                
+            }
+
+           
+        }
+
+        public bool HasChanged
+        {
+            get
+            {
+                return StartingHash != EndingHash;
+            }
+        }
+
         public event MeetingSetEventHandler RaiseMeetingSetEvent;
 
         private void OnRaiseMeetingSetEvent()
@@ -377,7 +414,7 @@ namespace Infrastructure.Models
             _clearStampsCommand = new DelegateCommand<forms.TreeView>(OnClearStamps, CanClearStamps);
             
             _agenda = new Agenda();
-          
+            StartingHash = this.ToString().GetHashCode();
         }
 
         private bool CanClearStamps(forms.TreeView arg)
@@ -449,6 +486,8 @@ namespace Infrastructure.Models
 
         public void ParseAgendaFile(forms.TreeView agendaTree, string allText)
         {
+            
+
             XDocument xDoc = XDocument.Parse(allText);
             MeetingName = xDoc.Element("meeting").Element("meetingname").Value;
 
@@ -483,6 +522,7 @@ namespace Infrastructure.Models
             }
 
             ClearStampsCommand.RaiseCanExecuteChanged();
+            StartingHash = this.ToString().GetHashCode();
             OnRaiseMeetingSetEvent();
             
         }
@@ -555,18 +595,35 @@ namespace Infrastructure.Models
             XDocument xdoc = GetAgendaXmlDoc();
             return xdoc.ToString();
         }
+
         public long WriteAgendaFile(forms.TreeView agendaTree)
         {
-            XDocument xdoc = GetAgendaXmlDoc();
-
-            foreach(forms.TreeNode tn in agendaTree.Nodes)
+            try
             {
-                XElement root = ProcessNodes(tn);
-                xdoc.Element("meeting").Element("agenda").Element("items").Add(root);
+                _agendaTree = agendaTree;
+
+                XDocument xdoc = GetAgendaXmlDoc();
+
+                foreach (forms.TreeNode tn in agendaTree.Nodes)
+                {
+                    XElement root = ProcessNodes(tn);
+                    xdoc.Element("meeting").Element("agenda").Element("items").Add(root);
+                }
+                xdoc.Save(_localAgendaFileName);
+                FileInfo fInfo = new FileInfo(_localAgendaFileName);
+
+                string xml = GetAgendaXML();
+                return fInfo.Length;
+
             }
-            xdoc.Save(_localAgendaFileName);
-            FileInfo fInfo = new FileInfo(_localAgendaFileName);
-            return fInfo.Length;
+            catch (Exception ex)
+            {
+                throw;
+            }
+
+          
+          
+
         }
 
         private XElement ProcessNodes(forms.TreeNode tn)
@@ -611,6 +668,17 @@ namespace Infrastructure.Models
                 MeetingAgenda.Items.Remove(item);
             else
                 item.Parent.Items.Remove(item);
+        }
+
+        public override string ToString()
+        {
+            StringBuilder sb = new StringBuilder(MeetingName + MeetingDate.ToString());
+            foreach(Item n in MeetingAgenda.Items)
+            {
+                sb.Append(n.ToString());
+            }
+
+            return sb.ToString();
         }
     }
 }

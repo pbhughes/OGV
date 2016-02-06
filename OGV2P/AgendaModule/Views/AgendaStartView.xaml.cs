@@ -362,6 +362,18 @@ namespace OGV2P.AgendaModule.Views
             agendaTree.SelectedNode = tn;
             _currentMeeting.SelectedItem = item;
 
+            Item temp = _currentMeeting.SelectedItem;
+            ItemEditor ie = new ItemEditor(_container, _currentMeeting);
+            ie.ShowDialog();
+            if(ie.DialogResult.HasValue && ie.DialogResult.Value == true)
+            {
+                tn.Text = _currentMeeting.SelectedItem.Title;
+            }
+            else
+            {
+                ;//forget it
+            }
+
         }
 
         private void Delete_Click(object sender, EventArgs e)
@@ -768,6 +780,7 @@ namespace OGV2P.AgendaModule.Views
                         XDocument xDoc = XDocument.Parse(xml);
                         xDoc.Save(_currentMeeting.LocalAgendaFileName);
                         _currentMeeting.ParseAgendaFile(agendaTree, xml);
+                        
                     }
 
                 }

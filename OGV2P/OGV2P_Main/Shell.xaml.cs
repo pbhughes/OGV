@@ -157,5 +157,40 @@ namespace OGV2P
         {
             Process.Start(forms.Application.LocalUserAppDataPath);
         }
+
+        private void Window_Closed(object sender, EventArgs e)
+        {
+            
+        }
+
+        private void Window_Closing(object sender, System.ComponentModel.CancelEventArgs e)
+        {
+            if(_meeting.IsBusy || _meeting.HasChanged)
+            {
+                if (_meeting.IsBusy)
+                {
+                    if (Xceed.Wpf.Toolkit.MessageBox.Show(
+                        "A recording is in progress.  Continue to close?",
+                        "OpenGoVideo", MessageBoxButton.YesNo, MessageBoxImage.Warning) == MessageBoxResult.No)
+                    {
+                        e.Cancel = true;
+                        return;
+                    }
+                }
+
+                if (_meeting.HasChanged)
+                {
+                    if (Xceed.Wpf.Toolkit.MessageBox.Show(
+                        "The agenda file changes if you close without saving you will lose them.  Do you want to Continue?",
+                        "OpenGoVideo", MessageBoxButton.YesNo, MessageBoxImage.Warning) == MessageBoxResult.No)
+                    {
+                        e.Cancel = true;
+                    }
+                }
+            }
+
+
+          
+        }
     }
 }

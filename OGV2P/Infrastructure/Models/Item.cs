@@ -68,6 +68,21 @@ namespace Infrastructure.Models
             set { _items = value; OnPropertyChanged("Items"); }
         }
 
+        public override string ToString()
+        {
+            StringBuilder sb = new StringBuilder(Title + Description);
+            if(Items != null)
+            {
+                foreach (Item n in Items)
+                {
+                    sb.Append(n.ToString());
+                }
+            }
+            
+
+            return sb.ToString();
+        }
+
         #region INotifyPropertyChanged
 
         public event PropertyChangedEventHandler PropertyChanged;

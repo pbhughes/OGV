@@ -2,80 +2,14 @@
   <org>
     <name>City Council</name>
     <state>RI</state>
-    <city>Saunderstown</city>
+    <city>Test1</city>
     <board>City Council</board>
-    <filelocation>c:\OpenGovideo</filelocation>
-    <offset>2</offset>
-    <livestream>
-      <publishpoint>http://higgles.mytestserver.com/</publishpoint>
-      <username>joe1</username>
-      <password>password</password>
-    </livestream>
     <ftpserver>
       <host>ftp.coreyware.com</host>
-      <dir>test</dir>
-      <username>barkley</username>
-      <password>mep-005a</password>
+      <dir></dir>
+      <username>RI_Test1</username>
+      <password>RI_test1</password>
       <login>false</login>
-    </ftpserver>
-  </org>
-  <org>
-    <name>Newport City Council</name>
-    <state>RI</state>
-    <city>Newport</city>
-    <board>City Council</board>
-    <filelocation>c:\OpenGovideo</filelocation>
-    <offset>2</offset>
-    <livestream>
-      <publishpoint>http://higgles.mytestserver.com/</publishpoint>
-      <username>joe1</username>
-      <password>password</password>
-    </livestream>
-    <ftpserver>
-      <host>ftp.coreyware.com</host>
-      <dir>test</dir>
-      <username>barkley</username>
-      <password>mep-005a</password>
-      <login>true</login>
-    </ftpserver>
-  </org>
-  <org>
-    <name>Pawtucket Pensions</name>
-    <state>RI</state>
-    <city>Pawtucket</city>
-    <board>Mayor</board>
-    <filelocation>c:\OpenGovideo</filelocation>
-    <offset>2</offset>
-    <livestream>
-      <publishpoint>http://higgles.mytestserver.com/</publishpoint>
-      <username>joe1</username>
-      <password>password</password>
-    </livestream>
-    <ftpserver>
-      <host>ftp.coreyware.com</host>
-      <dir>test</dir>
-      <username>barkley</username>
-      <password>mep-005a</password>
-      <login>false</login>
-    </ftpserver>
-  </org>
-  <org>
-    <name>East Prov Council</name>
-    <state>RI</state>
-    <city>East Providence</city>
-    <board>City Council</board>
-    <filelocation>c:\OpenGovideo</filelocation>
-    <offset>2</offset>
-    <livestream>
-      <publishpoint>http://higgles.mytestserver.com/</publishpoint>
-      <username>joe1</username>
-      <password>password</password>
-    </livestream>
-    <ftpserver>
-      <host>ftp.coreyware.com</host>
-      <dir>test</dir>
-      <username>barkley</username>
-      <password>mep-005a</password>
     </ftpserver>
   </org>
 </organizations>
