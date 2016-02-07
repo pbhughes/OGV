@@ -18,6 +18,17 @@ namespace Infrastructure.Models
             set { _items = value; OnPropertyChanged("Items"); }
         }
 
+        public void UpdateHash()
+        {
+            if(Items != null)
+            {
+                foreach(Item n in Items)
+                {
+                    n.UpdateHash();
+                }
+            }
+        }
+
         public Agenda()
         {
             _items = new List<Item>();

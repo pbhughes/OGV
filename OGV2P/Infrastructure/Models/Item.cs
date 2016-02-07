@@ -68,6 +68,30 @@ namespace Infrastructure.Models
             set { _items = value; OnPropertyChanged("Items"); }
         }
 
+        long _startingHash = 0;
+        public long StartingHash
+        {
+            get
+            {
+                return _startingHash;
+            }
+
+            set
+            {
+                _startingHash = value;
+                OnPropertyChanged("StartingHash");
+            }
+        }
+
+        public bool HasChanges
+        {
+            get
+            {
+                long currentHash = (Title + Description).GetHashCode();
+                return (currentHash == StartingHash);
+            }
+        }
+
         public override string ToString()
         {
             StringBuilder sb = new StringBuilder(Title + Description);
@@ -130,6 +154,21 @@ namespace Infrastructure.Models
             return string.Format("[{0}]{1}", stamp, source);
         }
 
-       
+        public void UpdateHash()
+        {
+            StartingHash = (Title + Description).GetHashCode();
+            if(Items != null)
+            {
+                foreach(Item n in Items)
+                {
+                    n.UpdateHash();
+                }
+            }
+        }
+
+        public Item()
+        {
+            StartingHash = 0;
+        }
     }
 }

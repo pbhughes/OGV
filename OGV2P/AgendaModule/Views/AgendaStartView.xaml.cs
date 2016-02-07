@@ -55,6 +55,7 @@ namespace OGV2P.AgendaModule.Views
             agendaTree.HotTracking = true;
             agendaTree.BorderStyle = System.Windows.Forms.BorderStyle.None;
             agendaTree.Dock = System.Windows.Forms.DockStyle.Fill;
+            agendaTree.ShowRootLines = true;
 
             meeting.RaiseMeetingItemChanged += Meeting_RaiseMeetingItemChanged;
 
@@ -532,6 +533,7 @@ namespace OGV2P.AgendaModule.Views
         private void Unstamp_Click(object sender, EventArgs e)
         {
             _currentMeeting.FindItem(agendaTree.SelectedNode.Name).TimeStamp = TimeSpan.Zero;
+            UnstampItem(agendaTree.SelectedNode);
         }
 
         private void agendaTree_MouseUp(object sender, forms.MouseEventArgs e)
@@ -593,6 +595,7 @@ namespace OGV2P.AgendaModule.Views
             }
 
             MoveUp(agendaTree.SelectedNode, pivot, col);
+            agendaTree.Focus();
         }
 
         private void floaterMoveDown_Click(object sender, RoutedEventArgs e)
@@ -637,7 +640,7 @@ namespace OGV2P.AgendaModule.Views
             }
             
             MoveDown(agendaTree.SelectedNode, pivot, col);
-
+            agendaTree.Focus();
             
         }
 
@@ -815,6 +818,7 @@ namespace OGV2P.AgendaModule.Views
                 if(result == MessageBoxResult.Yes)
                 {
                     long bytesWritten = _currentMeeting.WriteAgendaFile(agendaTree);
+                    
 
                     SaveAgendaFileDialog dg = new SaveAgendaFileDialog(_container);
 

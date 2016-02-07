@@ -69,8 +69,6 @@ namespace Infrastructure.Models
             set { _selectedItem = value; OnPropertyChanged("SelectedItem"); }
         }
 
-     
-
         private DelegateCommand<forms.TreeView> _clearStampsCommand;
         public DelegateCommand<forms.TreeView> ClearStampsCommand
         {
@@ -78,7 +76,6 @@ namespace Infrastructure.Models
             set { _clearStampsCommand = value; }
         }
 
-      
         private string _fileName;
 
         public string FileName
@@ -362,6 +359,7 @@ namespace Infrastructure.Models
                     x.Title = (item.Element("title") != null) ? item.Element("title").Value : null;
                     x.Description = (item.Element("desc") != null) ? item.Element("desc").Value : null;
                     x.TimeStamp = (item.Element("timestamp") != null) ? TimeSpan.Parse(item.Element("timestamp").Value) : TimeSpan.Zero;
+                    x.UpdateHash();
                     _agenda.Items.Add(x);
                     string assingedText = (x.Title.Length < 150) ? x.Title : x.Title.Substring(0, 150);
                     forms.TreeNode xn = new forms.TreeNode() { Text = assingedText , ToolTipText = x.Title };
@@ -482,8 +480,6 @@ namespace Infrastructure.Models
             return status;
         }
 
-     
-
         public void ParseAgendaFile(forms.TreeView agendaTree, string allText)
         {
             
@@ -526,8 +522,6 @@ namespace Infrastructure.Models
             OnRaiseMeetingSetEvent();
             
         }
-
-      
 
         private void _sessionService_RaiseStamped(TimeSpan sessionTime)
         {
@@ -611,8 +605,9 @@ namespace Infrastructure.Models
                 }
                 xdoc.Save(_localAgendaFileName);
                 FileInfo fInfo = new FileInfo(_localAgendaFileName);
-
+                MeetingAgenda.UpdateHash();
                 string xml = GetAgendaXML();
+                StartingHash = xml.GetHashCode();
                 return fInfo.Length;
 
             }

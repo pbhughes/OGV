@@ -14,7 +14,9 @@ namespace Infrastructure.Interfaces
         Item Parent { get; set; }
         TimeSpan TimeStamp { get; set; }
         string Title { get; set; }
-       
+        long StartingHash { get; set; }
+        bool HasChanges { get; }
+        void UpdateHash();
         event ItemChangedEventHandler ItemChangedEvent;
         event PropertyChangedEventHandler PropertyChanged;
         
