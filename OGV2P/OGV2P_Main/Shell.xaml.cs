@@ -28,7 +28,7 @@ namespace OGV2P
     /// <summary>
     /// Interaction logic for MainWindow.xaml
     /// </summary>
-    public partial class Shell : Window
+    public partial class Shell : Window, IDisposable
     {
         IUnityContainer _container;
         IMeeting _meeting;
@@ -191,6 +191,15 @@ namespace OGV2P
 
 
           
+        }
+
+        public void Dispose()
+        {
+            if (cpuCounter != null)
+                cpuCounter.Dispose();
+
+            if (cpuReadingTimer != null)
+                cpuReadingTimer.Dispose();
         }
     }
 }

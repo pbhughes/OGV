@@ -88,11 +88,15 @@ namespace OGV2P.Admin.Views
 
         async void ServicesView_Loaded(object sender, RoutedEventArgs e)
         {
-            Meeting = _container.Resolve<IMeeting>();
-            txtPublishingPoint.Text = Meeting.PublishingPoint;
-            txtUrl.Text = Meeting.LandingPage;
-            txtLocalFile.Text = Meeting.LocalFile;
-            txtAppVersion.Text = _meeting.ApplicationVersion;
+            await Task.Run(() =>
+            {
+                Meeting = _container.Resolve<IMeeting>();
+                txtPublishingPoint.Text = Meeting.PublishingPoint;
+                txtUrl.Text = Meeting.LandingPage;
+                txtLocalFile.Text = Meeting.LocalFile;
+                txtAppVersion.Text = _meeting.ApplicationVersion;
+            });
+         
 
         }
 
@@ -128,7 +132,9 @@ namespace OGV2P.Admin.Views
         private void Button_Click(object sender, RoutedEventArgs e)
         {
             if (txtUrl.Text == null || txtUrl.Text == string.Empty)
+#pragma warning disable CS0642 // Possible mistaken empty statement
                 ;//do nothing
+#pragma warning restore CS0642 // Possible mistaken empty statement
             else
                 System.Diagnostics.Process.Start(txtUrl.Text);
         }

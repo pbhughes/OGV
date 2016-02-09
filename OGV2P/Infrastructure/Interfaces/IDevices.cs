@@ -11,9 +11,6 @@ namespace Infrastructure.Interfaces
         List<string> Cameras { get; set; }
         List<string> Microphones { get; set; }
         DelegateCommand GetFolders { get; }
-        DelegateCommand GetRecorders { get;  }
-        DelegateCommand StartRecording { get;  }
-        DelegateCommand StopRecording { get;  }
         Guid CurrentSessionGuid { get; }
     }
 }

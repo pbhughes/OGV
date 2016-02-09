@@ -176,7 +176,9 @@ namespace OGV2P.Admin.Views
 
 
                 //get the application settings
+#pragma warning disable CS0618 // Type or member is obsolete
                 _settings = ConfigurationSettings.AppSettings;
+#pragma warning restore CS0618 // Type or member is obsolete
 
                 axRControl = new AxRTMPActiveX.AxRTMPActiveX();
 
@@ -255,11 +257,11 @@ namespace OGV2P.Admin.Views
                 //axRControl.StartConnect();
                 axRControl.StartPreview();
             }
-            catch(AccessViolationException aex)
+            catch(AccessViolationException )
             {
                 ;//ignore
             }
-            catch (Exception ex)
+            catch (Exception )
             {
 
                 throw;
@@ -395,7 +397,7 @@ namespace OGV2P.Admin.Views
             }
             catch (Exception ex)
             {
-
+                ex.WriteToLogFile();
                 MessageBox.Show("Unable to find the last audio device used {0}", deviceName);
             }
 
@@ -436,7 +438,7 @@ namespace OGV2P.Admin.Views
             }
             catch (Exception ex)
             {
-
+                ex.WriteToLogFile();
                 MessageBox.Show("Unable to find the last audio device used {0}", deviceName);
             }
 
@@ -519,7 +521,9 @@ namespace OGV2P.Admin.Views
             if (parsed)
             {
                 if (result == 10)
+#pragma warning disable CS0642 // Possible mistaken empty statement
                     ;
+#pragma warning restore CS0642 // Possible mistaken empty statement
                 if (result == 11)
                 {
 
@@ -581,6 +585,7 @@ namespace OGV2P.Admin.Views
             {
                 cmdStartRecording.IsEnabled = true;
                 cmdStopRecording.IsEnabled = false;
+                ex.WriteToLogFile();
                 MessageBox.Show("Error trying to record be sure to choose a valid agenda file" + "-" + axRControl.LastErrorMessage);
             }
         }

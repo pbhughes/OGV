@@ -132,6 +132,10 @@
     <Compile Include="Converters\DoubleToColorConverter.cs" />
     <Compile Include="Converters\InverseBoolConverter.cs" />
     <Compile Include="Converters\VisibilityConverter.cs" />
+    <Compile Include="ExtendedObjects\ExtendedTreeNode.cs" />
+    <Compile Include="ExtendedObjects\ExtendedTreeView.cs">
+      <SubType>Component</SubType>
+    </Compile>
     <Compile Include="Extensions\DateTimeExtensions.cs" />
     <Compile Include="Extensions\ExceptionExtensions.cs" />
     <Compile Include="Extensions\PathExtensions.cs" />
@@ -143,7 +147,6 @@
     <Compile Include="Interfaces\ISession.cs" />
     <Compile Include="Interfaces\IShowActivity.cs" />
     <Compile Include="Interfaces\IUser.cs" />
-    <Compile Include="Models\Agenda.cs" />
     <Compile Include="Models\AgendaSelector.cs" />
     <Compile Include="Models\BoardList.cs" />
     <Compile Include="Models\Boards.cs" />
@@ -179,10 +182,6 @@
     <ProjectReference Include="..\..\..\OGV1\FTPClient\FTPclient.vbproj">
       <Project>{8c7fef6c-2484-46f3-aeb1-1613e313e22c}</Project>
       <Name>FTPclient</Name>
-    </ProjectReference>
-    <ProjectReference Include="..\BuckSoft.Controls.FtpBrowseDialog\BuckSoft.Controls.FtpBrowseDialog.csproj">
-      <Project>{c6122999-cb33-464b-9d10-86ffab7b09f9}</Project>
-      <Name>BuckSoft.Controls.FtpBrowseDialog</Name>
     </ProjectReference>
   </ItemGroup>
   <ItemGroup>

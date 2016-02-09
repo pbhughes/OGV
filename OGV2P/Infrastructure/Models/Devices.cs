@@ -15,8 +15,6 @@ namespace Infrastructure.Models
     {
         private IUser _user;
 
-        private Timer _statusChecknTimer;
-
         private ISession _sessionService;
 
         public ISession SessionService
@@ -47,32 +45,8 @@ namespace Infrastructure.Models
         }
 
 
-        private DelegateCommand _stopRecording;
-        public DelegateCommand StopRecording
-        {
-            get { return _stopRecording; }
-            set { _stopRecording = value; }
-        }
-
-        private bool CanStopRecording()
-        {
-            return true;
-        }
-
-        private async void OnStopRecording()
-        {
-            try
-            {
-                _statusChecknTimer.Stop();
-            }
-            catch (Exception ex)
-            {
-
-                throw;
-            }
-            
-           
-        }
+        
+        
 
         private DelegateCommand _getFolders;
         public DelegateCommand GetFolders
@@ -87,47 +61,7 @@ namespace Infrastructure.Models
         }
 
 
-        private DelegateCommand _startRecording;
-        public DelegateCommand StartRecording
-        {
-            get { return _startRecording; }
-            set { _startRecording = value; }
-        }
-
-        private DelegateCommand _getRecorders;
-        public DelegateCommand GetRecorders
-        {
-            get { return _getRecorders; }
-        }
-
-        private bool CanStartRecording()
-        {
-            bool val = string.IsNullOrEmpty(_sessionService.MeetingName);
-
-            return val;
-
-        }
-
-        private async void OnStartRecording()
-        {
-            try
-            {
-                IsBusy = true;
-            
-            }
-            catch (Exception ex)
-            {
-                
-                throw;
-            }
-            finally
-            {
-                IsBusy = false;
-            }
-
-        }
-
-      
+         
 
         private bool CanGetRecorders()
         {
@@ -137,7 +71,6 @@ namespace Infrastructure.Models
        
         void _sessionService_RaiseMeetingNameSet(object sender, EventArgs e)
         {
-            StartRecording.RaiseCanExecuteChanged();
         }
 
         public Devices(ISession sessionService, IUser user)
@@ -149,9 +82,7 @@ namespace Infrastructure.Models
             Cameras = new List<string>();
             Microphones = new List<string>();
 
-            _startRecording = new DelegateCommand(OnStartRecording, CanStartRecording);
-
-            _stopRecording = new DelegateCommand(OnStopRecording, CanStopRecording);
+          
 
             _sessionService.RaiseMeetingNameSet += _sessionService_RaiseMeetingNameSet;
         }
@@ -165,8 +96,7 @@ namespace Infrastructure.Models
 
         private void OnPropertyChanged(string name)
         {
-            StartRecording.RaiseCanExecuteChanged();
-            
+    
             if (PropertyChanged != null)
                 PropertyChanged(this, new PropertyChangedEventArgs(name));
         }

@@ -5,9 +5,7 @@ using System;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.IO;
-using System.Text;
 using System.Threading.Tasks;
-using Xceed.Wpf.Toolkit;
 
 namespace Infrastructure.Models
 {
@@ -15,9 +13,8 @@ namespace Infrastructure.Models
     {
         private static IBoard _board;
         private static IUser _user;
-        private static BusyIndicator _indicator;
         private string _path;
-        FTPclient _client;
+        private FTPclient _client;
 
         public DelegateCommand GetAgendaFilesCommand { get; set; }
 
@@ -38,6 +35,7 @@ namespace Infrastructure.Models
         }
 
         private string _text;
+
         public string Text
         {
             get
@@ -101,6 +99,7 @@ namespace Infrastructure.Models
         }
 
         private int _percentDone;
+
         public int PercentDone
         {
             get
@@ -148,40 +147,39 @@ namespace Infrastructure.Models
                 fs.Close();
                 Text = File.ReadAllText(_targetFile);
 
-
                 return Text;
             }
-            catch (Exception ex)
+            catch (Exception)
             {
-
                 throw;
             }
-           
         }
 
         private void Client_ReportProgress(int PercentDone)
         {
-            if(PercentDone >= 100)
+            if (PercentDone >= 100)
             {
                 Text = File.ReadAllText(_path);
-               
             }
         }
 
         private static FTPclient GetStorageClient()
         {
-            Uri ftpUrl = new Uri(string.Format("ftp://{0}",_user.SelectedBoard.FtpServer));
+            Uri ftpUrl = new Uri(string.Format("ftp://{0}", _user.SelectedBoard.FtpServer));
 
             var client = new FTPclient(ftpUrl.ToString(), _user.UserID, _user.Password);
-            client.CurrentDirectory = string.Format("/{0}",_user.SelectedBoard.FtpPath);
+            client.CurrentDirectory = string.Format("/{0}", _user.SelectedBoard.FtpPath);
             return client;
         }
 
         public static async Task<AgendaSelector> Create(IUser user)
         {
-            AgendaSelector ags = new AgendaSelector(user);
+            return await Task.Run<AgendaSelector>(() =>
+           {
+               AgendaSelector ags = new AgendaSelector(user);
 
-            return ags;
+               return ags;
+           });
         }
 
         public List<FTPfileInfo> ListAgendaFilesOnServer()
@@ -202,7 +200,7 @@ namespace Infrastructure.Models
         {
             _user = user;
             _board = _user.SelectedBoard;
-            
+
             _client = GetStorageClient();
         }
     }

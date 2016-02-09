@@ -45,7 +45,9 @@ namespace Infrastructure.Extensions
                 }
                 File.AppendAllText(fileName, sb.ToString());
             }
+#pragma warning disable CS0168 // Variable is declared but never used
             catch (Exception exLocal)
+#pragma warning restore CS0168 // Variable is declared but never used
             {
                 MessageBox.Show("Could not write the exception log");
 

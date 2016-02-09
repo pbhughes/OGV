@@ -17,7 +17,6 @@ namespace Infrastructure.Interfaces
         long StartingHash { get; set; }
         bool HasChanges { get; }
         void UpdateHash();
-        event ItemChangedEventHandler ItemChangedEvent;
         event PropertyChangedEventHandler PropertyChanged;
         
     }

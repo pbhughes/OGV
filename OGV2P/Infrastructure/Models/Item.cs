@@ -54,8 +54,8 @@ namespace Infrastructure.Models
                     value.Hours.ToString().PadLeft(2,'0'), 
                     value.Minutes.ToString().PadLeft(2, '0'),
                     value.Seconds.ToString().PadLeft(2, '0'));
-                Title = StampTitle(formatted);
-                OnItemChanged();
+                 Title = StampTitle(formatted);
+           
                 OnPropertyChanged("TimeStamp");
             }
         }
@@ -112,11 +112,10 @@ namespace Infrastructure.Models
         public event PropertyChangedEventHandler PropertyChanged;
 
 
-       
+
         private void OnPropertyChanged(string name)
         {
 
-            OnItemChanged();
             if (PropertyChanged != null)
                 PropertyChanged(this, new PropertyChangedEventArgs(name));
         }
@@ -125,18 +124,8 @@ namespace Infrastructure.Models
 
         #endregion
 
-        #region Item Changed Event Support
 
-        public event ItemChangedEventHandler ItemChangedEvent;
-
-        private void OnItemChanged()
-        {
-            if (ItemChangedEvent != null)
-                ItemChangedEvent(this);
-        }
-        #endregion
-
-        private string StampTitle(string stamp)
+        public string StampTitle(string stamp)
         {
             //see if there is a stamp heading
             string pattern = @"\[\d\d:\d\d:\d\d\]";

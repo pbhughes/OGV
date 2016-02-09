@@ -194,6 +194,10 @@
       <Project>{8c7fef6c-2484-46f3-aeb1-1613e313e22c}</Project>
       <Name>FTPclient</Name>
     </ProjectReference>
+    <ProjectReference Include="..\CustomControls\CustomControls.csproj">
+      <Project>{676e39da-65e5-4c6f-826e-a589bc4fd80a}</Project>
+      <Name>CustomControls</Name>
+    </ProjectReference>
     <ProjectReference Include="..\Infrastructure\Infrastructure.csproj">
       <Project>{c7dba26a-38dc-4e6e-b386-99008004a915}</Project>
       <Name>Infrastructure</Name>

@@ -91,6 +91,7 @@ namespace OGV2P
             }
             catch (Exception exLocal)
             {
+                exLocal.WriteToLogFile();
                 MessageBox.Show("Could not write the exception log");
 
             }

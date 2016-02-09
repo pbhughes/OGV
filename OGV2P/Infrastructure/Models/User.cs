@@ -19,7 +19,6 @@ namespace Infrastructure.Models
 
     public class User : IUser, INotifyPropertyChanged
     {
-        private IUnityContainer _container;
         private ISession _session;
 
         private bool _isReady;
@@ -77,63 +76,66 @@ namespace Infrastructure.Models
 
         private async void OnLogin()
         {
-            try
-            {
-                IsBusy = true;
 
-                if (SelectedBoard.RequireLogin)
+                try
                 {
-                    if( string.IsNullOrEmpty(UserID))
+                    IsBusy = true;
+
+                    if (SelectedBoard.RequireLogin)
                     {
-                        Message = "Login required enter a valid user ID and password.";
-                        return;
+                        if (string.IsNullOrEmpty(UserID))
+                        {
+                            Message = "Login required enter a valid user ID and password.";
+                            return;
+                        }
+
+                        if (string.IsNullOrEmpty(Password))
+                        {
+                            Message = "Login required enter a valid user ID and password.";
+                            return;
+                        }
+
+                        if (UserID.ToLower() != SelectedBoard.UserID.ToLower())
+                        {
+
+                            Message = "Invalid user id or password";
+                            throw new UnauthorizedAccessException("Invalid user ID or password.");
+
+                        }
+
+                        if (Password.ToLower() != SelectedBoard.Password.ToLower())
+                        {
+                            Message = "Invalid user ID or password";
+                            throw new UnauthorizedAccessException("Invalid user ID or password");
+
+                        }
                     }
 
-                    if (string.IsNullOrEmpty(Password))
+                    else
                     {
-                        Message = "Login required enter a valid user ID and password.";
-                        return;
+                        UserID = SelectedBoard.UserID;
+                        Password = SelectedBoard.Password;
                     }
 
-                    if (UserID.ToLower() != SelectedBoard.UserID.ToLower())
-                    {
 
-                        Message = "Invalid user id or password";
-                        throw new UnauthorizedAccessException("Invalid user ID or password.");
 
-                    }
+                    OnRaiseLoginEvent();
 
-                    if (Password.ToLower() != SelectedBoard.Password.ToLower())
-                    {
-                        Message = "Invalid user ID or password";
-                        throw new UnauthorizedAccessException("Invalid user ID or password");
 
-                    }
+                }
+                catch (Exception ex)
+                {
+                    Message = ex.Message;
+                    ex.WriteToLogFile();
+                    Xceed.Wpf.Toolkit.MessageBox.Show(string.Format("An error occured loading the user, see error text: {0}", ex.Message));
+                }
+                finally
+                {
+                    IsBusy = false;
                 }
 
-                else
-                {
-                    UserID = SelectedBoard.UserID;
-                    Password = SelectedBoard.Password;
-                }
-
-                
-
-                OnRaiseLoginEvent();
-                
-
-            }
-            catch (Exception ex)
-            {
-                Message = ex.Message;
-                ex.WriteToLogFile();
-                Xceed.Wpf.Toolkit.MessageBox.Show(string.Format("An error occured loading the user, see error text: {0}", ex.Message));
-            }
-            finally
-            {
-                IsBusy = false;
-            }
-
+           
+            
         }
 
     

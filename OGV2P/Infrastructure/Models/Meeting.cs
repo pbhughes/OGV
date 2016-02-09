@@ -1,32 +1,25 @@
-﻿using System;
-using System.ComponentModel;
-using Microsoft.Practices.Prism.Commands;
+﻿using Infrastructure.ExtendedObjects;
 using Infrastructure.Interfaces;
-using System.IO;
-using System.Xml.Linq;
-using System.Net;
-using BuckSoft.Controls.FtpBrowseDialog;
-using forms = System.Windows.Forms;
-using System.Runtime.InteropServices;
-using System.Collections.Generic;
-using System.Threading.Tasks;
+using Microsoft.Practices.Prism.Commands;
+using System;
+using System.ComponentModel;
 using System.Deployment.Application;
-using Xceed.Wpf.Toolkit;
-using System.Windows;
-using Infrastructure.Extensions;
-using System.Text;
+using System.IO;
+using System.Net;
+using System.Windows.Threading;
+using System.Xml.Linq;
+using forms = System.Windows.Forms;
 
 namespace Infrastructure.Models
 {
-
     public class Meeting : INotifyPropertyChanged, IMeeting
     {
         private ISession _sessionService;
         private IUser _user;
         private forms.TreeView _agendaTree;
 
-
         private bool _isBusy;
+
         public bool IsBusy
         {
             get { return _isBusy; }
@@ -38,6 +31,7 @@ namespace Infrastructure.Models
         }
 
         private int _lastID;
+
         public int LastID
         {
             get
@@ -63,6 +57,7 @@ namespace Infrastructure.Models
         }
 
         private Item _selectedItem;
+
         public Item SelectedItem
         {
             get { return _selectedItem; }
@@ -70,6 +65,7 @@ namespace Infrastructure.Models
         }
 
         private DelegateCommand<forms.TreeView> _clearStampsCommand;
+
         public DelegateCommand<forms.TreeView> ClearStampsCommand
         {
             get { return _clearStampsCommand; }
@@ -85,17 +81,20 @@ namespace Infrastructure.Models
         }
 
         private string _meetingName;
+
         public string MeetingName
         {
             get { return _meetingName; }
-            set { 
-                _meetingName = value; 
-                _sessionService.MeetingName = value; 
-                OnPropertyChanged("MeetingName"); 
+            set
+            {
+                _meetingName = value;
+                _sessionService.MeetingName = value;
+                OnPropertyChanged("MeetingName");
             }
         }
 
         private string _localFile;
+
         public string LocalFile
         {
             get
@@ -117,15 +116,8 @@ namespace Infrastructure.Models
             set { _meetingDate = value; OnPropertyChanged("MeetingDate"); }
         }
 
-        private Agenda _agenda;
-
-        public Agenda MeetingAgenda
-        {
-            get { return _agenda; }
-            set { _agenda = value; OnPropertyChanged("MeetingAgenda"); }
-        }
-
         private string _clientPathLive;
+
         public string ClientPathLive
         {
             get
@@ -142,6 +134,7 @@ namespace Infrastructure.Models
         }
 
         private string _clientPathLiveStream;
+
         public string ClientPathLiveStream
         {
             get
@@ -158,6 +151,7 @@ namespace Infrastructure.Models
         }
 
         private int _videoWidth;
+
         public int VideoWidth
         {
             get
@@ -173,6 +167,7 @@ namespace Infrastructure.Models
         }
 
         private int _videoHeight;
+
         public int VideoHeight
         {
             get
@@ -188,6 +183,7 @@ namespace Infrastructure.Models
         }
 
         private int _frameRate;
+
         public int FrameRate
         {
             get
@@ -203,6 +199,7 @@ namespace Infrastructure.Models
         }
 
         private string _landingPage;
+
         public string LandingPage
         {
             get
@@ -235,6 +232,7 @@ namespace Infrastructure.Models
         }
 
         private long _bytesWritten;
+
         public long BytesWritten
         {
             get
@@ -250,6 +248,7 @@ namespace Infrastructure.Models
         }
 
         private string _localAgendaFileName;
+
         public string LocalAgendaFileName
         {
             get
@@ -265,6 +264,7 @@ namespace Infrastructure.Models
         }
 
         private string _leftStatus;
+
         public string LeftStatus
         {
             get
@@ -280,6 +280,7 @@ namespace Infrastructure.Models
         }
 
         private string _rightStatus;
+
         public string RightStatus
         {
             get
@@ -295,6 +296,7 @@ namespace Infrastructure.Models
         }
 
         private long _startingHash;
+
         public long StartingHash
         {
             get
@@ -314,10 +316,7 @@ namespace Infrastructure.Models
             get
             {
                 return this.ToString().GetHashCode();
-                
             }
-
-           
         }
 
         public bool HasChanged
@@ -332,7 +331,7 @@ namespace Infrastructure.Models
 
         private void OnRaiseMeetingSetEvent()
         {
-            if(RaiseMeetingSetEvent != null)
+            if (RaiseMeetingSetEvent != null)
             {
                 RaiseMeetingSetEvent(this, new EventArgs());
             }
@@ -343,60 +342,30 @@ namespace Infrastructure.Models
             return true;
         }
 
-        private void OnUpateSelectedItem()
-        {
-            int x = 0;
-        }
-
-        private void ParseItems(XElement items, ref Agenda a, ref forms.TreeNode node)
+        
+        private void ParseItems(XElement items, ref ExtendedTreeNode node)
         {
             if (items != null)
             {
                 foreach (XElement item in items.Elements("item"))
                 {
                     Item x = new Item();
-                    x.ItemChangedEvent += Item_ItemChangedEvent;
+
                     x.Title = (item.Element("title") != null) ? item.Element("title").Value : null;
                     x.Description = (item.Element("desc") != null) ? item.Element("desc").Value : null;
                     x.TimeStamp = (item.Element("timestamp") != null) ? TimeSpan.Parse(item.Element("timestamp").Value) : TimeSpan.Zero;
                     x.UpdateHash();
-                    _agenda.Items.Add(x);
                     string assingedText = (x.Title.Length < 150) ? x.Title : x.Title.Substring(0, 150);
-                    forms.TreeNode xn = new forms.TreeNode() { Text = assingedText , ToolTipText = x.Title };
+                    ExtendedTreeNode xn = new ExtendedTreeNode() { Text = assingedText, ToolTipText = x.Title, AgendaItem = x };
 
                     //tag tree node item with the IDa
-                    x.ID = NextID().ToString();
-                    xn.Tag = x.ID;
-                    xn.Name = x.ID;
                     if (item.Element("items") == null || item.Element("items").Elements("item") != null)
                     {
-                        ParseItems(item.Element("items"), ref a, ref xn);
+                        ParseItems(item.Element("items"), ref xn);
                     }
                     node.Nodes.Add(xn);
-                    a.Items.Add(x);
                 }
             }
-        }
-
-        private void Item_ItemChangedEvent(Item item)
-        {
-            string title = item.Title;
-            RaiseMeetingItemChanged(item);
-        }
-
-        public Item FindItem(string id )
-        {
-            
-            foreach (Item i in this.MeetingAgenda.Items)
-            {
-                if (i.ID == id)
-                {
-                    return i;
-                }
-                    
-            }
-
-            return null;
         }
 
         public Meeting(ISession sessionService, IUser user)
@@ -410,15 +379,14 @@ namespace Infrastructure.Models
             _user = user;
             _sessionService.RaiseStamped += _sessionService_RaiseStamped;
             _clearStampsCommand = new DelegateCommand<forms.TreeView>(OnClearStamps, CanClearStamps);
-            
-            _agenda = new Agenda();
+
             StartingHash = this.ToString().GetHashCode();
         }
 
         private bool CanClearStamps(forms.TreeView arg)
         {
-            if (MeetingAgenda != null)
-                if (MeetingAgenda.Items.Count > 0)
+            if (_agendaTree != null)
+                if (_agendaTree.Nodes.Count > 0)
                     return true;
 
             return false;
@@ -428,19 +396,23 @@ namespace Infrastructure.Models
         {
             string caption = "Do you want to clear all stamps?";
             string content = "If you continue all stamps will be removed and set to zero.  Continue?";
-            if(Xceed.Wpf.Toolkit.MessageBox.Show(content, caption, System.Windows.MessageBoxButton.YesNo, System.Windows.MessageBoxImage.Exclamation) == System.Windows.MessageBoxResult.Yes)
-                ClearItemStamps(MeetingAgenda?.Items);
+            if (Xceed.Wpf.Toolkit.MessageBox.Show(content, caption, System.Windows.MessageBoxButton.YesNo, System.Windows.MessageBoxImage.Exclamation) == System.Windows.MessageBoxResult.Yes)
+                ClearItemStamps(_agendaTree.Nodes);
         }
 
-        private void ClearItemStamps( List<Item> collection)
+        private void ClearItemStamps(forms.TreeNodeCollection collection)
         {
-            foreach(Item i in collection)
+            foreach (forms.TreeNode tn in collection)
             {
-               i.TimeStamp = TimeSpan.Zero;
+                if (tn.Nodes.Count > 0)
+                    ClearItemStamps(tn.Nodes);
+                else
+                    ((ExtendedTreeNode)tn).SetTimeStamp(TimeSpan.Zero);
             }
+
         }
 
-        private string PushFile( string fileName )
+        private string PushFile(string fileName)
         {
             long totalBytesToSend;
             int bytes;
@@ -462,7 +434,7 @@ namespace Infrastructure.Models
             //read the file to send 4097 bytes at a time
             FileStream fs = fi.OpenRead();
             Stream ss = req.GetRequestStream();
-            while(totalBytesToSend > 0)
+            while (totalBytesToSend > 0)
             {
                 bytes = fs.Read(buffer, 0, buffer.Length);
                 ss.Write(buffer, 0, bytes);
@@ -473,7 +445,7 @@ namespace Infrastructure.Models
             //get a write stream from the request and write the content
             fs.Close();
             ss.Close();
-            
+
             FtpWebResponse response = (FtpWebResponse)req.GetResponse();
             string status = response.StatusDescription;
             response.Close();
@@ -482,8 +454,7 @@ namespace Infrastructure.Models
 
         public void ParseAgendaFile(forms.TreeView agendaTree, string allText)
         {
-            
-
+            _agendaTree = agendaTree;
             XDocument xDoc = XDocument.Parse(allText);
             MeetingName = xDoc.Element("meeting").Element("meetingname").Value;
 
@@ -503,14 +474,14 @@ namespace Infrastructure.Models
             XElement items = xDoc.Element("meeting").Element("agenda").Element("items");
             if (items != null)
             {
-                forms.TreeNode root = new forms.TreeNode();
-                Agenda a = new Agenda();
+                ExtendedObjects.ExtendedTreeNode root = new ExtendedObjects.ExtendedTreeNode();
 
-                ParseItems(items, ref a, ref root);
+                ParseItems(items, ref root);
 
-                foreach (forms.TreeNode x in root.Nodes)
+                foreach (ExtendedTreeNode x in root.Nodes)
                 {
                     agendaTree.Nodes.Add(x);
+                   
                 }
                 agendaTree.ShowPlusMinus = true;
                 agendaTree.ShowLines = true;
@@ -520,7 +491,6 @@ namespace Infrastructure.Models
             ClearStampsCommand.RaiseCanExecuteChanged();
             StartingHash = this.ToString().GetHashCode();
             OnRaiseMeetingSetEvent();
-            
         }
 
         private void _sessionService_RaiseStamped(TimeSpan sessionTime)
@@ -528,9 +498,7 @@ namespace Infrastructure.Models
             if (_selectedItem != null)
             {
                 _selectedItem.TimeStamp = sessionTime;
-                
             }
-               
         }
 
         #region INotifyPropertyChanged
@@ -543,17 +511,7 @@ namespace Infrastructure.Models
                 PropertyChanged(this, new PropertyChangedEventArgs(name));
         }
 
-        public void AddNode(Item item, List<Item> collection)
-        {
-           
-            if (collection == null)
-                collection = new List<Item>();
-
-            collection.Add(item);
-            SelectedItem = item;
-        }
-
-        #endregion
+        #endregion INotifyPropertyChanged
 
         #region Meeting Item Changed Support
 
@@ -564,7 +522,8 @@ namespace Infrastructure.Models
             if (RaiseMeetingItemChanged != null)
                 RaiseMeetingItemChanged(item);
         }
-        #endregion
+
+        #endregion Meeting Item Changed Support
 
         public XDocument GetAgendaXmlDoc()
         {
@@ -584,6 +543,7 @@ namespace Infrastructure.Models
 
             return xdoc;
         }
+
         public string GetAgendaXML()
         {
             XDocument xdoc = GetAgendaXmlDoc();
@@ -598,50 +558,41 @@ namespace Infrastructure.Models
 
                 XDocument xdoc = GetAgendaXmlDoc();
 
-                foreach (forms.TreeNode tn in agendaTree.Nodes)
+                foreach (ExtendedTreeNode tn in agendaTree.Nodes)
                 {
                     XElement root = ProcessNodes(tn);
                     xdoc.Element("meeting").Element("agenda").Element("items").Add(root);
                 }
                 xdoc.Save(_localAgendaFileName);
                 FileInfo fInfo = new FileInfo(_localAgendaFileName);
-                MeetingAgenda.UpdateHash();
                 string xml = GetAgendaXML();
                 StartingHash = xml.GetHashCode();
                 return fInfo.Length;
-
             }
-            catch (Exception ex)
+            catch (Exception )
             {
                 throw;
             }
-
-          
-          
-
         }
 
-        private XElement ProcessNodes(forms.TreeNode tn)
+        private XElement ProcessNodes(ExtendedTreeNode tn)
         {
             XElement item = CreateAnItem(tn);
-            if(tn.Nodes.Count > 0)
+            if (tn.Nodes.Count > 0)
             {
-                foreach(forms.TreeNode subNode in tn.Nodes)
+                foreach (ExtendedTreeNode subNode in tn.Nodes)
                 {
                     XElement sub = ProcessNodes(subNode);
                     item.Element("items").Add(sub);
-                    
                 }
             }
 
             return item;
-            
         }
 
-        private XElement CreateAnItem(forms.TreeNode tn)
+        private XElement CreateAnItem(ExtendedTreeNode tn)
         {
-
-            Item agendaItem = FindItem(tn.Name);
+            Item agendaItem = tn.AgendaItem as Item;
             XElement item = new XElement("item",
                                          new XElement("title", agendaItem.Title),
                                          new XElement("desc", agendaItem.Description),
@@ -649,31 +600,6 @@ namespace Infrastructure.Models
                                          new XElement("items"));
 
             return item;
-        }
-
-        public int NextID()
-        {
-            return _lastID++;
-        }
-
-        public void RemoveItem(string id)
-        {
-            var item = FindItem(id);
-            if (item.Parent == null)
-                MeetingAgenda.Items.Remove(item);
-            else
-                item.Parent.Items.Remove(item);
-        }
-
-        public override string ToString()
-        {
-            StringBuilder sb = new StringBuilder(MeetingName + MeetingDate.ToString());
-            foreach(Item n in MeetingAgenda.Items)
-            {
-                sb.Append(n.ToString());
-            }
-
-            return sb.ToString();
         }
     }
 }

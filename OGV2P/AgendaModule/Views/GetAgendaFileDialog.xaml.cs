@@ -77,7 +77,7 @@ namespace OGV2P.AgendaModule.Views
                 });
                 System.Threading.Thread.Sleep(1000);
             }
-            catch (Exception ex)
+            catch (Exception )
             {
 
                 throw;

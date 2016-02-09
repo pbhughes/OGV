@@ -67,7 +67,6 @@
     <Compile Include="Views\AboutWindow.xaml.cs">
       <DependentUpon>AboutWindow.xaml</DependentUpon>
     </Compile>
-    <Compile Include="Views\ExtendedTreeNode.cs" />
     <Compile Include="Views\TimerDisplay.xaml.cs">
       <DependentUpon>TimerDisplay.xaml</DependentUpon>
     </Compile>
