@@ -27,7 +27,7 @@
     </UserControl.Resources>
     <Grid >
         <Grid.RowDefinitions>
-            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="480"/>
             <RowDefinition Height="20" />
             <RowDefinition Height="Auto" />
         </Grid.RowDefinitions>
@@ -74,7 +74,7 @@
         </Grid>
 
         <Grid Grid.Row="2" Grid.Column="0" Grid.ColumnSpan="2"  
-              Margin="0,20.4,0.2,0.2" Grid.RowSpan="2">
+              Margin="0,10.4,0.2,0.2" Grid.RowSpan="2">
             <Grid.ColumnDefinitions>
                 <ColumnDefinition Width="100" />
                 <ColumnDefinition Width="*" />
@@ -98,9 +98,9 @@
                           VerticalContentAlignment="Center"
                           SelectionChanged="cboMicrophones_SelectionChanged"></ComboBox>
 
-            <Grid Grid.Row="2" Grid.ColumnSpan="2" Grid.Column="0">
+            <Grid Grid.Row="2" Grid.ColumnSpan="2" Grid.Column="1" >
                 <Grid.RowDefinitions>
-                    <RowDefinition Height="Auto" />
+                    <RowDefinition Height="55" />
                 </Grid.RowDefinitions>
                 <Grid.ColumnDefinitions>
                     <ColumnDefinition />
@@ -116,10 +116,18 @@
                         Margin="10" Width="100"
                         FontSize="15">
                     <Button.Content>
-                        <StackPanel Orientation="Horizontal" HorizontalAlignment="Stretch" Margin="2">
-                            <Image Source="/OGV2P.Admin;component/Images/RecordPressed.png" Width="25"/>
-                            <Label Name="cmdRecordLabel">REC</Label>
-                        </StackPanel>
+                        <Grid>
+                            <Grid.RowDefinitions>
+                                <RowDefinition  />
+                            </Grid.RowDefinitions>
+
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition />
+                                <ColumnDefinition />
+                            </Grid.ColumnDefinitions>
+                            <Image Grid.Column="0" Source="/OGV2P.Admin;component/Images/RecordHot1.png" />
+                            <Label Grid.Column="1" Name="cmdRecordLabel" VerticalAlignment="Center">Start</Label>
+                        </Grid>
                     </Button.Content>
                 </Button>
 
@@ -138,10 +146,19 @@
                         Margin="10" Width="100"
                         FontSize="15">
                     <Button.Content>
-                        <StackPanel Orientation="Horizontal" HorizontalAlignment="Stretch" Margin="2">
-                            <Image Source="Stop1NormalBlue.png" Width="25"/>
-                            <Label Name="cmdStopRecordingLabel">STOP</Label>
-                        </StackPanel>
+                        <Grid>
+                            <Grid.RowDefinitions>
+                                <RowDefinition  />
+                            </Grid.RowDefinitions>
+
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition />
+                                <ColumnDefinition />
+                            </Grid.ColumnDefinitions>
+                            <Image Source="Stop1NormalBlue.png"  Grid.Column="0"/>
+                            <Label Name="cmdStopRecordingLabel" Grid.Column="1" VerticalAlignment="Center">Stop</Label>
+                        </Grid>
+                        
                     </Button.Content>
                     
                 </Button>

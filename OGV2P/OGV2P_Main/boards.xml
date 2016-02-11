@@ -1,6 +1,6 @@
 <organizations>
   <org>
-    <name>City Council</name>
+    <name>City Council Test 1</name>
     <state>RI</state>
     <city>Test1</city>
     <board>City Council</board>
@@ -9,6 +9,32 @@
       <dir></dir>
       <username>RI_Test1</username>
       <password>RI_test1</password>
+      <login>false</login>
+    </ftpserver>
+  </org>
+  <org>
+    <name>Zoning Zone Test 2</name>
+    <state>RI</state>
+    <city>Test2</city>
+    <board>ZoningZone</board>
+    <ftpserver>
+      <host>ftp.coreyware.com</host>
+      <dir></dir>
+      <username>RI_Test2</username>
+      <password>RI_Test2</password>
+      <login>false</login>
+    </ftpserver>
+  </org>
+  <org>
+    <name>Fun Board Test 3</name>
+    <state>MA</state>
+    <city>Test3</city>
+    <board>Fun Board</board>
+    <ftpserver>
+      <host>ftp.coreyware.com</host>
+      <dir></dir>
+      <username>MA_Test3</username>
+      <password>MA_Test3</password>
       <login>false</login>
     </ftpserver>
   </org>

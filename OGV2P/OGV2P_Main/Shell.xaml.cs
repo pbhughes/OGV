@@ -120,29 +120,51 @@ namespace OGV2P
 
         private void File_LogOutMenu_Click(object sender, RoutedEventArgs e)
         {
-            _regionManager = Microsoft.Practices.ServiceLocation.ServiceLocator.Current.GetInstance<Microsoft.Practices.Prism.Regions.IRegionManager>();
+            
 
-            var loginView = _regionManager.Regions[Infrastructure.Models.Regions.Middle].GetView("LoginView");
-
-            if(loginView == null)
+            if (_meeting.IsBusy || _meeting.HasChanged)
             {
-                loginView = new OGV2P.Admin.Views.LoginView(_container,
-                    _container.Resolve<ISession>(), _container.Resolve<IUser>());
-                _regionManager.Regions[Infrastructure.Models.Regions.Middle].Add(loginView, "LoginView");
+                if (_meeting.IsBusy)
+                {
+                    if (Xceed.Wpf.Toolkit.MessageBox.Show(
+                        "A recording is in progress.  Continue to close?",
+                        "OpenGoVideo", MessageBoxButton.YesNo, MessageBoxImage.Warning) == MessageBoxResult.No)
+                    {
+                        e.Handled = true;
+                        return;
+                    }
+                }
+
+                if (_meeting.HasChanged)
+                {
+                    if (Xceed.Wpf.Toolkit.MessageBox.Show(
+                        "The agenda file changes if you close without saving you will lose them.  Do you want to Continue?",
+                        "OpenGoVideo", MessageBoxButton.YesNo, MessageBoxImage.Warning) == MessageBoxResult.No)
+                    {
+                        e.Handled = true;
+                        return ;
+                    }
+                }
             }
 
-            _regionManager.Regions[Infrastructure.Models.Regions.Middle].Activate(loginView);
+            
+                _regionManager = Microsoft.Practices.ServiceLocation.ServiceLocator.Current.GetInstance<Microsoft.Practices.Prism.Regions.IRegionManager>();
 
-            foreach (var view in _regionManager.Regions[Infrastructure.Models.Regions.Main].Views)
-            {
-                _regionManager.Regions[Infrastructure.Models.Regions.Main].Remove(view);
-            }
+                var loginView = _regionManager.Regions[Infrastructure.Models.Regions.Middle].GetView("LoginView");
 
-            foreach (var view in _regionManager.Regions[Infrastructure.Models.Regions.SideBar].Views)
-            {
-                _regionManager.Regions[Infrastructure.Models.Regions.SideBar].Remove(view);
-            }
-         
+                if (loginView == null)
+                {
+                    loginView = new OGV2P.Admin.Views.LoginView(_container,
+                        _container.Resolve<ISession>(), _container.Resolve<IUser>());
+                    _regionManager.Regions[Infrastructure.Models.Regions.Middle].Add(loginView, "LoginView");
+                }
+
+                _regionManager.Regions[Infrastructure.Models.Regions.Middle].Activate(loginView);
+
+                foreach (var view in _regionManager.Regions[Infrastructure.Models.Regions.Main].Views)
+                {
+                    _regionManager.Regions[Infrastructure.Models.Regions.Main].Remove(view);
+                }
             
 
         }

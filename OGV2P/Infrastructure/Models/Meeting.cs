@@ -6,6 +6,7 @@ using System.ComponentModel;
 using System.Deployment.Application;
 using System.IO;
 using System.Net;
+using System.Text;
 using System.Windows.Threading;
 using System.Xml.Linq;
 using forms = System.Windows.Forms;
@@ -327,6 +328,36 @@ namespace Infrastructure.Models
             }
         }
 
+        private void GetString(ExtendedTreeNode etn, ref string composite)
+        {
+           
+
+            if (etn.AgendaItem != null)
+            {
+                composite += etn.AgendaItem.Title + etn.AgendaItem.Description;
+            }
+
+            foreach (ExtendedTreeNode node in etn.Nodes)
+            {
+                GetString(node, ref composite);
+            }
+        }
+
+        public override string ToString()
+        {
+            string part = MeetingName + MeetingDate.ToString();
+
+            if (_agendaTree != null)
+            {
+                foreach (ExtendedTreeNode etn in _agendaTree.Nodes)
+                {
+                    GetString(etn, ref part);
+
+                }
+            }
+
+            return part;
+        }
         public event MeetingSetEventHandler RaiseMeetingSetEvent;
 
         private void OnRaiseMeetingSetEvent()

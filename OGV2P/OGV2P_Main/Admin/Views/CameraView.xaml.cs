@@ -700,7 +700,7 @@ namespace OGV2P.Admin.Views
                     dg.DefaultExt = ".mp4";
                     dg.Filter = "Video Files (*.mp4)|*.mp4|WMV Files (*.wmv)|*.wmv|MOV Files (*.mov)|*.mov|MPG Files (*.mpg)|*.mpg|All (*.*)|*.*";
                     forms.DialogResult result = dg.ShowDialog();
-                    cmdRecordLabel.Content = "PLAY";
+                    cmdRecordLabel.Content = "Play";
                     if (result == forms.DialogResult.OK)
                     {
                         axRControl.VideoSource = FILE_SOURCE;
