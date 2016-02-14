@@ -29,6 +29,7 @@
         <Grid.RowDefinitions>
             <RowDefinition Height="480"/>
             <RowDefinition Height="20" />
+            <RowDefinition Height="30" />
             <RowDefinition Height="Auto" />
         </Grid.RowDefinitions>
         <Grid.ColumnDefinitions>
@@ -36,13 +37,16 @@
             <ColumnDefinition  Width="Auto"/>
         </Grid.ColumnDefinitions>
 
-        <StackPanel Name="pnlDock" 
-                   Grid.Row="0" 
-                   Grid.Column="0" 
-                    Grid.ColumnSpan="2" 
-                    Margin="5,0,5,0" >
-            <Button Click="RefreshPreview_Click">Refresh Preview</Button>
-            <WindowsFormsHost Grid.Row="0" Grid.Column="0" 
+        <Grid Grid.Row="0" Grid.Column="0" 
+              Margin="5,0,5,0"
+              Grid.ColumnSpan="2">
+            <Grid.RowDefinitions>
+                <RowDefinition Height="20" />
+                <RowDefinition Height="*" />
+                <RowDefinition Height="20" />
+            </Grid.RowDefinitions>
+            <Button Grid.Row="0" Click="RefreshPreview_Click">Refresh Preview</Button>
+            <WindowsFormsHost Grid.Row="1" Grid.Column="0" 
                               Grid.ColumnSpan="2"
                                Height="480"
                                Width="640"
@@ -51,11 +55,12 @@
                 <frms:Panel   Dock="Fill" 
                               Name="winFormHostPanel"/>
             </WindowsFormsHost>
-        </StackPanel>
+        </Grid>
 
-
-
-        <Grid Grid.Row="1" Grid.Column="0" Grid.ColumnSpan="2">
+        <Grid Grid.Row="2" Grid.Column="0" Grid.ColumnSpan="2">
+            <Grid.RowDefinitions>
+                <RowDefinition />
+            </Grid.RowDefinitions>
             <Grid.ColumnDefinitions>
                 <ColumnDefinition Width="45" />
                 <ColumnDefinition Width="*" />
@@ -72,10 +77,10 @@
                          Background="Transparent">
 
             </ProgressBar>
-
         </Grid>
-
-        <Grid Grid.Row="2" Grid.Column="0" Grid.ColumnSpan="2"  
+        
+        
+        <Grid Grid.Row="4" Grid.Column="0" Grid.ColumnSpan="2"  
               Margin="0,10.4,0.2,0.2" Grid.RowSpan="2">
             <Grid.ColumnDefinitions>
                 <ColumnDefinition Width="100" />
@@ -89,18 +94,20 @@
                 <RowDefinition Height="Auto" />
                 <RowDefinition Height="Auto" />
             </Grid.RowDefinitions>
-
-            <Label Grid.Column="0" Grid.Row="0">Cameras:</Label>
-            <ComboBox Grid.Column="1" Grid.Row="0" x:Name="cboCameras" 
+            <CheckBox Unchecked="CheckBox_Checked_1" ClickMode="Press" Checked="CheckBox_Checked_1" Margin="5,0,0,0" VerticalContentAlignment="Center" 
+                      IsEnabled="{Binding Meeting.IsBusy, Converter={StaticResource InverseBoolConverter}}" IsChecked="{Binding ShowOverlay}"  >Show Overlay</CheckBox>
+            <tk:WatermarkTextBox TextChanged="WatermarkTextBox_TextChanged" Margin="5,0,5,0" Text="{Binding Overlay}"  Watermark="Enter overlay text... " Grid.Column="1"></tk:WatermarkTextBox>
+            <Label Grid.Column="0" Grid.Row="1">Cameras:</Label>
+            <ComboBox Grid.Column="1" Grid.Row="1" x:Name="cboCameras" 
                           VerticalContentAlignment="Center"
                           SelectionChanged="cboSource_SelectedChanged"></ComboBox>
 
-            <Label Grid.Column="0" Grid.Row="1">Microphones</Label>
-            <ComboBox Grid.Column="1" Grid.Row="1" x:Name="cboMicrophones" 
+            <Label Grid.Column="0" Grid.Row="2">Microphones</Label>
+            <ComboBox Grid.Column="1" Grid.Row="2" x:Name="cboMicrophones" 
                           VerticalContentAlignment="Center"
                           SelectionChanged="cboMicrophones_SelectionChanged"></ComboBox>
 
-            <Grid Grid.Row="2" Grid.ColumnSpan="2" Grid.Column="1" >
+            <Grid Grid.Row="3" Grid.ColumnSpan="2" Grid.Column="1" >
                 <Grid.RowDefinitions>
                     <RowDefinition Height="55" />
                 </Grid.RowDefinitions>

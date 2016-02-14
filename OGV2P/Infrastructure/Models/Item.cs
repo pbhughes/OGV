@@ -1,12 +1,10 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using System.ComponentModel;
-using System.Text.RegularExpressions;
+﻿using Infrastructure.Extensions;
 using Infrastructure.Interfaces;
-using Infrastructure.Extensions;
+using System;
+using System.Collections.Generic;
+using System.ComponentModel;
+using System.Text;
+using System.Text.RegularExpressions;
 
 namespace Infrastructure.Models
 {
@@ -49,11 +47,12 @@ namespace Infrastructure.Models
         public TimeSpan TimeStamp
         {
             get { return _timeStamp; }
-            set {
+            set
+            {
                 _timeStamp = value;
-                
-                 Title = StampTitle(value);
-           
+
+                Title = StampTitle(value);
+
                 OnPropertyChanged("TimeStamp");
             }
         }
@@ -66,7 +65,8 @@ namespace Infrastructure.Models
             set { _items = value; OnPropertyChanged("Items"); }
         }
 
-        long _startingHash = 0;
+        private long _startingHash = 0;
+
         public long StartingHash
         {
             get
@@ -93,14 +93,13 @@ namespace Infrastructure.Models
         public override string ToString()
         {
             StringBuilder sb = new StringBuilder(Title + Description);
-            if(Items != null)
+            if (Items != null)
             {
                 foreach (Item n in Items)
                 {
                     sb.Append(n.ToString());
                 }
             }
-            
 
             return sb.ToString();
         }
@@ -109,19 +108,13 @@ namespace Infrastructure.Models
 
         public event PropertyChangedEventHandler PropertyChanged;
 
-
-
         private void OnPropertyChanged(string name)
         {
-
             if (PropertyChanged != null)
                 PropertyChanged(this, new PropertyChangedEventArgs(name));
         }
 
-       
-
-        #endregion
-
+        #endregion INotifyPropertyChanged
 
         public string StampTitle(TimeSpan stamp)
         {
@@ -130,33 +123,29 @@ namespace Infrastructure.Models
             string source = _title;
             Regex regx = new Regex(pattern, RegexOptions.IgnoreCase);
             MatchCollection matches = regx.Matches(source);
-            int offSet = 0;
-            if(matches.Count > 0)
+
+            if (matches.Count > 0)
             {
                 //there is a match so this item has been stamped
                 int start = source.IndexOf('[');
-                offSet = source.IndexOf(']');
+                int offSet = source.IndexOf(']');
+
                 source = source.Substring(offSet + 1);
             }
 
-            if(stamp == TimeSpan.Zero)
-            {
-                return Title.Substring(offSet + 1);
-            }
+            //the time has not been stamped
+            if (stamp == TimeSpan.Zero)
+                return source;
             else
-            {
                 return string.Format("{0}{1}", stamp.ToAgendaTimeString(), source);
-            }
-            
-            
         }
 
         public void UpdateHash()
         {
             StartingHash = (Title + Description).GetHashCode();
-            if(Items != null)
+            if (Items != null)
             {
-                foreach(Item n in Items)
+                foreach (Item n in Items)
                 {
                     n.UpdateHash();
                 }

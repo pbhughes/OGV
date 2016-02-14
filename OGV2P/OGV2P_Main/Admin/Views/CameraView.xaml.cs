@@ -57,6 +57,7 @@ namespace OGV2P.Admin.Views
                 OnPropertyChanged("SessionService");
             }
         }
+
         IMeeting _meeting;
         public IMeeting Meeting
         {
@@ -144,6 +145,37 @@ namespace OGV2P.Admin.Views
            
         }
 
+        private string _overlay = string.Empty;
+        public string Overlay
+        {
+            get
+            {
+                return _overlay;
+            }
+
+            set
+            {
+                _overlay = value;
+                OnPropertyChanged("Overlay");
+            }
+        }
+
+        private bool _showOverlay;
+        public bool ShowOverlay
+        {
+            get
+            {
+                return _showOverlay;
+            }
+
+            set
+            {
+                _showOverlay = value;
+                OnPropertyChanged("ShowOverlay");
+            }
+        }
+
+
         private string _message;
         public string Message
         {
@@ -200,6 +232,7 @@ namespace OGV2P.Admin.Views
              
 
                 _meeting.IsBusy = false;
+                cmdStopRecording.IsEnabled = false;
 
                 //initialize the window to listen for USB devices to be added
                 var query = new WqlEventQuery("SELECT * FROM Win32_DeviceChangeEvent WHERE EventType = 2 OR EventType = 3");
@@ -540,8 +573,7 @@ namespace OGV2P.Admin.Views
         {
             try
             {
-                //set the meeting title in the view
-                axRControl.TextOverlayText = (_meeting.MeetingName == null)? "" : _meeting.MeetingName;
+              
 
                 //font cache a file source only hardware
                 if (axRControl.VideoSource != FILE_SOURCE)
@@ -708,7 +740,6 @@ namespace OGV2P.Admin.Views
                         if (File.Exists(dg.FileName))
                         {
                             axRControl.FileSourceFilename = dg.FileName;
-                            axRControl.TextOverlayText = "";
                             axRControl.StartPreview();
 
                         }
@@ -822,6 +853,50 @@ namespace OGV2P.Admin.Views
                 ex.WriteToLogFile();
             }
            
+        }
+
+
+        private void CheckBox_Checked_1(object sender, RoutedEventArgs e)
+        {
+            
+            if (axRControl.InvokeRequired)
+            {
+                Dispatcher.Invoke((Action)(() =>
+                {
+                    DisplayOverLay();
+                }));
+               
+            }
+            else
+            {
+                DisplayOverLay();
+            }
+
+        }
+
+        private void DisplayOverLay()
+        {
+            if (!_meeting.IsBusy)
+            {
+                if (!ShowOverlay)
+                    axRControl.TextOverlayText = string.Empty;
+                else
+                {
+                    axRControl.TextOverlayText = string.Format("{0} - {1}", Overlay, 
+                        (Meeting.MeetingDate == DateTime.MinValue)? DateTime.Now.ToShortDateString() : Meeting.MeetingDate.ToShortDateString());
+                }
+                
+                axRControl.StartPreview();
+            }
+                    
+        }
+
+        private void WatermarkTextBox_TextChanged(object sender, TextChangedEventArgs e)
+        {
+            if (!_meeting.IsBusy && ShowOverlay)
+            {
+                DisplayOverLay();
+            }
         }
     }
 }
