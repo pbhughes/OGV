@@ -6,6 +6,7 @@ using System.Threading.Tasks;
 using System.ComponentModel;
 using System.Text.RegularExpressions;
 using Infrastructure.Interfaces;
+using Infrastructure.Extensions;
 
 namespace Infrastructure.Models
 {
@@ -50,11 +51,8 @@ namespace Infrastructure.Models
             get { return _timeStamp; }
             set {
                 _timeStamp = value;
-                string formatted = string.Format("{0}:{1}:{2}", 
-                    value.Hours.ToString().PadLeft(2,'0'), 
-                    value.Minutes.ToString().PadLeft(2, '0'),
-                    value.Seconds.ToString().PadLeft(2, '0'));
-                 Title = StampTitle(formatted);
+                
+                 Title = StampTitle(value);
            
                 OnPropertyChanged("TimeStamp");
             }
@@ -125,22 +123,32 @@ namespace Infrastructure.Models
         #endregion
 
 
-        public string StampTitle(string stamp)
+        public string StampTitle(TimeSpan stamp)
         {
             //see if there is a stamp heading
             string pattern = @"\[\d\d:\d\d:\d\d\]";
             string source = _title;
             Regex regx = new Regex(pattern, RegexOptions.IgnoreCase);
             MatchCollection matches = regx.Matches(source);
+            int offSet = 0;
             if(matches.Count > 0)
             {
                 //there is a match so this item has been stamped
                 int start = source.IndexOf('[');
-                int offset = source.IndexOf(']');
-                source = source.Substring(offset + 1);
+                offSet = source.IndexOf(']');
+                source = source.Substring(offSet + 1);
             }
 
-            return string.Format("[{0}]{1}", stamp, source);
+            if(stamp == TimeSpan.Zero)
+            {
+                return Title.Substring(offSet + 1);
+            }
+            else
+            {
+                return string.Format("{0}{1}", stamp.ToAgendaTimeString(), source);
+            }
+            
+            
         }
 
         public void UpdateHash()

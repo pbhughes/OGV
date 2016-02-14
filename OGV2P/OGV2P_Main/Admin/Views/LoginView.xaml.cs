@@ -98,14 +98,18 @@ namespace OGV2P.Admin.Views
         {
             if (_user.SelectedBoard.RequireLogin)
             {
-                pnlPassword.Visibility = Visibility.Visible;
-                pnlUserID.Visibility = Visibility.Visible;
+                lblPassword.Visibility = Visibility.Visible;
+                txtPassword.Visibility = Visibility.Visible;
+                lblUserID.Visibility = Visibility.Visible;
+                txtUserID.Visibility = Visibility.Visible;
                 cmdLogin.Content = "Login";
             }
             else
             {
-                pnlPassword.Visibility = Visibility.Collapsed;
-                pnlUserID.Visibility = Visibility.Collapsed;
+                lblPassword.Visibility = Visibility.Collapsed;
+                txtPassword.Visibility = Visibility.Collapsed;
+                lblUserID.Visibility = Visibility.Collapsed;
+                txtUserID.Visibility = Visibility.Collapsed;
                 cmdLogin.Content = "Start";
 
             }

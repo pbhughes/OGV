@@ -46,7 +46,7 @@ namespace OGV2P.AgendaModule.Views
             agendaTree.NodeMouseDoubleClick += agendaTree_NodeMouseDoubleClick;
             agendaTree.BeforeSelect += AgendaTree_BeforeSelect;
             agendaTree.HideSelection = false;
-            agendaTree.DrawMode = System.Windows.Forms.TreeViewDrawMode.OwnerDrawAll;
+            agendaTree.DrawMode = System.Windows.Forms.TreeViewDrawMode.Normal;
             agendaTree.DrawNode += AgendaTree_DrawNode;
             agendaTree.FullRowSelect = true;
             
@@ -110,6 +110,8 @@ namespace OGV2P.AgendaModule.Views
             DataContext = _currentMeeting;
 
             winFormHost.Child.Controls.Add(agendaTree);
+
+            
            
         }
 
@@ -227,6 +229,12 @@ namespace OGV2P.AgendaModule.Views
                 //select the dragged node
                 agendaTree.SelectedNode = draggedNode;
             }
+        }
+
+        private void agendaCommandDropDown_Click(object sender, RoutedEventArgs e)
+        {
+            agendaCommandDropDown.IsOpen = !agendaCommandDropDown.IsOpen;
+
         }
 
         // Determine whether one node is a parent 
@@ -397,6 +405,8 @@ namespace OGV2P.AgendaModule.Views
 
         private void MarkItemStamped(ExtendedTreeNode targetNode, bool advance = true)
         {
+            
+
             if (agendaTree.ImageList.Images.Count >= 2)
             {
                 if (targetNode.ImageKey.ToLower().Contains("edited"))
@@ -422,7 +432,8 @@ namespace OGV2P.AgendaModule.Views
                 if (targetNode.Nodes.Count > 0)
                 {
                     //current node has children move to the first
-                    agendaTree.SelectedNode = agendaTree.SelectedNode.Nodes[0];
+
+                    agendaTree.SelectedNode = targetNode.Nodes[0];
                     return;
                 }
                 else
@@ -456,6 +467,7 @@ namespace OGV2P.AgendaModule.Views
 
         private void UnstampItem(ExtendedTreeNode targetNode)
         {
+            targetNode.SetTimeStamp(TimeSpan.Zero);
             if (agendaTree.ImageList.Images.Count >= 2)
             {
                 if (targetNode.ImageKey.ToLower().Contains("edited"))
@@ -857,6 +869,7 @@ namespace OGV2P.AgendaModule.Views
             if(etn.AgendaItem != null)
             {
                 etn.SetTimeStamp(TimeSpan.Zero);
+                UnstampItem(etn);
             }
 
             foreach(ExtendedTreeNode node in etn.Nodes)

@@ -39,15 +39,16 @@ namespace CustomControls.Views
             TimerDisplay display = (TimerDisplay)d;
             if ((bool)e.NewValue == true)
             {
-                display.border.Background = new SolidColorBrush(Colors.Green);
                 display.border.BorderBrush = new SolidColorBrush(Colors.Green);
+                display.border.Background = new SolidColorBrush(Colors.Green);
+               
             }
                 
             else
             {
+                display.border.BorderBrush = new SolidColorBrush(Colors.Transparent);
                 display.border.Background = new SolidColorBrush(Colors.Transparent);
                 display.Foreground = new SolidColorBrush(Colors.Black);
-                display.border.BorderBrush = new SolidColorBrush(Colors.Black);
             }
 
             System.Diagnostics.Debug.WriteLine(string.Format("Timer State Changed {0}", e.NewValue.ToString()));

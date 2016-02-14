@@ -1,16 +1,13 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Configuration;
-using System.Data;
-using System.Linq;
-using System.Threading.Tasks;
-using System.Windows;
-using OGV2P;
+﻿using Infrastructure.Extensions;
+using System;
 using System.IO;
 using System.Runtime.InteropServices;
 using System.Text;
+using System.Windows;
+using System.Windows.Controls;
+using System.Windows.Controls.Primitives;
+using System.Windows.Media;
 using forms = System.Windows.Forms;
-using Infrastructure.Extensions;
 
 namespace OGV2P
 {
@@ -26,6 +23,10 @@ namespace OGV2P
                 AppDomain current = AppDomain.CurrentDomain;
                 current.UnhandledException += Current_UnhandledException;
                 base.OnStartup(e);
+                EventManager.RegisterClassHandler(typeof(DatePicker),
+                       DatePicker.LoadedEvent,
+                       new RoutedEventHandler(DatePicker_Loaded));
+
                 OGV2P.BootStrapper bootStrapper = new BootStrapper();
                 bootStrapper.Run();
             }
@@ -33,15 +34,11 @@ namespace OGV2P
             {
                 ex.WriteToLogFile();
                 MessageBox.Show(string.Format("A startup exception occurred here is the error: {0}", ex.Message));
-
             }
-
-
         }
 
         private void Current_UnhandledException(object sender, UnhandledExceptionEventArgs e)
         {
-
             WriteExceptionToFile((Exception)e.ExceptionObject);
             if (e.ExceptionObject is InvalidComObjectException)
             {
@@ -51,9 +48,6 @@ namespace OGV2P
             {
                 MessageBox.Show(string.Format("A startup execption occured here is the error: {0}", ((Exception)e.ExceptionObject).Message));
             }
-
-
-
         }
 
         public void WriteExceptionToFile(Exception ex)
@@ -85,7 +79,6 @@ namespace OGV2P
                         File.WriteAllText(fileName, sb.ToString());
                         return;
                     }
-
                 }
                 File.AppendAllText(fileName, sb.ToString());
             }
@@ -93,13 +86,35 @@ namespace OGV2P
             {
                 exLocal.WriteToLogFile();
                 MessageBox.Show("Could not write the exception log");
-
             }
-
-
         }
 
-       
+        public static T GetChildOfType<T>(DependencyObject depObj) where T : DependencyObject
+        {
+            if (depObj == null) return null;
 
+            for (int i = 0; i < VisualTreeHelper.GetChildrenCount(depObj); i++)
+            {
+                var child = VisualTreeHelper.GetChild(depObj, i);
+
+                var result = (child as T) ?? GetChildOfType<T>(child);
+                if (result != null) return result;
+            }
+            return null;
+        }
+
+        private void DatePicker_Loaded(object sender, RoutedEventArgs e)
+        {
+            var dp = sender as DatePicker;
+            if (dp == null) return;
+
+            var tb = GetChildOfType<DatePickerTextBox>(dp);
+            if (tb == null) return;
+
+            var wm = tb.Template.FindName("PART_Watermark", tb) as ContentControl;
+            if (wm == null) return;
+
+            wm.Content = "";
+        }
     }
 }

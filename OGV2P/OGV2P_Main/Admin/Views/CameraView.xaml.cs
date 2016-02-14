@@ -807,6 +807,21 @@ namespace OGV2P.Admin.Views
 
         }
 
-       
+        private void RefreshPreview_Click(object sender, RoutedEventArgs e)
+        {
+            try
+            {
+                if (_meeting.IsBusy)
+                    return;
+
+                axRControl.StartPreview();
+            }
+            catch (Exception ex)
+            {
+
+                ex.WriteToLogFile();
+            }
+           
+        }
     }
 }

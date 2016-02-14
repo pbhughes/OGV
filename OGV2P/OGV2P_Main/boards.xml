@@ -22,7 +22,7 @@
       <dir></dir>
       <username>RI_Test2</username>
       <password>RI_Test2</password>
-      <login>false</login>
+      <login>true</login>
     </ftpserver>
   </org>
   <org>

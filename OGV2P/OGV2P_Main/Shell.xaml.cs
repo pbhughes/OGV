@@ -64,7 +64,7 @@ namespace OGV2P
 
         private void AboutMenuItem_Click(object sender, RoutedEventArgs e)
         {
-            var window = new CustomControls.Views.AboutWindow("support@clerkbase.com");
+            var window = new CustomControls.Views.AboutWindow("support@opengovideo.com");
             window.ShowDialog();
         }
 
@@ -107,7 +107,7 @@ namespace OGV2P
         {
             try
             {
-                SettingWindowDialog diag = new SettingWindowDialog(_meeting.LandingPage, _meeting.LocalFile, _meeting.PublishingPoint);
+                SettingWindowDialog diag = new SettingWindowDialog(_meeting.LandingPage ?? "http://www.opengovideo.com/ogv2help", _meeting.LocalFile, _meeting.PublishingPoint);
                 diag.ShowDialog();
             }
             catch (Exception ex)

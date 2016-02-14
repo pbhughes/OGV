@@ -27,7 +27,7 @@ namespace OGV2P.Admin.Views
         {
             InitializeComponent();
             navUrl.NavigateUri = new Uri((string.IsNullOrEmpty(previewUrl) ? "http://www.clerkbase.com" : previewUrl));
-            txtNavUrlContainer.Text = (string.IsNullOrEmpty(previewUrl) ? "Not set, choose and agenda" : previewUrl);
+            txtNavUrlContainer.Text = (string.IsNullOrEmpty(previewUrl) ? " www.opengovideo.com/ogv2help" : previewUrl);
             txtLocalFile.Text = (localVideoFile == null || localVideoFile == string.Empty)?"The folder where the local video is stored....":localVideoFile;
             txtAppVersion.Text = SoftwareVersion();
             txtPublishingPoint.Text = (publishingPoint == null || publishingPoint == string.Empty)?"The url on the internet where the video is sent....":publishingPoint;

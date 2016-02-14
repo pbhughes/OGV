@@ -18,7 +18,9 @@
             <RowDefinition />
             <RowDefinition Height="35"/>
         </Grid.RowDefinitions>
-    
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition Width="*"></ColumnDefinition>
+        </Grid.ColumnDefinitions>
     <DockPanel Grid.Row="0" >
         <Menu IsMainMenu="True"  Panel.ZIndex="200"
              DockPanel.Dock="Top" Margin="10"
@@ -39,7 +41,7 @@
             <Grid.ColumnDefinitions>
                 <ColumnDefinition  Width="Auto"/>
                 <ColumnDefinition  Width="Auto"/>
-                <ColumnDefinition  Width="Auto"/>
+                <ColumnDefinition  Width="*"/>
             </Grid.ColumnDefinitions>
 
             <ScrollViewer Grid.Column="0" Grid.Row="0" 
@@ -59,7 +61,7 @@
                         cal:RegionManager.RegionName="MiddleRegion" />
             </Border>
 
-            <ScrollViewer Grid.Column="2" Grid.Row="0" 
+            <ScrollViewer Grid.Column="2" Grid.Row="0"
                       Grid.RowSpan="3" VerticalScrollBarVisibility="Auto">
                 <ContentControl 
                          Name="MainRegion" 

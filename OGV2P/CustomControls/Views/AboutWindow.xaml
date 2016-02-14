@@ -23,8 +23,8 @@
                    HorizontalAlignment="Left" 
                    VerticalContentAlignment="Center">Email Address:</Label>
             <TextBlock VerticalAlignment="Center">
-                <Hyperlink NavigateUri="mailto:support@clerkbase.com?subject=Support Question" RequestNavigate="Hyperlink_RequestNavigate">
-                    support@clerkbase.com
+                <Hyperlink NavigateUri="mailto:support@opengovideo.com?subject=Support Question" RequestNavigate="Hyperlink_RequestNavigate">
+                    support@opengovideo.com
                 </Hyperlink>
             </TextBlock>
             </StackPanel>
