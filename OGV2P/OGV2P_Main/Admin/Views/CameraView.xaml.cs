@@ -588,10 +588,10 @@ namespace OGV2P.Admin.Views
                if(string.IsNullOrEmpty(_meeting.MeetingName))
                 {
                     MessageBoxResult result = Xceed.Wpf.Toolkit.MessageBox.Show(
-                        $"No agenda file has been chosen this will record locally only and the recording can be found at {_meeting.DefaultVideoDirectory()}",
-                        "Do you want to include an agenda so you can stream live?", 
+                        $"No agenda file has been chosen, you can only stream locally.  To Continue to stream locally click Yes, to stop and choose an agenda please click No and select an agenda.",
+                        "Streaming locally only",
                         MessageBoxButton.YesNo);
-                    if (result == MessageBoxResult.Yes)
+                    if (result == MessageBoxResult.No)
                         return;
 
                 }
@@ -658,8 +658,9 @@ namespace OGV2P.Admin.Views
             try
             {
                 //remember the chosen audio and video devices
-                string videoCacheDevice = cboCameras.SelectedItem.ToString();
-                string audioCacheDevice = cboMicrophones.SelectedItem.ToString();
+
+                string videoCacheDevice = (cboCameras.SelectedItem == null) ? cboCameras.Items[0].ToString() : cboCameras.SelectedItem.ToString();
+                string audioCacheDevice = (cboMicrophones.SelectedItem == null)? cboMicrophones.Items[0].ToString() :  cboMicrophones.SelectedItem.ToString();
                 XDocument xDoc = new XDocument();
                 XElement root = new XElement("devices", null);
                 XElement videoElement = new XElement("videodevice", videoCacheDevice);
@@ -673,7 +674,7 @@ namespace OGV2P.Admin.Views
             {
 
                 MessageBox.Show(string.Format("Tried to write the default device cache file and failed. " +
-                    "Please verify the selected camera and microphone before recording.  {0}", ex.Message));
+                    "Please verify the selected camera and microphone before recording."));
             }
             
         }
@@ -694,17 +695,21 @@ namespace OGV2P.Admin.Views
 
             try
             {
-                _vuMeterTimer.Stop();
-                cmdStartRecording.IsEnabled = true;
-                cmdStopRecording.IsEnabled = false;
-                axRControl.StopBroadcast();
-                Meeting.IsBusy = false;
-                VuMeterReading = 0;
-               
-                TimerStamp = TimeSpan.Zero;
-                Meeting.LeftStatus = "Idle";
-                Meeting.RightStatus = "";
-                axRControl.StartPreview();
+                Dispatcher.Invoke(() =>
+                {
+                    axRControl.StopBroadcast();
+                    _vuMeterTimer.Stop();
+                    cmdStartRecording.IsEnabled = true;
+                    cmdStopRecording.IsEnabled = false;
+                    Meeting.IsBusy = false;
+                    VuMeterReading = 0;
+
+                    TimerStamp = TimeSpan.Zero;
+                    Meeting.LeftStatus = "Idle";
+                    Meeting.RightStatus = "";
+                   
+                });
+                
             }
             catch (Exception ex)
             {

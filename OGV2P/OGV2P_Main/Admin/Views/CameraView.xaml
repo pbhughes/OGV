@@ -95,17 +95,37 @@
                 <RowDefinition Height="Auto" />
             </Grid.RowDefinitions>
             <CheckBox Unchecked="CheckBox_Checked_1" ClickMode="Press" Checked="CheckBox_Checked_1" Margin="5,0,0,0" VerticalContentAlignment="Center" 
-                      IsEnabled="{Binding Meeting.IsBusy, Converter={StaticResource InverseBoolConverter}}" IsChecked="{Binding ShowOverlay}"  >Show Overlay</CheckBox>
-            <tk:WatermarkTextBox TextChanged="WatermarkTextBox_TextChanged" Margin="5,0,5,0" Text="{Binding Overlay}"  Watermark="Enter overlay text... " Grid.Column="1"></tk:WatermarkTextBox>
-            <Label Grid.Column="0" Grid.Row="1">Cameras:</Label>
-            <ComboBox Grid.Column="1" Grid.Row="1" x:Name="cboCameras" 
+                      IsEnabled="{Binding Meeting.IsBusy, 
+                Converter={StaticResource InverseBoolConverter}}"
+                      IsChecked="{Binding ShowOverlay}">Show Overlay</CheckBox>
+            <tk:WatermarkTextBox 
+                TextChanged="WatermarkTextBox_TextChanged" 
+                Margin="5,0,5,0" Text="{Binding Overlay}"
+                Watermark="Enter overlay text... " 
+                Grid.Column="1"></tk:WatermarkTextBox>
+            <Expander Header="Show Devices" Grid.Column="0" Grid.Row="1" Grid.ColumnSpan="2">
+                <Grid >
+                    <Grid.RowDefinitions>
+                        <RowDefinition />
+                        <RowDefinition />
+                    </Grid.RowDefinitions>
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="100" />
+                        <ColumnDefinition Width="*"/>
+                    </Grid.ColumnDefinitions>
+                    <Label Grid.Column="0" Grid.Row="0">Cameras:</Label>
+                    <ComboBox Grid.Column="1" Grid.Row="0" x:Name="cboCameras" 
                           VerticalContentAlignment="Center"
                           SelectionChanged="cboSource_SelectedChanged"></ComboBox>
 
-            <Label Grid.Column="0" Grid.Row="2">Microphones</Label>
-            <ComboBox Grid.Column="1" Grid.Row="2" x:Name="cboMicrophones" 
+                    <Label Grid.Column="0" Grid.Row="1">Microphones</Label>
+                    <ComboBox Grid.Column="1" Grid.Row="1" x:Name="cboMicrophones" 
                           VerticalContentAlignment="Center"
                           SelectionChanged="cboMicrophones_SelectionChanged"></ComboBox>
+                </Grid>
+            </Expander>
+       
+        
 
             <Grid Grid.Row="3" Grid.ColumnSpan="2" Grid.Column="1" >
                 <Grid.RowDefinitions>
