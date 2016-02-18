@@ -588,11 +588,11 @@ namespace OGV2P.Admin.Views
                if(string.IsNullOrEmpty(_meeting.MeetingName))
                 {
                     MessageBoxResult result = Xceed.Wpf.Toolkit.MessageBox.Show(
-                        $"No agenda file has been chosen, you can only stream locally.  To Continue to stream locally click Yes, to stop and choose an agenda please click No and select an agenda.",
-                        "Streaming locally only",
-                        MessageBoxButton.YesNo);
-                    if (result == MessageBoxResult.No)
-                        return;
+                        $"Please choose an agenda file to continue.",
+                        "No agenda file loaded.",
+                        MessageBoxButton.OK);
+                    return;
+                    
 
                 }
 
