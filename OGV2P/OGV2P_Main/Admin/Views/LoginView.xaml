@@ -30,7 +30,7 @@
 
         <TextBlock Grid.Row="0" Grid.ColumnSpan="2"
                        HorizontalAlignment="Center"
-                       VerticalAlignment="Bottom">Select a Board and click Start</TextBlock>
+                       VerticalAlignment="Bottom" FontSize="20">Select a Board and click Start</TextBlock>
         <Label Grid.Column="0" Grid.Row="1" FontSize="15" FontWeight="Bold">Boards:</Label>
 
         <ComboBox Grid.Row="1" Grid.Column="1"  ItemsSource="{Binding Boards.Boards}"

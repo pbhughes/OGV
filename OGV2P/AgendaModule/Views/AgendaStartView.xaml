@@ -32,20 +32,24 @@
                 <RowDefinition Height="Auto" />
             </Grid.RowDefinitions>
             <Grid.ColumnDefinitions>
-                <ColumnDefinition Width="150" />
+                <ColumnDefinition Width="175" />
                 <ColumnDefinition />
                 <ColumnDefinition Width="150" />
             </Grid.ColumnDefinitions>
 
-          
-
-            
-
-
-                <tk:SplitButton Grid.Row="1" Background="{x:Static SystemColors.ControlDarkBrush}" 
+         
+                <tk:SplitButton Grid.Row="1" 
+                                Background="{x:Static SystemColors.ControlLightBrush}" 
                     Grid.Column="2" Name="agendaCommandDropDown"
-                        Click="agendaCommandDropDown_Click"
-                         Content="Get Agenda File" Margin="10"  >
+                        Click="GetAgendaFromServer_Click"
+                         Margin="10"  >
+                <tk:SplitButton.Content>
+                    <StackPanel Orientation="Horizontal">
+                        <Image Source="/OGV2P.Agenda;component/tools.png"
+                               Width="33.6"/>
+                        <Label>Get Agenda</Label>
+                    </StackPanel>
+                </tk:SplitButton.Content>
                     <tk:SplitButton.BorderBrush>
                         <SolidColorBrush Color="Transparent"></SolidColorBrush>
                     </tk:SplitButton.BorderBrush>
@@ -59,8 +63,10 @@
                              Click="GetAgendaFromServer_Click">
                             <Button.Content>
                                 <StackPanel Orientation="Horizontal" VerticalAlignment="Center">
-                                    <Image Source="/OGV2P.Agenda;component/tools.png" Width="33.6" />
-                                    <Label VerticalAlignment="Center">Get Agenda From Server</Label>
+                                    <Image Source="/OGV2P.Agenda;component/GetAgenda.png" Width="33.6" />
+                                    <Label VerticalAlignment="Center"
+                                           HorizontalAlignment="Left"
+                                           Width="150">Get Agenda From Server</Label>
                                 </StackPanel>
                             </Button.Content>
                         </Button>
@@ -69,8 +75,10 @@
                         Style="{StaticResource RoundedButton}">
                             <Button.Content>
                                 <StackPanel Orientation="Horizontal">
-                                    <Image Source="/OGV2P.Agenda;component/tools.png" Width="33.6" />
-                                    <Label VerticalAlignment="Center">Open Agenda File</Label>
+                                    <Image Source="/OGV2P.Agenda;component/OpenAgenda.png" Width="33.6" />
+                                    <Label VerticalAlignment="Center"
+                                           HorizontalAlignment="Left"
+                                           Width="150">Open Agenda File</Label>
                                 </StackPanel>
                             </Button.Content>
                         </Button>
@@ -80,8 +88,10 @@
                             Click="SaveAgenda_Click">
                             <Button.Content>
                                 <StackPanel Orientation="Horizontal">
-                                    <Image Source="/OGV2P.Agenda;component/tools.png" Width="33.6" />
-                                    <Label VerticalAlignment="Center">Save The Agenda</Label>
+                                    <Image Source="/OGV2P.Agenda;component/SaveAgenda.png" Width="33.6" />
+                                    <Label VerticalAlignment="Center"
+                                           HorizontalAlignment="Left"
+                                           Width="150">Save The Agenda</Label>
                                 </StackPanel>
                             </Button.Content>
                         </Button>
@@ -91,8 +101,10 @@
                              Click="ClearStamps_Click">
                             <Button.Content>
                                 <StackPanel Orientation="Horizontal">
-                                    <Image Source="/OGV2P.Agenda;component/tools.png" Width="33.6" />
-                                    <Label VerticalAlignment="Center">Clear All Timestamps</Label>
+                                    <Image Source="/OGV2P.Agenda;component/ClearAllItems.png" Width="33.6" />
+                                    <Label VerticalAlignment="Center"
+                                           HorizontalAlignment="Left"
+                                           Width="150">Clear All Timestamps</Label>
                                 </StackPanel>
                             </Button.Content>
                         </Button>
@@ -102,8 +114,10 @@
                              Click="AddAgenadaItem_click">
                             <Button.Content>
                                 <StackPanel Orientation="Horizontal">
-                                    <Image Source="/OGV2P.Agenda;component/tools.png" Width="33.6" />
-                                    <Label VerticalAlignment="Center">Add Agenda Item</Label>
+                                    <Image Source="/OGV2P.Agenda;component/AddAgendaItem.png" Width="33.6" />
+                                    <Label VerticalAlignment="Center"
+                                           HorizontalAlignment="Left"
+                                           Width="150">Add Agenda Item</Label>
                                 </StackPanel>
                             </Button.Content>
                         </Button>
@@ -111,16 +125,20 @@
                 </tk:SplitButton.DropDownContent>
             </tk:SplitButton>
 
-            <Label Grid.Column="0" Content="Meeting Name:" Grid.Row="0" />
+            <Label Grid.Column="0" Content="Meeting Name:" Grid.Row="0"
+                   FontSize="20"/>
             <ScrollViewer Grid.Column="1" HorizontalScrollBarVisibility="Auto"
                           VerticalScrollBarVisibility="Disabled"
                           Grid.Row="0" Grid.ColumnSpan="2">
                 <TextBlock  x:Name="txtMeetingName" VerticalAlignment="Center"
-                          Margin="0 0 5 0" Text="{Binding MeetingName}" />
+                          Margin="0 0 5 0" Text="{Binding MeetingName}" 
+                            FontSize="18"/>
             </ScrollViewer>
-            <Label Grid.Row="2" Grid.Column="0" Content="Meeting Date:" />
+            <Label Grid.Row="2" Grid.Column="0" Content="Meeting Date:" 
+                   FontSize="20"/>
             <TextBlock Name="dteMeetingDate" Grid.Column="1"
                        VerticalAlignment="Center"
+                       FontSize="18"
                        Grid.Row="2" Grid.ColumnSpan="1"
                        Text="{Binding MeetingDate, Converter={StaticResource DateToString}}" />
         </Grid>

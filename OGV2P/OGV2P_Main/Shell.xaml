@@ -45,15 +45,19 @@
                 <ColumnDefinition  Width="*"/>
             </Grid.ColumnDefinitions>
 
+           
             <ScrollViewer Grid.Column="0" Grid.Row="0" 
-                          VerticalScrollBarVisibility="Auto" VerticalAlignment="Top"
+                          VerticalScrollBarVisibility="Auto"
+                          VerticalAlignment="Top"
                           HorizontalAlignment="Left">
-                           
+                
                     <ContentControl 
                         Name="SideBarRegion" 
                         cal:RegionManager.RegionName="SideBarRegion"
                         Background="AliceBlue"  />
+                
             </ScrollViewer>
+           
 
             <ScrollViewer Grid.Column="1" Grid.Row="0"
                           HorizontalAlignment="Stretch"

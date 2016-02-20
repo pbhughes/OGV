@@ -231,11 +231,7 @@ namespace OGV2P.AgendaModule.Views
             }
         }
 
-        private void agendaCommandDropDown_Click(object sender, RoutedEventArgs e)
-        {
-            agendaCommandDropDown.IsOpen = !agendaCommandDropDown.IsOpen;
-
-        }
+      
 
         // Determine whether one node is a parent 
         // or ancestor of a second node.
