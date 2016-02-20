@@ -45,7 +45,7 @@
                          Margin="10"  >
                 <tk:SplitButton.Content>
                     <StackPanel Orientation="Horizontal">
-                        <Image Source="/OGV2P.Agenda;component/tools.png"
+                        <Image Source="/OGV2P.Agenda;component/GetAgenda.png"
                                Width="33.6"/>
                         <Label>Get Agenda</Label>
                     </StackPanel>
@@ -91,7 +91,7 @@
                                     <Image Source="/OGV2P.Agenda;component/SaveAgenda.png" Width="33.6" />
                                     <Label VerticalAlignment="Center"
                                            HorizontalAlignment="Left"
-                                           Width="150">Save The Agenda</Label>
+                                           Width="150">Publish The Agenda</Label>
                                 </StackPanel>
                             </Button.Content>
                         </Button>

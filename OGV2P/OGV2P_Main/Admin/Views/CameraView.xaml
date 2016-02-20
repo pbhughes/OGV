@@ -100,7 +100,9 @@
                 <RowDefinition Height="Auto" />
                 <RowDefinition Height="Auto" />
             </Grid.RowDefinitions>
-            <CheckBox Unchecked="CheckBox_Checked_1" ClickMode="Press" Checked="CheckBox_Checked_1" Margin="5,0,0,0" VerticalContentAlignment="Center" 
+            <CheckBox Unchecked="CheckBox_Checked_1" 
+                      ClickMode="Press" Checked="CheckBox_Checked_1" 
+                      Margin="5,0,0,0" VerticalContentAlignment="Center" 
                       IsEnabled="{Binding Meeting.IsBusy, 
                 Converter={StaticResource InverseBoolConverter}}"
                       IsChecked="{Binding ShowOverlay}">Show Overlay</CheckBox>
@@ -108,6 +110,7 @@
                 TextChanged="WatermarkTextBox_TextChanged" 
                 Margin="5,0,5,0" Text="{Binding Overlay}"
                 Watermark="Enter overlay text... " 
+                IsReadOnly="{Binding ShowOverlay}"
                 Grid.Column="1"></tk:WatermarkTextBox>
             <Expander Header="Show Devices" Grid.Column="0" Grid.Row="1" Grid.ColumnSpan="2">
                 <Grid >
