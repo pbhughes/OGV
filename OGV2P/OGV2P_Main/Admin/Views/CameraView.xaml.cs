@@ -589,7 +589,7 @@ namespace OGV2P.Admin.Views
                 {
                     MessageBoxResult result = Xceed.Wpf.Toolkit.MessageBox.Show(
                         $"Please choose an agenda file to continue.",
-                        "No agenda file loaded.",
+                        "No agenda file loaded",
                         MessageBoxButton.OK);
                     return;
                     

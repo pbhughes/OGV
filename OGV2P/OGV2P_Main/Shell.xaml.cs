@@ -150,16 +150,16 @@ namespace OGV2P
             
                 _regionManager = Microsoft.Practices.ServiceLocation.ServiceLocator.Current.GetInstance<Microsoft.Practices.Prism.Regions.IRegionManager>();
 
-                var loginView = _regionManager.Regions[Infrastructure.Models.Regions.Middle].GetView("LoginView");
+                var loginView = _regionManager.Regions[Infrastructure.Models.Regions.Main].GetView("LoginView");
 
                 if (loginView == null)
                 {
                     loginView = new OGV2P.Admin.Views.LoginView(_container,
                         _container.Resolve<ISession>(), _container.Resolve<IUser>());
-                    _regionManager.Regions[Infrastructure.Models.Regions.Middle].Add(loginView, "LoginView");
+                    _regionManager.Regions[Infrastructure.Models.Regions.Main].Add(loginView, "LoginView");
                 }
 
-                _regionManager.Regions[Infrastructure.Models.Regions.Middle].Activate(loginView);
+                _regionManager.Regions[Infrastructure.Models.Regions.Main].Activate(loginView);
 
                 foreach (var view in _regionManager.Regions[Infrastructure.Models.Regions.Main].Views)
                 {

@@ -48,8 +48,7 @@
             <Button Grid.Row="0" Click="RefreshPreview_Click">Refresh Preview</Button>
             <WindowsFormsHost Grid.Row="1" Grid.Column="0" 
                               Grid.ColumnSpan="2"
-                               Height="480"
-                               Width="640"
+                               
                               x:Name="winFormHost">
 
                 <frms:Panel   Dock="Fill" 

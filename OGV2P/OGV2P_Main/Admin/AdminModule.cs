@@ -26,10 +26,10 @@ namespace OGV2P.Admin
 
         public void Initialize()
         {
-            _regionManager.Regions[Infrastructure.Models.Regions.Middle].Add(new Views.LoginView(_container, _session, _user), "LoginView");
+            _regionManager.Regions[Infrastructure.Models.Regions.Main].Add(new Views.LoginView(_container, _session, _user), "LoginView");
 
-            var v = _regionManager.Regions[Infrastructure.Models.Regions.Middle].GetView("LoginView");
-            _regionManager.Regions[Infrastructure.Models.Regions.Middle].Activate( v );
+            var v = _regionManager.Regions[Infrastructure.Models.Regions.Main].GetView("LoginView");
+            _regionManager.Regions[Infrastructure.Models.Regions.Main].Activate( v );
 
             _regionManager.RegisterViewWithRegion(Infrastructure.Models.Regions.SideBar, typeof(OGV2P.Admin.Views.CameraView));
         }

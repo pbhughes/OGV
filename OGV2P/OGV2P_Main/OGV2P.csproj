@@ -26,12 +26,12 @@
     <UpdateRequired>false</UpdateRequired>
     <MapFileExtensions>true</MapFileExtensions>
     <InstallUrl>http://mwfogvdb01.opengovideo.com/Test/</InstallUrl>
+    <SupportUrl>http://opengovideo.com</SupportUrl>
     <ProductName>OpenGovVideo</ProductName>
     <PublisherName>ClerkBase</PublisherName>
-    <SuiteName>OGV-2</SuiteName>
     <CreateWebPageOnPublish>true</CreateWebPageOnPublish>
     <WebPage>publish.htm</WebPage>
-    <ApplicationRevision>73</ApplicationRevision>
+    <ApplicationRevision>74</ApplicationRevision>
     <ApplicationVersion>1.0.0.%2a</ApplicationVersion>
     <UseApplicationTrust>false</UseApplicationTrust>
     <CreateDesktopShortcut>true</CreateDesktopShortcut>

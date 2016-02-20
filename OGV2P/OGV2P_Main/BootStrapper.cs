@@ -93,8 +93,8 @@ namespace OGV2P
         {
             _regionManager = Microsoft.Practices.ServiceLocation.ServiceLocator.Current.GetInstance<Microsoft.Practices.Prism.Regions.IRegionManager>();
 
-            var loginView = _regionManager.Regions[Infrastructure.Models.Regions.Middle].GetView("LoginView");
-            _regionManager.Regions[Infrastructure.Models.Regions.Middle].Deactivate ( loginView );
+            var loginView = _regionManager.Regions[Infrastructure.Models.Regions.Main].GetView("LoginView");
+            _regionManager.Regions[Infrastructure.Models.Regions.Main].Deactivate ( loginView );
 
             ((Shell)_shell).SetSideBarAllignmentTop();
             

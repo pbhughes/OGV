@@ -37,13 +37,7 @@
                 <ColumnDefinition Width="150" />
             </Grid.ColumnDefinitions>
 
-            <Label Grid.Column="0" Content="Meeting Name:" Grid.Row="0" />
-            <ScrollViewer Grid.Column="1" HorizontalScrollBarVisibility="Auto"
-                          VerticalScrollBarVisibility="Disabled"
-                          Grid.Row="0" Grid.ColumnSpan="2">
-                <TextBox  x:Name="txtMeetingName" IsReadOnly="True"
-                          Margin="0 0 5 0" Text="{Binding MeetingName}" />
-            </ScrollViewer>
+          
 
             
 
@@ -116,27 +110,19 @@
                     </ItemsControl>
                 </tk:SplitButton.DropDownContent>
             </tk:SplitButton>
-     
-            <ScrollViewer Grid.Column="0" Grid.Row="0"
-                         Grid.ColumnSpan="3"
+
+            <Label Grid.Column="0" Content="Meeting Name:" Grid.Row="0" />
+            <ScrollViewer Grid.Column="1" HorizontalScrollBarVisibility="Auto"
                           VerticalScrollBarVisibility="Disabled"
-                          HorizontalScrollBarVisibility="Auto">
-
-                <DockPanel LastChildFill="False"
-                        HorizontalAlignment="Stretch">
-                </DockPanel>
+                          Grid.Row="0" Grid.ColumnSpan="2">
+                <TextBlock  x:Name="txtMeetingName" VerticalAlignment="Center"
+                          Margin="0 0 5 0" Text="{Binding MeetingName}" />
             </ScrollViewer>
-
             <Label Grid.Row="2" Grid.Column="0" Content="Meeting Date:" />
-            <DatePicker Name="dteMeetingDate" Grid.Column="1"  
-                        Grid.Row="2" Grid.ColumnSpan="1"
-                        Focusable="False" IsHitTestVisible="False"
-                        Text=""
-                        SelectedDateFormat="Long"
-                                SelectedDate="{Binding MeetingDate, Converter={StaticResource DateToString}}"
-                                VerticalContentAlignment="Center"
-                                VerticalAlignment="Center"
-                  FirstDayOfWeek="Monday" />
+            <TextBlock Name="dteMeetingDate" Grid.Column="1"
+                       VerticalAlignment="Center"
+                       Grid.Row="2" Grid.ColumnSpan="1"
+                       Text="{Binding MeetingDate, Converter={StaticResource DateToString}}" />
         </Grid>
 
         <!-- Windows forms tree Grid -->

@@ -15,10 +15,7 @@
 
         <infra:DateConverter x:Key="DateToString"></infra:DateConverter>
         
-        <Style TargetType="UserControl">
-            <Setter Property="MinWidth" Value="400" />
-            <Setter Property="MinHeight" Value="400" />
-        </Style>
+      
 
         <Style TargetType="Label">
             <Setter Property="MinWidth" Value="100"/>
