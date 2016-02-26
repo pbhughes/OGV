@@ -46,7 +46,7 @@ namespace OGV2P
             }
             else
             {
-                MessageBox.Show(string.Format("A startup execption occured here is the error: {0}", ((Exception)e.ExceptionObject).Message));
+                MessageBox.Show(string.Format("A startup exception occurred here is the error: {0}", ((Exception)e.ExceptionObject).Message));
             }
         }
 

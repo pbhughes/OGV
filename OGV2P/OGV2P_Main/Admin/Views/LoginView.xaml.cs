@@ -41,7 +41,8 @@ namespace OGV2P.Admin.Views
             _session = session;
             _user = user;
             DataContext = _user;
-            if(_user.Boards.Boards.Count >0)
+          
+            if(_user.Boards.Boards.Count > 0)
             {
                 _user.SelectedBoard = _user.Boards.Boards[0];
             }
@@ -128,6 +129,13 @@ namespace OGV2P.Admin.Views
 
         private void lstBoards_SelectionChanged(object sender, SelectionChangedEventArgs e)
         {
+            _user.Message = string.Empty;
+
+            if (_user.SelectedBoard.RequireLogin)
+            {
+                _user.UserID = string.Empty;
+                _user.Password = string.Empty;
+            }
             DecorateLoginScreen();
             txtUserID.Focus();
             txtUserID.SelectAll();

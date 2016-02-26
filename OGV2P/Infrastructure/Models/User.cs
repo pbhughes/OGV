@@ -1,22 +1,11 @@
-﻿using Infrastructure.Interfaces;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using System.ComponentModel;
-using Microsoft.Practices.Unity;
+﻿using Infrastructure.Extensions;
+using Infrastructure.Interfaces;
 using Microsoft.Practices.Prism.Commands;
-using Microsoft.Practices.Prism.Regions;
-using System.Threading;
-using System.Windows;
-using System.ServiceProcess;
-using Infrastructure.Extensions;
-
+using System;
+using System.ComponentModel;
 
 namespace Infrastructure.Models
 {
-
     public class User : IUser, INotifyPropertyChanged
     {
         private ISession _session;
@@ -53,7 +42,6 @@ namespace Infrastructure.Models
             set { _isBusy = value; OnPropertyChanged("IsBusy"); }
         }
 
-
         private string _message;
 
         public string Message
@@ -63,6 +51,7 @@ namespace Infrastructure.Models
         }
 
         private DelegateCommand _loginCommand;
+
         public DelegateCommand LoginCommand
         {
             get { return _loginCommand; }
@@ -76,70 +65,59 @@ namespace Infrastructure.Models
 
         private async void OnLogin()
         {
+            try
+            {
+                IsBusy = true;
 
-                try
+                if (SelectedBoard.RequireLogin)
                 {
-                    IsBusy = true;
-
-                    if (SelectedBoard.RequireLogin)
+                    if (string.IsNullOrEmpty(UserID))
                     {
-                        if (string.IsNullOrEmpty(UserID))
-                        {
-                            Message = "Login required enter a valid user ID and password.";
-                            return;
-                        }
-
-                        if (string.IsNullOrEmpty(Password))
-                        {
-                            Message = "Login required enter a valid user ID and password.";
-                            return;
-                        }
-
-                        if (UserID.ToLower() != SelectedBoard.UserID.ToLower())
-                        {
-
-                            Message = "Invalid user id or password";
-                            throw new UnauthorizedAccessException("Invalid user ID or password.");
-
-                        }
-
-                        if (Password.ToLower() != SelectedBoard.Password.ToLower())
-                        {
-                            Message = "Invalid user ID or password";
-                            throw new UnauthorizedAccessException("Invalid user ID or password");
-
-                        }
+                        Message = "Login required enter a valid user ID and password.";
+                        return;
                     }
 
-                    else
+                    if (string.IsNullOrEmpty(Password))
                     {
-                        UserID = SelectedBoard.UserID;
-                        Password = SelectedBoard.Password;
+                        Message = "Login required enter a valid user ID and password.";
+                        return;
                     }
 
+                    if (UserID.ToLower() != SelectedBoard.UserID.ToLower())
+                    {
+                        Message = "Invalid user id or password";
+                        throw new UnauthorizedAccessException("Invalid user ID or password.");
+                    }
 
-
-                    OnRaiseLoginEvent();
-
-
+                    if (Password.ToLower() != SelectedBoard.Password.ToLower())
+                    {
+                        Message = "Invalid user ID or password";
+                        throw new UnauthorizedAccessException("Invalid user ID or password");
+                    }
                 }
-                catch (Exception ex)
+                else
                 {
-                    Message = ex.Message;
-                    ex.WriteToLogFile();
-                    Xceed.Wpf.Toolkit.MessageBox.Show(string.Format("An error occured loading the user, see error text: {0}", ex.Message));
-                }
-                finally
-                {
-                    IsBusy = false;
+                    UserID = SelectedBoard.UserID;
+                    Password = SelectedBoard.Password;
                 }
 
-           
-            
+                Message = string.Empty;
+                OnRaiseLoginEvent();
+            }
+            catch (Exception ex)
+            {
+                Message = ex.Message;
+                ex.WriteToLogFile();
+                Xceed.Wpf.Toolkit.MessageBox.Show(string.Format("An error occured loading the user, see error text: {0}", ex.Message));
+            }
+            finally
+            {
+                IsBusy = false;
+            }
         }
 
-    
         private string _userID;
+
         public string UserID
         {
             get { return _userID; }
@@ -147,6 +125,7 @@ namespace Infrastructure.Models
         }
 
         private string _password;
+
         public string Password
         {
             get { return _password; }
@@ -186,9 +165,6 @@ namespace Infrastructure.Models
             }
         }
 
-
-
-
         public event LoginEventHandler RaiseLoginEvent;
 
         private void OnRaiseLoginEvent()
@@ -202,7 +178,6 @@ namespace Infrastructure.Models
             _loginCommand = new DelegateCommand(OnLogin, CanLogin);
             _session = session;
             _boards = boards;
-
         }
 
         #region INotifyPropertyChanged
@@ -211,7 +186,6 @@ namespace Infrastructure.Models
 
         private void OnPropertyChanged(string name)
         {
-
             if (PropertyChanged != null)
                 PropertyChanged(this, new PropertyChangedEventArgs(name));
         }
@@ -221,8 +195,6 @@ namespace Infrastructure.Models
             LoginCommand.RaiseCanExecuteChanged();
         }
 
-        #endregion
-
-
+        #endregion INotifyPropertyChanged
     }
 }

@@ -167,9 +167,9 @@ namespace OGV2P.AgendaModule.Views
                     {
                         selection[0].Text = item.Title;
                         if (item.TimeStamp == TimeSpan.Zero)
-                            UnstampItem(agendaTree.SelectedNode as ExtendedTreeNode);
+                            ((ExtendedTreeNode)agendaTree.SelectedNode).MarkItemUnstamped();
                         else
-                            MarkItemStamped(agendaTree.SelectedNode as ExtendedTreeNode, false);
+                            ((ExtendedTreeNode)agendaTree.SelectedNode).MarkItemStamped(txtTitle.Text, false);
                     }
                         
                 }
@@ -396,92 +396,10 @@ namespace OGV2P.AgendaModule.Views
       
         private void _sessionService_ClearStamp()
         {
-            UnstampItem(agendaTree.SelectedNode as ExtendedTreeNode);
+            ((ExtendedTreeNode)agendaTree.SelectedNode).MarkItemUnstamped();
         }
 
-        private void MarkItemStamped(ExtendedTreeNode targetNode, bool advance = true)
-        {
-            
-
-            if (agendaTree.ImageList.Images.Count >= 2)
-            {
-                if (targetNode.ImageKey.ToLower().Contains("edited"))
-                {
-                    targetNode.ImageKey = "stamped_edited";
-                    targetNode.SelectedImageKey = "stamped_edited";
-                }
-                else
-                {
-                    targetNode.ImageKey = "stamped";
-                    targetNode.SelectedImageKey = "stamped";
-                }
-            }
-            string newTitle = txtTitle.Text;
-            targetNode.Text = newTitle;
-            targetNode.BackColor = Color.LightBlue;
-            
-            if (advance)
-            {
-
-
-                //Check for children if they exist go to them
-                if (targetNode.Nodes.Count > 0)
-                {
-                    //current node has children move to the first
-
-                    agendaTree.SelectedNode = targetNode.Nodes[0];
-                    return;
-                }
-                else
-                {
-                    //Check for siblings if they exist go to them
-
-                    //Current node doesn't have children
-                    //is there a sibling node next
-                    if (targetNode.NextNode != null)
-                    {
-                        agendaTree.SelectedNode = targetNode.NextNode;
-                        return;
-                    }
-                    else
-                    {
-
-                        ExtendedTreeNode parent = targetNode.Parent as ExtendedTreeNode;
-                        if (parent != null)
-                        {
-                            while (parent.NextNode == null)
-                            {
-                                parent = parent.Parent as ExtendedTreeNode;
-                            }
-                            agendaTree.SelectedNode = parent.NextNode;
-                        }
-
-                    }
-                }
-            }
-        }
-
-        private void UnstampItem(ExtendedTreeNode targetNode)
-        {
-            targetNode.SetTimeStamp(TimeSpan.Zero);
-            if (agendaTree.ImageList.Images.Count >= 2)
-            {
-                if (targetNode.ImageKey.ToLower().Contains("edited"))
-                {
-                    targetNode.ImageKey = "unstamped_edited";
-                    targetNode.SelectedImageKey = "unstamped_edited";
-                }
-                else
-                {
-                    targetNode.ImageKey = "unselected";
-                    targetNode.SelectedImageKey = "unselected";
-                    
-                }
-            }
-
-            targetNode.BackColor = Color.Transparent;
-
-        }
+     
 
         void agendaTree_AfterSelect(object sender, forms.TreeViewEventArgs e)
         {
@@ -536,14 +454,15 @@ namespace OGV2P.AgendaModule.Views
 
         private void Stamp_Click(object sender, EventArgs e)
         {
-            MarkItemStamped(agendaTree.SelectedNode as ExtendedTreeNode);
+            ((ExtendedTreeNode)agendaTree.SelectedNode).MarkItemStamped(txtTitle.Text);
             _currentMeeting.SelectedItem.TimeStamp = _sessionService.CurrentVideoTime;
         }
 
         private void Unstamp_Click(object sender, EventArgs e)
         {
             
-            UnstampItem(agendaTree.SelectedNode as ExtendedTreeNode);
+            ((ExtendedTreeNode)agendaTree.SelectedNode).MarkItemUnstamped();
+
         }
 
         private void agendaTree_MouseUp(object sender, forms.MouseEventArgs e)
@@ -702,11 +621,11 @@ namespace OGV2P.AgendaModule.Views
             {
                 case forms.Keys.Enter:
                     _sessionService.Stamp();
-                    MarkItemStamped(agendaTree.SelectedNode as ExtendedTreeNode);
+                    ((ExtendedTreeNode)agendaTree.SelectedNode).MarkItemStamped(txtTitle.Text);
                     break;
                 case forms.Keys.Space:
                     _sessionService.Stamp();
-                    MarkItemStamped(agendaTree.SelectedNode as ExtendedTreeNode);
+                    ((ExtendedTreeNode)agendaTree.SelectedNode).MarkItemStamped(txtTitle.Text);
                     break;
 
             }
@@ -808,7 +727,7 @@ namespace OGV2P.AgendaModule.Views
         private void agendaTree_NodeMouseDoubleClick(object sender, forms.TreeNodeMouseClickEventArgs e)
         {
             _sessionService.Stamp();
-            MarkItemStamped(agendaTree.SelectedNode as ExtendedTreeNode);
+            ((ExtendedTreeNode)agendaTree.SelectedNode).MarkItemStamped(txtTitle.Text);
             e.Node.Expand();
         }
 
@@ -862,10 +781,12 @@ namespace OGV2P.AgendaModule.Views
 
         private void ClearStamp(ExtendedTreeNode etn)
         {
+            etn.BackColor = Color.Transparent;
+            etn.MarkItemUnstamped();
             if(etn.AgendaItem != null)
             {
                 etn.SetTimeStamp(TimeSpan.Zero);
-                UnstampItem(etn);
+                ((ExtendedTreeNode)agendaTree.SelectedNode).MarkItemUnstamped();
             }
 
             foreach(ExtendedTreeNode node in etn.Nodes)
@@ -878,9 +799,20 @@ namespace OGV2P.AgendaModule.Views
             foreach(ExtendedTreeNode etn in agendaTree.Nodes)
             {
                 ClearStamp(etn);
+                etn.BackColor = Color.Transparent;
             }
         }
 
-
+        private void agendaCommandDropDown_Click(object sender, RoutedEventArgs e)
+        {
+            if(!_currentMeeting.IsBusy)
+            {
+                GetAgendaFromServer_Click(sender, e);
+            }
+            else
+            {
+                agendaCommandDropDown.IsOpen = !agendaCommandDropDown.IsOpen;
+            }
+        }
     }
 }

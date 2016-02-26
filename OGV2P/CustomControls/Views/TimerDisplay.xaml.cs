@@ -41,6 +41,7 @@ namespace CustomControls.Views
             {
                 display.border.BorderBrush = new SolidColorBrush(Colors.Green);
                 display.border.Background = new SolidColorBrush(Colors.Green);
+                display.Foreground = new SolidColorBrush(Colors.White);
                
             }
                 

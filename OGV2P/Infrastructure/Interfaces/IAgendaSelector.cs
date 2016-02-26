@@ -14,6 +14,8 @@ namespace Infrastructure.Interfaces
         List<FTPfileInfo> AvailableFiles { get; set; }
         string GetSelectedAgendaXML(string fileName);
         List<FTPfileInfo> ListAgendaFilesOnServer();
+        FTPfileInfo SelectedFile { get; set; }
+        bool FileChosen { get; }
         Exception LastError { get; set; }
         string Text { get; set; }
     }

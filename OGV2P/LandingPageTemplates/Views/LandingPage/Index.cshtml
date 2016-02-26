@@ -1,0 +1,85 @@
+﻿@{
+    Layout = null;
+}
+<!DOCTYPE html>
+<html>
+<head>
+    <!-- Latest compiled and minified CSS -->
+    <link rel="stylesheet" href="http://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/css/bootstrap.min.css">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Sample Landing Page</title>
+
+    <script src="http://p.jwpcdn.com/player/v/7.1.0/jwplayer.js"></script>
+    <script>jwplayer.key = "9yfn9CfhJNUNwedH1opzu1zHUacbzSibnYdgJPV3/X8=";</script>
+</head>
+<body>
+    <div class="container-fluid">
+        <div class="row" id="header">
+            <div class="col-lg-12 text-center">
+                <img src="~/Content/Images/customer_logo.jpg" />
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-sm-6 text-center">
+                <img src="~/Content/Images/opengov_logo.png" />
+                <div class="text-center">
+                    <div id="my-video" class="text-center" style="align-content:center">
+
+                        <script type="text/javascript">
+                            jwplayer("my-video").setup({
+                                file: "http://devob2.opengovideo.com:1935/RI_SouthKingstown_Live/ChessBoard/playlist.m3u8?DVR",
+                                skin: {
+                                    name: "bekle"
+                                },
+                                image: "http://www.clerkbase.com/img/opengov_sm.jpg",
+                                logo: {
+                                    file: 'http://www.mytestserver.com/OGVOverlay.png',
+                                    link: 'http://www.clerkbase.com'
+                                },
+                                abouttext: "Steve is cooler than Jay",
+                                aboutlink: "http://www.clerkbase.com",
+                                width: "640",
+                                height: "480",
+                                primary: "flash"
+                            });
+                        </script>
+
+                    </div>
+                </div>
+            </div>
+            <div class="col-lg-6 text-center">
+                <img src="~/Content/Images/clerkbase_logo.png" />
+                <p class=MsoNormal>
+                    <span style='font-size:9.0pt;font-family:Arial'><b><u>Westerly Town Council - Feb. 22, 2016</u></b></span>
+                </p>
+
+                <p class=MsoNormal>
+                    <span style='font-size:9.0pt;font-family:Arial'>
+
+                        Click the following link to open the <b>Committee of the Whole Agenda (6:00 PM)</b> and associated supporting documents:
+
+                        <a href="javascript:void(0)" onclick="window.open('http://clerkshq.com/default.ashx?ClientSite=Westerly-ri&Mode=getdocument&id=AGENDA','linkname','height=380, width=300,scrollbars=no, resizable=1, scrollbars=1')">link</a>.
+                    </span>
+                </p>
+
+                <p class=MsoNormal>
+                    <span style='font-size:9.0pt;font-family:Arial'>
+
+                        Click the following link to open the <b>Regular Session Agenda (7:00 PM)</b> and associated supporting documents
+
+                        <a href="javascript:void(0)" onclick="window.open('http://clerkshq.com/default.ashx?ClientSite=Westerly-ri&Mode=getdocument&id=AGENDA2','linkname','height=380, width=300,scrollbars=no, resizable=1, scrollbars=1')">link</a>.
+                    </span>
+                </p>
+            </div>
+        </div>
+        
+    </div>
+
+    <!-- jQuery library -->
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.12.0/jquery.min.js"></script>
+
+    <!-- Latest compiled JavaScript -->
+    <script src="http://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/js/bootstrap.min.js"></script>
+</body>
+
+</html>

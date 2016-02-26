@@ -41,8 +41,9 @@
                 <tk:SplitButton Grid.Row="1" 
                                 Background="{x:Static SystemColors.ControlLightBrush}" 
                     Grid.Column="2" Name="agendaCommandDropDown"
-                        Click="GetAgendaFromServer_Click"
-                         Margin="10"  >
+                        Click="agendaCommandDropDown_Click"
+                         Margin="10">
+                    
                 <tk:SplitButton.Content>
                     <StackPanel Orientation="Horizontal">
                         <Image Source="/OGV2P.Agenda;component/GetAgenda.png"
@@ -57,10 +58,11 @@
                 <tk:SplitButton.DropDownContent>
 
                     <ItemsControl>
-                        <Button>Commands</Button>
+                        <Label>Commands</Label>
                         <Button Margin="5" Height="35"
-                       Style="{StaticResource RoundedButton}"
-                             Click="GetAgendaFromServer_Click">
+                            Style="{StaticResource RoundedButton}"
+                             Click="GetAgendaFromServer_Click" 
+                                IsEnabled="{Binding IsBusy, Converter={StaticResource InverseBoolConverter}}"  >
                             <Button.Content>
                                 <StackPanel Orientation="Horizontal" VerticalAlignment="Center">
                                     <Image Source="/OGV2P.Agenda;component/GetAgenda.png" Width="33.6" />
@@ -71,8 +73,10 @@
                             </Button.Content>
                         </Button>
 
-                        <Button  Click="GetAgendaFromFile_Click" Margin="5" Height="35"
-                        Style="{StaticResource RoundedButton}">
+                        <Button  Click="GetAgendaFromFile_Click"
+                                 Margin="5" Height="35"
+                        Style="{StaticResource RoundedButton}"
+                                 IsEnabled="{Binding IsBusy, Converter={StaticResource InverseBoolConverter}}" >
                             <Button.Content>
                                 <StackPanel Orientation="Horizontal">
                                     <Image Source="/OGV2P.Agenda;component/OpenAgenda.png" Width="33.6" />
@@ -85,10 +89,11 @@
 
                         <Button  Margin="5" Height="35"
                         Style="{StaticResource RoundedButton}"
-                            Click="SaveAgenda_Click">
+                            Click="SaveAgenda_Click"
+                                 IsEnabled="{Binding IsBusy, Converter={StaticResource InverseBoolConverter}}" >
                             <Button.Content>
                                 <StackPanel Orientation="Horizontal">
-                                    <Image Source="/OGV2P.Agenda;component/SaveAgenda.png" Width="33.6" />
+                                    <Image Source="/OGV2P.Agenda;component/PublishAgenda.png" Width="33.6" />
                                     <Label VerticalAlignment="Center"
                                            HorizontalAlignment="Left"
                                            Width="150">Publish The Agenda</Label>
@@ -125,7 +130,7 @@
                 </tk:SplitButton.DropDownContent>
             </tk:SplitButton>
 
-            <Label Grid.Column="0" Content="Meeting Name:" Grid.Row="0"
+            <Label Grid.Column="0" Padding="2" Content="Meeting Name:" Grid.Row="0"
                    FontSize="20"/>
             <ScrollViewer Grid.Column="1" HorizontalScrollBarVisibility="Auto"
                           VerticalScrollBarVisibility="Disabled"
@@ -134,7 +139,7 @@
                           Margin="0 0 5 0" Text="{Binding MeetingName}" 
                             FontSize="18"/>
             </ScrollViewer>
-            <Label Grid.Row="2" Grid.Column="0" Content="Meeting Date:" 
+            <Label Grid.Row="2" Grid.Column="0" Padding="2" Content="Meeting Date:" 
                    FontSize="20"/>
             <TextBlock Name="dteMeetingDate" Grid.Column="1"
                        VerticalAlignment="Center"

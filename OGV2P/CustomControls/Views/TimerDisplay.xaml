@@ -26,9 +26,9 @@
                 <ColumnDefinition Width="auto" />
             </Grid.ColumnDefinitions>
             <TextBlock x:Name="txtHours" VerticalAlignment="Center" HorizontalAlignment="Center" Grid.Column="0" Text="00"></TextBlock>
-            <TextBlock Name="txtColon1" Margin="2"  Text=":" Width="auto" Grid.Column="1" HorizontalAlignment="Center" VerticalAlignment="Center" Foreground="Black"></TextBlock>
+            <TextBlock Name="txtColon1" Margin="2"  Text=":" Width="auto" Grid.Column="1" HorizontalAlignment="Center" VerticalAlignment="Center" ></TextBlock>
             <TextBlock x:Name="txtMinutes" VerticalAlignment="Center" HorizontalAlignment="Center" Grid.Column="2" Text="00"></TextBlock>
-            <TextBlock Name="txtColon2" Margin="2" Text=":" Width="auto" Grid.Column="3" HorizontalAlignment="Center" VerticalAlignment="Center" Foreground="Black"></TextBlock>
+            <TextBlock Name="txtColon2" Margin="2" Text=":" Width="auto" Grid.Column="3" HorizontalAlignment="Center" VerticalAlignment="Center" ></TextBlock>
             <TextBlock x:Name="txtSeconds" VerticalAlignment="Center" HorizontalAlignment="Center" Grid.Column="4" Text="00"></TextBlock>
         </Grid>
     </Border>

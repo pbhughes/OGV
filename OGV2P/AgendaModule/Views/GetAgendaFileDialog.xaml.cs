@@ -169,5 +169,10 @@ namespace OGV2P.AgendaModule.Views
                 _selector.IsBusy = false;
             }
         }
+
+        private void agendaList_SelectionChanged(object sender, System.Windows.Controls.SelectionChangedEventArgs e)
+        {
+            _selector.SelectedFile = (FTPfileInfo)agendaList.SelectedItem;
+        }
     }
 }

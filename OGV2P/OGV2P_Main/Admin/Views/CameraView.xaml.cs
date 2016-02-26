@@ -615,8 +615,9 @@ namespace OGV2P.Admin.Views
             }
             catch (Exception ex)
             {
-                cmdStartRecording.IsEnabled = true;
-                cmdStopRecording.IsEnabled = false;
+                _meeting.IsBusy = false;
+                cmdStopRecording.IsEnabled = true;
+                cmdStartRecording.IsEnabled = false;
                 ex.WriteToLogFile();
                 MessageBox.Show("Error trying to record be sure to choose a valid agenda file" + "-" + axRControl.LastErrorMessage);
             }

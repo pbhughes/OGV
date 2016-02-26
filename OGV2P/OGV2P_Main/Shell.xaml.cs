@@ -1,43 +1,28 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using System.Windows;
-using System.Windows.Controls;
-using System.Windows.Data;
-using System.Windows.Documents;
-using System.Windows.Input;
-using System.Windows.Media;
-using System.Windows.Media.Imaging;
-using System.Windows.Navigation;
-using System.Windows.Shapes;
-using CustomControls;
+﻿using Infrastructure.Interfaces;
+using Infrastructure.Models;
+using Microsoft.Practices.Prism.Regions;
 using Microsoft.Practices.Unity;
-using Infrastructure.Interfaces;
+using OGV2P.Admin.Views;
+using System;
 using System.Diagnostics;
 using System.Timers;
-using OGV2P.Admin.Views;
-using Microsoft.Practices.Prism.Regions;
-using Infrastructure.Models;
+using System.Windows;
 using forms = System.Windows.Forms;
 
 namespace OGV2P
 {
-    
     /// <summary>
     /// Interaction logic for MainWindow.xaml
     /// </summary>
     public partial class Shell : Window, IDisposable
     {
-        IUnityContainer _container;
-        IMeeting _meeting;
+        private IUnityContainer _container;
+        private IMeeting _meeting;
         private PerformanceCounter cpuCounter;
         private System.Timers.Timer cpuReadingTimer;
         private IRegionManager _regionManager;
 
-
-        public void SetSideBarAllignmentTop( )
+        public void SetSideBarAllignmentTop()
         {
             SideBarRegion.VerticalContentAlignment = VerticalAlignment.Top;
             SideBarRegion.VerticalAlignment = VerticalAlignment.Top;
@@ -100,7 +85,6 @@ namespace OGV2P
                 shellPBar.Value = cpuUtilization;
                 txtCPUReading.Text = string.Format("CPU: {0}", cpuUtilization.ToString("n2") + "%");
             });
-
         }
 
         private void File_SettingsMenu_CLick(object sender, RoutedEventArgs e)
@@ -112,16 +96,12 @@ namespace OGV2P
             }
             catch (Exception ex)
             {
-
                 System.Windows.MessageBox.Show(ex.Message);
             }
-
         }
 
         private void File_LogOutMenu_Click(object sender, RoutedEventArgs e)
         {
-            
-
             if (_meeting.IsBusy || _meeting.HasChanged)
             {
                 if (_meeting.IsBusy)
@@ -142,36 +122,37 @@ namespace OGV2P
                         "OpenGoVideo", MessageBoxButton.YesNo, MessageBoxImage.Warning) == MessageBoxResult.No)
                     {
                         e.Handled = true;
-                        return ;
+                        return;
                     }
                 }
             }
 
-            
-                _regionManager = Microsoft.Practices.ServiceLocation.ServiceLocator.Current.GetInstance<Microsoft.Practices.Prism.Regions.IRegionManager>();
+            _regionManager = Microsoft.Practices.ServiceLocation.ServiceLocator.Current.GetInstance<Microsoft.Practices.Prism.Regions.IRegionManager>();
 
-                var loginView = _regionManager.Regions[Infrastructure.Models.Regions.Main].GetView("LoginView");
+            var loginView = _regionManager.Regions[Infrastructure.Models.Regions.Main].GetView("LoginView");
 
-                if (loginView == null)
-                {
-                    loginView = new OGV2P.Admin.Views.LoginView(_container,
-                        _container.Resolve<ISession>(), _container.Resolve<IUser>());
-                    _regionManager.Regions[Infrastructure.Models.Regions.Main].Add(loginView, "LoginView");
-                }
+            if (loginView == null)
+            {
+                loginView = new OGV2P.Admin.Views.LoginView(_container,
+                    _container.Resolve<ISession>(), _container.Resolve<IUser>());
+                _regionManager.Regions[Infrastructure.Models.Regions.Main].Add(loginView, "LoginView");
+            }
 
-                _regionManager.Regions[Infrastructure.Models.Regions.Main].Activate(loginView);
+            _regionManager.Regions[Infrastructure.Models.Regions.Main].Activate(loginView);
 
-                foreach (var view in _regionManager.Regions[Infrastructure.Models.Regions.Main].Views)
-                {
+            foreach (var view in _regionManager.Regions[Infrastructure.Models.Regions.Main].Views)
+            {
+                if (!(view is LoginView))
                     _regionManager.Regions[Infrastructure.Models.Regions.Main].Remove(view);
-                }
-            
+            }
 
+
+
+            
         }
 
         private void BoardsFile_MenuItem_Click(object sender, RoutedEventArgs e)
         {
-
             Process.Start(forms.Application.LocalUserAppDataPath);
         }
 
@@ -182,12 +163,11 @@ namespace OGV2P
 
         private void Window_Closed(object sender, EventArgs e)
         {
-            
         }
 
         private void Window_Closing(object sender, System.ComponentModel.CancelEventArgs e)
         {
-            if(_meeting.IsBusy || _meeting.HasChanged)
+            if (_meeting.IsBusy || _meeting.HasChanged)
             {
                 if (_meeting.IsBusy)
                 {
@@ -210,9 +190,6 @@ namespace OGV2P
                     }
                 }
             }
-
-
-          
         }
 
         public void Dispose()

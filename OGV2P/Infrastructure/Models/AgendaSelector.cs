@@ -114,6 +114,32 @@ namespace Infrastructure.Models
             }
         }
 
+        private FTPfileInfo _selectedFile;
+        public FTPfileInfo SelectedFile
+        {
+            get
+            {
+                return _selectedFile;
+            }
+
+            set
+            {
+                _selectedFile = value;
+                OnPropertyChanged("");
+                
+            }
+        }
+
+        public bool FileChosen
+        {
+            get
+            {
+                return (_selectedFile != null);
+            }
+
+          
+        }
+
         #region INotifyPropertyChanged
 
         public event PropertyChangedEventHandler PropertyChanged;

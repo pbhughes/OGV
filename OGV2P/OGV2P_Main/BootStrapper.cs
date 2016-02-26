@@ -66,26 +66,19 @@ namespace OGV2P
             this.Container.RegisterType<object, OGV2P.Admin.Views.ServicesView>(typeof(OGV2P.Admin.Views.ServicesView).FullName);
             this.Container.RegisterType<IAgendaSelector, Infrastructure.Models.AgendaSelector>();
             this.Container.RegisterType<Infrastructure.Interfaces.IDevices, Infrastructure.Models.Devices>();
-           
-
+            this.Container.RegisterType<ISession, Session>();
+            
             _boardList = LoadBoards();
-            _session = new Session( );
-            _user = new User(_session, _boardList);
-            _meeting = new Meeting(_session, _user);
-            _saveAgendaViewModel = new SaveAgendaViewModel(_user, _meeting);
-
-            
-            
-           
-
-            _user.RaiseLoginEvent += _user_RaiseLoginEvent;
-            this.Container.RegisterInstance<ISession>(_session);
-            this.Container.RegisterInstance<IUser>(_user);
-            this.Container.RegisterInstance<IMeeting>(_meeting);
             this.Container.RegisterInstance<IBoardList>(_boardList);
-            this.Container.RegisterInstance<ISaveAgendaViewModel>(_saveAgendaViewModel);
 
+            _session = new Session();
+            _user = new User(_session, _boardList);
+            this.Container.RegisterInstance<IUser>(_user);
+            this.Container.RegisterType<IBoardList, BoardList>();
 
+            _meeting = new Meeting(_session, _user);
+            this.Container.RegisterInstance(_meeting);
+            _user.RaiseLoginEvent += _user_RaiseLoginEvent;
 
         }
 
@@ -97,7 +90,16 @@ namespace OGV2P
             _regionManager.Regions[Infrastructure.Models.Regions.Main].Deactivate ( loginView );
 
             ((Shell)_shell).SetSideBarAllignmentTop();
-            
+
+            _meeting = new Meeting(_session, _user);
+            _saveAgendaViewModel = new SaveAgendaViewModel(_user, _meeting);
+
+            this.Container.RegisterInstance(_session);
+            this.Container.RegisterInstance(_user);
+          
+            this.Container.RegisterInstance(_boardList);
+            this.Container.RegisterInstance(_saveAgendaViewModel);
+
             _regionManager.RegisterViewWithRegion(Infrastructure.Models.Regions.Main, typeof(OGV2P.AgendaModule.Views.AgendaStartView));
 
            

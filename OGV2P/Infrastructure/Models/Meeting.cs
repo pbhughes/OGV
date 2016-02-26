@@ -376,6 +376,7 @@ namespace Infrastructure.Models
         
         private void ParseItems(XElement items, ref ExtendedTreeNode node)
         {
+           
             if (items != null)
             {
                 foreach (XElement item in items.Elements("item"))
@@ -389,23 +390,31 @@ namespace Infrastructure.Models
                     string assingedText = (x.Title.Length < 150) ? x.Title : x.Title.Substring(0, 150);
                     ExtendedTreeNode xn = new ExtendedTreeNode() { Text = assingedText, ToolTipText = x.Title, AgendaItem = x };
 
+                    if (xn.AgendaItem.TimeStamp != TimeSpan.Zero)
+                    {
+
+                        xn.MarkItemStamped(xn.AgendaItem.Title, false);
+                        _agendaTree.SelectedNode = xn;
+                    }
+                    else
+                    {
+                        xn.MarkItemUnstamped();
+                    }
                     //tag tree node item with the IDa
                     if (item.Element("items") == null || item.Element("items").Elements("item") != null)
                     {
                         ParseItems(item.Element("items"), ref xn);
                     }
                     node.Nodes.Add(xn);
+
                 }
             }
+         
         }
 
         public Meeting(ISession sessionService, IUser user)
         {
-            if (user.SelectedBoard != null)
-            {
-                _meetingDate = DateTime.Now;
-                _meetingName = string.Format("{0}_{1}", (user.SelectedBoard == null) ? "select_a_board" : user.SelectedBoard.Name, _meetingDate.ToString("mm-dd-yyyy"));
-            }
+
             _sessionService = sessionService;
             _user = user;
             _sessionService.RaiseStamped += _sessionService_RaiseStamped;
@@ -485,6 +494,7 @@ namespace Infrastructure.Models
 
         public void ParseAgendaFile(forms.TreeView agendaTree, string allText)
         {
+            
             _agendaTree = agendaTree;
             XDocument xDoc = XDocument.Parse(allText);
             MeetingName = xDoc.Element("meeting").Element("meetingname").Value;
@@ -522,6 +532,7 @@ namespace Infrastructure.Models
             ClearStampsCommand.RaiseCanExecuteChanged();
             StartingHash = this.ToString().GetHashCode();
             OnRaiseMeetingSetEvent();
+            
         }
 
         private void _sessionService_RaiseStamped(TimeSpan sessionTime)
