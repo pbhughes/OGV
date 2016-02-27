@@ -17,7 +17,7 @@ using Microsoft.Practices.Prism.Commands;
 using System.Xml.Linq;
 using forms = System.Windows.Forms;
 using Infrastructure.Extensions;
-
+using Microsoft.Practices.Unity;
 
 namespace OGV2P.Admin.Views
 {
@@ -193,15 +193,17 @@ namespace OGV2P.Admin.Views
 
         public string InteractionResultMessage { get; private set; }
 
+        IUnityContainer _container;
+
         private void UpdateVUMeter(int sampleVolume)
         {
             VuMeterReading = sampleVolume;
         }
 
-        public CameraView(IRegionManager regionManager, IDevices devices, ISession sessionService, IMeeting meeting, IUser user)
+        public CameraView(IRegionManager regionManager, IDevices devices, ISession sessionService, IMeeting meeting, IUser user, IUnityContainer container)
         {
-            
 
+            _container = container;
             try
             {
                 InitializeComponent();
@@ -573,7 +575,8 @@ namespace OGV2P.Admin.Views
         {
             try
             {
-              
+
+                Meeting = _container.Resolve<IMeeting>();
 
                 //font cache a file source only hardware
                 if (axRControl.VideoSource != FILE_SOURCE)

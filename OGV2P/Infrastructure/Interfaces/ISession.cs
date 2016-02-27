@@ -20,9 +20,13 @@ namespace Infrastructure.Interfaces
 
         void Stamp();
 
+        void LogOut();
+
         event MeetingNameSetEventHandler RaiseMeetingNameSet;
 
         event StampedEventHandler RaiseStamped;
+
+        event LoggedOutEventHandler RaiseLoggedOut;
 
 
     }

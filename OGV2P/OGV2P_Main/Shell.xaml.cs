@@ -125,6 +125,7 @@ namespace OGV2P
                         return;
                     }
                 }
+               
             }
 
             _regionManager = Microsoft.Practices.ServiceLocation.ServiceLocator.Current.GetInstance<Microsoft.Practices.Prism.Regions.IRegionManager>();
@@ -146,9 +147,11 @@ namespace OGV2P
                     _regionManager.Regions[Infrastructure.Models.Regions.Main].Remove(view);
             }
 
+            var session = _container.Resolve<ISession>();
+            var user = _container.Resolve<IUser>();
+            _meeting = new Meeting(session, user);
 
-
-            
+            session.LogOut();
         }
 
         private void BoardsFile_MenuItem_Click(object sender, RoutedEventArgs e)

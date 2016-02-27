@@ -15,6 +15,8 @@ namespace Infrastructure.Models
 
     public delegate void StampedEventHandler(TimeSpan sessionTime);
 
+    public delegate void LoggedOutEventHandler();
+
     public class Session : ISession, INotifyPropertyChanged
     {
 
@@ -103,6 +105,7 @@ namespace Infrastructure.Models
         #region INotifyPropertyChanged
 
         public event PropertyChangedEventHandler PropertyChanged;
+       
 
         private void OnPropertyChanged(string name)
         {
@@ -111,9 +114,19 @@ namespace Infrastructure.Models
             if (PropertyChanged != null)
                 PropertyChanged(this, new PropertyChangedEventArgs(name));
         }
-
-       
-
         #endregion
+
+        public event LoggedOutEventHandler RaiseLoggedOut;
+
+        private void OnLoggedOut()
+        {
+            if (RaiseLoggedOut != null)
+                RaiseLoggedOut();
+        }
+
+        public void LogOut()
+        {
+            OnLoggedOut();
+        }
     }
 }

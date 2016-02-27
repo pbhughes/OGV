@@ -108,7 +108,7 @@ namespace Infrastructure.Models
             {
                 Message = ex.Message;
                 ex.WriteToLogFile();
-                Xceed.Wpf.Toolkit.MessageBox.Show(string.Format("An error occured loading the user, see error text: {0}", ex.Message));
+                Xceed.Wpf.Toolkit.MessageBox.Show(string.Format("An error occurred loading the user, see error text: {0}", ex.Message));
             }
             finally
             {

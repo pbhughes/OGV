@@ -91,7 +91,9 @@ namespace OGV2P
 
             ((Shell)_shell).SetSideBarAllignmentTop();
 
+            _session = new Session();
             _meeting = new Meeting(_session, _user);
+            Container.RegisterInstance<IMeeting>(_meeting);
             _saveAgendaViewModel = new SaveAgendaViewModel(_user, _meeting);
 
             this.Container.RegisterInstance(_session);

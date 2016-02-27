@@ -145,7 +145,7 @@
                        VerticalAlignment="Center"
                        FontSize="18"
                        Grid.Row="2" Grid.ColumnSpan="1"
-                       Text="{Binding MeetingDate, Converter={StaticResource DateToString}}" />
+                       Text="{Binding MeetingDate,Converter={StaticResource DateToString}}" />
         </Grid>
 
         <!-- Windows forms tree Grid -->

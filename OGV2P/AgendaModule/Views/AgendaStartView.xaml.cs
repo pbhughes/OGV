@@ -13,13 +13,14 @@ using Microsoft.Practices.Unity;
 using System.Xml.Linq;
 using Infrastructure.Extensions;
 using Infrastructure.ExtendedObjects;
+using Microsoft.Practices.Prism.Regions;
 
 namespace OGV2P.AgendaModule.Views
 {
     /// <summary>
     /// Interaction logic for ChooseAgendaView.xaml
     /// </summary>
-    public partial class AgendaStartView : UserControl
+    public partial class AgendaStartView : UserControl, INavigationAware
     {
         private IUnityContainer _container;
         private IMeeting _currentMeeting;
@@ -33,6 +34,8 @@ namespace OGV2P.AgendaModule.Views
         {
             InitializeComponent();
 
+            
+          
             Application.Current.MainWindow.LocationChanged += MainWindow_LocationChanged;
             Application.Current.MainWindow.Deactivated += MainWindow_Deactivated;
             Application.Current.MainWindow.StateChanged += MainWindow_StateChanged;
@@ -106,13 +109,20 @@ namespace OGV2P.AgendaModule.Views
             _sessionService = sessionService;
             _user = user;
             _currentMeeting.RaiseMeetingSetEvent += _currentMeeting_RaiseMeetingSetEvent;
-
+            _sessionService.RaiseLoggedOut += _sessionService_RaiseLoggedOut;
             DataContext = _currentMeeting;
 
             winFormHost.Child.Controls.Add(agendaTree);
 
             
            
+        }
+
+        private void _sessionService_RaiseLoggedOut()
+        {
+            txtMeetingName.Text = string.Empty;
+            dteMeetingDate.Text = string.Empty;
+            _currentMeeting = null;
         }
 
         private void AgendaTree_DrawNode(object sender, forms.DrawTreeNodeEventArgs e)
@@ -712,7 +722,7 @@ namespace OGV2P.AgendaModule.Views
 
                 }
 
-
+                _container.RegisterInstance<IMeeting>(_currentMeeting);
             }
             catch (Exception ex)
             {
@@ -814,5 +824,23 @@ namespace OGV2P.AgendaModule.Views
                 agendaCommandDropDown.IsOpen = !agendaCommandDropDown.IsOpen;
             }
         }
+
+        #region Navigation Awareness
+        public void OnNavigatedTo(NavigationContext navigationContext)
+        {
+            
+        }
+
+        public bool IsNavigationTarget(NavigationContext navigationContext)
+        {
+            return false;
+        }
+
+        public void OnNavigatedFrom(NavigationContext navigationContext)
+        {
+           
+        }
+
+        #endregion
     }
 }
