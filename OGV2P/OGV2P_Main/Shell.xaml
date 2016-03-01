@@ -14,7 +14,7 @@
     </Window.Resources>
     <Grid>
         <Grid.RowDefinitions>
-            <RowDefinition Height="35" />
+            <RowDefinition Height="40" />
             <RowDefinition Height="*" />
             <RowDefinition Height="35" />
         </Grid.RowDefinitions>
@@ -22,8 +22,8 @@
             <ColumnDefinition Width="*"></ColumnDefinition>
         </Grid.ColumnDefinitions>
         <DockPanel Grid.Row="0" LastChildFill="True">
-            <Menu IsMainMenu="True"  Panel.ZIndex="200"
-             DockPanel.Dock="Top" Margin="10"
+            <Menu IsMainMenu="True"  Panel.ZIndex="200" VerticalContentAlignment="Center"
+             DockPanel.Dock="Top" Margin="10" 
               VerticalAlignment="Center" Background="Transparent">
                 <MenuItem Header="_File">
                     <MenuItem Header="_Settings" Click="File_SettingsMenu_CLick" />
