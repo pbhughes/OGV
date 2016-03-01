@@ -82,16 +82,7 @@ namespace OGV2P.AgendaModule.Views
                 _treeImages.Images.Add("unstamped_edited", img4);
             }
 
-            if (File.Exists(@"Images\down_arrow.png"))
-            {
-                var brush = new System.Windows.Media.ImageBrush();
-                brush.ImageSource = new BitmapImage(new Uri("Images/down_arrow.png", UriKind.Relative));
-                cmdDown.Background = brush;
-            }
-            else
-            {
-                cmdDown.Content = "Down";
-            }
+          
 
             _container = container;
             agendaTree.ImageList = _treeImages;
