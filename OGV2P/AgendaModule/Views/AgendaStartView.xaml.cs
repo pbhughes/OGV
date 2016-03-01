@@ -40,6 +40,7 @@ namespace OGV2P.AgendaModule.Views
             agendaTree.DragOver += AgendaTree_DragOver;
             agendaTree.DragDrop += AgendaTree_DragDrop;
             agendaTree.DragLeave += AgendaTree_DragLeave;
+            
 
             agendaTree.KeyDown += agendaTree_KeyDown;
             agendaTree.MouseUp += agendaTree_MouseUp;
@@ -142,6 +143,11 @@ namespace OGV2P.AgendaModule.Views
 
         private void AgendaTree_DragOver(object sender, forms.DragEventArgs e)
         {
+
+            //support  auto scroll while dragging
+            ((ExtendedTreeView)agendaTree).Scroll();
+
+            //turn on drag graphics
             ((ExtendedTreeView)agendaTree).Dragging = true;
 
             // Retrieve the client coordinates of the mouse position.

@@ -3,11 +3,15 @@ using System.Drawing.Drawing2D;
 using System.Windows.Forms;
 using System;
 using Infrastructure.Enumerations;
+using System.Runtime.InteropServices;
 
 namespace Infrastructure.ExtendedObjects
 {
     public class ExtendedTreeView : TreeView
     {
+        [DllImport("user32.dll", CharSet = CharSet.Auto)]
+        internal static extern IntPtr SendMessage(IntPtr hWnd, UInt32 Msg, IntPtr wParam, IntPtr lParam);
+
         Point _start;
         Point _end;
         bool _dragging = false;
@@ -128,6 +132,23 @@ namespace Infrastructure.ExtendedObjects
             pen.StartCap = LineCap.RoundAnchor;
             pen.EndCap = LineCap.RoundAnchor;
             e.DrawLine(pen, _start, _end);
+        }
+
+        public void Scroll()
+        {
+            var pt = this.PointToClient(Cursor.Position);
+
+            if ((pt.Y + 20) > this.Height)
+            {
+                // scroll down
+                SendMessage(this.Handle, 277, (IntPtr)1, (IntPtr)0);
+            }
+            else if (pt.Y < 20)
+            {
+                // scroll up
+                SendMessage(this.Handle, 277, (IntPtr)0, (IntPtr)0);
+            }
+
         }
     }
 }
