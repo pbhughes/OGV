@@ -178,7 +178,6 @@
         <!-- Current node editable field grid-->
         <Grid Grid.Row="2">
             <Grid.RowDefinitions>
-                <RowDefinition Height="45" />
                 <RowDefinition />
                 <RowDefinition />
             </Grid.RowDefinitions>
@@ -188,30 +187,10 @@
                 <ColumnDefinition />
             </Grid.ColumnDefinitions>
 
-            <StackPanel Orientation="Horizontal" Grid.Column="1"
-                        Grid.ColumnSpan="2"
-                        Grid.Row="0" HorizontalAlignment="Center">
-                <Button Name="cmdUp" Click="floaterMoveUp_Click"
-                        Margin="5"
-                        Width="35" Height="35"
-                        Background="Transparent"
-                        Grid.Row="0" Grid.Column="1">
-                    <Button.Content>
-                        <Image Source="/OGV2P.Agenda;component/Play1Hot11.png"></Image>
-                    </Button.Content>
-                </Button>
-                <Button Name="cmdDown" Margin="5"
-                        Click="floaterMoveDown_Click"
-                        Width="35" Height="35"
-                        Grid.Row="2" Grid.Column="1" Background="Transparent">
-                    <Button.Content>
-                        <Image Source="/OGV2P.Agenda;component/Play1Hot1.png"></Image>
-                    </Button.Content>
-                </Button>
-            </StackPanel>
-            <Label Grid.Row="1" Grid.Column="0">Title:</Label>
+ 
+            <Label Grid.Row="0" Grid.Column="0">Title:</Label>
             <ScrollViewer
-                    Grid.Row="1" Grid.Column="1" Grid.ColumnSpan="2"
+                    Grid.Row="0" Grid.Column="1" Grid.ColumnSpan="2"
                     VerticalScrollBarVisibility="Disabled" HorizontalScrollBarVisibility="Auto">
                 <TextBox x:Name="txtTitle"
                          HorizontalAlignment="Stretch"
@@ -221,8 +200,8 @@
                          MouseDown="txtTitle_MouseDown"></TextBox>
             </ScrollViewer>
 
-            <Label Grid.Row="2" Grid.Column="0">Description:</Label>
-            <ScrollViewer Grid.Row="2" Grid.Column="1" Grid.ColumnSpan="2"
+            <Label Grid.Row="1" Grid.Column="0">Description:</Label>
+            <ScrollViewer Grid.Row="1" Grid.Column="1" Grid.ColumnSpan="2"
                       VerticalScrollBarVisibility="Disabled" HorizontalScrollBarVisibility="Auto">
                 <TextBox Text="{Binding SelectedItem.Description}"
                          HorizontalAlignment="Stretch"

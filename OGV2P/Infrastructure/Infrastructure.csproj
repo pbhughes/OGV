@@ -133,6 +133,7 @@
     <Compile Include="Converters\DoubleToColorConverter.cs" />
     <Compile Include="Converters\InverseBoolConverter.cs" />
     <Compile Include="Converters\VisibilityConverter.cs" />
+    <Compile Include="Enumerations\DropLocations.cs" />
     <Compile Include="ExtendedObjects\ExtendedTreeNode.cs" />
     <Compile Include="ExtendedObjects\ExtendedTreeView.cs">
       <SubType>Component</SubType>

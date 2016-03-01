@@ -6,20 +6,39 @@
         xmlns:local="clr-namespace:OGV2P.AgendaModule.Views"
         xmlns:tk="http://schemas.xceed.com/wpf/xaml/toolkit"
         xmlns:gif="http://wpfanimatedgif.codeplex.com"
-        mc:Ignorable="d" FontSize="15"
-        Title="OpenGoVideo - Save Agenda File" Height="300" Width="600">
-    <Grid Width="Auto">
+        mc:Ignorable="d" FontSize="15" SizeToContent="WidthAndHeight"
+        Title="OpenGoVideo - Save Agenda File">
+    <Window.Resources>
+        <Style TargetType="TextBlock" >
+            <Setter Property="Margin" Value="5,2,2,5" />
+        </Style>
+    </Window.Resources>
+    <Grid Margin="10" >
         <Grid.RowDefinitions>
-            <RowDefinition Height="auto"/>
-            <RowDefinition Height="*" />
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="Auto" />
+            <RowDefinition Height="Auto" />
+            <RowDefinition Height="Auto" />
+            <RowDefinition Height="Auto" />
+            <RowDefinition Height="Auto" />
+            <RowDefinition Height="Auto" />
             <RowDefinition Height="65" />
         </Grid.RowDefinitions>
-        <tk:BusyIndicator Name="busyIndicator" IsBusy="{Binding IsBusy}" 
-                          Visibility="{Binding IsBusy, Converter={StaticResource BoolToVisibility}}" Grid.Row="0" Width="150" Height="125" >
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition Width="Auto" />
+            <ColumnDefinition Width="Auto"  />
+        </Grid.ColumnDefinitions>
+        
+        <tk:BusyIndicator Grid.Row="0" 
+                          Grid.Column="2" Grid.ColumnSpan="2"
+                          Name="busyIndicator" IsBusy="{Binding IsBusy}"
+                          HorizontalAlignment="Center"
+                          Visibility="{Binding IsBusy, Converter={StaticResource BoolToVisibility}}"
+                          Width="150" Height="125" >
             <tk:BusyIndicator.BusyContentTemplate>
                 <DataTemplate>
                     <StackPanel Margin="5">
-                        <Image gif:ImageBehavior.AnimatedSource="/Images/loading.gif" Width="100" Height="100" />
+                        <Image gif:ImageBehavior.AnimatedSource="/Images/loading.gif" Width="100" Height="100" Source="/OGV2P.Agenda;component/loading.gif" />
                     </StackPanel>
                 </DataTemplate>
             </tk:BusyIndicator.BusyContentTemplate>
@@ -35,34 +54,22 @@
             </tk:BusyIndicator.ProgressBarStyle>
             <ContentControl />
         </tk:BusyIndicator>
-        <Grid Grid.Row="1" Margin="10">
-            <Grid.RowDefinitions>
-                <RowDefinition Height="Auto" />
-                <RowDefinition Height="Auto" />
-                <RowDefinition Height="Auto" />
-                <RowDefinition Height="Auto" />
-                <RowDefinition Height="Auto" />
-                <RowDefinition Height="Auto" />
-            </Grid.RowDefinitions>
 
-            <Grid.ColumnDefinitions>
-                <ColumnDefinition Width="150"/>
-                <ColumnDefinition Width="Auto"/>
-            </Grid.ColumnDefinitions>
-            <Label Margin="5">Meeting Name:</Label>
-            <TextBlock  VerticalAlignment="Center" Grid.Column="1" Text="{Binding Meeting.MeetingName}"/>
-            <Label Margin="5" Grid.Row="1">Meeting Date:</Label>
-            <TextBlock Grid.Row="1" VerticalAlignment="Center" Grid.Column="1" Text="{Binding Meeting.MeetingDate, StringFormat=d}"/>
-            <Label Grid.Row="2">Local File:</Label>
-            <TextBlock Grid.Row="2" VerticalAlignment="Center" Grid.Column="1" Text="{Binding Meeting.LocalAgendaFileName}"/>
-            <Label Grid.Row="3">Board Name:</Label>
-            <TextBlock Grid.Row="3" VerticalAlignment="Center" Grid.Column="1" Text="{Binding User.SelectedBoard.Name}"/>
-            <Label Grid.Row="4">City:</Label>
-            <TextBlock Grid.Row="4" VerticalAlignment="Center" Grid.Column="1" Text="{Binding User.SelectedBoard.City}"/>
-            <Label Grid.Row="5">State:</Label>
-            <TextBlock Grid.Row="5" VerticalAlignment="Center" Grid.Column="1" Text="{Binding User.SelectedBoard.State}"/>
-        </Grid>
-        <StackPanel Grid.Row="2" Orientation="Horizontal" HorizontalAlignment="Right">
+
+        <Label Grid.Column="0" Grid.Row="1" Margin="5">Meeting Name:</Label>
+        <TextBlock VerticalAlignment="Center" Grid.Column="1" Grid.Row="1" Text="{Binding Meeting.MeetingName}"/>
+        <Label Grid.Column="0" Grid.Row="2"  Margin="5">Meeting Date:</Label>
+        <TextBlock Grid.Row="2" VerticalAlignment="Center" Grid.Column="1" Text="{Binding Meeting.MeetingDate, StringFormat=d}"/>
+        <Label Grid.Column="0" Grid.Row="3" >Local File:</Label>
+        <TextBlock Grid.Row="3" VerticalAlignment="Center" Grid.Column="1" Text="{Binding Meeting.LocalAgendaFileName}"/>
+        <Label Grid.Column="0" Grid.Row="4" >Board Name:</Label>
+        <TextBlock Grid.Row="4" VerticalAlignment="Center" Grid.Column="1" Text="{Binding User.SelectedBoard.Name}"/>
+        <Label Grid.Column="0" Grid.Row="5" >City:</Label>
+        <TextBlock Grid.Row="5" VerticalAlignment="Center" Grid.Column="1" Text="{Binding User.SelectedBoard.City}"/>
+        <Label Grid.Column="0" Grid.Row="6" >State:</Label>
+        <TextBlock Grid.Row="6" VerticalAlignment="Center" Grid.Column="1" Text="{Binding User.SelectedBoard.State}"/>
+
+        <StackPanel Grid.Column="1" Grid.Row="7" Orientation="Horizontal" HorizontalAlignment="Right">
             <Button Style="{StaticResource btn-info}" IsDefault="True"
                     Margin="10" Width="70" Click="OKButton_Click">OK</Button>
             <Button Style="{StaticResource btn-info}"
