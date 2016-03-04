@@ -898,6 +898,8 @@ namespace OGV2P.Admin.Views
                     int left = 10;
                     int top = height - 100;
                     axRControl.SetConfig("OverlayRect", string.Format("0,{0},{1}, {2}, {3}", left, top, 200,200));
+                    axRControl.SetConfig("OverlayTextColor", "0x004D88FF");
+                    axRControl.SetConfig("OverlayBackgroundColor", "0x00FFFFFF");
                     if (string.IsNullOrEmpty(Overlay))
                     {
                         axRControl.TextOverlayText = (Meeting.MeetingDate == DateTime.MinValue) ? DateTime.Now.ToShortDateString() : Meeting.MeetingDate.ToShortDateString();
