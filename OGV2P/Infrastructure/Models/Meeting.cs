@@ -89,7 +89,6 @@ namespace Infrastructure.Models
             set
             {
                 _meetingName = value;
-                _sessionService.MeetingName = value;
                 OnPropertyChanged("MeetingName");
             }
         }
@@ -393,7 +392,7 @@ namespace Infrastructure.Models
                     if (xn.AgendaItem.TimeStamp != TimeSpan.Zero)
                     {
 
-                        xn.MarkItemStamped(xn.AgendaItem.Title, false);
+                        xn.MarkItemStamped(xn.AgendaItem.Title, x.TimeStamp, false);
                         _agendaTree.SelectedNode = xn;
                     }
                     else

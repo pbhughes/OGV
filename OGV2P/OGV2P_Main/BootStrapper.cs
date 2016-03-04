@@ -66,12 +66,14 @@ namespace OGV2P
             this.Container.RegisterType<object, OGV2P.Admin.Views.ServicesView>(typeof(OGV2P.Admin.Views.ServicesView).FullName);
             this.Container.RegisterType<IAgendaSelector, Infrastructure.Models.AgendaSelector>();
             this.Container.RegisterType<Infrastructure.Interfaces.IDevices, Infrastructure.Models.Devices>();
-            this.Container.RegisterType<ISession, Session>();
             
             _boardList = LoadBoards();
             this.Container.RegisterInstance<IBoardList>(_boardList);
 
             _session = new Session();
+
+            this.Container.RegisterInstance(_session);
+
             _user = new User(_session, _boardList);
             this.Container.RegisterInstance<IUser>(_user);
             this.Container.RegisterType<IBoardList, BoardList>();
@@ -91,9 +93,8 @@ namespace OGV2P
 
             ((Shell)_shell).SetSideBarAllignmentTop();
 
-            _session = new Session();
-            _meeting = new Meeting(_session, _user);
-            Container.RegisterInstance<IMeeting>(_meeting);
+            _meeting.MeetingName = string.Empty;
+            _meeting.MeetingDate = DateTime.MinValue;
             _saveAgendaViewModel = new SaveAgendaViewModel(_user, _meeting);
 
             this.Container.RegisterInstance(_session);

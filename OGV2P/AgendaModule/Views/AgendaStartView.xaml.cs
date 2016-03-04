@@ -31,9 +31,11 @@ namespace OGV2P.AgendaModule.Views
         private forms.TreeView agendaTree = new ExtendedTreeView();
         private ExtendedTreeNode target = null;
 
-        public AgendaStartView(IMeeting meeting, ISession sessionService, IUser user, IUnityContainer container)
+        public AgendaStartView(IUser user, IUnityContainer container)
         {
             InitializeComponent();
+
+         
 
             agendaTree.ItemDrag += AgendaTree_ItemDrag;
             agendaTree.DragEnter += AgendaTree_DragEnter;
@@ -88,8 +90,9 @@ namespace OGV2P.AgendaModule.Views
             _container = container;
             agendaTree.ImageList = _treeImages;
             agendaTree.AfterSelect += agendaTree_AfterSelect;
-            _currentMeeting = meeting;
-            _sessionService = sessionService;
+           
+            _sessionService = _container.Resolve<ISession>();
+            _currentMeeting = _container.Resolve<IMeeting>();
             _user = user;
             _currentMeeting.RaiseMeetingSetEvent += _currentMeeting_RaiseMeetingSetEvent;
             _sessionService.RaiseLoggedOut += _sessionService_RaiseLoggedOut;
@@ -123,22 +126,6 @@ namespace OGV2P.AgendaModule.Views
                                    e.Node.ForeColor);
         }
 
-        private void Meeting_RaiseMeetingItemChanged(IItem item)
-        {
-            if (agendaTree != null)
-                if (agendaTree.Nodes.Count > 0)
-                {
-                    forms.TreeNode[] selection = agendaTree.Nodes.Find(item.ID, true);
-                    if (selection.Length > 0)
-                    {
-                        selection[0].Text = item.Title;
-                        if (item.TimeStamp == TimeSpan.Zero)
-                            ((ExtendedTreeNode)agendaTree.SelectedNode).MarkItemUnstamped();
-                        else
-                            ((ExtendedTreeNode)agendaTree.SelectedNode).MarkItemStamped(txtTitle.Text, false);
-                    }
-                }
-        }
 
 
         private void AgendaTree_DragOver(object sender, forms.DragEventArgs e)
@@ -470,8 +457,10 @@ namespace OGV2P.AgendaModule.Views
 
         private void Stamp_Click(object sender, EventArgs e)
         {
-            ((ExtendedTreeNode)agendaTree.SelectedNode).MarkItemStamped(txtTitle.Text);
-            _currentMeeting.SelectedItem.TimeStamp = _sessionService.CurrentVideoTime;
+            System.Diagnostics.Debug.WriteLine(string.Format("Session Service INit AgendaView Time: {0}", _sessionService.InitializationTime.ToShortTimeString()));
+
+            ((ExtendedTreeNode)agendaTree.SelectedNode).MarkItemStamped(txtTitle.Text, _sessionService.CurrentVideoTime);
+            
         }
 
         private void Unstamp_Click(object sender, EventArgs e)
@@ -538,13 +527,13 @@ namespace OGV2P.AgendaModule.Views
             switch (e.KeyCode)
             {
                 case forms.Keys.Enter:
-                    _sessionService.Stamp();
-                    ((ExtendedTreeNode)agendaTree.SelectedNode).MarkItemStamped(txtTitle.Text);
+                   
+                    ((ExtendedTreeNode)agendaTree.SelectedNode).MarkItemStamped(txtTitle.Text, _sessionService.CurrentVideoTime);
                     break;
 
                 case forms.Keys.Space:
                     _sessionService.Stamp();
-                    ((ExtendedTreeNode)agendaTree.SelectedNode).MarkItemStamped(txtTitle.Text);
+                    ((ExtendedTreeNode)agendaTree.SelectedNode).MarkItemStamped(txtTitle.Text, _sessionService.CurrentVideoTime);
                     break;
             }
         }
@@ -615,7 +604,7 @@ namespace OGV2P.AgendaModule.Views
                     }
                 }
 
-                _container.RegisterInstance<IMeeting>(_currentMeeting);
+               
             }
             catch (Exception ex)
             {
@@ -626,8 +615,8 @@ namespace OGV2P.AgendaModule.Views
 
         private void agendaTree_NodeMouseDoubleClick(object sender, forms.TreeNodeMouseClickEventArgs e)
         {
-            _sessionService.Stamp();
-            ((ExtendedTreeNode)agendaTree.SelectedNode).MarkItemStamped(txtTitle.Text);
+            
+            ((ExtendedTreeNode)agendaTree.SelectedNode).MarkItemStamped(txtTitle.Text,_sessionService.CurrentVideoTime);
             e.Node.Expand();
         }
 

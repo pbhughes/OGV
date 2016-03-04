@@ -51,17 +51,7 @@ namespace Infrastructure.Models
             }
         }
 
-        string _meetingName;
-        public string MeetingName
-        {
-            get { return _meetingName; }
-            set { 
-                _meetingName = value; 
-                OnPropertyChanged("MeetingName");
-                OnRaiseMeetingSetEvent();
-
-            }
-        }
+    
 
 
 
@@ -72,7 +62,19 @@ namespace Infrastructure.Models
             set { _recoderID = value; }
         }
 
-      
+        private DateTime _initTime;
+        public DateTime InitializationTime
+        {
+            get
+            {
+                return _initTime;
+            }
+
+            set
+            {
+                _initTime = value;
+            }
+        }
 
         public event MeetingNameSetEventHandler RaiseMeetingNameSet;
 
@@ -99,7 +101,7 @@ namespace Infrastructure.Models
 
         public Session()
         {
-           
+            InitializationTime = DateTime.Now;
         }
 
         #region INotifyPropertyChanged

@@ -200,10 +200,11 @@ namespace OGV2P.Admin.Views
             VuMeterReading = sampleVolume;
         }
 
-        public CameraView(IRegionManager regionManager, IDevices devices, ISession sessionService, IMeeting meeting, IUser user, IUnityContainer container)
+        public CameraView(IRegionManager regionManager, IDevices devices, IUser user, IUnityContainer container)
         {
 
             _container = container;
+
             try
             {
                 InitializeComponent();
@@ -219,15 +220,13 @@ namespace OGV2P.Admin.Views
 
                 axRControl.Width = int.Parse(_settings["PreviewVideoWidth"]);
                 axRControl.Height = int.Parse(_settings["PreviewVideoHeight"]);
-                
-                
 
                 this.DataContext = this;
                 NotificationRequest = new InteractionRequest<INotification>();
                 NotificationCommand = new DelegateCommand(OnNofity, CanNotify);
 
-                _sessionService = sessionService;
-                _meeting = meeting;
+                _sessionService = _container.Resolve<ISession>();
+                _meeting = _container.Resolve<IMeeting>();
                 _meeting.RaiseMeetingSetEvent += Meeting_SetEvent;
                 _regionManager = regionManager;
                 _user = user;
@@ -253,6 +252,7 @@ namespace OGV2P.Admin.Views
                 _vuMeterTimer.Start();
 
                 axRControl.Dock = System.Windows.Forms.DockStyle.Fill;
+               
                 winFormHost.Child.Controls.Add(axRControl);
 
 
@@ -495,6 +495,7 @@ namespace OGV2P.Admin.Views
                     TimeSpan current = new TimeSpan(0, 0, 0, 0, milliSeconds);
                  
                     _sessionService.CurrentVideoTime = current;
+                    System.Diagnostics.Debug.WriteLine(string.Format("Session Service Init Cameraview Time: {0}", _sessionService.InitializationTime.ToShortTimeString()));
                     TimerStamp = current;
                     UpdateVUMeter(volumeLevel);
                 });
@@ -891,8 +892,23 @@ namespace OGV2P.Admin.Views
                     axRControl.TextOverlayText = string.Empty;
                 else
                 {
-                    axRControl.TextOverlayText = string.Format("{0} - {1}", Overlay, 
-                        (Meeting.MeetingDate == DateTime.MinValue)? DateTime.Now.ToShortDateString() : Meeting.MeetingDate.ToShortDateString());
+                    //set the overlay position
+                    axRControl.VideoEffect = 5;
+                    int height = int.Parse(_settings["PreviewVideoHeight"]);
+                    int left = 10;
+                    int top = height - 100;
+                    axRControl.SetConfig("OverlayRect", string.Format("0,{0},{1}, {2}, {3}", left, top, 200,200));
+                    if (string.IsNullOrEmpty(Overlay))
+                    {
+                        axRControl.TextOverlayText = (Meeting.MeetingDate == DateTime.MinValue) ? DateTime.Now.ToShortDateString() : Meeting.MeetingDate.ToShortDateString();
+                    }
+                    else
+                    {
+                        axRControl.TextOverlayText = string.Format("{0}-{1}", Overlay,
+                        (Meeting.MeetingDate == DateTime.MinValue) ? DateTime.Now.ToShortDateString() : Meeting.MeetingDate.ToShortDateString());
+                    }
+                    
+                    
                 }
                 
                 axRControl.StartPreview();

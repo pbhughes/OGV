@@ -12,8 +12,6 @@ namespace Infrastructure.Interfaces
 
         Guid RecorderID { get; set; }
 
-        string MeetingName { get; set; }
-
         string LocalVideoFile { get; set; }
 
         TimeSpan CurrentVideoTime { get; set; }
@@ -27,6 +25,8 @@ namespace Infrastructure.Interfaces
         event StampedEventHandler RaiseStamped;
 
         event LoggedOutEventHandler RaiseLoggedOut;
+
+        DateTime InitializationTime { get; set; }
 
 
     }

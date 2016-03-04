@@ -107,6 +107,7 @@
                 Converter={StaticResource InverseBoolConverter}}"
                       IsChecked="{Binding ShowOverlay}">Show Overlay</CheckBox>
             <tk:WatermarkTextBox 
+                MaxLength="20"
                 TextChanged="WatermarkTextBox_TextChanged" 
                 Margin="5,0,5,0" Text="{Binding Overlay}"
                 Watermark="Enter overlay text... " 

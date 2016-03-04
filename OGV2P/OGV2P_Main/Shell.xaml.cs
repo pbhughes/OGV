@@ -28,11 +28,12 @@ namespace OGV2P
             SideBarRegion.VerticalAlignment = VerticalAlignment.Top;
         }
 
-        public Shell(IUnityContainer container, IMeeting meeting)
+        public Shell(IUnityContainer container)
         {
             InitializeComponent();
             _container = container;
-            _meeting = meeting;
+            _meeting = _container.Resolve<IMeeting>();
+            _meeting.RaiseMeetingSetEvent += _meeting_RaiseMeetingSetEvent;
             DataContext = _meeting;
             _meeting.LeftStatus = "Stream Idle";
 
@@ -45,6 +46,11 @@ namespace OGV2P
             cpuCounter.CounterName = "% Processor Time";
             cpuCounter.InstanceName = "_Total";
             cpuReadingTimer.Start();
+        }
+
+        private void _meeting_RaiseMeetingSetEvent(object sender, EventArgs e)
+        {
+            string x = _meeting.MeetingName;
         }
 
         private void AboutMenuItem_Click(object sender, RoutedEventArgs e)
