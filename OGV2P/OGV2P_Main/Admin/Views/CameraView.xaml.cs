@@ -1,50 +1,50 @@
-﻿using System.Windows;
-using System.Windows.Controls;
+﻿using Infrastructure.Extensions;
 using Infrastructure.Interfaces;
 using Infrastructure.Models;
-using System.Timers;
-using System;
-using System.Windows.Media;
-using Microsoft.Practices.Prism.Regions;
-using System.IO;
-using System.Configuration;
-using System.ComponentModel;
-using System.Management;
-using System.Collections.Specialized;
-using System.Threading.Tasks;
-using Microsoft.Practices.Prism.Interactivity.InteractionRequest;
 using Microsoft.Practices.Prism.Commands;
+using Microsoft.Practices.Prism.Interactivity.InteractionRequest;
+using Microsoft.Practices.Prism.Regions;
+using Microsoft.Practices.Unity;
+using System;
+using System.Collections.Specialized;
+using System.ComponentModel;
+using System.Configuration;
+using System.IO;
+using System.Management;
+using System.Threading.Tasks;
+using System.Timers;
+using System.Windows;
+using System.Windows.Controls;
+using System.Windows.Media;
 using System.Xml.Linq;
 using forms = System.Windows.Forms;
-using Infrastructure.Extensions;
-using Microsoft.Practices.Unity;
-using OGV2P.Admin.Models;
 
 namespace OGV2P.Admin.Views
 {
     /// <summary>
     /// Interaction logic for CameraView.xaml
     /// </summary>
-    public partial class CameraView : UserControl,  INotifyPropertyChanged
+    public partial class CameraView : UserControl, INotifyPropertyChanged
     {
         private const int FILE_SOURCE = 101;
         private const string RECORDING_IN_PROGRESS = "Recording in progress, please stop recording before changing devices";
         private Timer _vuMeterTimer;
         private ManagementEventWatcher usbWatcher = new ManagementEventWatcher();
-        NameValueCollection _settings;
+        private NameValueCollection _settings;
         private IRegionManager _regionManager;
         private IUser _user;
-        private  AxRTMPActiveX.AxRTMPActiveX axRControl;
+        private AxRTMPActiveX.AxRTMPActiveX axRControl;
         private string PREFERED_DEVICE_FILE = "preferedDevices.xml";
 
-        LinearGradientBrush _yellow =
+        private LinearGradientBrush _yellow =
         new LinearGradientBrush(Colors.Green, Colors.Yellow,
             new Point(0, 1), new Point(1, 0));
 
         public DelegateCommand NotificationCommand { get; set; }
         public InteractionRequest<INotification> NotificationRequest { get; set; }
 
-        ISession _sessionService;
+        private ISession _sessionService;
+
         public ISession SessionService
         {
             get
@@ -59,7 +59,8 @@ namespace OGV2P.Admin.Views
             }
         }
 
-        IMeeting _meeting;
+        private IMeeting _meeting;
+
         public IMeeting Meeting
         {
             get
@@ -75,6 +76,7 @@ namespace OGV2P.Admin.Views
         }
 
         private int _bandwidthCheckInterval;
+
         public int BandwidthCheckInterval
         {
             get
@@ -90,6 +92,7 @@ namespace OGV2P.Admin.Views
         }
 
         private bool _isCheckingBandwidth;
+
         public bool IsCheckingBandwidth
         {
             get
@@ -103,8 +106,6 @@ namespace OGV2P.Admin.Views
                 OnPropertyChanged("IsCheckingBandwidth");
             }
         }
-
-      
 
         public bool KeepAlive
         {
@@ -131,6 +132,7 @@ namespace OGV2P.Admin.Views
         }
 
         private TimeSpan _timerStamp;
+
         public TimeSpan TimerStamp
         {
             get
@@ -142,11 +144,10 @@ namespace OGV2P.Admin.Views
                 _timerStamp = value;
                 OnPropertyChanged("TimerStamp");
             }
-
-           
         }
 
         private string _overlay = string.Empty;
+
         public string Overlay
         {
             get
@@ -162,6 +163,7 @@ namespace OGV2P.Admin.Views
         }
 
         private bool _showOverlay;
+
         public bool ShowOverlay
         {
             get
@@ -176,8 +178,8 @@ namespace OGV2P.Admin.Views
             }
         }
 
-
         private string _message;
+
         public string Message
         {
             get
@@ -194,7 +196,7 @@ namespace OGV2P.Admin.Views
 
         public string InteractionResultMessage { get; private set; }
 
-        IUnityContainer _container;
+        private IUnityContainer _container;
 
         private void UpdateVUMeter(int sampleVolume)
         {
@@ -203,13 +205,11 @@ namespace OGV2P.Admin.Views
 
         public CameraView(IRegionManager regionManager, IDevices devices, IUser user, IUnityContainer container)
         {
-
             _container = container;
 
             try
             {
                 InitializeComponent();
-
 
                 //get the application settings
 #pragma warning disable CS0618 // Type or member is obsolete
@@ -217,7 +217,6 @@ namespace OGV2P.Admin.Views
 #pragma warning restore CS0618 // Type or member is obsolete
 
                 axRControl = new AxRTMPActiveX.AxRTMPActiveX();
-
 
                 axRControl.Width = int.Parse(_settings["PreviewVideoWidth"]);
                 axRControl.Height = int.Parse(_settings["PreviewVideoHeight"]);
@@ -231,7 +230,6 @@ namespace OGV2P.Admin.Views
                 _meeting.RaiseMeetingSetEvent += Meeting_SetEvent;
                 _regionManager = regionManager;
                 _user = user;
-             
 
                 _meeting.IsBusy = false;
                 cmdStopRecording.IsEnabled = false;
@@ -242,8 +240,6 @@ namespace OGV2P.Admin.Views
                 usbWatcher.Query = query;
                 usbWatcher.Start();
 
-               
-
                 //setup the vu meter
                 vuMeter.Minimum = double.Parse(_settings["VuMeterMinimum"]);
                 vuMeter.Maximum = double.Parse(_settings["VuMeterMaximum"]);
@@ -253,23 +249,17 @@ namespace OGV2P.Admin.Views
                 _vuMeterTimer.Start();
 
                 axRControl.Dock = System.Windows.Forms.DockStyle.Fill;
-               
+
                 winFormHost.Child.Controls.Add(axRControl);
-
-
-
             }
             catch (Exception ex)
             {
                 if (ex.GetBaseException() != null)
                     ex.GetBaseException().WriteToLogFile();
 
-
                 ex.WriteToLogFile();
                 throw;
             }
-
-
         }
 
         private bool CanNotify()
@@ -280,7 +270,7 @@ namespace OGV2P.Admin.Views
         private void OnNofity()
         {
             this.NotificationRequest.Raise(
-                 new Notification { Content = "Notification Message", Title = "Hey Your Notified"},
+                 new Notification { Content = "Notification Message", Title = "Hey Your Notified" },
                  n => { InteractionResultMessage = "The user was notified"; });
         }
 
@@ -293,28 +283,24 @@ namespace OGV2P.Admin.Views
                 //axRControl.StartConnect();
                 axRControl.StartPreview();
             }
-            catch(AccessViolationException )
+            catch (AccessViolationException)
             {
                 ;//ignore
             }
-            catch (Exception )
+            catch (Exception)
             {
-
                 throw;
             }
-           
         }
 
         private void InitRTMPControl()
         {
-
             axRControl.InitEncoder();
             axRControl.SetConfig("UseSampleGrabber", "2");
             axRControl.AudioBitrate = 64000;
-           
 
             //set the user id / password
-            axRControl.SetConfig("Auth", string.Format("{0}:{1}",_user.SelectedBoard.UserID, _user.SelectedBoard.Password));
+            axRControl.SetConfig("Auth", string.Format("{0}:{1}", _user.SelectedBoard.UserID, _user.SelectedBoard.Password));
 
             // Device/Camera Resolution
             axRControl.VideoWidth = 800;
@@ -324,21 +310,17 @@ namespace OGV2P.Admin.Views
             // Video Encoder Bitrate (Bits/s)
             axRControl.VideoBitrate = 500000;
 
-
             axRControl.VideoEffect = 3;
 
             // nanoStream Event Handlers
             axRControl.OnEvent += new AxRTMPActiveX.IRTMPActiveXEvents_OnEventEventHandler(axRControl_OnEvent);
             axRControl.OnStop += new AxRTMPActiveX.IRTMPActiveXEvents_OnStopEventHandler(axRControl_OnStop);
-            
 
             // Video/Audio Devices
             string[] lastUsedDevices = ReadDefaultDeviceCache();
 
-           
-
             AddVideoSources();
-            if(lastUsedDevices != null)
+            if (lastUsedDevices != null)
             {
                 cboCameras.BeginInit();
                 cboCameras.SelectedItem = lastUsedDevices[0];
@@ -350,21 +332,18 @@ namespace OGV2P.Admin.Views
                 cboCameras.SelectedItem = axRControl.GetVideoSource(0);
                 axRControl.VideoSource = 0;
             }
-            
 
             AddAudioSources();
             if (lastUsedDevices != null)
             {
                 cboMicrophones.SelectedItem = lastUsedDevices[1];
                 axRControl.AudioSource = FindAudioSource(lastUsedDevices[1]);
-
             }
             else
             {
                 cboMicrophones.SelectedItem = axRControl.GetAudioSource(0);
                 axRControl.AudioSource = 0;
             }
-           
 
             long num = axRControl.GetNumberOfResolutions(0);
             axRControl.VideoWidth = int.Parse(_settings["PreviewVideoWidth"]);
@@ -372,8 +351,6 @@ namespace OGV2P.Admin.Views
 
             //winFormHost.Width = axRControl.VideoWidth;
             //winFormHost.Height = axRControl.VideoHeight;
-            
-
 
             //set the publishing point url
             //axRControl.DestinationURL = @"rtmp://devob2.opengovideo.com:1935/RI_SouthKingstown_Live/LicenseBoard";
@@ -382,21 +359,15 @@ namespace OGV2P.Admin.Views
             //reconnect settings
             axRControl.ReconnectAttempts = 3;
             axRControl.ReconnectDelay = 2000;
-
-
-
-
         }
 
         private void UsbWatcher_EventArrived(object sender, EventArrivedEventArgs e)
         {
             Dispatcher.Invoke(() =>
             {
-                if (! _meeting.IsBusy)
+                if (!_meeting.IsBusy)
                 {
-                    
                     //InitRTMPControl();
-
                 }
             });
         }
@@ -412,9 +383,7 @@ namespace OGV2P.Admin.Views
                 {
                     cboMicrophones.Items.Add(source);
                 }
-
             }
-
         }
 
         private int FindAudioSource(string deviceName)
@@ -442,7 +411,6 @@ namespace OGV2P.Admin.Views
 
         private void AddVideoSources()
         {
-
             int n = axRControl.NumberOfVideoSources;
             cboCameras.Items.Clear();
             for (int i = 0; i < n; i++)
@@ -455,7 +423,6 @@ namespace OGV2P.Admin.Views
             }
 
             cboCameras.Items.Add("Choose a File Source....");
-
         }
 
         private int FindVideoSource(string deviceName)
@@ -494,19 +461,16 @@ namespace OGV2P.Admin.Views
                     string s = axRControl.GetConfig("StreamTime");
                     int milliSeconds = int.Parse(s);
                     TimeSpan current = new TimeSpan(0, 0, 0, 0, milliSeconds);
-                 
+
                     _sessionService.CurrentVideoTime = current;
                     System.Diagnostics.Debug.WriteLine(string.Format("Session Service Init Cameraview Time: {0}", _sessionService.InitializationTime.ToShortTimeString()));
                     TimerStamp = current;
                     UpdateVUMeter(volumeLevel);
                 });
             }
-
         }
 
-
-
-        void axRControl_OnStop(object sender, AxRTMPActiveX.IRTMPActiveXEvents_OnStopEvent e)
+        private void axRControl_OnStop(object sender, AxRTMPActiveX.IRTMPActiveXEvents_OnStopEvent e)
         {
             int result = 0;
             bool parsed = int.TryParse(e.result, out result);
@@ -514,25 +478,27 @@ namespace OGV2P.Admin.Views
             {
                 if (result < 64)
                 {
-
                     switch (result)
                     {
                         case 1:
                             Message = "Streaming Error";
                             break;
+
                         case 2:
                             Message = "Connection Lost";
                             break;
+
                         case 3:
                             Message = "No input data, timeout";
                             break;
+
                         case 4:
                             Message = "License expired";
                             break;
+
                         default:
                             Message = "Stopped";
                             break;
-
                     }
                     return;
                 }
@@ -548,10 +514,8 @@ namespace OGV2P.Admin.Views
             System.Diagnostics.Debug.WriteLine(e.result);
         }
 
-
-        void axRControl_OnEvent(object sender, AxRTMPActiveX.IRTMPActiveXEvents_OnEventEvent e)
+        private void axRControl_OnEvent(object sender, AxRTMPActiveX.IRTMPActiveXEvents_OnEventEvent e)
         {
-
             int result = 0;
             bool parsed = int.TryParse(e.type, out result);
 
@@ -563,21 +527,17 @@ namespace OGV2P.Admin.Views
 #pragma warning restore CS0642 // Possible mistaken empty statement
                 if (result == 11)
                 {
-
                     RTMPStatus status = Newtonsoft.Json.JsonConvert.DeserializeObject<RTMPStatus>(e.result);
                     Message = status.ConnectionStatus;
                 }
-
             }
             System.Diagnostics.Debug.WriteLine(e.result);
-
         }
 
         private void cmdStartRecording_Click(object sender, RoutedEventArgs e)
         {
             try
             {
-
                 Meeting = _container.Resolve<IMeeting>();
 
                 //font cache a file source only hardware
@@ -590,18 +550,16 @@ namespace OGV2P.Admin.Views
                 if (!Directory.Exists(path))
                     Directory.CreateDirectory(path);
 
-               if(string.IsNullOrEmpty(_meeting.MeetingName))
+                if (string.IsNullOrEmpty(_meeting.MeetingName))
                 {
                     MessageBoxResult result = Xceed.Wpf.Toolkit.MessageBox.Show(
                         $"Please choose an agenda file to continue.",
                         "No agenda file loaded",
                         MessageBoxButton.OK);
                     return;
-                    
-
                 }
 
-                if(string.IsNullOrEmpty(_meeting.LocalFile))
+                if (string.IsNullOrEmpty(_meeting.LocalFile))
                 {
                     _meeting.LocalFile = string.Format("{0}_{1}_{2}.mp4", _user.SelectedBoard.Name, DateTime.Now.ToFileNameComponent(), _meeting.MeetingName);
                 }
@@ -645,18 +603,14 @@ namespace OGV2P.Admin.Views
 
                     return result;
                 }
-
-                
             }
             catch (Exception ex)
             {
-
                 MessageBox.Show(string.Format("Tried to read the default device cache file and failed. " +
                     "Please verify the selected camera and microphone before recording.  {0}", ex.Message));
             }
 
             return null;
-
         }
 
         private void WriteDefaultDeviceCache()
@@ -666,7 +620,7 @@ namespace OGV2P.Admin.Views
                 //remember the chosen audio and video devices
 
                 string videoCacheDevice = (cboCameras.SelectedItem == null) ? cboCameras.Items[0].ToString() : cboCameras.SelectedItem.ToString();
-                string audioCacheDevice = (cboMicrophones.SelectedItem == null)? cboMicrophones.Items[0].ToString() :  cboMicrophones.SelectedItem.ToString();
+                string audioCacheDevice = (cboMicrophones.SelectedItem == null) ? cboMicrophones.Items[0].ToString() : cboMicrophones.SelectedItem.ToString();
                 XDocument xDoc = new XDocument();
                 XElement root = new XElement("devices", null);
                 XElement videoElement = new XElement("videodevice", videoCacheDevice);
@@ -678,44 +632,57 @@ namespace OGV2P.Admin.Views
             }
             catch (Exception ex)
             {
-
                 MessageBox.Show(string.Format("Tried to write the default device cache file and failed. " +
                     "Please verify the selected camera and microphone before recording."));
             }
-            
         }
 
         private void cmdStopRecording_Click(object sender, RoutedEventArgs e)
         {
-
-           
-            MessageBoxResult result = Xceed.Wpf.Toolkit.MessageBox.Show(
-                       "If you are streaming live the stream will stop and the counter will be reset",
-                       "Do you want to stop streaming?",
-                       MessageBoxButton.YesNo);
-
-            if (result == MessageBoxResult.No)
-            {
-                return;
-            }
-
             try
             {
-                Dispatcher.Invoke(() =>
+                if (_meeting.IsLive)
                 {
-                    axRControl.StopBroadcast();
-                    _vuMeterTimer.Stop();
-                    cmdStartRecording.IsEnabled = true;
-                    cmdStopRecording.IsEnabled = false;
-                    Meeting.IsBusy = false;
-                    VuMeterReading = 0;
+                    MessageBoxResult result = Xceed.Wpf.Toolkit.MessageBox.Show(
+                        "If you are streaming live the stream will stop and the counter will be reset",
+                        "Do you want to stop streaming?",
+                        MessageBoxButton.YesNo);
 
-                    TimerStamp = TimeSpan.Zero;
-                    Meeting.LeftStatus = "Idle";
-                    Meeting.RightStatus = "";
-                   
-                });
-                
+                    if (result == MessageBoxResult.No)
+                    {
+                        return;
+                    }
+
+                    Dispatcher.Invoke(() =>
+                    {
+                        axRControl.StopBroadcast();
+                        _vuMeterTimer.Stop();
+                        cmdStartRecording.IsEnabled = true;
+                        cmdStopRecording.IsEnabled = false;
+
+                        if (_meeting.IsLive)
+                        {
+                            Meeting.IsBusy = false;
+                            VuMeterReading = 0;
+                            TimerStamp = TimeSpan.Zero;
+                            Meeting.RightStatus = "";
+                        }
+                        Meeting.LeftStatus = "Idle";
+                    });
+                }
+                else
+                {
+                    Dispatcher.Invoke(() =>
+                    {
+                       
+                        axRControl.StopBroadcast();
+                        _vuMeterTimer.Stop();
+                        cmdStartRecording.IsEnabled = true;
+                        cmdStopRecording.IsEnabled = false;
+
+                        Meeting.LeftStatus = "Idle";
+                    });
+                }
             }
             catch (Exception ex)
             {
@@ -724,7 +691,6 @@ namespace OGV2P.Admin.Views
 
                 Xceed.Wpf.Toolkit.MessageBox.Show(ex.Message, "Error stopping the preview", MessageBoxButton.OK);
             }
-           
         }
 
         private void cboSource_SelectedChanged(object sender, SelectionChangedEventArgs e)
@@ -739,47 +705,43 @@ namespace OGV2P.Admin.Views
 
                 if (cboCameras.SelectedItem.ToString().Contains("Choose a File Source...."))
                 {
-                    
                     axRControl.VideoEffect = 0;
-                    System.Windows.Forms.OpenFileDialog dg = new System.Windows.Forms.OpenFileDialog(); 
+                    System.Windows.Forms.OpenFileDialog dg = new System.Windows.Forms.OpenFileDialog();
                     dg.DefaultExt = ".mp4";
                     dg.Filter = "Video Files (*.mp4)|*.mp4|WMV Files (*.wmv)|*.wmv|MOV Files (*.mov)|*.mov|MPG Files (*.mpg)|*.mpg|All (*.*)|*.*";
                     forms.DialogResult result = dg.ShowDialog();
                     cmdRecordLabel.Content = "Play";
+                    cmdStopRecording.Content = "Pause";
                     if (result == forms.DialogResult.OK)
                     {
                         axRControl.VideoSource = FILE_SOURCE;
-                       
+
                         if (File.Exists(dg.FileName))
                         {
                             axRControl.FileSourceFilename = dg.FileName;
+                            
                             //axRControl.StartPreview();
-
                         }
                         else
                         {
                             Xceed.Wpf.Toolkit.MessageBox.Show(string.Format("Unable to load file {0}", dg.FileName));
                         }
-
                     }
                 }
                 else
                 {
                     cmdRecordLabel.Content = "REC";
+                    cmdStopRecording.Content = "Stop";
                     axRControl.DestinationURL2 = _meeting.LocalFile;
                     axRControl.VideoSource = Convert.ToInt32(cboCameras.SelectedIndex);
                     axRControl.StartPreview();
                 }
-
             }
             catch (Exception ex)
             {
                 string msg = string.Format("Level 1 occurred: {0} sub error {1}", ex.Message, axRControl.LastErrorMessage);
                 Xceed.Wpf.Toolkit.MessageBox.Show(msg, "Preview Error", MessageBoxButton.OK, MessageBoxImage.Error);
             }
-           
-
-
         }
 
         private void cboMicrophones_SelectionChanged(object sender, SelectionChangedEventArgs e)
@@ -799,19 +761,14 @@ namespace OGV2P.Admin.Views
 
         private void OnPropertyChanged(string name)
         {
-
             if (PropertyChanged != null)
                 PropertyChanged(this, new PropertyChangedEventArgs(name));
         }
 
-
-
-
-        #endregion
+        #endregion INotifyPropertyChanged
 
         private void UserControl_Loaded(object sender, RoutedEventArgs e)
         {
-
             //INIT AXRTMP Control
             axRControl.License = @"nlic:1.2:LiveEnc:3.0:LvApp=1,LivePlg=1,H264DEC=1,H264ENC=1,MP4=1,RtmpMsg=1,RTMPx=3,Resz=1,RSrv=1,ScCap=1,NoMsg=1,Ap1=GOV2P.Main.exe,max=10,Ic=0:win:20151230,20161214::0:0:clerkbase-555215-1:ncpt:ce608864c444270ff79e5d65e5c92682";
 
@@ -827,12 +784,10 @@ namespace OGV2P.Admin.Views
                axRControl.StartBandwidthChecker();
                while (keepgoing <= 9)
                {
-                   
                    System.Threading.Thread.Sleep(250);
                    keepgoing++;
                    BandwidthCheckInterval = keepgoing;
                }
-
 
                Dispatcher.Invoke(() =>
                {
@@ -842,13 +797,10 @@ namespace OGV2P.Admin.Views
                });
            });
             checkBandwith.Start();
-
         }
 
-       
         private void ToggleSwtich_Loaded(object sender, RoutedEventArgs e)
         {
-
         }
 
         private void RefreshPreview_Click(object sender, RoutedEventArgs e)
@@ -862,29 +814,23 @@ namespace OGV2P.Admin.Views
             }
             catch (Exception ex)
             {
-
                 ex.WriteToLogFile();
             }
-           
         }
-
 
         private void CheckBox_Checked_1(object sender, RoutedEventArgs e)
         {
-            
             if (axRControl.InvokeRequired)
             {
                 Dispatcher.Invoke((Action)(() =>
                 {
                     DisplayOverLay();
                 }));
-               
             }
             else
             {
                 DisplayOverLay();
             }
-
         }
 
         private void DisplayOverLay()
@@ -900,7 +846,7 @@ namespace OGV2P.Admin.Views
                     int height = int.Parse(_settings["PreviewVideoHeight"]);
                     int left = 10;
                     int top = height - 100;
-                    axRControl.SetConfig("OverlayRect", string.Format("0,{0},{1}, {2}, {3}", left, top, 200,200));
+                    axRControl.SetConfig("OverlayRect", string.Format("0,{0},{1}, {2}, {3}", left, top, 200, 200));
                     axRControl.SetConfig("OverlayTextColor", "0x004D88FF");
                     axRControl.SetConfig("OverlayBackgroundColor", "0x00FFFFFF");
                     if (string.IsNullOrEmpty(Overlay))
@@ -912,13 +858,10 @@ namespace OGV2P.Admin.Views
                         axRControl.TextOverlayText = string.Format("{0}-{1}", Overlay,
                         (Meeting.MeetingDate == DateTime.MinValue) ? DateTime.Now.ToShortDateString() : Meeting.MeetingDate.ToShortDateString());
                     }
-                    
-                    
                 }
-                
+
                 axRControl.StartPreview();
             }
-                    
         }
 
         private void WatermarkTextBox_TextChanged(object sender, TextChangedEventArgs e)

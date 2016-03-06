@@ -31,6 +31,21 @@ namespace Infrastructure.Models
             }
         }
 
+
+        private bool _isLive;
+        public bool IsLive
+        {
+            get
+            {
+                return _isLive;
+            }
+
+            set
+            {
+                _isLive = value;
+            }
+        }
+
         private int _lastID;
 
         public int LastID
@@ -326,6 +341,8 @@ namespace Infrastructure.Models
                 return StartingHash != EndingHash;
             }
         }
+
+       
 
         private void GetString(ExtendedTreeNode etn, ref string composite)
         {

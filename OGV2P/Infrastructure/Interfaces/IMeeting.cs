@@ -40,5 +40,6 @@ namespace Infrastructure.Interfaces
         long StartingHash { get; set; }
         long EndingHash { get; }
         bool HasChanged { get; }
+        bool IsLive { get; set; }
     }
 }
