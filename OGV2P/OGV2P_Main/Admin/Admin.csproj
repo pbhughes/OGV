@@ -145,6 +145,7 @@
   <ItemGroup>
     <Compile Include="AdminModule.cs" />
     <Compile Include="Helpers\UsbSystemObserver.cs" />
+    <Compile Include="Models\ImageOverlay.cs" />
     <Compile Include="Properties\AssemblyInfo.cs">
       <SubType>Code</SubType>
     </Compile>
@@ -203,9 +204,7 @@
       <Generator>MSBuild:Compile</Generator>
     </Page>
   </ItemGroup>
-  <ItemGroup>
-    <Folder Include="Models\" />
-  </ItemGroup>
+  <ItemGroup />
   <ItemGroup>
     <ProjectReference Include="..\..\CustomControls\CustomControls.csproj">
       <Project>{676e39da-65e5-4c6f-826e-a589bc4fd80a}</Project>
@@ -218,6 +217,7 @@
   </ItemGroup>
   <ItemGroup>
     <Resource Include="Images\Medium Volume-96.png" />
+    <Resource Include="Images\largePlayButton.jpg" />
     <Content Include="Images\openGOVideo.png">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>

@@ -330,6 +330,7 @@ namespace OGV2P.AgendaModule.Views
             }
 
             _docMenu = new System.Windows.Forms.ContextMenuStrip();
+            _docMenu.Opening += DocMenu_Opening;
             forms.ToolStripMenuItem stamp = new forms.ToolStripMenuItem("Stamp");
             stamp.Click += Stamp_Click;
             forms.ToolStripMenuItem unstamp = new forms.ToolStripMenuItem("Clear Stamp");
@@ -352,6 +353,7 @@ namespace OGV2P.AgendaModule.Views
         {
             //build the context menu
             _docMenu = new System.Windows.Forms.ContextMenuStrip();
+            _docMenu.Opening += DocMenu_Opening;
             forms.ToolStripMenuItem stamp = new forms.ToolStripMenuItem("Stamp");
             stamp.Click += Stamp_Click;
             forms.ToolStripMenuItem unstamp = new forms.ToolStripMenuItem("Clear Stamp");
@@ -396,6 +398,26 @@ namespace OGV2P.AgendaModule.Views
             {
                 ;//forget it
             }
+        }
+
+        private void DocMenu_Opening(object sender, System.ComponentModel.CancelEventArgs e)
+        {
+
+            foreach (forms.ToolStripItem i in ((System.Windows.Forms.ContextMenuStrip)sender).Items)
+            {
+                if (_currentMeeting.IsBusy)
+                {
+                    i.Enabled = true;
+                }
+                else
+                {
+                    if(i.Text == "Stamp" || i.Text == "Clear Stamp")
+                    {
+                        i.Enabled = false;
+                    }
+                }
+            }
+           
         }
 
         private void Delete_Click(object sender, EventArgs e)

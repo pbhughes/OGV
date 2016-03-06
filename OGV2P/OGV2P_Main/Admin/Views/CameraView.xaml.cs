@@ -18,6 +18,7 @@ using System.Xml.Linq;
 using forms = System.Windows.Forms;
 using Infrastructure.Extensions;
 using Microsoft.Practices.Unity;
+using OGV2P.Admin.Models;
 
 namespace OGV2P.Admin.Views
 {
@@ -738,7 +739,9 @@ namespace OGV2P.Admin.Views
 
                 if (cboCameras.SelectedItem.ToString().Contains("Choose a File Source...."))
                 {
-                    System.Windows.Forms.OpenFileDialog dg = new System.Windows.Forms.OpenFileDialog();
+                    
+                    axRControl.VideoEffect = 0;
+                    System.Windows.Forms.OpenFileDialog dg = new System.Windows.Forms.OpenFileDialog(); 
                     dg.DefaultExt = ".mp4";
                     dg.Filter = "Video Files (*.mp4)|*.mp4|WMV Files (*.wmv)|*.wmv|MOV Files (*.mov)|*.mov|MPG Files (*.mpg)|*.mpg|All (*.*)|*.*";
                     forms.DialogResult result = dg.ShowDialog();
@@ -746,11 +749,11 @@ namespace OGV2P.Admin.Views
                     if (result == forms.DialogResult.OK)
                     {
                         axRControl.VideoSource = FILE_SOURCE;
-                        axRControl.DestinationURL2 = string.Empty;
+                       
                         if (File.Exists(dg.FileName))
                         {
                             axRControl.FileSourceFilename = dg.FileName;
-                            axRControl.StartPreview();
+                            //axRControl.StartPreview();
 
                         }
                         else
