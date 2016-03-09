@@ -631,7 +631,7 @@ namespace OGV2P.AgendaModule.Views
             catch (Exception ex)
             {
                 ex.WriteToLogFile();
-                Xceed.Wpf.Toolkit.MessageBox.Show("Unable to get the agenda file, ensure the board is setup correctly on the server.", "OpenGoVideo - Error", MessageBoxButton.OK, MessageBoxImage.Error);
+                Xceed.Wpf.Toolkit.MessageBox.Show("Unable to get and or parse the agenda file, ensure the board is setup correctly on the server.", "OpenGoVideo - Error", MessageBoxButton.OK, MessageBoxImage.Error);
             }
         }
 
