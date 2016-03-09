@@ -10,9 +10,9 @@ using System.Windows;
 [assembly: AssemblyTitle("OpenGov2")]
 [assembly: AssemblyDescription("Video streaming and indexing application")]
 [assembly: AssemblyConfiguration("")]
-[assembly: AssemblyCompany("ClerkBase")]
+[assembly: AssemblyCompany("OpenGoVideo")]
 [assembly: AssemblyProduct("OpenGov2")]
-[assembly: AssemblyCopyright("Copyright © ClerkBase 2015")]
+[assembly: AssemblyCopyright("Copyright © OpenGoVideo 2015")]
 [assembly: AssemblyTrademark("")]
 [assembly: AssemblyCulture("")]
 

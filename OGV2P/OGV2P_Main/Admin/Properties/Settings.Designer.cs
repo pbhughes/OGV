@@ -25,7 +25,7 @@ namespace OGV2P.Admin.Properties {
         
         [global::System.Configuration.UserScopedSettingAttribute()]
         [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
-        [global::System.Configuration.DefaultSettingValueAttribute("ClerkBase\\Videos")]
+        [global::System.Configuration.DefaultSettingValueAttribute("OGV2\\Videos")]
         public string LocalVideoFolder {
             get {
                 return ((string)(this["LocalVideoFolder"]));

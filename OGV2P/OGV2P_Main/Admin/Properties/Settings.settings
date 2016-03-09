@@ -3,7 +3,7 @@
   <Profiles />
   <Settings>
     <Setting Name="LocalVideoFolder" Type="System.String" Scope="User">
-      <Value Profile="(Default)">ClerkBase\Videos</Value>
+      <Value Profile="(Default)">OGV2\Videos</Value>
     </Setting>
     <Setting Name="VuMeterMinimum" Type="System.Int32" Scope="User">
       <Value Profile="(Default)">0</Value>

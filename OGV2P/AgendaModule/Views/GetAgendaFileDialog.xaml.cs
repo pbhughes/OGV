@@ -68,7 +68,7 @@ namespace OGV2P.AgendaModule.Views
                 {
                     string fileName = ((FTPfileInfo)agendaList.SelectedItem).Filename;
 
-                    string dir = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments), "ClerkBase", "Agendas");
+                    string dir = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments), "OGV2", "Agendas");
                     if (!Directory.Exists(dir))
                         Directory.CreateDirectory(dir);
 

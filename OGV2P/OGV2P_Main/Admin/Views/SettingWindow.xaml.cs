@@ -26,7 +26,7 @@ namespace OGV2P.Admin.Views
         public SettingWindowDialog(string previewUrl, string localVideoFile, string publishingPoint)
         {
             InitializeComponent();
-            navUrl.NavigateUri = new Uri((string.IsNullOrEmpty(previewUrl) ? "http://www.clerkbase.com" : previewUrl));
+            navUrl.NavigateUri = new Uri((string.IsNullOrEmpty(previewUrl) ? "http://www.opengovideo.com" : previewUrl));
             txtNavUrlContainer.Text = (string.IsNullOrEmpty(previewUrl) ? " www.opengovideo.com/ogv2help" : previewUrl);
             txtLocalFile.Text = (localVideoFile == null || localVideoFile == string.Empty)?"The folder where the local video is stored....":localVideoFile;
             txtAppVersion.Text = SoftwareVersion();
