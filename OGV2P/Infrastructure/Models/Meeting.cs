@@ -43,6 +43,7 @@ namespace Infrastructure.Models
             set
             {
                 _isLive = value;
+                OnPropertyChanged("IsLive");
             }
         }
 

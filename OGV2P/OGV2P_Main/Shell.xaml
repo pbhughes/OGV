@@ -55,7 +55,7 @@
                         Background="AliceBlue" />
             </ScrollViewer>
 
-            <ScrollViewer Grid.Column="1" Grid.Row="0"
+            <ScrollViewer Grid.Column="1" Grid.Row="0" Margin="10,0,10,0"
                           HorizontalAlignment="Stretch"
                           VerticalAlignment="Stretch"
                       Grid.RowSpan="2" VerticalScrollBarVisibility="Auto">

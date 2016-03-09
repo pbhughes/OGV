@@ -281,7 +281,8 @@ namespace OGV2P.Admin.Views
                 axRControl.DestinationURL = _meeting.PublishingPoint;
 
                 //axRControl.StartConnect();
-                axRControl.StartPreview();
+                if(_meeting.IsLive)
+                    axRControl.StartPreview();
             }
             catch (AccessViolationException)
             {
@@ -319,7 +320,7 @@ namespace OGV2P.Admin.Views
             // Video/Audio Devices
             string[] lastUsedDevices = ReadDefaultDeviceCache();
 
-            AddVideoSources();
+            AddVideoSources(null);
             if (lastUsedDevices != null)
             {
                 cboCameras.BeginInit();
@@ -409,8 +410,9 @@ namespace OGV2P.Admin.Views
             return result;
         }
 
-        private void AddVideoSources()
+        private void AddVideoSources( string previousSelection)
         {
+            cboCameras.SelectionChanged -= cboSource_SelectedChanged;
             int n = axRControl.NumberOfVideoSources;
             cboCameras.Items.Clear();
             for (int i = 0; i < n; i++)
@@ -423,6 +425,12 @@ namespace OGV2P.Admin.Views
             }
 
             cboCameras.Items.Add("Choose a File Source....");
+
+            if(! string.IsNullOrEmpty(previousSelection))
+            {
+                cboCameras.SelectedItem = previousSelection;
+            }
+            cboCameras.SelectionChanged += cboSource_SelectedChanged;
         }
 
         private int FindVideoSource(string deviceName)
@@ -667,7 +675,7 @@ namespace OGV2P.Admin.Views
                             TimerStamp = TimeSpan.Zero;
                             Meeting.RightStatus = "";
                         }
-                        Meeting.LeftStatus = "Idle";
+                        
                     });
                 }
                 else
@@ -680,9 +688,10 @@ namespace OGV2P.Admin.Views
                         cmdStartRecording.IsEnabled = true;
                         cmdStopRecording.IsEnabled = false;
 
-                        Meeting.LeftStatus = "Idle";
+                       
                     });
                 }
+                Meeting.LeftStatus = "Idle";
             }
             catch (Exception ex)
             {
@@ -710,17 +719,22 @@ namespace OGV2P.Admin.Views
                     dg.DefaultExt = ".mp4";
                     dg.Filter = "Video Files (*.mp4)|*.mp4|WMV Files (*.wmv)|*.wmv|MOV Files (*.mov)|*.mov|MPG Files (*.mpg)|*.mpg|All (*.*)|*.*";
                     forms.DialogResult result = dg.ShowDialog();
-                    cmdRecordLabel.Content = "Play";
-                    cmdStopRecording.Content = "Pause";
+                   
                     if (result == forms.DialogResult.OK)
                     {
                         axRControl.VideoSource = FILE_SOURCE;
-
+                        cmdRecordLabel.Content = "Play";
+                        cmdStopRecording.Content = "Pause";
                         if (File.Exists(dg.FileName))
                         {
+                            _meeting.IsLive = true;
                             axRControl.FileSourceFilename = dg.FileName;
-                            
-                            //axRControl.StartPreview();
+                            txtLocalFileSource.Text = dg.FileName;
+                            FileInfo fi = new FileInfo(dg.FileName);
+                            cboCameras.Items.Add(fi.Name);
+                            cboCameras.SelectionChanged -= cboSource_SelectedChanged;
+                            cboCameras.SelectedItem = fi.Name;
+                            cboCameras.SelectionChanged += cboSource_SelectedChanged;
                         }
                         else
                         {
@@ -730,10 +744,15 @@ namespace OGV2P.Admin.Views
                 }
                 else
                 {
+                    _meeting.IsLive = false;
                     cmdRecordLabel.Content = "REC";
                     cmdStopRecording.Content = "Stop";
                     axRControl.DestinationURL2 = _meeting.LocalFile;
                     axRControl.VideoSource = Convert.ToInt32(cboCameras.SelectedIndex);
+                    AddVideoSources(cboCameras.SelectedItem.ToString());
+                    cboCameras.SelectionChanged -= cboSource_SelectedChanged;
+                    
+                    cboCameras.SelectionChanged += cboSource_SelectedChanged;
                     axRControl.StartPreview();
                 }
             }
@@ -807,7 +826,7 @@ namespace OGV2P.Admin.Views
         {
             try
             {
-                if (_meeting.IsBusy)
+                if (_meeting.IsBusy || ! _meeting.IsLive)
                     return;
 
                 axRControl.StartPreview();
@@ -824,6 +843,7 @@ namespace OGV2P.Admin.Views
             {
                 Dispatcher.Invoke((Action)(() =>
                 {
+                   
                     DisplayOverLay();
                 }));
             }
@@ -860,7 +880,8 @@ namespace OGV2P.Admin.Views
                     }
                 }
 
-                axRControl.StartPreview();
+                if(_meeting.IsLive)
+                    axRControl.StartPreview();
             }
         }
 

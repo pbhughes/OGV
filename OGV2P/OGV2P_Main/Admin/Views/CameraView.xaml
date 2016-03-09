@@ -27,52 +27,67 @@
     </UserControl.Resources>
     <Grid >
         <Grid.RowDefinitions>
-            <RowDefinition Height="480"/>
-            <RowDefinition Height="1" />
+            <RowDefinition Height="Auto" />
+            <RowDefinition Height="20" />
+            <RowDefinition MinHeight="480" Height="Auto"/>
+            <RowDefinition Height="20" />
             <RowDefinition Height="30" />
             <RowDefinition Height="Auto" />
         </Grid.RowDefinitions>
         <Grid.ColumnDefinitions>
-            <ColumnDefinition Width="*" />
-            <ColumnDefinition  Width="Auto"/>
+            <ColumnDefinition Width="50" />
+            <ColumnDefinition  Width="*"/>
         </Grid.ColumnDefinitions>
 
-        <Grid Grid.Row="0" Grid.Column="0" 
-              Margin="5,0,5,0"
-              Grid.ColumnSpan="2">
-            <Grid.RowDefinitions>
-                <RowDefinition Height="20" />
-                <RowDefinition Height="*" />
-                <RowDefinition Height="20" />
-            </Grid.RowDefinitions>
-            <Grid.ColumnDefinitions>
-                <ColumnDefinition Width="*" />
-            </Grid.ColumnDefinitions>
-            <Button Grid.Row="0" Click="RefreshPreview_Click">Refresh Preview</Button>
-            <WindowsFormsHost Grid.Row="1" Grid.Column="0" 
+        <Expander Header="Show Devices" Grid.Column="0" 
+                  Grid.Row="0" Grid.ColumnSpan="2">
+            <Grid >
+                <Grid.RowDefinitions>
+                    <RowDefinition />
+                    <RowDefinition />
+                    <RowDefinition />
+                </Grid.RowDefinitions>
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="100" />
+                    <ColumnDefinition Width="*"/>
+                </Grid.ColumnDefinitions>
+                <Label Grid.Column="0" Grid.Row="0">Cameras:</Label>
+                <ComboBox Grid.Column="1" Grid.Row="0" x:Name="cboCameras" 
+                          VerticalContentAlignment="Center"
+                          SelectionChanged="cboSource_SelectedChanged"></ComboBox>
+
+                <Label 
+                        Grid.Column="0" Grid.Row="1"
+                         Visibility="{Binding Meeting.IsLive, Converter= {StaticResource BoolToVisibility}}">File Source:</Label>
+                <TextBlock Grid.Column="1" Grid.Row="1"
+                        Name="txtLocalFileSource"
+                        Visibility="{Binding Meeting.IsLive, Converter= {StaticResource BoolToVisibility}}"
+                        VerticalAlignment="Center"></TextBlock>
+
+                <Label Grid.Column="0" Grid.Row="2">Microphones</Label>
+                <ComboBox Grid.Column="1" Grid.Row="2" x:Name="cboMicrophones" 
+                          VerticalContentAlignment="Center"
+                          SelectionChanged="cboMicrophones_SelectionChanged"></ComboBox>
+            </Grid>
+        </Expander>
+
+        <Button Grid.ColumnSpan="2" Grid.Row="1" Click="RefreshPreview_Click">Refresh Preview</Button>
+
+        <WindowsFormsHost Grid.Row="2" Grid.Column="0" 
                               Grid.ColumnSpan="2"
                                
                               x:Name="winFormHost">
 
-                <frms:Panel   Dock="Fill" 
+            <frms:Panel   Dock="Fill" 
                               Name="winFormHostPanel"/>
-            </WindowsFormsHost>
-        </Grid>
+        </WindowsFormsHost>
 
-        <Grid Grid.Row="2" Grid.Column="0" Grid.ColumnSpan="2">
-            <Grid.RowDefinitions>
-                <RowDefinition />
-            </Grid.RowDefinitions>
-            <Grid.ColumnDefinitions>
-                <ColumnDefinition Width="45" />
-                <ColumnDefinition Width="*" />
-            </Grid.ColumnDefinitions>
-
-            <Image Grid.Column="0" Source="/OGV2P.Admin;component/Images/Medium Volume-96.png" ></Image>
+        <StackPanel Orientation="Horizontal" Grid.Column="0" Grid.Row="3"
+                    Grid.ColumnSpan="2">
+            <Image Source="/OGV2P.Admin;component/Images/Medium Volume-96.png" />
             <Border BorderThickness="1" BorderBrush="Black" Margin="3"
-                    CornerRadius="5"
-                    HorizontalAlignment="Stretch"
-                     Grid.ColumnSpan="1" Grid.Column="1">
+                    CornerRadius="5" 
+                    HorizontalAlignment="Stretch">
                 <ProgressBar BorderThickness="0" 
                          x:Name="vuMeter" 
                          Value="{Binding VuMeterReading}"
@@ -82,8 +97,10 @@
                          Background="Transparent">
                 </ProgressBar>
             </Border>
-           
-        </Grid>
+        </StackPanel>
+        
+
+
         
         
         <Grid Grid.Row="4" Grid.Column="0" Grid.ColumnSpan="2"  
@@ -113,28 +130,7 @@
                 Watermark="Enter overlay text... " 
                 IsReadOnly="{Binding ShowOverlay}"
                 Grid.Column="1"></tk:WatermarkTextBox>
-            <Expander Header="Show Devices" Grid.Column="0" Grid.Row="1" Grid.ColumnSpan="2">
-                <Grid >
-                    <Grid.RowDefinitions>
-                        <RowDefinition />
-                        <RowDefinition />
-                    </Grid.RowDefinitions>
-                    <Grid.ColumnDefinitions>
-                        <ColumnDefinition Width="100" />
-                        <ColumnDefinition Width="*"/>
-                    </Grid.ColumnDefinitions>
-                    <Label Grid.Column="0" Grid.Row="0">Cameras:</Label>
-                    <ComboBox Grid.Column="1" Grid.Row="0" x:Name="cboCameras" 
-                          VerticalContentAlignment="Center"
-                          SelectionChanged="cboSource_SelectedChanged"></ComboBox>
-
-                    <Label Grid.Column="0" Grid.Row="1">Microphones</Label>
-                    <ComboBox Grid.Column="1" Grid.Row="1" x:Name="cboMicrophones" 
-                          VerticalContentAlignment="Center"
-                          SelectionChanged="cboMicrophones_SelectionChanged"></ComboBox>
-                </Grid>
-            </Expander>
-       
+        
         
 
             <Grid Grid.Row="3" Grid.ColumnSpan="2" Grid.Column="1" >
