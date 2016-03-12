@@ -39,8 +39,9 @@
             <ColumnDefinition  Width="*"/>
         </Grid.ColumnDefinitions>
 
-        <Expander Header="Show Devices" Grid.Column="0" 
-                  Grid.Row="0" Grid.ColumnSpan="2">
+        <Expander Header="Show Devices" Grid.Column="0"
+                  Name="expDropDown"
+                  Grid.Row="0" Grid.ColumnSpan="2" IsEnabled="{Binding Meeting.IsBusy, Converter={StaticResource InverseBoolConverter} }" >
             <Grid >
                 <Grid.RowDefinitions>
                     <RowDefinition />
@@ -82,7 +83,7 @@
                               Name="winFormHostPanel"/>
         </WindowsFormsHost>
 
-        <StackPanel Orientation="Horizontal" Grid.Column="0" Grid.Row="3"
+        <DockPanel Grid.Column="0" Grid.Row="3"
                     Grid.ColumnSpan="2">
             <Image Source="/OGV2P.Admin;component/Images/Medium Volume-96.png" />
             <Border BorderThickness="1" BorderBrush="Black" Margin="3"
@@ -97,7 +98,7 @@
                          Background="Transparent">
                 </ProgressBar>
             </Border>
-        </StackPanel>
+        </DockPanel>
         
 
 

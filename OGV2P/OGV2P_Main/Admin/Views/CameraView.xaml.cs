@@ -544,8 +544,15 @@ namespace OGV2P.Admin.Views
 
         private void cmdStartRecording_Click(object sender, RoutedEventArgs e)
         {
+            _meeting.IsLive = true;
+
             try
             {
+                if (expDropDown.IsExpanded)
+                {
+                    expDropDown.IsExpanded = false;
+                }
+
                 Meeting = _container.Resolve<IMeeting>();
 
                 //font cache a file source only hardware
@@ -687,11 +694,13 @@ namespace OGV2P.Admin.Views
                         _vuMeterTimer.Stop();
                         cmdStartRecording.IsEnabled = true;
                         cmdStopRecording.IsEnabled = false;
+                        Meeting.IsBusy = false;
 
-                       
+
                     });
                 }
                 Meeting.LeftStatus = "Idle";
+                _meeting.IsLive = true;
             }
             catch (Exception ex)
             {
