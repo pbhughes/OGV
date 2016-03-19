@@ -460,8 +460,11 @@ namespace OGV2P.AgendaModule.Views
         private void Stamp_Click(object sender, EventArgs e)
         {
             System.Diagnostics.Debug.WriteLine(string.Format("Session Service INit AgendaView Time: {0}", _sessionService.InitializationTime.ToShortTimeString()));
+            if (_currentMeeting.IsBusy)
+            {
+                ((ExtendedTreeNode)agendaTree.SelectedNode).MarkItemStamped(txtTitle.Text, _sessionService.CurrentVideoTime);
 
-            ((ExtendedTreeNode)agendaTree.SelectedNode).MarkItemStamped(txtTitle.Text, _sessionService.CurrentVideoTime);
+            }
         }
 
         private void Unstamp_Click(object sender, EventArgs e)
@@ -525,16 +528,24 @@ namespace OGV2P.AgendaModule.Views
 
         private void agendaTree_KeyDown(object sender, forms.KeyEventArgs e)
         {
+            
+
             switch (e.KeyCode)
             {
                 case forms.Keys.Enter:
-
-                    ((ExtendedTreeNode)agendaTree.SelectedNode).MarkItemStamped(txtTitle.Text, _sessionService.CurrentVideoTime);
+                    if (_currentMeeting.IsBusy)
+                    {
+                        _sessionService.Stamp();
+                        ((ExtendedTreeNode)agendaTree.SelectedNode).MarkItemStamped(txtTitle.Text, _sessionService.CurrentVideoTime);
+                    }
                     break;
 
                 case forms.Keys.Space:
-                    _sessionService.Stamp();
-                    ((ExtendedTreeNode)agendaTree.SelectedNode).MarkItemStamped(txtTitle.Text, _sessionService.CurrentVideoTime);
+                    if (_currentMeeting.IsBusy)
+                    {
+                        _sessionService.Stamp();
+                        ((ExtendedTreeNode)agendaTree.SelectedNode).MarkItemStamped(txtTitle.Text, _sessionService.CurrentVideoTime);
+                    }
                     break;
             }
         }
@@ -647,8 +658,12 @@ namespace OGV2P.AgendaModule.Views
 
         private void agendaTree_NodeMouseDoubleClick(object sender, forms.TreeNodeMouseClickEventArgs e)
         {
-            ((ExtendedTreeNode)agendaTree.SelectedNode).MarkItemStamped(txtTitle.Text, _sessionService.CurrentVideoTime);
-            e.Node.Expand();
+            if (_currentMeeting.IsBusy)
+            {
+                ((ExtendedTreeNode)agendaTree.SelectedNode).MarkItemStamped(txtTitle.Text, _sessionService.CurrentVideoTime);
+                e.Node.Expand();
+            }
+            
         }
 
         private void SaveAgenda_Click(object sender, RoutedEventArgs e)
@@ -710,11 +725,23 @@ namespace OGV2P.AgendaModule.Views
 
         private void ClearStamps_Click(object sender, RoutedEventArgs e)
         {
-            foreach (ExtendedTreeNode etn in agendaTree.Nodes)
+            try
             {
-                ClearStamp(etn);
-                etn.BackColor = Color.Transparent;
+                foreach (ExtendedTreeNode etn in agendaTree.Nodes)
+                {
+                    ClearStamp(etn);
+                    etn.BackColor = Color.Transparent;
+                    
+                }
+                if(agendaTree != null)
+                    _currentMeeting.WriteAgendaFile(agendaTree);
             }
+            catch (Exception ex)
+            {
+                ex.WriteToLogFile();
+                throw;
+            }
+           
         }
 
         private void agendaCommandDropDown_Click(object sender, RoutedEventArgs e)

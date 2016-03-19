@@ -28,10 +28,10 @@
     <InstallUrl>http://mwfogvdb01.opengovideo.com/Test/</InstallUrl>
     <SupportUrl>http://opengovideo.com</SupportUrl>
     <ProductName>OpenGovVideo</ProductName>
-    <PublisherName>ClerkBase</PublisherName>
+    <PublisherName>OpenGoVideo</PublisherName>
     <CreateWebPageOnPublish>true</CreateWebPageOnPublish>
     <WebPage>publish.htm</WebPage>
-    <ApplicationRevision>88</ApplicationRevision>
+    <ApplicationRevision>90</ApplicationRevision>
     <ApplicationVersion>1.0.0.%2a</ApplicationVersion>
     <UseApplicationTrust>false</UseApplicationTrust>
     <CreateDesktopShortcut>true</CreateDesktopShortcut>

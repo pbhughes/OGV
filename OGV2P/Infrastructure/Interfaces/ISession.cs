@@ -28,6 +28,9 @@ namespace Infrastructure.Interfaces
 
         DateTime InitializationTime { get; set; }
 
+        void SignalStopRecording(object sender, EventArgs e);
+        event MeetingStopRecording RaiseStopRecording;
+
 
     }
 }

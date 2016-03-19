@@ -46,10 +46,10 @@
 
             <ScrollViewer Grid.Column="0" Grid.Row="0"
                           VerticalScrollBarVisibility="Auto"
-                          VerticalAlignment="Top"
-                          HorizontalAlignment="Left">
+                          VerticalAlignment="Top" 
+                          HorizontalAlignment="Center">
 
-                <ContentControl
+                <ContentControl Margin="10,0,10,0"
                         Name="SideBarRegion"
                         cal:RegionManager.RegionName="SideBarRegion"
                         Background="AliceBlue" />

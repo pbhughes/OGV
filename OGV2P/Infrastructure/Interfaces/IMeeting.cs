@@ -9,6 +9,7 @@ namespace Infrastructure.Interfaces
 {
     public delegate void MeetingSetEventHandler(object sender, EventArgs e);
     public delegate void MeeingItemChangedEventHandler(IItem item);
+    public delegate void MeetingStopRecording(object sender, EventArgs e);
 
     public interface IMeeting
     {
@@ -41,5 +42,6 @@ namespace Infrastructure.Interfaces
         long EndingHash { get; }
         bool HasChanged { get; }
         bool IsLive { get; set; }
+       
     }
 }

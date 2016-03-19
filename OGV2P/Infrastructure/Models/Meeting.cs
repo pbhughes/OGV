@@ -343,8 +343,6 @@ namespace Infrastructure.Models
             }
         }
 
-       
-
         private void GetString(ExtendedTreeNode etn, ref string composite)
         {
            
@@ -375,22 +373,12 @@ namespace Infrastructure.Models
 
             return part;
         }
-        public event MeetingSetEventHandler RaiseMeetingSetEvent;
-
-        private void OnRaiseMeetingSetEvent()
-        {
-            if (RaiseMeetingSetEvent != null)
-            {
-                RaiseMeetingSetEvent(this, new EventArgs());
-            }
-        }
 
         private bool CanUpateSelectedItem()
         {
             return true;
         }
 
-        
         private void ParseItems(XElement items, ref ExtendedTreeNode node)
         {
            
@@ -572,15 +560,26 @@ namespace Infrastructure.Models
 
         #endregion INotifyPropertyChanged
 
-        #region Meeting Item Changed Support
+        #region Event Support
 
         public event MeeingItemChangedEventHandler RaiseMeetingItemChanged;
+        public event MeetingSetEventHandler RaiseMeetingSetEvent;
 
         private void OnMeetingItemChanged(Item item)
         {
             if (RaiseMeetingItemChanged != null)
                 RaiseMeetingItemChanged(item);
         }
+
+        private void OnRaiseMeetingSetEvent()
+        {
+            if (RaiseMeetingSetEvent != null)
+            {
+                RaiseMeetingSetEvent(this, new EventArgs());
+            }
+        }
+
+       
 
         #endregion Meeting Item Changed Support
 
@@ -613,6 +612,8 @@ namespace Infrastructure.Models
         {
             try
             {
+                string fileName = LocalAgendaFileName;
+
                 _agendaTree = agendaTree;
 
                 XDocument xdoc = GetAgendaXmlDoc();
@@ -660,5 +661,7 @@ namespace Infrastructure.Models
 
             return item;
         }
+
+      
     }
 }

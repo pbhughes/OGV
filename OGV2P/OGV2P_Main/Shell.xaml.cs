@@ -95,6 +95,7 @@ namespace OGV2P
 
         private void File_SettingsMenu_CLick(object sender, RoutedEventArgs e)
         {
+           
             try
             {
                 SettingWindowDialog diag = new SettingWindowDialog(_meeting.LandingPage ?? "http://www.opengovideo.com/ogv2help", _meeting.LocalFile, _meeting.PublishingPoint);
@@ -108,6 +109,8 @@ namespace OGV2P
 
         private void File_LogOutMenu_Click(object sender, RoutedEventArgs e)
         {
+            var session = _container.Resolve<ISession>();
+
             if (_meeting.IsBusy || _meeting.HasChanged)
             {
                 if (_meeting.IsBusy)
@@ -118,6 +121,13 @@ namespace OGV2P
                     {
                         e.Handled = true;
                         return;
+                    }
+                    else
+                    {
+                       if(_meeting.IsBusy && session != null)
+                        {
+                            session.SignalStopRecording(this, new EventArgs());
+                        }
                     }
                 }
 
@@ -153,7 +163,7 @@ namespace OGV2P
                     _regionManager.Regions[Infrastructure.Models.Regions.Main].Remove(view);
             }
 
-            var session = _container.Resolve<ISession>();
+            
             var user = _container.Resolve<IUser>();
             _meeting = new Meeting(session, user);
 

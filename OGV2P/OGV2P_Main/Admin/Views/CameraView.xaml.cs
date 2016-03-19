@@ -218,14 +218,15 @@ namespace OGV2P.Admin.Views
 
                 axRControl = new AxRTMPActiveX.AxRTMPActiveX();
 
-                axRControl.Width = int.Parse(_settings["PreviewVideoWidth"]);
-                axRControl.Height = int.Parse(_settings["PreviewVideoHeight"]);
+                //axRControl.Width = int.Parse(_settings["PreviewVideoWidth"]);
+                //axRControl.Height = int.Parse(_settings["PreviewVideoHeight"]);
 
                 this.DataContext = this;
                 NotificationRequest = new InteractionRequest<INotification>();
                 NotificationCommand = new DelegateCommand(OnNofity, CanNotify);
 
                 _sessionService = _container.Resolve<ISession>();
+                _sessionService.RaiseStopRecording += _sessionService_RaiseStopRecording;
                 _meeting = _container.Resolve<IMeeting>();
                 _meeting.RaiseMeetingSetEvent += Meeting_SetEvent;
                 _regionManager = regionManager;
@@ -248,6 +249,7 @@ namespace OGV2P.Admin.Views
                 _vuMeterTimer.Elapsed += _vuMeterTimer_Elapsed;
                 _vuMeterTimer.Start();
 
+                
                 axRControl.Dock = System.Windows.Forms.DockStyle.Fill;
 
                 winFormHost.Child.Controls.Add(axRControl);
@@ -260,6 +262,21 @@ namespace OGV2P.Admin.Views
                 ex.WriteToLogFile();
                 throw;
             }
+        }
+
+        private void _sessionService_RaiseStopRecording(object sender, EventArgs e)
+        {
+            try
+            {
+                var er = new RoutedEventArgs();
+                cmdStopRecording_Click(sender, er);
+            }
+            catch (Exception ex)
+            {
+                ex.WriteToLogFile();
+                throw;
+            }
+            
         }
 
         private bool CanNotify()
@@ -304,8 +321,8 @@ namespace OGV2P.Admin.Views
             axRControl.SetConfig("Auth", string.Format("{0}:{1}", _user.SelectedBoard.UserID, _user.SelectedBoard.Password));
 
             // Device/Camera Resolution
-            axRControl.VideoWidth = 800;
-            axRControl.VideoHeight = 600;
+            //axRControl.VideoWidth = 800;
+            //axRControl.VideoHeight = 600;
             axRControl.VideoFrameRate = 30;
 
             // Video Encoder Bitrate (Bits/s)
@@ -347,8 +364,8 @@ namespace OGV2P.Admin.Views
             }
 
             long num = axRControl.GetNumberOfResolutions(0);
-            axRControl.VideoWidth = int.Parse(_settings["PreviewVideoWidth"]);
-            axRControl.VideoHeight = int.Parse(_settings["PreviewVideoHeight"]);
+            //axRControl.VideoWidth = int.Parse(_settings["PreviewVideoWidth"]);
+            //axRControl.VideoHeight = int.Parse(_settings["PreviewVideoHeight"]);
 
             //winFormHost.Width = axRControl.VideoWidth;
             //winFormHost.Height = axRControl.VideoHeight;
@@ -835,7 +852,7 @@ namespace OGV2P.Admin.Views
         {
             try
             {
-                if (_meeting.IsBusy || ! _meeting.IsLive)
+                if (_meeting.IsBusy )
                     return;
 
                 axRControl.StartPreview();
@@ -871,12 +888,9 @@ namespace OGV2P.Admin.Views
                 else
                 {
                     //set the overlay position
-                    axRControl.VideoEffect = 5;
-                    int height = int.Parse(_settings["PreviewVideoHeight"]);
-                    int left = 10;
-                    int top = height - 100;
-                    axRControl.SetConfig("OverlayRect", string.Format("0,{0},{1}, {2}, {3}", left, top, 200, 200));
-                    axRControl.SetConfig("OverlayTextColor", "0x004D88FF");
+                    
+                    axRControl.VideoEffect = 3;
+                    axRControl.SetConfig("FontSize","12");
                     axRControl.SetConfig("OverlayBackgroundColor", "0x00FFFFFF");
                     if (string.IsNullOrEmpty(Overlay))
                     {
@@ -889,7 +903,7 @@ namespace OGV2P.Admin.Views
                     }
                 }
 
-                if(_meeting.IsLive)
+                if(! _meeting.IsLive)
                     axRControl.StartPreview();
             }
         }

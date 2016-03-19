@@ -97,8 +97,6 @@ namespace Infrastructure.Models
             RaiseStampedEvent(CurrentVideoTime);
         }
 
-        
-
         public Session()
         {
             InitializationTime = DateTime.Now;
@@ -115,6 +113,23 @@ namespace Infrastructure.Models
 
             if (PropertyChanged != null)
                 PropertyChanged(this, new PropertyChangedEventArgs(name));
+        }
+        #endregion
+
+        #region Stop Recording Event Support
+        public event MeetingStopRecording RaiseStopRecording;
+
+        private void OnRaiseStopRecording(object sender, EventArgs e)
+        {
+            if (RaiseStopRecording != null)
+            {
+                RaiseStopRecording(sender, e);
+            }
+        }
+
+        public void SignalStopRecording(object sender, EventArgs e)
+        {
+            OnRaiseStopRecording(sender, e);
         }
         #endregion
 
