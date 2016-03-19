@@ -118,6 +118,7 @@ namespace Infrastructure.Models
 
         public string StampTitle(TimeSpan stamp)
         {
+            _timeStamp = stamp;
             //see if there is a stamp heading
             string pattern = @"\[\d\d:\d\d:\d\d\]";
             string source = _title;
@@ -154,6 +155,7 @@ namespace Infrastructure.Models
 
         public Item()
         {
+            Items = new List<Item>();
             StartingHash = 0;
         }
     }

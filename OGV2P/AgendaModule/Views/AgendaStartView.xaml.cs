@@ -670,21 +670,19 @@ namespace OGV2P.AgendaModule.Views
         {
             try
             {
+                long bytesWritten = _currentMeeting.WriteAgendaFile((ExtendedTreeView)agendaTree);
                 string message = string.Format("Do you want to publish agenda file {0}?", _currentMeeting.MeetingName);
                 string caption = string.Format("Publish to board  {0}", _user.SelectedBoard.Name);
                 var result = Xceed.Wpf.Toolkit.MessageBox.Show(message, caption, MessageBoxButton.YesNo, MessageBoxImage.Question);
                 if (result == MessageBoxResult.Yes)
                 {
-                    long bytesWritten = _currentMeeting.WriteAgendaFile(agendaTree);
+                    
 
                     SaveAgendaFileDialog dg = new SaveAgendaFileDialog(_container);
 
                     dg.ShowDialog();
                 }
-                else
-                {
-                    long bytesWritten = _currentMeeting.WriteAgendaFile(agendaTree);
-                }
+               
             }
             catch (Exception ex)
             {
@@ -710,7 +708,7 @@ namespace OGV2P.AgendaModule.Views
         private void ClearStamp(ExtendedTreeNode etn)
         {
             etn.BackColor = Color.Transparent;
-            etn.MarkItemUnstamped();
+           
             if (etn.AgendaItem != null)
             {
                 etn.SetTimeStamp(TimeSpan.Zero);
@@ -734,7 +732,7 @@ namespace OGV2P.AgendaModule.Views
                     
                 }
                 if(agendaTree != null)
-                    _currentMeeting.WriteAgendaFile(agendaTree);
+                    _currentMeeting.WriteAgendaFile((ExtendedTreeView)agendaTree);
             }
             catch (Exception ex)
             {

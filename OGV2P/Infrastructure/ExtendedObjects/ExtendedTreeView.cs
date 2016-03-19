@@ -4,6 +4,8 @@ using System.Windows.Forms;
 using System;
 using Infrastructure.Enumerations;
 using System.Runtime.InteropServices;
+using System.Text;
+using System.Xml;
 
 namespace Infrastructure.ExtendedObjects
 {
@@ -42,8 +44,6 @@ namespace Infrastructure.ExtendedObjects
             }
         }
 
-       
-
         public ExtendedTreeView() : base()
         {
             this.ItemHeight = this.ItemHeight * 2;
@@ -51,8 +51,6 @@ namespace Infrastructure.ExtendedObjects
         }
 
         internal const int WM_PAINT = 0xF;
-
-       
 
         protected override void WndProc(ref Message m)
         {
@@ -126,6 +124,7 @@ namespace Infrastructure.ExtendedObjects
             this.Invalidate();
             Dragging = false;
         }
+
         private void DrawDropIndicator(Graphics e)
         {
             Pen pen = new Pen(Color.FromArgb(255, 0, 0, 255), 8);
@@ -149,6 +148,29 @@ namespace Infrastructure.ExtendedObjects
                 SendMessage(this.Handle, 277, (IntPtr)0, (IntPtr)0);
             }
 
+        }
+
+        public override string ToString()
+        {
+            StringBuilder content = new StringBuilder();
+
+            XmlWriterSettings settings = new XmlWriterSettings();
+            settings.ConformanceLevel = ConformanceLevel.Fragment;
+            settings.OmitXmlDeclaration = true;
+            settings.CheckCharacters = true;
+            settings.Indent = true;
+            settings.CloseOutput = true;
+            settings.IndentChars = "\t";
+            using (var xmlWr = XmlWriter.Create(content, settings))
+            {
+                
+                foreach (ExtendedTreeNode etn in Nodes)
+                {
+                    xmlWr.WriteRaw(etn.ToString());
+                }
+                
+            }
+            return content.ToString();
         }
     }
 }

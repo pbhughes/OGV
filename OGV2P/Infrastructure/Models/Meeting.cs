@@ -8,6 +8,7 @@ using System.IO;
 using System.Net;
 using System.Text;
 using System.Windows.Threading;
+using System.Xml;
 using System.Xml.Linq;
 using forms = System.Windows.Forms;
 
@@ -608,28 +609,46 @@ namespace Infrastructure.Models
             return xdoc.ToString();
         }
 
-        public long WriteAgendaFile(forms.TreeView agendaTree)
+        public long WriteAgendaFile(ExtendedTreeView agendaTree)
         {
             try
             {
-                string fileName = LocalAgendaFileName;
-
                 _agendaTree = agendaTree;
+                string fileName = LocalAgendaFileName;
+                StringBuilder content = new StringBuilder();
 
-                XDocument xdoc = GetAgendaXmlDoc();
-
-                foreach (ExtendedTreeNode tn in agendaTree.Nodes)
+                XmlWriterSettings settings = new XmlWriterSettings();
+                settings.ConformanceLevel = ConformanceLevel.Fragment;
+                settings.OmitXmlDeclaration = true;
+                settings.CheckCharacters = true;
+                settings.Indent = true;
+                settings.CloseOutput = true;
+                settings.IndentChars = "\t";
+                using (var r = XmlWriter.Create(content, settings))
                 {
-                    XElement root = ProcessNodes(tn);
-                    xdoc.Element("meeting").Element("agenda").Element("items").Add(root);
+                    r.WriteStartElement("meeting");
+                    r.WriteElementString("clientpathlive", ClientPathLive);
+                    r.WriteElementString("clientpathlivestream", ClientPathLiveStream);
+                    r.WriteElementString("meetingname", MeetingName);
+                    r.WriteElementString("meetingdate", MeetingDate.ToShortDateString() );
+                    r.WriteElementString("videoheight", VideoHeight.ToString());
+                    r.WriteElementString("videowidth", VideoWidth.ToString());
+                    r.WriteElementString("framerate", FrameRate.ToString());
+                    r.WriteElementString("landingpage", LandingPage);
+                    r.WriteStartElement("agenda");
+                    r.WriteStartElement("items");
+                    r.WriteRaw(agendaTree.ToString());
+                    r.WriteEndElement();
+                    r.WriteEndElement();
+                    r.WriteEndElement();
                 }
-                xdoc.Save(_localAgendaFileName);
-                FileInfo fInfo = new FileInfo(_localAgendaFileName);
-                string xml = GetAgendaXML();
-                StartingHash = xml.GetHashCode();
-                return fInfo.Length;
+                string allText = content.ToString();
+                File.WriteAllText(_localAgendaFileName, allText);
+                FileInfo f = new FileInfo(_localAgendaFileName);
+
+                return f.Length;
             }
-            catch (Exception )
+            catch (Exception ex)
             {
                 throw;
             }
