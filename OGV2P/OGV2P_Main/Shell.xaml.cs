@@ -95,7 +95,6 @@ namespace OGV2P
 
         private void File_SettingsMenu_CLick(object sender, RoutedEventArgs e)
         {
-           
             try
             {
                 SettingWindowDialog diag = new SettingWindowDialog(_meeting.LandingPage ?? "http://www.opengovideo.com/ogv2help", _meeting.LocalFile, _meeting.PublishingPoint);
@@ -111,26 +110,16 @@ namespace OGV2P
         {
             var session = _container.Resolve<ISession>();
 
-            if (_meeting.IsBusy || _meeting.HasChanged)
+            if (_meeting.IsBusy)
             {
-                if (_meeting.IsBusy)
-                {
-                    if (Xceed.Wpf.Toolkit.MessageBox.Show(
-                        "A recording is in progress.  Continue to close?",
-                        "OpenGoVideo", MessageBoxButton.YesNo, MessageBoxImage.Warning) == MessageBoxResult.No)
-                    {
-                        e.Handled = true;
-                        return;
-                    }
-                    else
-                    {
-                       if(_meeting.IsBusy && session != null)
-                        {
-                            session.SignalStopRecording(this, new EventArgs());
-                        }
-                    }
-                }
+                Xceed.Wpf.Toolkit.MessageBox.Show(
+                        "A recording is in progress if you want to log out please stop the recording.",
+                        "OpenGoVideo", MessageBoxButton.OK, MessageBoxImage.Warning);
+                return;
+            }
 
+            if (_meeting.HasChanged)
+            {
                 if (_meeting.HasChanged)
                 {
                     if (Xceed.Wpf.Toolkit.MessageBox.Show(
@@ -141,7 +130,6 @@ namespace OGV2P
                         return;
                     }
                 }
-               
             }
 
             _regionManager = Microsoft.Practices.ServiceLocation.ServiceLocator.Current.GetInstance<Microsoft.Practices.Prism.Regions.IRegionManager>();
@@ -163,7 +151,6 @@ namespace OGV2P
                     _regionManager.Regions[Infrastructure.Models.Regions.Main].Remove(view);
             }
 
-            
             var user = _container.Resolve<IUser>();
             _meeting = new Meeting(session, user);
 
@@ -186,6 +173,7 @@ namespace OGV2P
 
         private void Window_Closing(object sender, System.ComponentModel.CancelEventArgs e)
         {
+            _meeting = _container.Resolve<IMeeting>();
             if (_meeting.IsBusy || _meeting.HasChanged)
             {
                 if (_meeting.IsBusy)

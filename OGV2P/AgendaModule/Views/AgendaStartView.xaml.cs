@@ -414,6 +414,10 @@ namespace OGV2P.AgendaModule.Views
         private void agendaTree_AfterSelect(object sender, forms.TreeViewEventArgs e)
         {
             ExtendedTreeNode selectedNode = (ExtendedTreeNode)((forms.TreeView)sender).SelectedNode;
+            if(_currentMeeting == null)
+            {
+                _currentMeeting = _container.Resolve<IMeeting>();
+            }
             _currentMeeting.SelectedItem = selectedNode.AgendaItem;
         }
 
