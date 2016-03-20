@@ -390,8 +390,8 @@ namespace Infrastructure.Models
                     Item x = new Item();
 
                     x.Title = (item.Element("title") != null) ? item.Element("title").Value : null;
-                    x.Description = (item.Element("desc") != null) ? item.Element("desc").Value : null;
-                    x.TimeStamp = (item.Element("timestamp") != null) ? TimeSpan.Parse(item.Element("timestamp").Value) : TimeSpan.Zero;
+                    x.Description = (item.Element("description") != null) ? item.Element("description").Value : null;
+                    x.TimeStamp = (item.Element("timestamp") != null) ? XmlConvert.ToTimeSpan(item.Element("timestamp").Value.ToString()) : TimeSpan.Zero;
                     x.UpdateHash();
                     string assingedText = (x.Title.Length < 150) ? x.Title : x.Title.Substring(0, 150);
                     ExtendedTreeNode xn = new ExtendedTreeNode() { Text = assingedText, ToolTipText = x.Title, AgendaItem = x };

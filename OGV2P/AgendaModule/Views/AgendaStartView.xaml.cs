@@ -28,7 +28,7 @@ namespace OGV2P.AgendaModule.Views
         private IUser _user;
         private forms.ImageList _treeImages = new forms.ImageList();
         private forms.ContextMenuStrip _docMenu;
-        private forms.TreeView agendaTree = new ExtendedTreeView();
+        private ExtendedTreeView agendaTree = new ExtendedTreeView();
         private ExtendedTreeNode target = null;
 
         public AgendaStartView(IUser user, IUnityContainer container)
@@ -463,7 +463,7 @@ namespace OGV2P.AgendaModule.Views
             if (_currentMeeting.IsBusy)
             {
                 ((ExtendedTreeNode)agendaTree.SelectedNode).MarkItemStamped(txtTitle.Text, _sessionService.CurrentVideoTime);
-
+                _currentMeeting.WriteAgendaFile(agendaTree);
             }
         }
 
@@ -537,6 +537,7 @@ namespace OGV2P.AgendaModule.Views
                     {
                         _sessionService.Stamp();
                         ((ExtendedTreeNode)agendaTree.SelectedNode).MarkItemStamped(txtTitle.Text, _sessionService.CurrentVideoTime);
+                        _currentMeeting.WriteAgendaFile(agendaTree);
                     }
                     break;
 
@@ -545,6 +546,7 @@ namespace OGV2P.AgendaModule.Views
                     {
                         _sessionService.Stamp();
                         ((ExtendedTreeNode)agendaTree.SelectedNode).MarkItemStamped(txtTitle.Text, _sessionService.CurrentVideoTime);
+                        _currentMeeting.WriteAgendaFile(agendaTree);
                     }
                     break;
             }
@@ -661,6 +663,7 @@ namespace OGV2P.AgendaModule.Views
             if (_currentMeeting.IsBusy)
             {
                 ((ExtendedTreeNode)agendaTree.SelectedNode).MarkItemStamped(txtTitle.Text, _sessionService.CurrentVideoTime);
+                _currentMeeting.WriteAgendaFile(agendaTree);
                 e.Node.Expand();
             }
             
@@ -711,13 +714,16 @@ namespace OGV2P.AgendaModule.Views
            
             if (etn.AgendaItem != null)
             {
+                agendaTree.SelectedNode = etn;
                 etn.SetTimeStamp(TimeSpan.Zero);
                 ((ExtendedTreeNode)agendaTree.SelectedNode).MarkItemUnstamped();
             }
 
             foreach (ExtendedTreeNode node in etn.Nodes)
             {
+
                 ClearStamp(node);
+                agendaTree.SelectedNode = node;
             }
         }
 
@@ -727,12 +733,15 @@ namespace OGV2P.AgendaModule.Views
             {
                 foreach (ExtendedTreeNode etn in agendaTree.Nodes)
                 {
+                    agendaTree.SelectedNode = etn;
                     ClearStamp(etn);
                     etn.BackColor = Color.Transparent;
                     
                 }
                 if(agendaTree != null)
                     _currentMeeting.WriteAgendaFile((ExtendedTreeView)agendaTree);
+
+                agendaCommandDropDown.IsOpen = false;
             }
             catch (Exception ex)
             {

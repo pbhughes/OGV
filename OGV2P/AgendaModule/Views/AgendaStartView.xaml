@@ -38,7 +38,7 @@
             </Grid.ColumnDefinitions>
 
          
-                <tk:SplitButton Grid.Row="1" 
+                <tk:SplitButton Grid.Row="1"
                                 Background="{x:Static SystemColors.ControlLightBrush}" 
                     Grid.Column="2" Name="agendaCommandDropDown"
                         Click="agendaCommandDropDown_Click"
