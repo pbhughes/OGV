@@ -12,7 +12,7 @@ namespace Infrastructure.Interfaces
         string ID { get; set; }
         List<Item> Items { get; set; }
         Item Parent { get; set; }
-        TimeSpan TimeStamp { get; set; }
+        int TimeStamp { get; set; }
         string Title { get; set; }
         long StartingHash { get; set; }
         bool HasChanges { get; }

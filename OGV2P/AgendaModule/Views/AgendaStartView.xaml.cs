@@ -466,7 +466,7 @@ namespace OGV2P.AgendaModule.Views
             System.Diagnostics.Debug.WriteLine(string.Format("Session Service INit AgendaView Time: {0}", _sessionService.InitializationTime.ToShortTimeString()));
             if (_currentMeeting.IsBusy)
             {
-                ((ExtendedTreeNode)agendaTree.SelectedNode).MarkItemStamped(txtTitle.Text, _sessionService.CurrentVideoTime);
+                ((ExtendedTreeNode)agendaTree.SelectedNode).MarkItemStamped(txtTitle.Text, (int)_sessionService.CurrentVideoTime.TotalSeconds);
                 _currentMeeting.WriteAgendaFile(agendaTree);
             }
         }
@@ -540,7 +540,7 @@ namespace OGV2P.AgendaModule.Views
                     if (_currentMeeting.IsBusy)
                     {
                         _sessionService.Stamp();
-                        ((ExtendedTreeNode)agendaTree.SelectedNode).MarkItemStamped(txtTitle.Text, _sessionService.CurrentVideoTime);
+                        ((ExtendedTreeNode)agendaTree.SelectedNode).MarkItemStamped(txtTitle.Text, (int)_sessionService.CurrentVideoTime.TotalSeconds);
                         _currentMeeting.WriteAgendaFile(agendaTree);
                     }
                     break;
@@ -549,7 +549,7 @@ namespace OGV2P.AgendaModule.Views
                     if (_currentMeeting.IsBusy)
                     {
                         _sessionService.Stamp();
-                        ((ExtendedTreeNode)agendaTree.SelectedNode).MarkItemStamped(txtTitle.Text, _sessionService.CurrentVideoTime);
+                        ((ExtendedTreeNode)agendaTree.SelectedNode).MarkItemStamped(txtTitle.Text, (int)_sessionService.CurrentVideoTime.TotalSeconds);
                         _currentMeeting.WriteAgendaFile(agendaTree);
                     }
                     break;
@@ -666,7 +666,7 @@ namespace OGV2P.AgendaModule.Views
         {
             if (_currentMeeting.IsBusy)
             {
-                ((ExtendedTreeNode)agendaTree.SelectedNode).MarkItemStamped(txtTitle.Text, _sessionService.CurrentVideoTime);
+                ((ExtendedTreeNode)agendaTree.SelectedNode).MarkItemStamped(txtTitle.Text, (int) _sessionService.CurrentVideoTime.TotalSeconds);
                 _currentMeeting.WriteAgendaFile(agendaTree);
                 e.Node.Expand();
             }
@@ -719,7 +719,7 @@ namespace OGV2P.AgendaModule.Views
             if (etn.AgendaItem != null)
             {
                 agendaTree.SelectedNode = etn;
-                etn.SetTimeStamp(TimeSpan.Zero);
+                etn.SetTimeStamp(0);
                 ((ExtendedTreeNode)agendaTree.SelectedNode).MarkItemUnstamped();
             }
 

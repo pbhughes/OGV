@@ -42,9 +42,9 @@ namespace Infrastructure.Models
             set { _description = value; OnPropertyChanged("Description"); }
         }
 
-        private TimeSpan _timeStamp;
+        private int _timeStamp;
 
-        public TimeSpan TimeStamp
+        public int TimeStamp
         {
             get { return _timeStamp; }
             set
@@ -116,9 +116,10 @@ namespace Infrastructure.Models
 
         #endregion INotifyPropertyChanged
 
-        public string StampTitle(TimeSpan stamp)
+        public string StampTitle(int seconds)
         {
-            _timeStamp = stamp;
+            TimeSpan stamp = new TimeSpan(0, 0, seconds);
+            _timeStamp = seconds;
             //see if there is a stamp heading
             string pattern = @"\[\d\d:\d\d:\d\d\]";
             string source = _title;

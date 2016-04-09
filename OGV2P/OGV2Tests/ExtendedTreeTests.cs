@@ -19,10 +19,10 @@ namespace OGV2Tests
             Item i = new Item();
             i.Title = "Test Title";
             i.Description = "Test description";
-            i.TimeStamp = TimeSpan.Zero;
+            i.TimeStamp = 0;
 
-            Item ii1 = new Item() { Title = "sub node 1", Description = "sub node 1 description", TimeStamp = TimeSpan.Zero };
-            Item ii2 = new Item() { Title = "sub node 2", Description = "sub node 2 description", TimeStamp = TimeSpan.Zero };
+            Item ii1 = new Item() { Title = "sub node 1", Description = "sub node 1 description", TimeStamp = 0 };
+            Item ii2 = new Item() { Title = "sub node 2", Description = "sub node 2 description", TimeStamp = 0 };
 
             ExtendedTreeNode n11 = new ExtendedTreeNode();
             n11.AgendaItem = ii1;

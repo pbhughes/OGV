@@ -391,12 +391,12 @@ namespace Infrastructure.Models
 
                     x.Title = (item.Element("title") != null) ? item.Element("title").Value : null;
                     x.Description = (item.Element("description") != null) ? item.Element("description").Value : null;
-                    x.TimeStamp = (item.Element("timestamp") != null) ? XmlConvert.ToTimeSpan(item.Element("timestamp").Value.ToString()) : TimeSpan.Zero;
+                    x.TimeStamp = (item.Element("timestamp") != null) ? int.Parse(item.Element("timestamp").Value.ToString()) : 0;
                     x.UpdateHash();
                     string assingedText = (x.Title.Length < 150) ? x.Title : x.Title.Substring(0, 150);
                     ExtendedTreeNode xn = new ExtendedTreeNode() { Text = assingedText, ToolTipText = x.Title, AgendaItem = x };
 
-                    if (xn.AgendaItem.TimeStamp != TimeSpan.Zero)
+                    if (xn.AgendaItem.TimeStamp != 0)
                     {
 
                         xn.MarkItemStamped(xn.AgendaItem.Title, x.TimeStamp, false);
@@ -417,6 +417,7 @@ namespace Infrastructure.Models
             }
          
         }
+
 
         public Meeting(ISession sessionService, IUser user)
         {
@@ -453,7 +454,7 @@ namespace Infrastructure.Models
                 if (tn.Nodes.Count > 0)
                     ClearItemStamps(tn.Nodes);
                 else
-                    ((ExtendedTreeNode)tn).SetTimeStamp(TimeSpan.Zero);
+                    ((ExtendedTreeNode)tn).SetTimeStamp(0);
             }
 
         }
@@ -545,7 +546,7 @@ namespace Infrastructure.Models
         {
             if (_selectedItem != null)
             {
-                _selectedItem.TimeStamp = sessionTime;
+                _selectedItem.TimeStamp = (int)sessionTime.TotalSeconds;
             }
         }
 
