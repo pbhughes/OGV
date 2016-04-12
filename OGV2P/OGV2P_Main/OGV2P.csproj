@@ -15,7 +15,7 @@
     <WarningLevel>4</WarningLevel>
     <TargetFrameworkProfile />
     <IsWebBootstrapper>true</IsWebBootstrapper>
-    <PublishUrl>ftp://mwfogvdb01.opengovideo.com/Test/</PublishUrl>
+    <PublishUrl>ftp://mwfogvdb01.opengovideo.com/Live/</PublishUrl>
     <Install>true</Install>
     <InstallFrom>Web</InstallFrom>
     <UpdateEnabled>true</UpdateEnabled>
@@ -25,13 +25,13 @@
     <UpdatePeriodically>false</UpdatePeriodically>
     <UpdateRequired>false</UpdateRequired>
     <MapFileExtensions>true</MapFileExtensions>
-    <InstallUrl>http://mwfogvdb01.opengovideo.com/Test/</InstallUrl>
+    <InstallUrl>http://mwfogvdb01.opengovideo.com/Live/</InstallUrl>
     <SupportUrl>http://opengovideo.com</SupportUrl>
     <ProductName>OpenGovVideo</ProductName>
     <PublisherName>OpenGoVideo</PublisherName>
     <CreateWebPageOnPublish>true</CreateWebPageOnPublish>
     <WebPage>publish.htm</WebPage>
-    <ApplicationRevision>98</ApplicationRevision>
+    <ApplicationRevision>99</ApplicationRevision>
     <ApplicationVersion>1.0.0.%2a</ApplicationVersion>
     <UseApplicationTrust>false</UseApplicationTrust>
     <CreateDesktopShortcut>true</CreateDesktopShortcut>
