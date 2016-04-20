@@ -8,6 +8,8 @@ using System.Windows.Controls;
 using System.Windows.Controls.Primitives;
 using System.Windows.Media;
 using forms = System.Windows.Forms;
+using OGV2P.WpfSingleInstanceByEventWaitHandle;
+
 
 namespace OGV2P
 {
@@ -20,8 +22,15 @@ namespace OGV2P
         {
             try
             {
+
                 AppDomain current = AppDomain.CurrentDomain;
                 current.UnhandledException += Current_UnhandledException;
+
+                WpfSingleInstance.Make("424dbbdd-3c99-4390-81a0-f1efb384e1bd", this);
+
+           
+
+            
                 base.OnStartup(e);
                 EventManager.RegisterClassHandler(typeof(DatePicker),
                        DatePicker.LoadedEvent,

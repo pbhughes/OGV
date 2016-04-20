@@ -8,7 +8,8 @@
         WindowStartupLocation="Manual"
         Left="10" Top="10"
         ResizeMode="CanResizeWithGrip"
-       Closing="Window_Closing"
+        Closing="Window_Closing"
+        Loaded="Window_Loaded"
         MinHeight="768" MinWidth="1024">
     <Window.Resources>
     </Window.Resources>

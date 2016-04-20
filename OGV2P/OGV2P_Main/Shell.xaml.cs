@@ -8,6 +8,8 @@ using System.Diagnostics;
 using System.Timers;
 using System.Windows;
 using forms = System.Windows.Forms;
+using System.Runtime.InteropServices;
+using System.Windows.Interop;
 
 namespace OGV2P
 {
@@ -157,6 +159,11 @@ namespace OGV2P
             session.LogOut();
         }
 
+        internal static void ProcessArg(string arg)
+        {
+            throw new NotImplementedException();
+        }
+
         private void BoardsFile_MenuItem_Click(object sender, RoutedEventArgs e)
         {
             Process.Start(forms.Application.LocalUserAppDataPath);
@@ -207,5 +214,22 @@ namespace OGV2P
             if (cpuReadingTimer != null)
                 cpuReadingTimer.Dispose();
         }
+
+        private void Window_Loaded(object sender, RoutedEventArgs e)
+        {
+            HwndSource source = HwndSource.FromHwnd(new WindowInteropHelper(this).Handle);
+            source.AddHook(new HwndSourceHook(WndProc));
+        }
+
+        private static IntPtr WndProc(IntPtr hwnd, int msg, IntPtr wParam, IntPtr lParam, ref bool handled)
+        {
+
+            if (msg == OGV2P.WpfSingleInstanceByEventWaitHandle.WpfSingleInstance.NativeMethods.WM_SHOWME)
+            {
+                
+            }
+            return IntPtr.Zero;
+        }
+
     }
 }
