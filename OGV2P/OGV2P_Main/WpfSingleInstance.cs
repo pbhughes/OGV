@@ -65,11 +65,9 @@ namespace OGV2P.WpfSingleInstanceByEventWaitHandle
             app.Dispatcher.BeginInvoke(
                     new dispatcherInvoker(delegate ()
                     {
-                        Application.Current.MainWindow.Topmost = true;
                         Application.Current.MainWindow.Activate();
-                        
-
-                       
+                        Application.Current.MainWindow.WindowState = WindowState.Normal;
+                        Application.Current.MainWindow.BringIntoView();
                     }),
                     null
                 );
