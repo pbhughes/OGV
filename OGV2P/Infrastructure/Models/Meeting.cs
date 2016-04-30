@@ -129,8 +129,13 @@ namespace Infrastructure.Models
 
         public DateTime MeetingDate
         {
-            get { return _meetingDate; }
-            set { _meetingDate = value; OnPropertyChanged("MeetingDate"); }
+            get {
+                return _meetingDate;
+            }
+            set {
+                _meetingDate = value;
+                OnPropertyChanged("MeetingDate");
+            }
         }
 
         private string _clientPathLive;

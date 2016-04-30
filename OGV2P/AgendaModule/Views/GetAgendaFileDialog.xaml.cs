@@ -29,44 +29,15 @@ namespace OGV2P.AgendaModule.Views
             DataContext = _selector;
         }
 
-        private async void agendaList_MouseDoubleClick(object sender, MouseButtonEventArgs e)
-        {
-            _selector.IsBusy = true;
-            try
-            {
-                if (agendaList.SelectedItem != null)
-                {
-                    await Task.Run(() =>
-                    {
-                        SetFileAndClose();
-                    });
-                }
-            }
-            catch (Exception ex)
-            {
-                ex.WriteToLogFile();
-                var msgBox = new Xceed.Wpf.Toolkit.MessageBox();
 
-                msgBox.Text = ex.Message;
-                msgBox.Caption = "Error getting the agenda XML";
-                throw;
-            }
-            finally
-            {
-                _selector.IsBusy = false;
-                this.DialogResult = true;
-                this.Close();
-            }
-        }
-
-        private  void SetFileAndClose()
+        private  void SetFileAndClose(string target)
         {
             try
             {
                 System.Threading.Thread.Sleep(1000);
                 Dispatcher.Invoke(() =>
                 {
-                    string fileName = ((FTPfileInfo)agendaList.SelectedItem).Filename;
+                    string fileName = target;
 
                     string dir = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments), "OGV2", "Agendas");
                     if (!Directory.Exists(dir))
@@ -106,7 +77,7 @@ namespace OGV2P.AgendaModule.Views
                 {
                     await Task.Run(() =>
                     {
-                        SetFileAndClose();
+                        SetFileAndClose(_selector.SelectedFile.FullName);
                     });
                 }
             }
@@ -174,5 +145,38 @@ namespace OGV2P.AgendaModule.Views
         {
             _selector.SelectedFile = (FTPfileInfo)agendaList.SelectedItem;
         }
+        private async void agendaList_MouseDoubleClick(object sender, MouseButtonEventArgs e)
+        {
+            _selector.IsBusy = true;
+            try
+            {
+                _selector.SelectedFile = (FTPfileInfo)agendaList.SelectedItem;
+
+                if (agendaList.SelectedItem != null)
+                {
+                    System.Diagnostics.Debug.WriteLine(_selector.SelectedFile.FullName + "    " + _selector.SelectedFile.Path);
+                    await Task.Run(() =>
+                    {
+                        SetFileAndClose(_selector.SelectedFile.FullName);
+                    });
+                }
+            }
+            catch (Exception ex)
+            {
+                ex.WriteToLogFile();
+                var msgBox = new Xceed.Wpf.Toolkit.MessageBox();
+
+                msgBox.Text = ex.Message;
+                msgBox.Caption = "Error getting the agenda XML";
+                throw;
+            }
+            finally
+            {
+                _selector.IsBusy = false;
+                this.DialogResult = true;
+                this.Close();
+            }
+        }
+
     }
 }
