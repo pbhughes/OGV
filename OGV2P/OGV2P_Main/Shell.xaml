@@ -8,6 +8,7 @@
         WindowStartupLocation="Manual"
         Left="10" Top="10"
         ResizeMode="CanResizeWithGrip"
+        SizeToContent="WidthAndHeight"
         Closing="Window_Closing"
         Loaded="Window_Loaded"
         Height="{x:Static SystemParameters.FullPrimaryScreenHeight}"
