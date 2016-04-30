@@ -6,6 +6,7 @@ using Infrastructure.Models;
 using Microsoft.Practices.Prism.Regions;
 using Microsoft.Practices.Unity;
 using System;
+using System.ComponentModel;
 using System.Drawing;
 using System.IO;
 using System.Windows;
@@ -20,16 +21,30 @@ namespace OGV2P.AgendaModule.Views
     /// <summary>
     /// Interaction logic for ChooseAgendaView.xaml
     /// </summary>
-    public partial class AgendaStartView : UserControl, INavigationAware
+    public partial class AgendaStartView : UserControl, INavigationAware, INotifyPropertyChanged
     {
         private IUnityContainer _container;
-        private IMeeting _currentMeeting;
         private ISession _sessionService;
         private IUser _user;
         private forms.ImageList _treeImages = new forms.ImageList();
         private forms.ContextMenuStrip _docMenu;
         private ExtendedTreeView agendaTree = new ExtendedTreeView();
         private ExtendedTreeNode target = null;
+
+        private IMeeting _currentMeeting;
+        public IMeeting CurrentMeeting
+        {
+            get
+            {
+                return _currentMeeting;
+            }
+
+            set
+            {
+                _currentMeeting = value;
+                OnPropertyChanged("CurrentMeeting");
+            }
+        }
 
         public AgendaStartView(IUser user, IUnityContainer container)
         {
@@ -87,12 +102,12 @@ namespace OGV2P.AgendaModule.Views
             agendaTree.AfterSelect += agendaTree_AfterSelect;
 
             _sessionService = _container.Resolve<ISession>();
-            _currentMeeting = _container.Resolve<IMeeting>();
+            CurrentMeeting = _container.Resolve<IMeeting>();
             _user = user;
-            _currentMeeting.RaiseMeetingSetEvent += _currentMeeting_RaiseMeetingSetEvent;
+            CurrentMeeting.RaiseMeetingSetEvent += _currentMeeting_RaiseMeetingSetEvent;
             _sessionService.RaiseLoggedOut += _sessionService_RaiseLoggedOut;
             _sessionService.RaiseStopRecording += _sessionService_RaiseStopRecording;
-            DataContext = _currentMeeting;
+            DataContext = CurrentMeeting;
 
             winFormHost.Child.Controls.Add(agendaTree);
         }
@@ -111,7 +126,7 @@ namespace OGV2P.AgendaModule.Views
         {
             txtMeetingName.Text = string.Empty;
             dteMeetingDate.Text = string.Empty;
-            _currentMeeting = null;
+            CurrentMeeting = null;
         }
 
         private void AgendaTree_DrawNode(object sender, forms.DrawTreeNodeEventArgs e)
@@ -373,14 +388,14 @@ namespace OGV2P.AgendaModule.Views
             txtTitle.SelectAll();
 
             agendaTree.SelectedNode = tn;
-            _currentMeeting.SelectedItem = item;
+            CurrentMeeting.SelectedItem = item;
 
-            Item temp = _currentMeeting.SelectedItem;
-            ItemEditor ie = new ItemEditor(_container, _currentMeeting);
+            Item temp = CurrentMeeting.SelectedItem;
+            ItemEditor ie = new ItemEditor(_container, CurrentMeeting);
             ie.ShowDialog();
             if (ie.DialogResult.HasValue && ie.DialogResult.Value == true)
             {
-                tn.Text = _currentMeeting.SelectedItem.Title;
+                tn.Text = CurrentMeeting.SelectedItem.Title;
             }
             else
             {
@@ -392,7 +407,7 @@ namespace OGV2P.AgendaModule.Views
         {
             foreach (forms.ToolStripItem i in ((System.Windows.Forms.ContextMenuStrip)sender).Items)
             {
-                if (_currentMeeting.IsBusy)
+                if (CurrentMeeting.IsBusy)
                 {
                     i.Enabled = true;
                 }
@@ -420,11 +435,11 @@ namespace OGV2P.AgendaModule.Views
         private void agendaTree_AfterSelect(object sender, forms.TreeViewEventArgs e)
         {
             ExtendedTreeNode selectedNode = (ExtendedTreeNode)((forms.TreeView)sender).SelectedNode;
-            if(_currentMeeting == null)
+            if(CurrentMeeting == null)
             {
-                _currentMeeting = _container.Resolve<IMeeting>();
+                CurrentMeeting = _container.Resolve<IMeeting>();
             }
-            _currentMeeting.SelectedItem = selectedNode.AgendaItem;
+            CurrentMeeting.SelectedItem = selectedNode.AgendaItem;
         }
 
         private void DescriptionBox_KeyDown(object sender, KeyEventArgs e)
@@ -452,8 +467,8 @@ namespace OGV2P.AgendaModule.Views
                 string newTitle = txtTitle.Text;
                 agendaTree.SelectedNode.Text = newTitle;
                 agendaTree.SelectedNode.ToolTipText = txtDescription.Text;
-                _currentMeeting.SelectedItem.Title = newTitle;
-                _currentMeeting.SelectedItem.Description = txtDescription.Text;
+                CurrentMeeting.SelectedItem.Title = newTitle;
+                CurrentMeeting.SelectedItem.Description = txtDescription.Text;
                 if (agendaTree.SelectedNode.ImageKey == "stamped")
                 {
                     agendaTree.SelectedNode.ImageKey = "stamped_edited";
@@ -470,10 +485,10 @@ namespace OGV2P.AgendaModule.Views
         private void Stamp_Click(object sender, EventArgs e)
         {
             System.Diagnostics.Debug.WriteLine(string.Format("Session Service INit AgendaView Time: {0}", _sessionService.InitializationTime.ToShortTimeString()));
-            if (_currentMeeting.IsBusy)
+            if (CurrentMeeting.IsBusy)
             {
                 ((ExtendedTreeNode)agendaTree.SelectedNode).MarkItemStamped(txtTitle.Text, (int)_sessionService.CurrentVideoTime.TotalSeconds);
-                _currentMeeting.WriteAgendaFile(agendaTree);
+                CurrentMeeting.WriteAgendaFile(agendaTree);
             }
         }
 
@@ -543,20 +558,20 @@ namespace OGV2P.AgendaModule.Views
             switch (e.KeyCode)
             {
                 case forms.Keys.Enter:
-                    if (_currentMeeting.IsBusy)
+                    if (CurrentMeeting.IsBusy)
                     {
                         _sessionService.Stamp();
                         ((ExtendedTreeNode)agendaTree.SelectedNode).MarkItemStamped(txtTitle.Text, (int)_sessionService.CurrentVideoTime.TotalSeconds);
-                        _currentMeeting.WriteAgendaFile(agendaTree);
+                        CurrentMeeting.WriteAgendaFile(agendaTree);
                     }
                     break;
 
                 case forms.Keys.Space:
-                    if (_currentMeeting.IsBusy)
+                    if (CurrentMeeting.IsBusy)
                     {
                         _sessionService.Stamp();
                         ((ExtendedTreeNode)agendaTree.SelectedNode).MarkItemStamped(txtTitle.Text, (int)_sessionService.CurrentVideoTime.TotalSeconds);
-                        _currentMeeting.WriteAgendaFile(agendaTree);
+                        CurrentMeeting.WriteAgendaFile(agendaTree);
                     }
                     break;
             }
@@ -576,10 +591,10 @@ namespace OGV2P.AgendaModule.Views
                 if (dg.ShowDialog() == System.Windows.Forms.DialogResult.OK)
                 {
                     string xml = ReadAndValidateXML(dg.FileName);
-                    _currentMeeting.LocalAgendaFileName = dg.FileName;
+                    CurrentMeeting.LocalAgendaFileName = dg.FileName;
                     XDocument xDoc = XDocument.Parse(xml);
-                    xDoc.Save(_currentMeeting.LocalAgendaFileName);
-                    _currentMeeting.ParseAgendaFile(agendaTree, xml);
+                    xDoc.Save(CurrentMeeting.LocalAgendaFileName);
+                    CurrentMeeting.ParseAgendaFile(agendaTree, xml);
                 }
             }
             catch (XmlException xmlEx)
@@ -629,12 +644,14 @@ namespace OGV2P.AgendaModule.Views
                     dg.ShowDialog();
                     if (dg.DialogResult.Value)
                     {
-
+                        CurrentMeeting = new Meeting(_sessionService, _user);
+                        
                         string xml = ReadAndValidateXML(dg.FilePath);
-                        _currentMeeting.LocalAgendaFileName = dg.FilePath;
+                        CurrentMeeting.LocalAgendaFileName = dg.FilePath;
                         XDocument xDoc = XDocument.Parse(xml);
-                        xDoc.Save(_currentMeeting.LocalAgendaFileName);
-                        _currentMeeting.ParseAgendaFile(agendaTree, xml);
+                        xDoc.Save(CurrentMeeting.LocalAgendaFileName);
+                        CurrentMeeting.ParseAgendaFile(agendaTree, xml);
+                        this.DataContext = CurrentMeeting;
                     }
                 }
             }
@@ -661,19 +678,15 @@ namespace OGV2P.AgendaModule.Views
                 XDocument xDoc = XDocument.Load(rdr);
                 return xDoc.ToString();
             }
-
-           
-
-
         }
 
 
         private void agendaTree_NodeMouseDoubleClick(object sender, forms.TreeNodeMouseClickEventArgs e)
         {
-            if (_currentMeeting.IsBusy)
+            if (CurrentMeeting.IsBusy)
             {
                 ((ExtendedTreeNode)agendaTree.SelectedNode).MarkItemStamped(txtTitle.Text, (int) _sessionService.CurrentVideoTime.TotalSeconds);
-                _currentMeeting.WriteAgendaFile(agendaTree);
+                CurrentMeeting.WriteAgendaFile(agendaTree);
                 e.Node.Expand();
             }
             
@@ -683,8 +696,8 @@ namespace OGV2P.AgendaModule.Views
         {
             try
             {
-                long bytesWritten = _currentMeeting.WriteAgendaFile((ExtendedTreeView)agendaTree);
-                string message = string.Format("Do you want to publish agenda file {0}?", _currentMeeting.MeetingName);
+                long bytesWritten = CurrentMeeting.WriteAgendaFile((ExtendedTreeView)agendaTree);
+                string message = string.Format("Do you want to publish agenda file {0}?", CurrentMeeting.MeetingName);
                 string caption = string.Format("Publish to board  {0}", _user.SelectedBoard.Name);
                 var result = Xceed.Wpf.Toolkit.MessageBox.Show(message, caption, MessageBoxButton.YesNo, MessageBoxImage.Question);
                 if (result == MessageBoxResult.Yes)
@@ -749,7 +762,7 @@ namespace OGV2P.AgendaModule.Views
                     
                 }
                 if(agendaTree != null)
-                    _currentMeeting.WriteAgendaFile((ExtendedTreeView)agendaTree);
+                    CurrentMeeting.WriteAgendaFile((ExtendedTreeView)agendaTree);
 
                 agendaCommandDropDown.IsOpen = false;
             }
@@ -763,7 +776,7 @@ namespace OGV2P.AgendaModule.Views
 
         private void agendaCommandDropDown_Click(object sender, RoutedEventArgs e)
         {
-            if (!_currentMeeting.IsBusy)
+            if (!CurrentMeeting.IsBusy)
             {
                 GetAgendaFromServer_Click(sender, e);
             }
@@ -789,5 +802,17 @@ namespace OGV2P.AgendaModule.Views
         }
 
         #endregion Navigation Awareness
+
+        #region INotifyPropertyChanged
+
+        public event PropertyChangedEventHandler PropertyChanged;
+
+        private void OnPropertyChanged(string name)
+        {
+            if (PropertyChanged != null)
+                PropertyChanged(this, new PropertyChangedEventArgs(name));
+        }
+
+        #endregion
     }
 }

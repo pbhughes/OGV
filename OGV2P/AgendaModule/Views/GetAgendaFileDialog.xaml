@@ -39,7 +39,8 @@
         </tk:BusyIndicator>
         <ListView  x:Name="agendaList" Grid.Row="1"
                     Width="Auto" Height="Auto"
-                   SelectionChanged="agendaList_SelectionChanged">
+                   SelectionChanged="agendaList_SelectionChanged"
+                   MouseDoubleClick="agendaList_MouseDoubleClick" >
             <ListView.View>
                 <GridView>
                     <!--<GridViewColumn Header="Date" DisplayMemberBinding="{Binding FileDateTime}" />-->
