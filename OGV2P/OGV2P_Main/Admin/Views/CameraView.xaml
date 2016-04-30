@@ -25,11 +25,11 @@
         </Style>
         
     </UserControl.Resources>
-    <Grid >
+    <Grid Height="Auto" >
         <Grid.RowDefinitions>
             <RowDefinition Height="Auto" />
             <RowDefinition Height="20" />
-            <RowDefinition MinHeight="480" Height="Auto"/>
+            <RowDefinition Height="*"/>
             <RowDefinition Height="20" />
             <RowDefinition Height="30" />
             <RowDefinition Height="Auto" />
@@ -73,15 +73,21 @@
         </Expander>
 
         <Button Grid.ColumnSpan="2" Grid.Row="1" Click="RefreshPreview_Click">Refresh Preview</Button>
-
-        <WindowsFormsHost Grid.Row="2" Grid.Column="0" 
+        <DockPanel LastChildFill="True" 
+                   Grid.Row="2" 
+                   Grid.Column="0"
+                   Grid.ColumnSpan="2"
+                   MinHeight="400" >
+            <WindowsFormsHost VerticalAlignment="Stretch" 
+                              HorizontalAlignment="Stretch"
                               Grid.ColumnSpan="2"
-                               
                               x:Name="winFormHost">
 
-            <frms:Panel   Dock="Fill" 
+                <frms:Panel   Dock="Fill"
                               Name="winFormHostPanel"/>
-        </WindowsFormsHost>
+            </WindowsFormsHost>
+        </DockPanel>
+        
 
         <DockPanel Grid.Column="0" Grid.Row="3"
                     Grid.ColumnSpan="2">
