@@ -104,6 +104,7 @@ namespace OGV2P.AgendaModule.Views
             _sessionService = _container.Resolve<ISession>();
             CurrentMeeting = _container.Resolve<IMeeting>();
             _user = user;
+
             CurrentMeeting.RaiseMeetingSetEvent += _currentMeeting_RaiseMeetingSetEvent;
             _sessionService.RaiseLoggedOut += _sessionService_RaiseLoggedOut;
             _sessionService.RaiseStopRecording += _sessionService_RaiseStopRecording;
@@ -644,7 +645,7 @@ namespace OGV2P.AgendaModule.Views
                     dg.ShowDialog();
                     if (dg.DialogResult.Value)
                     {
-                        CurrentMeeting = new Meeting(_sessionService, _user);
+                        
                         
                         string xml = ReadAndValidateXML(dg.FilePath);
                         CurrentMeeting.LocalAgendaFileName = dg.FilePath;
@@ -652,6 +653,7 @@ namespace OGV2P.AgendaModule.Views
                         xDoc.Save(CurrentMeeting.LocalAgendaFileName);
                         CurrentMeeting.ParseAgendaFile(agendaTree, xml);
                         this.DataContext = CurrentMeeting;
+                       
                     }
                 }
             }
@@ -679,7 +681,6 @@ namespace OGV2P.AgendaModule.Views
                 return xDoc.ToString();
             }
         }
-
 
         private void agendaTree_NodeMouseDoubleClick(object sender, forms.TreeNodeMouseClickEventArgs e)
         {
@@ -814,5 +815,10 @@ namespace OGV2P.AgendaModule.Views
         }
 
         #endregion
+
+        private void AgendaViewLoaded(object sender, RoutedEventArgs e)
+        {
+            GetAgendaFromServer_Click(this, new RoutedEventArgs());
+        }
     }
 }

@@ -552,6 +552,7 @@ namespace OGV2P.Admin.Views
 
         private void cmdStartRecording_Click(object sender, RoutedEventArgs e)
         {
+            
             _meeting.IsLive = true;
 
             try
