@@ -10,7 +10,8 @@
         ResizeMode="CanResizeWithGrip"
         Closing="Window_Closing"
         Loaded="Window_Loaded"
-        MinHeight="768" MinWidth="1024">
+        Height="{x:Static SystemParameters.FullPrimaryScreenHeight}"
+        Width="{x:Static SystemParameters.FullPrimaryScreenWidth}">
     <Window.Resources>
     </Window.Resources>
     <Grid>
