@@ -91,9 +91,15 @@ namespace OGV2P.AgendaModule.Views
             _user = user;
             _currentMeeting.RaiseMeetingSetEvent += _currentMeeting_RaiseMeetingSetEvent;
             _sessionService.RaiseLoggedOut += _sessionService_RaiseLoggedOut;
+            _sessionService.RaiseStopRecording += _sessionService_RaiseStopRecording;
             DataContext = _currentMeeting;
 
             winFormHost.Child.Controls.Add(agendaTree);
+        }
+
+        private void _sessionService_RaiseStopRecording(object sender, EventArgs e)
+        {
+            SaveAgenda_Click(sender, new RoutedEventArgs());
         }
 
         private void AgendaTree_DragLeave(object sender, EventArgs e)

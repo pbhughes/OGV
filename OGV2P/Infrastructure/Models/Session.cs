@@ -51,10 +51,6 @@ namespace Infrastructure.Models
             }
         }
 
-    
-
-
-
         private Guid _recoderID;
         public Guid RecorderID
         {
