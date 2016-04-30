@@ -47,20 +47,6 @@ namespace OGV2P.Admin.Views
 
         private ISession _sessionService;
 
-        public ISession SessionService
-        {
-            get
-            {
-                return _sessionService;
-            }
-
-            set
-            {
-                _sessionService = value;
-                OnPropertyChanged("SessionService");
-            }
-        }
-
         private IMeeting _meeting;
 
         public IMeeting Meeting
@@ -208,6 +194,7 @@ namespace OGV2P.Admin.Views
         public CameraView(IRegionManager regionManager, IDevices devices, IUser user, IUnityContainer container)
         {
             _container = container;
+            
 
             try
             {
@@ -228,7 +215,6 @@ namespace OGV2P.Admin.Views
                 NotificationCommand = new DelegateCommand(OnNofity, CanNotify);
 
                 _sessionService = _container.Resolve<ISession>();
-                _sessionService.RaiseStopRecording += _sessionService_RaiseStopRecording;
                 _meeting = _container.Resolve<IMeeting>();
                 _meeting.RaiseMeetingSetEvent += Meeting_SetEvent;
                 _regionManager = regionManager;
@@ -584,6 +570,9 @@ namespace OGV2P.Admin.Views
                 
                 // Video Encoder Bitrate (Bits/s)
                 axRControl.VideoBitrate = GetVideoBitRate();
+                axRControl.VideoHeight = GetVideoHeight();
+                axRControl.VideoWidth = GetVideoWidth();
+                
 
                 Meeting = _container.Resolve<IMeeting>();
 
@@ -714,6 +703,7 @@ namespace OGV2P.Admin.Views
                         _vuMeterTimer.Stop();
                         cmdStartRecording.IsEnabled = true;
                         cmdStopRecording.IsEnabled = false;
+                        _sessionService.SignalStopRecording(this, new EventArgs());
 
                         if (_meeting.IsLive)
                         {
@@ -739,8 +729,15 @@ namespace OGV2P.Admin.Views
 
                     });
                 }
+
+               
+
                 Meeting.LeftStatus = "Idle";
                 _meeting.IsLive = true;
+                axRControl.StartPreview();
+                
+
+
             }
             catch (Exception ex)
             {
@@ -985,6 +982,20 @@ namespace OGV2P.Admin.Views
             height = int.Parse(splits[1]);
 
             return resolution;
+        }
+
+        private int GetVideoHeight()
+        {
+            int width, height;
+            GetResolution(out width, out height);
+            return height;
+        }
+
+        private int GetVideoWidth()
+        {
+            int width, height;
+            GetResolution(out width, out height);
+            return width;
         }
 
         private int GetVideoBitRate()
