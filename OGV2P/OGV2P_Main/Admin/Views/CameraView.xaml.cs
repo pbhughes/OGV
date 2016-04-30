@@ -326,7 +326,11 @@ namespace OGV2P.Admin.Views
             else
                 throw new Exception("Unable to determine device resolution, restart and try again. If a resolution cannot be obtained call tech support.");
 
-            cboResolutions.SelectedValue = lastUsedDevices[2];
+            if (lastUsedDevices != null
+                && lastUsedDevices.Length > 0 && !string.IsNullOrEmpty(lastUsedDevices[0]))
+            {
+                cboResolutions.SelectedValue = lastUsedDevices[2];
+            }
 
             axRControl.VideoEffect = 3;
 
@@ -337,7 +341,8 @@ namespace OGV2P.Admin.Views
             
 
             AddVideoSources(null);
-            if (lastUsedDevices != null)
+            if (lastUsedDevices != null
+                && lastUsedDevices.Length > 1 && !string.IsNullOrEmpty(lastUsedDevices[1]))
             {
                 cboCameras.BeginInit();
                 cboCameras.SelectedItem = lastUsedDevices[0];
