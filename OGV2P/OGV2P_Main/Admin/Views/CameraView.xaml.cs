@@ -18,6 +18,7 @@ using System.Windows.Controls;
 using System.Windows.Media;
 using System.Xml.Linq;
 using forms = System.Windows.Forms;
+using System.Collections.Generic;
 
 namespace OGV2P.Admin.Views
 {
@@ -35,6 +36,7 @@ namespace OGV2P.Admin.Views
         private IUser _user;
         private AxRTMPActiveX.AxRTMPActiveX axRControl;
         private string PREFERED_DEVICE_FILE = "preferedDevices.xml";
+        private List<string> _resolutions = new List<string>();
 
         private LinearGradientBrush _yellow =
         new LinearGradientBrush(Colors.Green, Colors.Yellow,
@@ -249,7 +251,6 @@ namespace OGV2P.Admin.Views
                 _vuMeterTimer.Elapsed += _vuMeterTimer_Elapsed;
                 _vuMeterTimer.Start();
 
-                
                 axRControl.Dock = System.Windows.Forms.DockStyle.Fill;
 
                 winFormHost.Child.Controls.Add(axRControl);
@@ -320,13 +321,26 @@ namespace OGV2P.Admin.Views
             //set the user id / password
             axRControl.SetConfig("Auth", string.Format("{0}:{1}", _user.SelectedBoard.UserID, _user.SelectedBoard.Password));
 
-            // Device/Camera Resolution
-            //axRControl.VideoWidth = 800;
-            //axRControl.VideoHeight = 600;
-            axRControl.VideoFrameRate = 30;
 
-            // Video Encoder Bitrate (Bits/s)
-            axRControl.VideoBitrate = 500000;
+            // Video/Audio Devices / resolution
+            string[] lastUsedDevices = ReadDefaultDeviceCache();
+
+
+            // Device/Camera Resolution
+            //acquire resolutions and frame rates
+            int numberOfResolutions = axRControl.GetNumberOfResolutions();
+            for(int i=0; i<numberOfResolutions; i++)
+            {
+                string currentResolution = axRControl.GetResolution(i);
+                cboResolutions.Items.Add(currentResolution);
+            }
+
+            if (cboResolutions.Items.Count > 0)
+                cboResolutions.SelectedIndex = 0;
+            else
+                throw new Exception("Unable to determine device resolution, restart and try again. If a resolution cannot be obtained call tech support.");
+
+            cboResolutions.SelectedValue = lastUsedDevices[2];
 
             axRControl.VideoEffect = 3;
 
@@ -334,8 +348,7 @@ namespace OGV2P.Admin.Views
             axRControl.OnEvent += new AxRTMPActiveX.IRTMPActiveXEvents_OnEventEventHandler(axRControl_OnEvent);
             axRControl.OnStop += new AxRTMPActiveX.IRTMPActiveXEvents_OnStopEventHandler(axRControl_OnStop);
 
-            // Video/Audio Devices
-            string[] lastUsedDevices = ReadDefaultDeviceCache();
+            
 
             AddVideoSources(null);
             if (lastUsedDevices != null)
@@ -363,15 +376,7 @@ namespace OGV2P.Admin.Views
                 axRControl.AudioSource = 0;
             }
 
-            long num = axRControl.GetNumberOfResolutions(0);
-            //axRControl.VideoWidth = int.Parse(_settings["PreviewVideoWidth"]);
-            //axRControl.VideoHeight = int.Parse(_settings["PreviewVideoHeight"]);
-
-            //winFormHost.Width = axRControl.VideoWidth;
-            //winFormHost.Height = axRControl.VideoHeight;
-
-            //set the publishing point url
-            //axRControl.DestinationURL = @"rtmp://devob2.opengovideo.com:1935/RI_SouthKingstown_Live/LicenseBoard";
+            
             axRControl.DestinationURL = _meeting.ClientPathLiveStream;
 
             //reconnect settings
@@ -570,6 +575,16 @@ namespace OGV2P.Admin.Views
                     expDropDown.IsExpanded = false;
                 }
 
+                if (cboFrameRates.SelectedItem == null)
+                    axRControl.VideoFrameRate = 30;
+                else
+                {
+                    double frameRate = double.Parse(cboFrameRates.SelectedItem.ToString());
+                }
+                
+                // Video Encoder Bitrate (Bits/s)
+                axRControl.VideoBitrate = GetVideoBitRate();
+
                 Meeting = _container.Resolve<IMeeting>();
 
                 //font cache a file source only hardware
@@ -624,14 +639,19 @@ namespace OGV2P.Admin.Views
             {
                 string video = string.Empty;
                 string audio = string.Empty;
+                string resolution = string.Empty;
                 if (File.Exists(PREFERED_DEVICE_FILE))
                 {
                     string xml = File.ReadAllText(PREFERED_DEVICE_FILE);
                     XDocument xDoc = XDocument.Parse(xml);
                     video = xDoc.Element("devices").Element("videodevice").Value;
                     audio = xDoc.Element("devices").Element("audiodevice").Value;
+                    if (xDoc.Element("devices").Element("resolution") != null)
+                        resolution = xDoc.Element("devices").Element("resolution").Value;
+                    else
+                        resolution = "640x480";
 
-                    string[] result = new string[] { video, audio };
+                    string[] result = new string[] { video, audio, resolution };
 
                     return result;
                 }
@@ -653,12 +673,15 @@ namespace OGV2P.Admin.Views
 
                 string videoCacheDevice = (cboCameras.SelectedItem == null) ? cboCameras.Items[0].ToString() : cboCameras.SelectedItem.ToString();
                 string audioCacheDevice = (cboMicrophones.SelectedItem == null) ? cboMicrophones.Items[0].ToString() : cboMicrophones.SelectedItem.ToString();
+                string resolution = cboResolutions.SelectedItem.ToString();
                 XDocument xDoc = new XDocument();
                 XElement root = new XElement("devices", null);
                 XElement videoElement = new XElement("videodevice", videoCacheDevice);
                 XElement audioElement = new XElement("audiodevice", audioCacheDevice);
+                XElement resolutionElement = new XElement("resolution", resolution);
                 root.Add(videoElement);
                 root.Add(audioElement);
+                root.Add(resolutionElement);
                 xDoc.Add(root);
                 File.WriteAllText(PREFERED_DEVICE_FILE, xDoc.ToString());
             }
@@ -915,5 +938,64 @@ namespace OGV2P.Admin.Views
                 DisplayOverLay();
             }
         }
+
+        private void cboResolutions_SelectionChanged(object sender, SelectionChangedEventArgs e)
+        {
+            cboColorSpaces.Items.Clear();
+
+            int width, height;
+            GetResolution(out width, out height);
+            int numberOfColorSpaces = axRControl.GetNumberOfColorSpaces(width, height);
+            for (int i = 0; i < numberOfColorSpaces; i++)
+            {
+                string colorSpace = axRControl.GetColorSpace(i);
+                cboColorSpaces.Items.Add(colorSpace);
+            }
+
+            if(cboColorSpaces.Items.Count > 0)
+                cboColorSpaces.SelectedIndex = 0;
+        }
+
+        private void cboColorSpaces_SelectionChanged(object sender, SelectionChangedEventArgs e)
+        {
+            if (cboColorSpaces.SelectedItem == null)
+                return;
+
+            cboFrameRates.Items.Clear();
+
+            string colorSpace = cboColorSpaces.SelectedItem.ToString();
+            int width, height;
+            GetResolution(out width, out height);
+            int numberOfFrameRates = axRControl.GetNumberOfFramerates(width, height, colorSpace);
+            for(int i=0; i<numberOfFrameRates; i++)
+            {
+                double frameRate = axRControl.GetFramerate(i);
+                cboFrameRates.Items.Add(frameRate);
+            }
+
+            if(cboFrameRates.Items.Count > 0)
+                cboFrameRates.SelectedIndex = 0;
+        }
+
+        private string GetResolution(out int width, out int height)
+        {
+            string resolution = cboResolutions.SelectedItem.ToString();
+            string[] splits = resolution.Split('x');
+            width = int.Parse(splits[0]);
+            height = int.Parse(splits[1]);
+
+            return resolution;
+        }
+
+        private int GetVideoBitRate()
+        {
+            int width, height;
+            string resolution = GetResolution(out width, out height);
+            if (width < 720)
+                return 500 * 1024;   //500 KB/s
+            else
+                return 1 * (1024 * 1024); //1MB/s
+        }
+
     }
 }
