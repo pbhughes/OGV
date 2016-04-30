@@ -157,7 +157,7 @@ namespace Infrastructure.Models
             try
             {
                 _path = fileName;
-                string path = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments), "OGV2", "Agendas", fileName);
+                string path = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments), "OGV2", "Agendas", fileName.Replace("/",""));
                 if (File.Exists(path))
                     File.Delete(path);
 
