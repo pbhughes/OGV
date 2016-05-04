@@ -3,19 +3,9 @@ using Infrastructure.Models;
 using Infrastructure.Extensions;
 using Microsoft.Practices.Unity;
 using System;
-using System.Collections.Generic;
 using System.ComponentModel;
-using System.Linq;
-using System.Text;
 using System.Threading.Tasks;
 using System.Windows;
-using System.Windows.Controls;
-using System.Windows.Data;
-using System.Windows.Documents;
-using System.Windows.Input;
-using System.Windows.Media;
-using System.Windows.Media.Imaging;
-using System.Windows.Shapes;
 
 namespace OGV2P.AgendaModule.Views
 {
@@ -42,6 +32,11 @@ namespace OGV2P.AgendaModule.Views
         }
         private async void OKButton_Click(object sender, RoutedEventArgs e)
         {
+            await PostTheFile();
+        }
+
+        private async Task PostTheFile()
+        {
             _saveAgendaViewModel.IsBusy = true;
             try
             {
@@ -50,11 +45,11 @@ namespace OGV2P.AgendaModule.Views
                     _saveAgendaViewModel.SaveAgenda();
                 });
             }
-            catch (Exception ex )
+            catch (Exception ex)
             {
                 ex.WriteToLogFile();
                 Xceed.Wpf.Toolkit.MessageBox.Show(
-                    string.Format("Error trying to save the agenda file ensure your board is setup correctly on the server.  Error Text: {0}", 
+                    string.Format("Error trying to save the agenda file ensure your board is setup correctly on the server.  Error Text: {0}",
                     ex.Message));
             }
             finally
@@ -64,7 +59,7 @@ namespace OGV2P.AgendaModule.Views
             }
         }
 
-     
+
 
         #region INotifyPropertyChanged
 
@@ -76,8 +71,12 @@ namespace OGV2P.AgendaModule.Views
                 PropertyChanged(this, new PropertyChangedEventArgs(name));
         }
 
+
         #endregion
 
-       
+        private async void Window_Loaded(object sender, RoutedEventArgs e)
+        {
+            await PostTheFile();
+        }
     }
 }
