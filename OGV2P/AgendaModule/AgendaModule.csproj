@@ -137,7 +137,7 @@
     <Compile Include="Views\GetAgendaFileDialog.xaml.cs">
       <DependentUpon>GetAgendaFileDialog.xaml</DependentUpon>
     </Compile>
-    <Compile Include="Views\ItemEditor.xaml.cs">
+    <Compile Include="ItemEditor.xaml.cs">
       <DependentUpon>ItemEditor.xaml</DependentUpon>
     </Compile>
     <Compile Include="Views\SaveAgendaFileDialog.xaml.cs">
@@ -151,7 +151,7 @@
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </Page>
-    <Page Include="Views\ItemEditor.xaml">
+    <Page Include="ItemEditor.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
