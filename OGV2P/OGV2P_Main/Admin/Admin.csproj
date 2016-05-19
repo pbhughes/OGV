@@ -216,8 +216,10 @@
     </ProjectReference>
   </ItemGroup>
   <ItemGroup>
+    <None Include="Resources\connecting.gif" />
     <Resource Include="Images\Medium Volume-96.png" />
     <Resource Include="Images\largePlayButton.jpg" />
+    <Resource Include="Images\connecting.gif" />
     <Content Include="Images\openGOVideo.png">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>

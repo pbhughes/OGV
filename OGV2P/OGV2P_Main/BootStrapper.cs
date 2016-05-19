@@ -91,6 +91,10 @@ namespace OGV2P
             var loginView = _regionManager.Regions[Infrastructure.Models.Regions.Main].GetView("LoginView");
             _regionManager.Regions[Infrastructure.Models.Regions.Main].Deactivate ( loginView );
 
+            var _cameraView = _regionManager.Regions[Infrastructure.Models.Regions.SideBar].GetView("CameraView");
+            _regionManager.Regions[Infrastructure.Models.Regions.SideBar].Activate(_cameraView);
+
+
             ((Shell)_shell).SetSideBarAllignmentTop();
 
             _meeting.MeetingName = string.Empty;

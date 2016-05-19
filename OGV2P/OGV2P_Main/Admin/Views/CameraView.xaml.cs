@@ -6,11 +6,13 @@ using Microsoft.Practices.Prism.Interactivity.InteractionRequest;
 using Microsoft.Practices.Prism.Regions;
 using Microsoft.Practices.Unity;
 using System;
+using System.Collections.Generic;
 using System.Collections.Specialized;
 using System.ComponentModel;
 using System.Configuration;
 using System.IO;
 using System.Management;
+using System.Threading;
 using System.Threading.Tasks;
 using System.Timers;
 using System.Windows;
@@ -18,18 +20,21 @@ using System.Windows.Controls;
 using System.Windows.Media;
 using System.Xml.Linq;
 using forms = System.Windows.Forms;
-using System.Collections.Generic;
 
 namespace OGV2P.Admin.Views
 {
     /// <summary>
     /// Interaction logic for CameraView.xaml
     /// </summary>
-    public partial class CameraView : UserControl, INotifyPropertyChanged
+    /// 
+    [RegionMemberLifetime(KeepAlive = true)]
+    public partial class CameraView : UserControl, INotifyPropertyChanged,  IRegionMemberLifetime
     {
         private const int FILE_SOURCE = 101;
         private const string RECORDING_IN_PROGRESS = "Recording in progress, please stop recording before changing devices";
-        private Timer _vuMeterTimer;
+        private const string RES640X480 = "640x480";
+        private const string RES320X240 = "320x240";
+        private System.Timers.Timer _vuMeterTimer;
         private ManagementEventWatcher usbWatcher = new ManagementEventWatcher();
         private NameValueCollection _settings;
         private IRegionManager _regionManager;
@@ -37,7 +42,6 @@ namespace OGV2P.Admin.Views
         private AxRTMPActiveX.AxRTMPActiveX axRControl;
         private string PREFERED_DEVICE_FILE = "preferedDevices.xml";
         private List<string> _resolutions = new List<string>();
-
         private LinearGradientBrush _yellow =
         new LinearGradientBrush(Colors.Green, Colors.Yellow,
             new Point(0, 1), new Point(1, 0));
@@ -60,6 +64,22 @@ namespace OGV2P.Admin.Views
             {
                 _meeting = value;
                 OnPropertyChanged("Meeting");
+            }
+        }
+
+        private bool _connecting;
+
+        public bool Connecting
+        {
+            get
+            {
+                return _connecting;
+            }
+
+            set
+            {
+                _connecting = value;
+                OnPropertyChanged("Connecting");
             }
         }
 
@@ -194,7 +214,6 @@ namespace OGV2P.Admin.Views
         public CameraView(IRegionManager regionManager, IDevices devices, IUser user, IUnityContainer container)
         {
             _container = container;
-            
 
             try
             {
@@ -214,6 +233,7 @@ namespace OGV2P.Admin.Views
                 NotificationRequest = new InteractionRequest<INotification>();
                 NotificationCommand = new DelegateCommand(OnNofity, CanNotify);
 
+
                 _sessionService = _container.Resolve<ISession>();
                 _meeting = _container.Resolve<IMeeting>();
                 _meeting.RaiseMeetingSetEvent += Meeting_SetEvent;
@@ -232,7 +252,7 @@ namespace OGV2P.Admin.Views
                 //setup the vu meter
                 vuMeter.Minimum = double.Parse(_settings["VuMeterMinimum"]);
                 vuMeter.Maximum = double.Parse(_settings["VuMeterMaximum"]);
-                _vuMeterTimer = new Timer();
+                _vuMeterTimer = new System.Timers.Timer();
                 _vuMeterTimer.Interval = double.Parse(_settings["VuMeterInterval"]);
                 _vuMeterTimer.Elapsed += _vuMeterTimer_Elapsed;
                 _vuMeterTimer.Start();
@@ -240,6 +260,8 @@ namespace OGV2P.Admin.Views
                 axRControl.Dock = System.Windows.Forms.DockStyle.Fill;
 
                 winFormHost.Child.Controls.Add(axRControl);
+
+                this.Name = "CameraView";
             }
             catch (Exception ex)
             {
@@ -263,7 +285,6 @@ namespace OGV2P.Admin.Views
                 ex.WriteToLogFile();
                 throw;
             }
-            
         }
 
         private bool CanNotify()
@@ -278,23 +299,31 @@ namespace OGV2P.Admin.Views
                  n => { InteractionResultMessage = "The user was notified"; });
         }
 
-        private void Meeting_SetEvent(object sender, EventArgs e)
+        private async void Meeting_SetEvent(object sender, EventArgs e)
         {
             try
             {
-                axRControl.DestinationURL = _meeting.PublishingPoint;
 
-                //axRControl.StartConnect();
-                if(_meeting.IsLive)
+                await Task.Run(() => {
+                    axRControl.DestinationURL = _meeting.PublishingPoint;
+                    
                     axRControl.StartPreview();
+                });
+
+               
             }
-            catch (AccessViolationException)
+           
+            catch (Exception ex)
             {
-                ;//ignore
+                _meeting.IsBusy = false;
+                cmdStopRecording.IsEnabled = true;
+                cmdStartRecording.IsEnabled = false;
+                ex.WriteToLogFile();
+                MessageBox.Show(string.Format("Unable to connect to {0} here is the error {1}", axRControl.DestinationURL, axRControl.LastErrorMessage));
             }
-            catch (Exception)
+            finally
             {
-                throw;
+                
             }
         }
 
@@ -307,46 +336,23 @@ namespace OGV2P.Admin.Views
             //set the user id / password
             axRControl.SetConfig("Auth", string.Format("{0}:{1}", _user.SelectedBoard.UserID, _user.SelectedBoard.Password));
 
-
-            // Video/Audio Devices / resolution
-            string[] lastUsedDevices = ReadDefaultDeviceCache();
-
-
-            // Device/Camera Resolution
-            //acquire resolutions and frame rates
-            int numberOfResolutions = axRControl.GetNumberOfResolutions();
-            for(int i=0; i<numberOfResolutions; i++)
-            {
-                string currentResolution = axRControl.GetResolution(i);
-                cboResolutions.Items.Add(currentResolution);
-            }
-
-            if (cboResolutions.Items.Count > 0)
-                cboResolutions.SelectedIndex = 0;
-            else
-                throw new Exception("Unable to determine device resolution, restart and try again. If a resolution cannot be obtained call tech support.");
-
-            if (lastUsedDevices != null
-                && lastUsedDevices.Length > 0 && !string.IsNullOrEmpty(lastUsedDevices[0]))
-            {
-                cboResolutions.SelectedValue = lastUsedDevices[2];
-            }
-
             axRControl.VideoEffect = 3;
 
+            // Video/Audio Devices / resolution
+            string audio = string.Empty, video = string.Empty, resolution = string.Empty;
+            string[] lastUsedDevices = ReadDefaultDeviceCache(ref audio, ref video, ref resolution);
+
+           
             // nanoStream Event Handlers
             axRControl.OnEvent += new AxRTMPActiveX.IRTMPActiveXEvents_OnEventEventHandler(axRControl_OnEvent);
             axRControl.OnStop += new AxRTMPActiveX.IRTMPActiveXEvents_OnStopEventHandler(axRControl_OnStop);
 
-            
-
             AddVideoSources(null);
-            if (lastUsedDevices != null
-                && lastUsedDevices.Length > 1 && !string.IsNullOrEmpty(lastUsedDevices[1]))
+            if(video != string.Empty)
             {
                 cboCameras.BeginInit();
-                cboCameras.SelectedItem = lastUsedDevices[0];
-                axRControl.VideoSource = FindVideoSource(lastUsedDevices[0]);
+                cboCameras.SelectedItem = video;
+                axRControl.VideoSource = FindVideoSource(video);
                 cboCameras.EndInit();
             }
             else
@@ -356,10 +362,10 @@ namespace OGV2P.Admin.Views
             }
 
             AddAudioSources();
-            if (lastUsedDevices != null)
+            if (audio != string.Empty)
             {
-                cboMicrophones.SelectedItem = lastUsedDevices[1];
-                axRControl.AudioSource = FindAudioSource(lastUsedDevices[1]);
+                cboMicrophones.SelectedItem = audio;
+                axRControl.AudioSource = FindAudioSource(audio);
             }
             else
             {
@@ -367,12 +373,60 @@ namespace OGV2P.Admin.Views
                 axRControl.AudioSource = 0;
             }
 
-            
+            SetupResolutions();
+
+            //assign the previous resolution
+            if (resolution != string.Empty)
+                cboResolutions.SelectedItem = resolution;
+
             axRControl.DestinationURL = _meeting.ClientPathLiveStream;
 
             //reconnect settings
             axRControl.ReconnectAttempts = 3;
             axRControl.ReconnectDelay = 2000;
+        }
+
+        private void SetupResolutions()
+        {
+            // Device/Camera Resolution
+            //clear existing items if they exist
+            if (cboResolutions.Items.Count > 0)
+                cboResolutions.Items.Clear();
+
+            //acquire resolutions and frame rates
+            int numberOfResolutions = axRControl.GetNumberOfResolutions();
+            for (int i = 0; i < numberOfResolutions; i++)
+            {
+                string currentResolution = axRControl.GetResolution(i);
+                cboResolutions.Items.Add(currentResolution);
+            }
+
+
+            //LOOK FOR KEY RESOLUTION 640X480 AND 320X340
+            int indexOf640x480 = cboResolutions.Items.IndexOf(RES640X480);
+            int indexOf320x240 = cboResolutions.Items.IndexOf(RES320X240);
+           
+
+
+            if (cboResolutions.Items.Count > 0)
+            {
+                //IF YOU HAVE 640X480 USE IT
+                if (indexOf640x480 > -1)
+                    cboResolutions.SelectedItem = RES640X480;
+                else
+                {
+                    //YOU DIDNT HAVE 640X480 SO TRY TO USE 320X240
+                    if (indexOf320x240 > -1)
+                        cboResolutions.SelectedItem = "320x240";
+                    else
+                        //NEITHER KEY RESOLTUIONS EXIST US THE FIRT ONE
+                        //IN THE LIST
+                        cboResolutions.SelectedIndex = 0;
+                }
+
+            }
+            else
+                throw new Exception("Unable to determine device resolution, restart and try again. If a resolution cannot be obtained call tech support.");
         }
 
         private void UsbWatcher_EventArrived(object sender, EventArrivedEventArgs e)
@@ -423,7 +477,7 @@ namespace OGV2P.Admin.Views
             return result;
         }
 
-        private void AddVideoSources( string previousSelection)
+        private void AddVideoSources(string previousSelection)
         {
             cboCameras.SelectionChanged -= cboSource_SelectedChanged;
             int n = axRControl.NumberOfVideoSources;
@@ -439,7 +493,7 @@ namespace OGV2P.Admin.Views
 
             cboCameras.Items.Add("Choose a File Source....");
 
-            if(! string.IsNullOrEmpty(previousSelection))
+            if (!string.IsNullOrEmpty(previousSelection))
             {
                 cboCameras.SelectedItem = previousSelection;
             }
@@ -555,13 +609,15 @@ namespace OGV2P.Admin.Views
             System.Diagnostics.Debug.WriteLine(e.result);
         }
 
-        private void cmdStartRecording_Click(object sender, RoutedEventArgs e)
+        private async void cmdStartRecording_Click(object sender, RoutedEventArgs e)
         {
-            
-            _meeting.IsLive = true;
-
             try
             {
+                Connecting = true;
+                _meeting.IsLive = true;
+
+                
+
                 if (expDropDown.IsExpanded)
                 {
                     expDropDown.IsExpanded = false;
@@ -573,12 +629,44 @@ namespace OGV2P.Admin.Views
                 {
                     double frameRate = double.Parse(cboFrameRates.SelectedItem.ToString());
                 }
-                
+
+                axRControl.DestinationURL = @"rtmp://a.rtmp.youtube.com/live2+wqe1-0t89-1ze0-d06p";
+
+                StartRecording();
+
+            }
+
+            catch (Exception ex)
+            {
+
+                throw;
+            }
+            finally
+            {
+                Connecting = false;
+            }
+           
+        }
+
+        private async void TryToConnect()
+        {
+            Task t = Task.Run(() =>
+            {
+               axRControl.StartConnect();
+            });
+
+            await t;
+        }
+
+        private void StartRecording()
+        {
+            try
+            {
+
                 // Video Encoder Bitrate (Bits/s)
                 axRControl.VideoBitrate = GetVideoBitRate();
                 axRControl.VideoHeight = GetVideoHeight();
                 axRControl.VideoWidth = GetVideoWidth();
-                
 
                 Meeting = _container.Resolve<IMeeting>();
 
@@ -608,6 +696,7 @@ namespace OGV2P.Admin.Views
 
                 path = Path.Combine(path, _meeting.LocalFile);
                 axRControl.DestinationURL2 = path;
+
                 _meeting.LocalFile = path;
                 _meeting.IsBusy = true;
                 axRControl.StartBroadcast();
@@ -626,15 +715,17 @@ namespace OGV2P.Admin.Views
                 ex.WriteToLogFile();
                 MessageBox.Show("Error trying to record be sure to choose a valid agenda file" + "-" + axRControl.LastErrorMessage);
             }
+            finally
+            {
+                Connecting = false;
+            }
         }
 
-        private string[] ReadDefaultDeviceCache()
+        private string[] ReadDefaultDeviceCache(ref string audio, ref string video, ref string resolution)
         {
             try
             {
-                string video = string.Empty;
-                string audio = string.Empty;
-                string resolution = string.Empty;
+                
                 if (File.Exists(PREFERED_DEVICE_FILE))
                 {
                     string xml = File.ReadAllText(PREFERED_DEVICE_FILE);
@@ -718,32 +809,23 @@ namespace OGV2P.Admin.Views
                             TimerStamp = TimeSpan.Zero;
                             Meeting.RightStatus = "";
                         }
-                        
                     });
                 }
                 else
                 {
                     Dispatcher.Invoke(() =>
                     {
-                       
                         axRControl.StopBroadcast();
                         _vuMeterTimer.Stop();
                         cmdStartRecording.IsEnabled = true;
                         cmdStopRecording.IsEnabled = false;
                         Meeting.IsBusy = false;
-
-
                     });
                 }
-
-               
 
                 Meeting.LeftStatus = "Idle";
                 _meeting.IsLive = true;
                 axRControl.StartPreview();
-                
-
-
             }
             catch (Exception ex)
             {
@@ -771,7 +853,7 @@ namespace OGV2P.Admin.Views
                     dg.DefaultExt = ".mp4";
                     dg.Filter = "Video Files (*.mp4)|*.mp4|WMV Files (*.wmv)|*.wmv|MOV Files (*.mov)|*.mov|MPG Files (*.mpg)|*.mpg|All (*.*)|*.*";
                     forms.DialogResult result = dg.ShowDialog();
-                   
+
                     if (result == forms.DialogResult.OK)
                     {
                         axRControl.VideoSource = FILE_SOURCE;
@@ -803,7 +885,8 @@ namespace OGV2P.Admin.Views
                     axRControl.VideoSource = Convert.ToInt32(cboCameras.SelectedIndex);
                     AddVideoSources(cboCameras.SelectedItem.ToString());
                     cboCameras.SelectionChanged -= cboSource_SelectedChanged;
-                    
+
+                    SetupResolutions();
                     cboCameras.SelectionChanged += cboSource_SelectedChanged;
                     axRControl.StartPreview();
                 }
@@ -878,7 +961,7 @@ namespace OGV2P.Admin.Views
         {
             try
             {
-                if (_meeting.IsBusy )
+                if (_meeting.IsBusy)
                     return;
 
                 axRControl.StartPreview();
@@ -895,7 +978,6 @@ namespace OGV2P.Admin.Views
             {
                 Dispatcher.Invoke((Action)(() =>
                 {
-                   
                     DisplayOverLay();
                 }));
             }
@@ -914,9 +996,9 @@ namespace OGV2P.Admin.Views
                 else
                 {
                     //set the overlay position
-                    
+
                     axRControl.VideoEffect = 3;
-                    axRControl.SetConfig("FontSize","12");
+                    axRControl.SetConfig("FontSize", "12");
                     axRControl.SetConfig("OverlayBackgroundColor", "0x00FFFFFF");
                     if (string.IsNullOrEmpty(Overlay))
                     {
@@ -929,7 +1011,7 @@ namespace OGV2P.Admin.Views
                     }
                 }
 
-                if(! _meeting.IsLive)
+                if (!_meeting.IsLive)
                     axRControl.StartPreview();
             }
         }
@@ -955,7 +1037,7 @@ namespace OGV2P.Admin.Views
                 cboColorSpaces.Items.Add(colorSpace);
             }
 
-            if(cboColorSpaces.Items.Count > 0)
+            if (cboColorSpaces.Items.Count > 0)
                 cboColorSpaces.SelectedIndex = 0;
         }
 
@@ -970,22 +1052,29 @@ namespace OGV2P.Admin.Views
             int width, height;
             GetResolution(out width, out height);
             int numberOfFrameRates = axRControl.GetNumberOfFramerates(width, height, colorSpace);
-            for(int i=0; i<numberOfFrameRates; i++)
+            for (int i = 0; i < numberOfFrameRates; i++)
             {
                 double frameRate = axRControl.GetFramerate(i);
                 cboFrameRates.Items.Add(frameRate);
             }
 
-            if(cboFrameRates.Items.Count > 0)
+            if (cboFrameRates.Items.Count > 0)
                 cboFrameRates.SelectedIndex = 0;
         }
 
         private string GetResolution(out int width, out int height)
         {
-            string resolution = cboResolutions.SelectedItem.ToString();
-            string[] splits = resolution.Split('x');
-            width = int.Parse(splits[0]);
-            height = int.Parse(splits[1]);
+            width = 0; height = 0;
+            string resolution = string.Empty;
+            if (cboResolutions.SelectedItem != null)
+            {
+                resolution = cboResolutions.SelectedItem.ToString();
+                string[] splits = resolution.Split('x');
+                width = int.Parse(splits[0]);
+                height = int.Parse(splits[1]);
+            }
+
+            
 
             return resolution;
         }
@@ -1014,5 +1103,13 @@ namespace OGV2P.Admin.Views
                 return 1 * (1024 * 1024); //1MB/s
         }
 
+    
+
+ 
+
+        private void AdvancedExpanderClick(object sender, RoutedEventArgs e)
+        {
+            advancedHeader.IsExpanded = !advancedHeader.IsExpanded;
+        }
     }
 }

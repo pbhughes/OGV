@@ -241,8 +241,12 @@ namespace Infrastructure.Models
             get
             {
                 if (_clientPathLive == null || _clientPathLiveStream == null)
+                {
+                    _isLive = false;
                     return null;
+                }
 
+                _isLive = true;
                 UriBuilder urib = new UriBuilder(_clientPathLive);
                 urib.Path += "/" + _clientPathLiveStream;
                 return urib.ToString();
@@ -687,6 +691,19 @@ namespace Infrastructure.Models
             return item;
         }
 
-      
+        private bool _showSettings;
+        public bool ShowSettings
+        {
+            get
+            {
+                return _showSettings;
+            }
+
+            set
+            {
+                _showSettings = value;
+                OnPropertyChanged("ShowSettings");
+            }
+        }
     }
 }

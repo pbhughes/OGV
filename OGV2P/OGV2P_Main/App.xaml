@@ -4,6 +4,7 @@
              xmlns:tk="http://schemas.xceed.com/wpf/xaml/toolkit"
              xmlns:infra="clr-namespace:Infrastructure.Converters;assembly=Infrastructure" ShutdownMode="OnMainWindowClose">
     
+    
     <Application.Resources>
         
         <infra:BoolToVisibilityConverter x:Key="BoolToVisibility"

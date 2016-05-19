@@ -8,9 +8,13 @@
              xmlns:infra="clr-namespace:Infrastructure.Converters;assembly=Infrastructure"
              xmlns:frms="clr-namespace:System.Windows.Forms;assembly=System.Windows.Forms"
              xmlns:prism="http://www.codeplex.com/prism"
+             xmlns:gif="http://wpfanimatedgif.codeplex.com"
              xmlns:diag="clr-namespace:System.Diagnostics;assembly=WindowsBase"
              mc:Ignorable="d"
-             Loaded="UserControl_Loaded" MinWidth="650">
+             Loaded="UserControl_Loaded" MinWidth="650"
+             Focusable="True">
+    <UserControl.InputBindings>
+    </UserControl.InputBindings>
     <UserControl.Resources>
         <infra:DoubleToColorConverter  x:Key="progBarConverter"></infra:DoubleToColorConverter>
         <Style TargetType="ProgressBar">
@@ -23,9 +27,28 @@
                 </Setter.Value>
             </Setter>
         </Style>
+
+        <Style TargetType="Border" x:Key="RacePitBorderStyle" >
+            <Style.Resources>
+                <LinearGradientBrush x:Key="BackBrush" StartPoint="0.5,0" EndPoint="0.5,1">
+                    <GradientStop Color="#EF3132" Offset="0.1" />
+                    <GradientStop Color="#D62B2B" Offset="0.9" />
+                </LinearGradientBrush>
+            </Style.Resources>
+            <Setter Property="Background" Value="{StaticResource BackBrush}"/>
+        </Style>
+
+        <DataTemplate x:Key="titleText">
+            <Button Click="AdvancedExpanderClick" Style="{StaticResource btn-default}">Advanced</Button>
+        </DataTemplate>
+
+        <Style TargetType="{x:Type Expander}" x:Key="secondLevel">
+            <Setter Property="HeaderTemplate" Value="{StaticResource titleText}"/>
+        </Style>
     </UserControl.Resources>
     <Grid Height="Auto">
         <Grid.RowDefinitions>
+            <RowDefinition Height="Auto" />
             <RowDefinition Height="Auto" />
             <RowDefinition Height="20" />
             <RowDefinition Height="*" />
@@ -38,13 +61,37 @@
             <ColumnDefinition  Width="*" />
         </Grid.ColumnDefinitions>
 
-        <Expander Header="Show Devices" Grid.Column="0"  Grid.Row="0" Grid.ColumnSpan="2"
+        <tk:BusyIndicator Grid.Row="0" 
+                          Grid.Column="0" Grid.ColumnSpan="2"
+                          Name="busyIndicator" IsBusy="{Binding Connecting}"
+                          HorizontalAlignment="Center"
+                          Visibility="{Binding Connecting, Converter={StaticResource BoolToVisibility}}"
+                          Width="150" Height="125" >
+            <tk:BusyIndicator.BusyContentTemplate>
+                <DataTemplate>
+                    <StackPanel Margin="5">
+                        <Image gif:ImageBehavior.AnimatedSource="/Images/connecting.gif" Width="100" Height="100"  />
+                    </StackPanel>
+                </DataTemplate>
+            </tk:BusyIndicator.BusyContentTemplate>
+            <tk:BusyIndicator.OverlayStyle>
+                <Style TargetType="Rectangle">
+                    <Setter Property="Fill" Value="#ffffeeee"/>
+                </Style>
+            </tk:BusyIndicator.OverlayStyle>
+            <tk:BusyIndicator.ProgressBarStyle>
+                <Style TargetType="ProgressBar">
+                    <Setter Property="Visibility" Value="Collapsed"/>
+                </Style>
+            </tk:BusyIndicator.ProgressBarStyle>
+            <ContentControl />
+        </tk:BusyIndicator>
+        <Expander Header="Show Devices" Visibility="{Binding Meeting.ShowSettings, Converter={StaticResource BoolToVisibility}}"
+                  Grid.Column="0"  Grid.Row="1" Grid.ColumnSpan="2"
                   Name="expDropDown"
                   IsEnabled="{Binding Meeting.IsBusy, Converter={StaticResource InverseBoolConverter} }">
             <Grid>
                 <Grid.RowDefinitions>
-                    <RowDefinition />
-                    <RowDefinition />
                     <RowDefinition />
                     <RowDefinition />
                     <RowDefinition />
@@ -71,29 +118,47 @@
                 <ComboBox Grid.Column="1" Grid.Row="2" x:Name="cboMicrophones"
                           VerticalContentAlignment="Center"
                           SelectionChanged="cboMicrophones_SelectionChanged"></ComboBox>
+                
+                <Expander Header="Advanced" Name="advancedHeader"
+                          Style="{StaticResource ResourceKey=secondLevel}"
+                          Grid.Column="1" 
+                          Grid.Row="3" HorizontalAlignment="Stretch">
+                    <Grid>
+                        <Grid.RowDefinitions>
+                            <RowDefinition />
+                            <RowDefinition />
+                            <RowDefinition />
+                        </Grid.RowDefinitions>
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition />
+                            <ColumnDefinition />
+                        </Grid.ColumnDefinitions>
 
-                <Label Grid.Column="0" Grid.Row="3" >Resolutions</Label>
-                <ComboBox Grid.Column="1" Grid.Row="3"
+                        <Label Grid.Column="0" Grid.Row="0" >Resolutions</Label>
+                        <ComboBox Grid.Column="1" Grid.Row="0"
                           x:Name="cboResolutions"
                           VerticalContentAlignment="Center"
                           SelectionChanged="cboResolutions_SelectionChanged"></ComboBox>
 
-                <Label Grid.Column="0" Grid.Row="4">Color Spaces</Label>
-                <ComboBox Grid.Column="1" Grid.Row="4"
+                        <Label Grid.Column="0" Grid.Row="1">Color Spaces</Label>
+                        <ComboBox Grid.Column="1" Grid.Row="1"
                           x:Name="cboColorSpaces"
                           VerticalContentAlignment="Center"
                           SelectionChanged="cboColorSpaces_SelectionChanged" ></ComboBox>
 
-                <Label Grid.Column="0" Grid.Row="5">Frame Rates</Label>
-                <ComboBox Grid.Column="1" Grid.Row="5"
+                        <Label Grid.Column="0" Grid.Row="2">Frame Rates</Label>
+                        <ComboBox Grid.Column="1" Grid.Row="2"
                           x:Name="cboFrameRates"
                           VerticalContentAlignment="Center"></ComboBox>
+                    </Grid>
+                </Expander>
+                
             </Grid>
         </Expander>
 
-        <Button Grid.ColumnSpan="2" Grid.Row="1" Click="RefreshPreview_Click">Refresh Preview</Button>
+        <Button Grid.ColumnSpan="2" Grid.Row="2" Click="RefreshPreview_Click">Refresh Preview</Button>
         <DockPanel LastChildFill="True"
-                   Grid.Row="2"
+                   Grid.Row="3"
                    Grid.Column="0"
                    Grid.ColumnSpan="2"
                    MinHeight="400">
@@ -107,7 +172,7 @@
             </WindowsFormsHost>
         </DockPanel>
 
-        <DockPanel Grid.Column="0" Grid.Row="3"
+        <DockPanel Grid.Column="0" Grid.Row="4"
                     Grid.ColumnSpan="2">
             <Image Source="/OGV2P.Admin;component/Images/Medium Volume-96.png" />
             <Border BorderThickness="1" BorderBrush="Black" Margin="3"
@@ -124,7 +189,7 @@
             </Border>
         </DockPanel>
 
-        <Grid Grid.Row="4" Grid.Column="0" Grid.ColumnSpan="2"
+        <Grid Grid.Row="5" Grid.Column="0" Grid.ColumnSpan="2"
               Margin="0,10.4,0.2,0.2" Grid.RowSpan="2">
             <Grid.ColumnDefinitions>
                 <ColumnDefinition Width="100" />

@@ -14,14 +14,16 @@ namespace OGV2P.Admin
         private IUnityContainer _container;
         private ISession _session;
         private IUser _user;
+        private IDevices _devices;
 
-        public AdminModule(IRegionViewRegistry registry, IRegionManager regionManager, IUnityContainer container, ISession session, IUser user)
+        public AdminModule(IRegionViewRegistry registry, IRegionManager regionManager, IUnityContainer container, ISession session, IUser user, IDevices devices)
         {
             _regionViewRegistry = registry;
             _regionManager = regionManager;
             _container = container;
             _session = session;
             _user = user;
+            _devices = devices;
         }
 
         public void Initialize()
@@ -31,7 +33,8 @@ namespace OGV2P.Admin
             var v = _regionManager.Regions[Infrastructure.Models.Regions.Main].GetView("LoginView");
             _regionManager.Regions[Infrastructure.Models.Regions.Main].Activate( v );
 
-            _regionManager.RegisterViewWithRegion(Infrastructure.Models.Regions.SideBar, typeof(OGV2P.Admin.Views.CameraView));
+            //_regionManager.RegisterViewWithRegion(Infrastructure.Models.Regions.SideBar, typeof(OGV2P.Admin.Views.CameraView));
+            _regionManager.Regions[Infrastructure.Models.Regions.SideBar].Add(new Views.CameraView(_regionManager, _devices,  _user, _container), "CameraView");
         }
     }
 }

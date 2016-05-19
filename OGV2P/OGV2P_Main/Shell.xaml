@@ -12,9 +12,15 @@
         Closing="Window_Closing"
         Loaded="Window_Loaded"
         Height="{x:Static SystemParameters.FullPrimaryScreenHeight}"
-        Width="{x:Static SystemParameters.FullPrimaryScreenWidth}">
+        Width="{x:Static SystemParameters.FullPrimaryScreenWidth}"
+        PreviewKeyDown="Window_PreviewKeyDown">
+        
     <Window.Resources>
     </Window.Resources>
+    <Window.InputBindings>
+        <KeyBinding Modifiers="Ctrl"
+                    Key="M" />
+    </Window.InputBindings>
     <Grid>
         <Grid.RowDefinitions>
             <RowDefinition Height="40" />
@@ -26,7 +32,7 @@
         </Grid.ColumnDefinitions>
         <DockPanel Grid.Row="0" LastChildFill="True">
             <Menu IsMainMenu="True"  Panel.ZIndex="200" VerticalContentAlignment="Center"
-             DockPanel.Dock="Top" Margin="10" 
+             DockPanel.Dock="Top" Margin="10"
               VerticalAlignment="Center" Background="Transparent">
                 <MenuItem Header="_File">
                     <MenuItem Header="_Settings" Click="File_SettingsMenu_CLick" />
@@ -49,7 +55,7 @@
 
             <ScrollViewer Grid.Column="0" Grid.Row="0"
                           VerticalScrollBarVisibility="Auto"
-                          VerticalAlignment="Top" 
+                          VerticalAlignment="Top"
                           HorizontalAlignment="Center">
 
                 <ContentControl Margin="10,0,10,0"
@@ -83,15 +89,14 @@
             <StatusBarItem HorizontalAlignment="Right"
                            VerticalAlignment="Center">
                 <StackPanel Orientation="Horizontal">
-                    
-              
-                <Label VerticalContentAlignment="Center"
+
+                    <Label VerticalContentAlignment="Center"
                        VerticalAlignment="Center"
-                    Visibility="{Binding IsBusy, 
+                    Visibility="{Binding IsBusy,
                                 Converter={StaticResource BoolToVisibility}}">Click to see live preview:</Label>
 
-                <TextBlock VerticalAlignment="Center">
-              
+                    <TextBlock VerticalAlignment="Center">
+
                 <Hyperlink NavigateUri="{Binding RightStatus}"
                            RequestNavigate="Hyperlink_RequestNavigate">
                     <TextBlock

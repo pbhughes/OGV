@@ -10,6 +10,8 @@ using System.Windows;
 using forms = System.Windows.Forms;
 using System.Runtime.InteropServices;
 using System.Windows.Interop;
+using Microsoft.Practices.Prism.Commands;
+using System.Windows.Input;
 
 namespace OGV2P
 {
@@ -23,6 +25,7 @@ namespace OGV2P
         private PerformanceCounter cpuCounter;
         private System.Timers.Timer cpuReadingTimer;
         private IRegionManager _regionManager;
+       
 
         public void SetSideBarAllignmentTop()
         {
@@ -48,6 +51,9 @@ namespace OGV2P
             cpuCounter.CounterName = "% Processor Time";
             cpuCounter.InstanceName = "_Total";
             cpuReadingTimer.Start();
+
+
+
         }
 
         private void _meeting_RaiseMeetingSetEvent(object sender, EventArgs e)
@@ -231,5 +237,20 @@ namespace OGV2P
             return IntPtr.Zero;
         }
 
+        private void Window_PreviewKeyDown(object sender, System.Windows.Input.KeyEventArgs e)
+        {
+            foreach (InputBinding inputBinding in this.InputBindings)
+            {
+                
+                KeyGesture keyGesture = inputBinding.Gesture as KeyGesture;
+                System.Diagnostics.Debug.WriteLine("Key {0} with Modifier {1} pushed", e.Key.ToString(), keyGesture.Modifiers);
+                if (keyGesture != null && keyGesture.Key == e.Key && keyGesture.Modifiers == Keyboard.Modifiers)
+                {
+                    var currentMeeting = _container.Resolve<IMeeting>();
+                    currentMeeting.ShowSettings = !currentMeeting.ShowSettings;
+                    
+                }
+            }
+        }
     }
 }
