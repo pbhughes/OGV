@@ -86,7 +86,7 @@
             </tk:BusyIndicator.ProgressBarStyle>
             <ContentControl />
         </tk:BusyIndicator>
-        <Expander Header="Show Devices" Visibility="{Binding Meeting.ShowSettings, Converter={StaticResource BoolToVisibility}}"
+        <Expander Header="Show Devices" 
                   Grid.Column="0"  Grid.Row="1" Grid.ColumnSpan="2"
                   Name="expDropDown"
                   IsEnabled="{Binding Meeting.IsBusy, Converter={StaticResource InverseBoolConverter} }">
@@ -118,8 +118,8 @@
                 <ComboBox Grid.Column="1" Grid.Row="2" x:Name="cboMicrophones"
                           VerticalContentAlignment="Center"
                           SelectionChanged="cboMicrophones_SelectionChanged"></ComboBox>
-                
-                <Expander Header="Advanced" Name="advancedHeader"
+
+                <Expander Header="Advanced" Name="advancedHeader" Visibility="{Binding Meeting.ShowSettings, Converter={StaticResource BoolToVisibility}}"
                           Style="{StaticResource ResourceKey=secondLevel}"
                           Grid.Column="1" 
                           Grid.Row="3" HorizontalAlignment="Stretch">
