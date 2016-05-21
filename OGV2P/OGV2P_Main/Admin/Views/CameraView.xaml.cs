@@ -630,7 +630,7 @@ namespace OGV2P.Admin.Views
                     double frameRate = double.Parse(cboFrameRates.SelectedItem.ToString());
                 }
 
-                axRControl.DestinationURL = @"rtmp://a.rtmp.youtube.com/live2+wqe1-0t89-1ze0-d06p";
+               
 
                 StartRecording();
 

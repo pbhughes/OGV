@@ -1,40 +1,27 @@
 <organizations>
   <org>
-    <name>City Council Test 1</name>
+    <name>SK School Committee</name>
     <state>RI</state>
-    <city>Test1</city>
-    <board>City Council</board>
+    <city>South Kingstown</city>
+    <board>School Committee</board>
     <ftpserver>
       <host>ftp.coreyware.com</host>
       <dir></dir>
-      <username>RI_Test1</username>
-      <password>RI_test1</password>
+      <username>RI_SouthKingstown_SchoolCommittee</username>
+      <password>RI_SouthKingstown_SchoolCommittee</password>
       <login>false</login>
     </ftpserver>
   </org>
   <org>
-    <name>Zoning Zone Test 2</name>
-    <state>RI</state>
-    <city>Test2</city>
-    <board>ZoningZone</board>
+    <name>XX Test Town Council</name>
+    <state>XX</state>
+    <city>Test</city>
+    <board>Town Council</board>
     <ftpserver>
       <host>ftp.coreyware.com</host>
       <dir></dir>
-      <username>RI_Test2</username>
-      <password>RI_Test2</password>
-      <login>true</login>
-    </ftpserver>
-  </org>
-  <org>
-    <name>Fun Board Test 3</name>
-    <state>MA</state>
-    <city>Test3</city>
-    <board>Fun Board</board>
-    <ftpserver>
-      <host>ftp.coreyware.com</host>
-      <dir></dir>
-      <username>MA_Test3</username>
-      <password>MA_Test3</password>
+      <username>XX_Test_Live</username>
+      <password>XX_Test_Live</password>
       <login>false</login>
     </ftpserver>
   </org>
