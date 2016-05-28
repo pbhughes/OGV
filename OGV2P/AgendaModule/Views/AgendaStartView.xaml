@@ -170,7 +170,7 @@
                           FontSize="16" HorizontalAlignment="Stretch"
                               VerticalAlignment="Stretch">
 
-                    <wf:Panel Name="winFormHostPanel" Dock="Fill">
+                    <wf:Panel Name="winFormHostPanel" Dock="Fill" AutoSizeMode="GrowAndShrink">
                     </wf:Panel>
                 </WindowsFormsHost>
             </DockPanel>

@@ -1,7 +1,8 @@
-﻿<Window x:Class="OGV2P.Shell"
+﻿<nativeHelp:PerMonitorDPIWindow x:Class="OGV2P.Shell"
         xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
         xmlns:cal="http://www.codeplex.com/prism"
+        xmlns:nativeHelp="clr-namespace:NativeHelpers;assembly=NativeHelpers"
         Title="OpenGoVideo"
         WindowState="Normal"
         Icon="OpenGOV.ico"
@@ -14,18 +15,18 @@
         Height="{x:Static SystemParameters.FullPrimaryScreenHeight}"
         Width="{x:Static SystemParameters.FullPrimaryScreenWidth}"
         PreviewKeyDown="Window_PreviewKeyDown">
-        
-    <Window.Resources>
-    </Window.Resources>
-    <Window.InputBindings>
+
+
+    <nativeHelp:PerMonitorDPIWindow.InputBindings>
         <KeyBinding Modifiers="Ctrl"
                     Key="M" />
-    </Window.InputBindings>
+    </nativeHelp:PerMonitorDPIWindow.InputBindings>
     <Grid>
         <Grid.RowDefinitions>
             <RowDefinition Height="40" />
             <RowDefinition Height="*" />
             <RowDefinition Height="35" />
+            <RowDefinition Height="Auto"/>
         </Grid.RowDefinitions>
         <Grid.ColumnDefinitions>
             <ColumnDefinition Width="*"></ColumnDefinition>
@@ -107,5 +108,6 @@
                 </StackPanel>
             </StatusBarItem>
         </StatusBar>
+        <TextBlock Name="dpiChanges" Grid.Row="3"></TextBlock>
     </Grid>
-</Window>
+</nativeHelp:PerMonitorDPIWindow>

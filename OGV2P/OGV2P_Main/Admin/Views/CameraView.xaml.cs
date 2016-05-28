@@ -219,6 +219,7 @@ namespace OGV2P.Admin.Views
             {
                 InitializeComponent();
 
+                
                 //get the application settings
 #pragma warning disable CS0618 // Type or member is obsolete
                 _settings = ConfigurationSettings.AppSettings;
@@ -1002,12 +1003,15 @@ namespace OGV2P.Admin.Views
                     axRControl.SetConfig("OverlayBackgroundColor", "0x00FFFFFF");
                     if (string.IsNullOrEmpty(Overlay))
                     {
-                        axRControl.TextOverlayText = (Meeting.MeetingDate == DateTime.MinValue) ? DateTime.Now.ToShortDateString() : Meeting.MeetingDate.ToShortDateString();
+                        axRControl.TextOverlayText = 
+                            (Meeting.MeetingDate == DateTime.MinValue) ? 
+                            DateTime.Now.ToShortDateString() : Meeting.MeetingDate.ToShortDateString();
                     }
                     else
                     {
                         axRControl.TextOverlayText = string.Format("{0}-{1}", Overlay,
-                        (Meeting.MeetingDate == DateTime.MinValue) ? DateTime.Now.ToShortDateString() : Meeting.MeetingDate.ToShortDateString());
+                        (Meeting.MeetingDate == DateTime.MinValue) ? 
+                            DateTime.Now.ToShortDateString() : Meeting.MeetingDate.ToShortDateString());
                     }
                 }
 

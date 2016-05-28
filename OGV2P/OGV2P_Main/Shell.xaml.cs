@@ -12,13 +12,14 @@ using System.Runtime.InteropServices;
 using System.Windows.Interop;
 using Microsoft.Practices.Prism.Commands;
 using System.Windows.Input;
+using NativeHelpers;
 
 namespace OGV2P
 {
     /// <summary>
     /// Interaction logic for MainWindow.xaml
     /// </summary>
-    public partial class Shell : Window, IDisposable
+    public partial class Shell : NativeHelpers.PerMonitorDPIWindow, IDisposable
     {
         private IUnityContainer _container;
         private IMeeting _meeting;

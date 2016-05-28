@@ -820,5 +820,7 @@ namespace OGV2P.AgendaModule.Views
         {
             GetAgendaFromServer_Click(this, new RoutedEventArgs());
         }
+
+       
     }
 }

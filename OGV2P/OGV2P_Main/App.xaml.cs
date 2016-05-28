@@ -23,7 +23,7 @@ namespace OGV2P
         {
             try
             {
-
+                
                 AppDomain current = AppDomain.CurrentDomain;
                 current.UnhandledException += Current_UnhandledException;
 

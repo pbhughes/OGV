@@ -162,7 +162,7 @@
                    Grid.Column="0"
                    Grid.ColumnSpan="2"
                    MinHeight="400">
-            <WindowsFormsHost VerticalAlignment="Stretch"
+            <WindowsFormsHost 
                               HorizontalAlignment="Stretch"
                               Grid.ColumnSpan="2"
                               x:Name="winFormHost">
@@ -207,7 +207,7 @@
                       ClickMode="Press" Checked="CheckBox_Checked_1"
                       Margin="5,0,0,0" VerticalContentAlignment="Center"
                       IsEnabled="{Binding Meeting.IsBusy,
-                Converter={StaticResource InverseBoolConverter}}"
+                     Converter={StaticResource InverseBoolConverter}}"
                       IsChecked="{Binding ShowOverlay}">Show Overlay</CheckBox>
             <tk:WatermarkTextBox
                 MaxLength="20"
