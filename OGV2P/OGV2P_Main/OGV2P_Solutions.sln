@@ -1,13 +1,16 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio 14
-VisualStudioVersion = 14.0.24720.0
+VisualStudioVersion = 14.0.25123.0
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "OGV2P", "OGV2P.csproj", "{706265BA-EAD0-4E64-A23A-1F9DE77874C9}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "AgendaModule", "..\AgendaModule\AgendaModule.csproj", "{3072C61C-AB0B-43E0-A00E-D7F1CD6E3573}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Admin", "Admin\Admin.csproj", "{1E5D4D49-CF32-419F-8890-658E4E3FAE07}"
+	ProjectSection(ProjectDependencies) = postProject
+		{938E65D0-EC9C-4181-87CA-A43D4747610D} = {938E65D0-EC9C-4181-87CA-A43D4747610D}
+	EndProjectSection
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Infrastructure", "..\Infrastructure\Infrastructure.csproj", "{C7DBA26A-38DC-4E6E-B386-99008004A915}"
 EndProject

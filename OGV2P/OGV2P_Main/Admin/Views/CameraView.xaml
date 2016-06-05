@@ -11,7 +11,8 @@
              xmlns:gif="http://wpfanimatedgif.codeplex.com"
              xmlns:diag="clr-namespace:System.Diagnostics;assembly=WindowsBase"
              mc:Ignorable="d"
-             Loaded="UserControl_Loaded" MinWidth="650"
+             Loaded="UserControl_Loaded"
+             MinWidth="650"
              Focusable="True">
     <UserControl.InputBindings>
     </UserControl.InputBindings>
