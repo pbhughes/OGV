@@ -260,7 +260,7 @@ namespace OGV2P.Admin.Views
 
                 axRControl.Dock = System.Windows.Forms.DockStyle.Fill;
 
-                winFormHost.Child.Controls.Add(axRControl);
+                winFormHost.Child = axRControl;
 
                 this.Name = "CameraView";
             }
@@ -925,8 +925,8 @@ namespace OGV2P.Admin.Views
         private void UserControl_Loaded(object sender, RoutedEventArgs e)
         {
             //INIT AXRTMP Control
-            axRControl.License = @"nlic:1.2:LiveEnc:3.0:LvApp=1,LivePlg=1,H264DEC=1,H264ENC=1,MP4=1,RtmpMsg=1,RTMPx=3,Resz=1,RSrv=1,ScCap=1,NoMsg=1,Ap1=GOV2P.Main.exe,max=10,Ic=0:win:20151230,20161214::0:0:clerkbase-555215-1:ncpt:ce608864c444270ff79e5d65e5c92682";
-
+            //axRControl.License = @"nlic:1.2:LiveEnc:3.0:LvApp=1,LivePlg=1,H264DEC=1,H264ENC=1,MP4=1,RtmpMsg=1,RTMPx=3,Resz=1,RSrv=1,ScCap=1,NoMsg=1,Ap1=GOV2P.Main.exe,max=10,Ic=0:win:20151230,20161214::0:0:clerkbase-555215-1:ncpt:ce608864c444270ff79e5d65e5c92682";
+            axRControl.License = @"nlic:1.2:LiveEnc:3.0:LvApp=1,LivePlg=1,H264DEC=1,H264ENC=1,MP4=1,RtmpMsg=1,RTMPx=3,Resz=1,RSrv=1,ScCap=1,NoMsg=1,Ap1=GOV2P.Main.exe,max=10,Ic=0:win:20161111,20171130::0:0:clerkbase-555215-2:ncpt:12d675765ccf154679900b0f5235bb47";
             InitRTMPControl();
         }
 

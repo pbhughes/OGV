@@ -31,7 +31,7 @@
     <PublisherName>OpenGoVideo</PublisherName>
     <CreateWebPageOnPublish>true</CreateWebPageOnPublish>
     <WebPage>publish.htm</WebPage>
-    <ApplicationRevision>124</ApplicationRevision>
+    <ApplicationRevision>126</ApplicationRevision>
     <ApplicationVersion>1.0.0.%2a</ApplicationVersion>
     <UseApplicationTrust>false</UseApplicationTrust>
     <CreateDesktopShortcut>true</CreateDesktopShortcut>
@@ -94,7 +94,7 @@
     <GenerateManifests>true</GenerateManifests>
   </PropertyGroup>
   <PropertyGroup>
-    <SignManifests>true</SignManifests>
+    <SignManifests>false</SignManifests>
   </PropertyGroup>
   <PropertyGroup>
     <TargetZone>Custom</TargetZone>
@@ -104,6 +104,9 @@
   </PropertyGroup>
   <PropertyGroup>
     <StartupObject>OGV2P.App</StartupObject>
+  </PropertyGroup>
+  <PropertyGroup>
+    <SignAssembly>false</SignAssembly>
   </PropertyGroup>
   <ItemGroup>
     <Reference Include="Microsoft.Practices.Prism.Composition">
@@ -233,10 +236,6 @@
     <AppDesigner Include="Properties\" />
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\..\..\..\..\Documents\PerMonitorDPIAware\NativeHelpers\NativeHelpers.vcxproj">
-      <Project>{938e65d0-ec9c-4181-87ca-a43d4747610d}</Project>
-      <Name>NativeHelpers</Name>
-    </ProjectReference>
     <ProjectReference Include="..\AgendaModule\AgendaModule.csproj">
       <Project>{3072c61c-ab0b-43e0-a00e-d7f1cd6e3573}</Project>
       <Name>AgendaModule</Name>

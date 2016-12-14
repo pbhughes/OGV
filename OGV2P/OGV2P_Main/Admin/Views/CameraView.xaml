@@ -167,9 +167,7 @@
                               HorizontalAlignment="Stretch"
                               Grid.ColumnSpan="2"
                               x:Name="winFormHost">
-
-                <frms:Panel   Dock="Fill"
-                              Name="winFormHostPanel" />
+                
             </WindowsFormsHost>
         </DockPanel>
 
