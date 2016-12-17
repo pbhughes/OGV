@@ -15,7 +15,7 @@
     <WarningLevel>4</WarningLevel>
     <TargetFrameworkProfile />
     <IsWebBootstrapper>true</IsWebBootstrapper>
-    <PublishUrl>ftp://mwfogvdb01.opengovideo.com/Test/</PublishUrl>
+    <PublishUrl>ftp://mwfogvdb01.opengovideo.com/Live/</PublishUrl>
     <Install>true</Install>
     <InstallFrom>Web</InstallFrom>
     <UpdateEnabled>true</UpdateEnabled>
@@ -25,13 +25,13 @@
     <UpdatePeriodically>false</UpdatePeriodically>
     <UpdateRequired>false</UpdateRequired>
     <MapFileExtensions>true</MapFileExtensions>
-    <InstallUrl>http://mwfogvdb01.opengovideo.com/Test/</InstallUrl>
+    <InstallUrl>http://mwfogvdb01.opengovideo.com/Live/</InstallUrl>
     <SupportUrl>http://opengovideo.com</SupportUrl>
     <ProductName>OpenGovVideo</ProductName>
     <PublisherName>OpenGoVideo</PublisherName>
     <CreateWebPageOnPublish>true</CreateWebPageOnPublish>
     <WebPage>publish.htm</WebPage>
-    <ApplicationRevision>126</ApplicationRevision>
+    <ApplicationRevision>127</ApplicationRevision>
     <ApplicationVersion>1.0.0.%2a</ApplicationVersion>
     <UseApplicationTrust>false</UseApplicationTrust>
     <CreateDesktopShortcut>true</CreateDesktopShortcut>
@@ -85,7 +85,7 @@
     <UseVSHostingProcess>false</UseVSHostingProcess>
   </PropertyGroup>
   <PropertyGroup>
-    <ManifestCertificateThumbprint>383750044CCFB31A7156DEB499D2EE88C64E9F70</ManifestCertificateThumbprint>
+    <ManifestCertificateThumbprint>FB4E143ED1AEBA9F59BFBAEF0A22D2A5F952B3B1</ManifestCertificateThumbprint>
   </PropertyGroup>
   <PropertyGroup>
     <ManifestKeyFile>OGV2P_TemporaryKey.pfx</ManifestKeyFile>
@@ -94,7 +94,7 @@
     <GenerateManifests>true</GenerateManifests>
   </PropertyGroup>
   <PropertyGroup>
-    <SignManifests>false</SignManifests>
+    <SignManifests>true</SignManifests>
   </PropertyGroup>
   <PropertyGroup>
     <TargetZone>Custom</TargetZone>
@@ -228,6 +228,7 @@
     <None Include="app.manifest">
       <SubType>Designer</SubType>
     </None>
+    <None Include="OGV2P_TemporaryKey.pfx" />
     <None Include="packages.config" />
     <None Include="Properties\Settings.settings">
       <Generator>SettingsSingleFileGenerator</Generator>
