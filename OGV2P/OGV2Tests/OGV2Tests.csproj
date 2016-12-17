@@ -58,7 +58,7 @@
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\Infrastructure\Infrastructure.csproj">
+    <ProjectReference Include="..\OGV2P_Main\Infrastructure\Infrastructure.csproj">
       <Project>{c7dba26a-38dc-4e6e-b386-99008004a915}</Project>
       <Name>Infrastructure</Name>
     </ProjectReference>

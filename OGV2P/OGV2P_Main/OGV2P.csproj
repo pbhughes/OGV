@@ -237,21 +237,21 @@
     <AppDesigner Include="Properties\" />
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\AgendaModule\AgendaModule.csproj">
-      <Project>{3072c61c-ab0b-43e0-a00e-d7f1cd6e3573}</Project>
-      <Name>AgendaModule</Name>
-    </ProjectReference>
-    <ProjectReference Include="..\CustomControls\CustomControls.csproj">
-      <Project>{676e39da-65e5-4c6f-826e-a589bc4fd80a}</Project>
-      <Name>CustomControls</Name>
-    </ProjectReference>
-    <ProjectReference Include="..\Infrastructure\Infrastructure.csproj">
-      <Project>{c7dba26a-38dc-4e6e-b386-99008004a915}</Project>
-      <Name>Infrastructure</Name>
-    </ProjectReference>
     <ProjectReference Include="Admin\Admin.csproj">
       <Project>{1e5d4d49-cf32-419f-8890-658e4e3fae07}</Project>
       <Name>Admin</Name>
+    </ProjectReference>
+    <ProjectReference Include="AgendaModule\AgendaModule.csproj">
+      <Project>{3072c61c-ab0b-43e0-a00e-d7f1cd6e3573}</Project>
+      <Name>AgendaModule</Name>
+    </ProjectReference>
+    <ProjectReference Include="CustomControls\CustomControls.csproj">
+      <Project>{676e39da-65e5-4c6f-826e-a589bc4fd80a}</Project>
+      <Name>CustomControls</Name>
+    </ProjectReference>
+    <ProjectReference Include="Infrastructure\Infrastructure.csproj">
+      <Project>{c7dba26a-38dc-4e6e-b386-99008004a915}</Project>
+      <Name>Infrastructure</Name>
     </ProjectReference>
   </ItemGroup>
   <ItemGroup>

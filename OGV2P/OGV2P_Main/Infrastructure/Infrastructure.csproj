@@ -182,7 +182,7 @@
     </None>
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\..\..\OGV1\FTPClient\FTPclient.vbproj">
+    <ProjectReference Include="..\FTPClient\FTPclient.vbproj">
       <Project>{8c7fef6c-2484-46f3-aeb1-1613e313e22c}</Project>
       <Name>FTPclient</Name>
     </ProjectReference>

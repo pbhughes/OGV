@@ -21,7 +21,7 @@ namespace OGV2P.AgendaModule.Views
         {
             InitializeComponent();
             _container = container;
-            _saveAgendaViewModel = (SaveAgendaViewModel)_container.Resolve(typeof(ISaveAgendaViewModel), new ResolverOverride[] { });
+            _saveAgendaViewModel = (SaveAgendaViewModel)_container.Resolve(typeof(ISaveAgendaViewModel));
             DataContext = _saveAgendaViewModel;
         }
 
